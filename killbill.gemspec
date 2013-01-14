@@ -23,8 +23,16 @@ Gem::Specification.new do |s|
 
   s.rdoc_options << '--exclude' << '.'
 
-  s.add_dependency 'rake', '>= 0.8.7'
   s.add_dependency 'rdoc', '~> 3.4'
+  # TODO See:
+  #   https://github.com/torquebox/maven-tools/pull/1
+  #   https://github.com/mkristian/jbundler/pull/13
+  s.add_dependency 'jbundler', '= 0.3.2.pierre'
 
+  s.add_development_dependency 'rake', '>= 0.8.7'
   s.add_development_dependency 'rspec', '~> 2.12.0'
+
+  s.requirements << "jar 'com.ning.billing:killbill-api', '0.1.48'"
+  # For testing only
+  s.requirements << "jar 'com.ning.billing:killbill-util:tests', '0.1.48'"
 end

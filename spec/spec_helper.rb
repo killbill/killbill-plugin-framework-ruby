@@ -1,9 +1,22 @@
-require 'rspec'
+require 'bundler'
 require 'killbill'
+
+%w(
+  MockAccountUserApi
+  MockEntitlementUserApi
+).each do |api|
+  begin
+    java_import "com.ning.billing.mock.api.#{api}"
+  rescue LoadError
+  end
+end
+
+require 'rspec'
 
 RSpec.configure do |config|
   config.color_enabled = true
-  config.formatter     = 'documentation'
+  config.tty = true
+  config.formatter = 'documentation'
 end
 
 begin
