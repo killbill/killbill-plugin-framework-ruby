@@ -15,7 +15,14 @@ class LifecycleNotificationPlugin < Killbill::Plugin::PluginBase
 end
 
 describe Killbill::Plugin::PluginBase do
-  it "should be able to add custom code in the startup/shutdown sequence" do
+  it 'should be able to register Killbill API instances' do
+    plugin = Killbill::Plugin::PluginBase.new(:account_user_api => MockAccountUserApi.new)
+
+    plugin.account_user_api.get_accounts(nil).size.should == 0
+    lambda { plugin.foobar_user_api.do_foo('with my bar') }.should raise_error Killbill::Plugin::PluginBase::APINotAvailableError
+  end
+
+  it 'should be able to add custom code in the startup/shutdown sequence' do
     plugin = LifecycleNotificationPlugin.new
 
     plugin.lifecycled = false
