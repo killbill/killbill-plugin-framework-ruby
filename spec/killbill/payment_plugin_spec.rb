@@ -7,7 +7,7 @@ describe Killbill::Plugin::Payment do
   before(:each) do
     @killbill_account_id = SecureRandom.uuid
     @killbill_payment_id = SecureRandom.uuid
-    @amount_in_cents = Random.rand(100000)
+    @amount_in_cents = rand(100000)
 
     @payment_method = Hash.new(:credit_card => SecureRandom.uuid)
     @external_payment_method_id = SecureRandom.uuid
