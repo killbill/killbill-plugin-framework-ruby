@@ -41,6 +41,8 @@ module Killbill
 
       # Called by the Killbill lifecycle when instantiating the plugin
       def initialize(apis_map = {})
+        @active = false
+
         apis_map.each do |api_name, api_instance|
           begin
             self.send("#{api_name}=", api_instance)
