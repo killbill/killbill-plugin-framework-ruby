@@ -7,11 +7,11 @@ module Killbill
       class OperationUnsupportedByGatewayError < NotImplementedError
       end
 
-      def charge(killbill_account_id, killbill_payment_id, amount_in_cents, options = {})
+      def charge(external_account_key, killbill_payment_id, amount_in_cents, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def refund(killbill_account_id, killbill_payment_id, amount_in_cents, options = {})
+      def refund(external_account_key, killbill_payment_id, amount_in_cents, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
@@ -19,19 +19,19 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def add_payment_method(payment_method, options = {})
+      def add_payment_method(external_account_key, payment_method, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def delete_payment_method(external_payment_method_id, options = {})
+      def delete_payment_method(external_account_key, external_payment_method_id, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def update_payment_method(payment_method, options = {})
+      def update_payment_method(external_account_key, payment_method, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def set_default_payment_method(payment_method, options = {})
+      def set_default_payment_method(external_account_key, payment_method, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
