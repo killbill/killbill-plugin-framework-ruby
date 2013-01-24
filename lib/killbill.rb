@@ -34,13 +34,12 @@ rescue NameError
   # killbill-api should be provided by the JRuby OSGI bundle. We default to using JBundler for development purposes only
   begin
     require 'jbundler'
+    KILLBILL_APIS.each { |api| java_import api }
+    warn 'Using JBundler to load killbill-api. This should only happen in development mode!'
+    warn "Classpath (see .jbundler/classpath.rb):\n\t#{JBUNDLER_CLASSPATH.join("\n\t")}"
   rescue LoadError => e
-    warn 'Unable to load killbill-api and couldn\'t find JBundler. For development purposes, make sure to run: bundle install && jbundle install'
-    raise e
+    warn 'Unable to load killbill-api and couldn\'t find JBundler. For development purposes, make sure to run: `bundle install && jbundle install\' from the killbill gem source tree'
   end
-  KILLBILL_APIS.each { |api| java_import api }
-  warn 'Using JBundler to load killbill-api. This should only happen in development mode!'
-  warn "Classpath (see .jbundler/classpath.rb):\n\t#{JBUNDLER_CLASSPATH.join("\n\t")}"
 end
 
 require 'killbill/notification'
