@@ -77,3 +77,30 @@ How to write a Payment plugin
         puts "MyPaymentPlugin plugin stopped"
       end
     end
+
+Rake tasks
+----------
+
+The killbill gem also ships helpful Rake tasks to package Killbill-ready plugins.
+
+To access these tasks, add the following to your Rakefile:
+
+    # Install tasks to package the plugin for Killbill
+    require 'killbill/rake_task'
+    Killbill::PluginHelper.install_tasks
+
+    # (Optional) Install tasks to build and release your plugin gem
+    require 'bundler/setup'
+    Bundler::GemHelper.install_tasks
+
+You can verify these tasks are available by running `rake -T`.
+
+To build the artifacts into pkg/:
+
+    # Cleanup output directories
+    rake killbill:clean
+    # Build your plugin gem in the pkg/ directory
+    rake build
+    # Build the Killbill plugin in the pkg/ directory
+    # The <plugin_name>-<plugin-version>/ directory is used as a staging directory
+    rake killbill:package
