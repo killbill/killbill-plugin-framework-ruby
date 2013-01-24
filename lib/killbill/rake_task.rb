@@ -43,6 +43,9 @@ module Killbill
       # Staging area to install gem dependencies
       # Note the Killbill friendly structure (which we will keep in the tarball)
       @target_dir = @package_dir.join("#{version}/gems").expand_path
+
+      # Staging area to install the killbill.properties file
+      @killbill_properties_target_dir = @package_dir.join("#{version}").expand_path
     end
 
     def specs
@@ -55,7 +58,7 @@ module Killbill
     def install
       namespace :killbill do
         desc "Validate plugin tree"
-        task :validate do
+        task :validate => killbill_properties_file do
           validate
         end
 
@@ -69,6 +72,7 @@ module Killbill
         desc "Stage all dependencies"
         task :stage => :validate do
           stage_dependencies
+          stage_killbill_properties_file
 
           # Small hack! Update the list of files to package (Rake::FileList is evaluated too early above)
           package_task.package_files = Rake::FileList.new("#{@package_dir.basename}/**/*")
@@ -167,6 +171,15 @@ module Killbill
 
       @logger.debug "Staging #{name} (#{version}) from #{@plugin_gem_file}"
       Gem::Installer.new(@plugin_gem_file, {:force => true, :install_dir => @target_dir}).install
+    end
+
+    def stage_killbill_properties_file
+      @logger.debug "Staging #{killbill_properties_file} to #{@killbill_properties_target_dir}"
+      cp killbill_properties_file, @killbill_properties_target_dir
+    end
+
+    def killbill_properties_file
+      @base.join("killbill.properties").expand_path.to_s
     end
   end
 end
