@@ -21,7 +21,7 @@ module Killbill
 
     def initialize(base_name, plugin_name, gem_name, gemfile_name, gemfile_lock_name)
       @logger = Logger.new(STDOUT)
-      #@logger.level = Logger::DEBUG
+      @logger.level = Logger::INFO
 
       @base_name = base_name
       @plugin_name = plugin_name
