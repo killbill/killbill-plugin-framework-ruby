@@ -34,6 +34,11 @@ How to write a Notification plugin
       end
     end
 
+Make sure to create the corresponding killbill.properties file:
+
+    mainClass=MyNotificationPlugin
+    pluginType=NOTIFICATION
+
 How to write a Payment plugin
 -----------------------------
 
@@ -77,6 +82,11 @@ How to write a Payment plugin
         puts "MyPaymentPlugin plugin stopped"
       end
     end
+
+Make sure to create the corresponding killbill.properties file:
+
+    mainClass=MyPaymentPlugin
+    pluginType=PAYMENT
 
 Rake tasks
 ----------
