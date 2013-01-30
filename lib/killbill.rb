@@ -35,10 +35,9 @@ rescue NameError
   begin
     require 'jbundler'
     KILLBILL_APIS.each { |api| java_import api }
-    warn 'Using JBundler to load killbill-api. This should only happen in development mode!'
-    warn "Classpath (see .jbundler/classpath.rb):\n\t#{JBUNDLER_CLASSPATH.join("\n\t")}"
+    warn 'Using JBundler to load killbill-api (see .jbundler/classpath.rb). This should only happen in development mode!'
   rescue LoadError => e
-    warn 'Unable to load killbill-api and couldn\'t find JBundler. For development purposes, make sure to run: `bundle install && jbundle install\' from the killbill gem source tree'
+    warn 'Unable to load killbill-api. For development purposes, use JBundler (create the following Jarfile: http://git.io/eobYXA and run: `bundle install && jbundle install\')'
   end
 end
 
