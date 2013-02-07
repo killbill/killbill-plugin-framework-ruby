@@ -17,7 +17,6 @@ KILLBILL_APIS = %w(
   com.ning.billing.invoice.api.InvoiceMigrationApi
   com.ning.billing.invoice.api.InvoicePaymentApi
   com.ning.billing.invoice.api.InvoiceUserApi
-  com.ning.billing.meter.api.MeterUserApi
   com.ning.billing.overdue.OverdueUserApi
   com.ning.billing.payment.api.PaymentApi
   com.ning.billing.tenant.api.TenantUserApi
