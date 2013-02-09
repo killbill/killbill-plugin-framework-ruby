@@ -52,6 +52,11 @@ module Killbill
         end
       end
 
+      # Called by the Killbill lifecycle to register the servlet
+      def rack_handler
+        Killbill::Plugin::RackHandler.instance
+      end
+
       class APINotAvailableError < NotImplementedError
       end
 

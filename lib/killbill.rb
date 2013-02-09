@@ -40,5 +40,6 @@ rescue NameError
   end
 end
 
+require 'killbill/http_servlet'
 require 'killbill/notification'
 require 'killbill/payment'
