@@ -37,24 +37,29 @@ module Killbill
                     :audit_user_api,
                     :custom_field_user_api,
                     :export_user_api,
-                    :tag_user_api
+                    :tag_user_api,
+                    # Extra services
+                    :root,
+                    :logger
 
       # Called by the Killbill lifecycle when instantiating the plugin
-      def initialize(apis_map = {})
+      def initialize(services = {})
         @active = false
 
-        apis_map.each do |api_name, api_instance|
+        services.each do |service_name, service_instance|
           begin
-            self.send("#{api_name}=", api_instance)
+            self.send("#{service_name}=", service_instance)
           rescue NoMethodError
-            warn "Ignoring unsupported API: #{api_name}"
+            warn "Ignoring unsupported service: #{service_name}"
           end
         end
       end
 
       # Called by the Killbill lifecycle to register the servlet
       def rack_handler
-        Killbill::Plugin::RackHandler.instance
+        instance = Killbill::Plugin::RackHandler.instance
+        instance.set_logger(@logger) unless @logger.nil?
+        instance
       end
 
       class APINotAvailableError < NotImplementedError
