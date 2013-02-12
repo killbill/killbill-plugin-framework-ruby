@@ -166,7 +166,11 @@ module Killbill
         # For the plugin itself, install it manually (the cache path is likely to be wrong)
         next if spec.name == name and spec.version == version
         @logger.debug "Staging #{spec.name} (#{spec.version}) from #{spec.cache_file}"
-        Gem::Installer.new(spec.cache_file, {:force => true, :install_dir => @target_dir}).install
+        begin
+          Gem::Installer.new(spec.cache_file, {:force => true, :install_dir => @target_dir}).install
+        rescue => e
+          @logger.warn "Unable to stage #{spec.name} (#{spec.version}) from #{spec.cache_file}: #{e}"
+        end
       end
 
       @logger.debug "Staging #{name} (#{version}) from #{@plugin_gem_file}"
