@@ -61,7 +61,8 @@ module Killbill
       end
 
       def method_missing(m, *args, &block)
-        raise APINotAvailableError.new("API #{m} is not available") if m =~ /_api$/
+        # m being a symbol, to_s is required for Ruby 1.8
+        raise APINotAvailableError.new("API #{m} is not available") if m.to_s =~ /_api$/
       end
 
     end
