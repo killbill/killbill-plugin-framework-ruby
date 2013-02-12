@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/killbill/killbill-plugin-framework-ruby.png?branch=master)](https://travis-ci.org/killbill/killbill-plugin-framework-ruby)
+[![Code Climate](https://codeclimate.com/github/killbill/killbill-plugin-framework-ruby.png)](https://codeclimate.com/github/killbill/killbill-plugin-framework-ruby)
+
 killbill-plugin-framework-ruby
 ==============================
 
