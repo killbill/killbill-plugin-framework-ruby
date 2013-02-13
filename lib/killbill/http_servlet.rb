@@ -33,7 +33,7 @@ module Killbill
 
         headers = {}
         servlet_request.header_names.reject { |name| name =~ /^Content-(Type|Length)$/i }.each do |name|
-          headers[:name] = servlet_request.get_headers(name).to_a
+          headers[name] = servlet_request.get_headers(name).to_a
         end
 
         response_status, response_headers, response_body = rack_service(request_uri, method, query_string, input, scheme, server_name, server_port, content_type, content_length, headers)
@@ -82,7 +82,7 @@ module Killbill
         rack_env['CONTENT_TYPE'] = content_type unless content_type.nil?
         rack_env['CONTENT_LENGTH']  = content_length unless content_length.nil?
         headers.each do |name, values|
-          rack_env["HTTP_#{name.upcase.gsub(/-/,'_')}"] = values.join(',')
+          rack_env["HTTP_#{name.to_s.upcase.gsub(/-/,'_')}"] = values.join(',')
         end
 
         @app.call(rack_env)

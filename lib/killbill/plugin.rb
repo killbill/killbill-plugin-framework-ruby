@@ -1,3 +1,5 @@
+require 'killbill/http_servlet'
+
 module Killbill
   # There are various types of plugins one can write for Killbill:
   #
