@@ -1,3 +1,7 @@
+gem 'rack'
+require 'rack'
+require 'rack/rewindable_input'
+
 require 'singleton'
 
 module Killbill
@@ -6,11 +10,130 @@ module Killbill
     class RackHandler < Java::javax.servlet.http.HttpServlet
       include Singleton
 
+      def configure(logger, config_ru)
+        @logger = RackLogger.new(logger)
+        @app = Rack::Builder.parse_file(config_ru).first
+      end
+
+      def configured?
+        !@app.nil?
+      end
+
       java_signature 'void service(HttpServletRequest, HttpServletResponse)'
-      def service(req, res)
-        puts "Received request: #{req.inspect} and response: #{res.inspect}"
-        res.setStatus(200)
+      def service(servlet_request, servlet_response)
+        input = Rack::RewindableInput.new(servlet_request.input_stream.to_io)
+        scheme = servlet_request.scheme
+        method = servlet_request.method
+        request_uri = servlet_request.request_uri
+        query_string = servlet_request.query_string
+        server_name = servlet_request.server_name
+        server_port = servlet_request.server_port
+        content_type = servlet_request.content_type
+        content_length = servlet_request.content_length
+
+        headers = {}
+        servlet_request.header_names.reject { |name| name =~ /^Content-(Type|Length)$/i }.each do |name|
+          headers[:name] = servlet_request.get_headers(name).to_a
+        end
+
+        response_status, response_headers, response_body = rack_service(request_uri, method, query_string, input, scheme, server_name, server_port, content_type, content_length, headers)
+
+        # Set status
+        servlet_response.status = response_status
+
+        # Set headers
+        response_headers.each do |header_name, header_value|
+          case header_name
+            when /^Content-Type$/i
+              servlet_response.content_type = header_value.to_s
+            when /^Content-Length$/i
+              servlet_response.content_length = header_value.to_i
+            else
+              servlet_response.add_header(header_name.to_s, header_value.to_s)
+          end
+        end
+
+        # Write output
+        response_stream = servlet_response.output_stream
+        response_body.each { |part| response_stream.write(part.to_java_bytes) }
+        response_stream.flush rescue nil
+      ensure
+        response_body.close if response_body.respond_to? :close
+      end
+
+      def rack_service(request_uri = '/', method = 'GET', query_string = '', input = '', scheme = 'http', server_name = 'localhost', server_port = 4567, content_type = 'text/plain', content_length = 0, headers = {})
+        rack_env = {
+                'rack.version' => Rack::VERSION,
+                'rack.multithread' => true,
+                'rack.multiprocess' => false,
+                'rack.input' => input,
+                # TODO
+                'rack.errors' => java::lang::System::err.to_io,
+                'rack.logger' => java::lang::System::out.to_io,
+                'rack.url_scheme' => scheme,
+                'REQUEST_METHOD' => method,
+                'SCRIPT_NAME' => '',
+                'PATH_INFO' => request_uri,
+                'QUERY_STRING' => (query_string || ""),
+                'SERVER_NAME' => server_name,
+                'SERVER_PORT' => server_port.to_s
+        }
+
+        rack_env['CONTENT_TYPE'] = content_type unless content_type.nil?
+        rack_env['CONTENT_LENGTH']  = content_length unless content_length.nil?
+        headers.each do |name, values|
+          rack_env["HTTP_#{name.upcase.gsub(/-/,'_')}"] = values.join(',')
+        end
+
+        @app.call(rack_env)
       end
     end
+
+    class RackLogger
+      def initialize(delegate)
+        @logger = delegate
+      end
+
+      def debug(msg)
+        @logger.log(4, msg)
+      end
+
+      def info(msg)
+        @logger.log(3, msg)
+      end
+
+      def warn(msg)
+        @logger.log(2, msg)
+      end
+
+      def error(msg)
+        @logger.log(1, msg)
+      end
+
+      alias_method :fatal, :error
+
+      # XXX TODO
+      def debug?
+        false
+      end
+
+      def info?
+        true
+      end
+
+      def warn?
+        true
+      end
+
+      alias_method :error?, :warn?
+      alias_method :fatal?, :error?
+    end
+  end
+end
+
+# Fix bug in JRuby's handling of gems in jars (JRUBY-3986)
+class File
+  def self.mtime(path)
+    stat(path).mtime
   end
 end

@@ -23,8 +23,10 @@ Gem::Specification.new do |s|
   s.rdoc_options << '--exclude' << '.'
 
   s.add_development_dependency 'jbundler', '~> 0.4.1'
+  s.add_development_dependency 'rack', '>= 1.5.2'
   s.add_development_dependency 'rake', '>= 0.8.7'
   s.add_development_dependency 'rspec', '~> 2.12.0'
+  s.add_development_dependency 'sinatra', '~> 1.3.4'
 
   s.requirements << "jar 'com.ning.billing:killbill-api', '0.1.48'"
   # For testing only

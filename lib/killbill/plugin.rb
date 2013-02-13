@@ -58,7 +58,7 @@ module Killbill
       # Called by the Killbill lifecycle to register the servlet
       def rack_handler
         instance = Killbill::Plugin::RackHandler.instance
-        instance.set_logger(@logger) unless @logger.nil?
+        instance.configure(@logger, @config_ru) unless instance.configured?
         instance
       end
 
