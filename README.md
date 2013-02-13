@@ -11,6 +11,8 @@ There are various types of plugins one can write for Killbill:
 1. notifications plugins, which listen to external bus events and can react to it
 2. payment plugins, which are used to issue payments against a payment gateway
 
+Both types of plugin can interact with Killbill directly via killbill-library APIs and expose HTTP endpoints.
+
 How to write a Notification plugin
 ----------------------------------
 
@@ -90,6 +92,22 @@ Make sure to create the corresponding killbill.properties file:
 
     mainClass=MyPaymentPlugin
     pluginType=PAYMENT
+
+How to expose HTTP endpoints
+----------------------------
+
+Killbill exports a Rack handler that interfaces directly with the container in which killbill-server runs (e.g. Jetty).
+
+This basically means that Killbill will understand native Rack config.ru files placed in the root of your plugin, e.g. (using Sinatra): 
+
+    require 'sinatra'
+
+    get "/plugins/myPlugin/ping" do
+      status 200
+      "pong"
+    end
+    run Sinatra::Application
+
 
 Rake tasks
 ----------
