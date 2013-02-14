@@ -44,8 +44,8 @@ module Killbill
       # Note the Killbill friendly structure (which we will keep in the tarball)
       @target_dir = @package_dir.join("#{version}/gems").expand_path
 
-      # Staging area to install the killbill.properties file
-      @killbill_properties_target_dir = @package_dir.join("#{version}").expand_path
+      # Staging area to install the killbill.properties and config.ru files
+      @plugin_root_target_dir = @package_dir.join("#{version}").expand_path
     end
 
     def specs
@@ -58,6 +58,7 @@ module Killbill
     def install
       namespace :killbill do
         desc "Validate plugin tree"
+        # The killbill.properties file is required, but not the config.ru one
         task :validate => killbill_properties_file do
           validate
         end
@@ -72,7 +73,7 @@ module Killbill
         desc "Stage all dependencies"
         task :stage => :validate do
           stage_dependencies
-          stage_killbill_properties_file
+          stage_extra_files
 
           # Small hack! Update the list of files to package (Rake::FileList is evaluated too early above)
           package_task.package_files = Rake::FileList.new("#{@package_dir.basename}/**/*")
@@ -177,13 +178,27 @@ module Killbill
       Gem::Installer.new(@plugin_gem_file, {:force => true, :install_dir => @target_dir}).install
     end
 
-    def stage_killbill_properties_file
-      @logger.debug "Staging #{killbill_properties_file} to #{@killbill_properties_target_dir}"
-      cp killbill_properties_file, @killbill_properties_target_dir
+    def stage_extra_files
+      unless killbill_properties_file.nil?
+        @logger.debug "Staging #{killbill_properties_file} to #{@plugin_root_target_dir}"
+        cp killbill_properties_file, @plugin_root_target_dir
+      end
+      unless config_ru_file.nil?
+        @logger.debug "Staging #{config_ru_file} to #{@plugin_root_target_dir}"
+        cp config_ru_file, @plugin_root_target_dir
+      end
     end
 
     def killbill_properties_file
-      @base.join("killbill.properties").expand_path.to_s
+      path_to_string @base.join("killbill.properties").expand_path
+    end
+
+    def config_ru_file
+      path_to_string @base.join("config.ru").expand_path
+    end
+
+    def path_to_string(path)
+      path.file? ? path.to_s : nil
     end
   end
 end
