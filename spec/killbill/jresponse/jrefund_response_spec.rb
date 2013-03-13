@@ -11,7 +11,7 @@ describe Killbill::Plugin::JRefundResponse do
 
     it "should_test_jrefund_response" do
 
-      amount = 12.35
+      amount = 12352
       created_date = DateTime.new
       effective_date = DateTime.new
       status = Killbill::Plugin::PaymentStatus::SUCCESS
@@ -21,7 +21,7 @@ describe Killbill::Plugin::JRefundResponse do
       input = Killbill::Plugin::RefundResponse.new(amount, created_date, effective_date, status, gateway_error, gateway_error_code)
       output = Killbill::Plugin::JRefundResponse.new(input)
       output.get_amount.should be_an_instance_of java.math.BigDecimal
-      output.get_amount.to_s.should == amount.to_s;
+      output.get_amount.to_s.should == '123.52';
 
       output.get_created_date.should be_an_instance_of org.joda.time.DateTime
       #output.get_created_date.get_millis == created_date.to_s;

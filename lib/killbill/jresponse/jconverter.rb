@@ -30,8 +30,8 @@ module Killbill
           end
         end
 
-        def to_big_decimal(price)
-          price.nil? ? java.math.BigDecimal::ZERO : java.math.BigDecimal.new(price.to_s)
+        def to_big_decimal(amount_in_cents)
+          amount_in_cents.nil? ? java.math.BigDecimal::ZERO : java.math.BigDecimal.new('%.2f' % (amount_in_cents.to_i/100.0))
         end
 
         def to_boolean(b)

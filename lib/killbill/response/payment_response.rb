@@ -1,17 +1,16 @@
 module Killbill
   module Plugin
-
      class PaymentResponse
 
-       attr_reader :amount,
+       attr_reader :amount_in_cents,
                    :created_date,
                    :effective_date,
                    :status,
                    :gateway_error,
                    :gateway_error_code
 
-      def initialize(amount, created_date, effective_date, status, gateway_error, gateway_error_code)
-         @amount = amount
+      def initialize(amount_in_cents, created_date, effective_date, status, gateway_error=nil, gateway_error_code=nil)
+         @amount_in_cents = amount_in_cents
          @created_date = created_date
          @effective_date = effective_date
          @status = status
