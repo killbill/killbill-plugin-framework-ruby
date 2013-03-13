@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-java_import 'java.util.UUID'
-java_import 'org.joda.time.DateTimeZone'
-java_import 'com.ning.billing.catalog.api.Currency'
-java_import 'com.ning.billing.mock.api.MockBillCycleDay'
+java_import java.util.UUID
+java_import org.joda.time.DateTimeZone
+java_import com.ning.billing.catalog.api.Currency
 
 describe Killbill::Plugin do
   before(:each) do
@@ -17,7 +16,7 @@ describe Killbill::Plugin do
                                     'name',
                                     1,
                                     Currency::USD,
-                                    MockBillCycleDay.new(12),
+                                    12,
                                     UUID.randomUUID,
                                     DateTimeZone::UTC,
                                     'locale',

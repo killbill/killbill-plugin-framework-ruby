@@ -12,6 +12,8 @@ describe Killbill::Plugin::Payment do
     @payment_method = Hash.new(:credit_card => SecureRandom.uuid)
     @external_payment_method_id = SecureRandom.uuid
 
+    @payment_method_props = Hash.new
+    @payment_methods = Hash.new
     @killbill_account = Hash.new(:name => SecureRandom.uuid)
 
     @plugin = DummyPaymentPlugin.new
@@ -21,10 +23,12 @@ describe Killbill::Plugin::Payment do
     lambda { @plugin.charge(@external_account_key, @killbill_payment_id, @amount_in_cents) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.refund(@external_account_key, @killbill_payment_id, @amount_in_cents) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.get_payment_info(@killbill_payment_id) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
-    lambda { @plugin.add_payment_method(@external_account_key, @payment_method) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
+    lambda { @plugin.add_payment_method(@external_account_key, @payment_method, @payment_method_props, true ) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.delete_payment_method(@external_account_key, @external_payment_method_id) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
-    lambda { @plugin.update_payment_method(@external_account_key, @payment_method) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.set_default_payment_method(@external_account_key, @payment_method) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
-    lambda { @plugin.create_account(@killbill_account) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
+
+    lambda { @plugin.get_payment_method_detail(@external_account_key, @payment_method) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
+    lambda { @plugin.get_payment_methods(@external_account_key) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
+    lambda { @plugin.reset_payment_methods(@payment_methods) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
   end
 end

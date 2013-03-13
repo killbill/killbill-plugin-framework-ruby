@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 2.12.0'
   s.add_development_dependency 'sinatra', '~> 1.3.4'
 
-  s.requirements << "jar 'com.ning.billing:killbill-api', '0.1.48'"
+  s.requirements << "jar 'com.ning.billing:killbill-api', '0.1.56-SNAPSHOT'"
   # For testing only
-  s.requirements << "jar 'com.ning.billing:killbill-util:tests', '0.1.48'"
+  s.requirements << "jar 'com.ning.billing:killbill-util:tests', '0.1.56-SNAPSHOT'"
 end

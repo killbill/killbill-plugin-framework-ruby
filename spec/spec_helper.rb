@@ -1,5 +1,10 @@
+require 'java'
+
 require 'bundler'
 require 'killbill'
+
+require 'killbill/payment_test'
+
 
 %w(
   MockAccountUserApi
