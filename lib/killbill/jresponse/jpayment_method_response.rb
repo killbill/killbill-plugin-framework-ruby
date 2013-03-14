@@ -14,18 +14,19 @@ module Killbill
           is_updatable = JConverter.to_boolean(payment_method_prop.is_updatable)
           Java::com.ning.billing.payment.api.PaymentMethodPlugin::PaymentMethodKVInfo.new(key, value, is_updatable)
         end
-      
+
         def to_payment_method_property(jpayment_method_prop)
           key = JConverter.from_string(jpayment_method_prop.get_key)
           value = JConverter.from_string(jpayment_method_prop.get_value)
           is_updatable = JConverter.from_boolean(jpayment_method_prop.get_is_updatable)
           PaymentMethodProperty.new(key, value, is_updatable)
         end
-      
+
       end
-      
+
     end
 
+    java_package 'com.ning.billing.payment.api'
     class JPaymentMethodResponse
 
       include Java::com.ning.billing.payment.api.PaymentMethodPlugin
@@ -33,7 +34,7 @@ module Killbill
       attr_reader :external_payment_method_id,
                    :is_default,
                    :properties
-      
+
       class << self
         def to_payment_method_response(jpayment_method_response)
           props = Array.new
@@ -44,7 +45,7 @@ module Killbill
           default = JConverter.from_boolean(jpayment_method_response.is_default_payment_method)
           PaymentMethodResponse.new(pmid, default, props)
         end
-        
+
       end
 
       def initialize(payment_method_response)
@@ -81,7 +82,7 @@ module Killbill
         end
         nil
       end
-      
+
     end
 
   end
