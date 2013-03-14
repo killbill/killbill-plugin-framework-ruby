@@ -23,7 +23,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          PaymentResponse.new(amount_in_cents, DateTime.now, DateTime.now, PaymentStatus::SUCCESS, "gateway_error", "gateway_error_code")
+          PaymentResponse.new(0, DateTime.now, DateTime.now, PaymentStatus::SUCCESS, "gateway_error", "gateway_error_code")
         end
       end
 
