@@ -25,6 +25,8 @@ describe Killbill::Plugin::PluginBase do
     lambda { plugin.payment_api.do_foo('with my bar') }.should raise_error Killbill::Plugin::PluginBase::APINotAvailableError
     # Non-existing API
     lambda { plugin.foobar_user_api.do_foo('with my bar') }.should raise_error Killbill::Plugin::PluginBase::APINotAvailableError
+    # Default method missing behavior
+    lambda { plugin.blablabla }.should raise_error NoMethodError
   end
 
   it 'should be able to add custom code in the startup/shutdown sequence' do

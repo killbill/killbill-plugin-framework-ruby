@@ -88,6 +88,8 @@ module Killbill
           else
             api
           end
+        else
+          raise NoMethodError.new("undefined method `#{m}' for #{self}")
         end
       end
     end
