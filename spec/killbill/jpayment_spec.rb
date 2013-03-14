@@ -12,7 +12,7 @@ describe Killbill::Plugin::JPayment do
     @payment_method_plugin = nil
     @amount = java.math.BigDecimal.new("50")
   end
-  
+
   before(:each) do
     @jpayment.real_payment.send(:clear_exception_on_next_calls)
   end
@@ -29,7 +29,7 @@ describe Killbill::Plugin::JPayment do
     @jpayment.real_payment.send(:raise_exception_on_next_calls)
     lambda { @jpayment.charge(@kb_payment_id, @kb_payment_method_id, @amount) }.should raise_error Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException
   end
-  
+
   it "should_test_get_payment_info_ok" do
     output = @jpayment.get_payment_info(@kb_payment_method_id)
     output.get_amount.should be_an_instance_of java.math.BigDecimal
@@ -64,8 +64,8 @@ describe Killbill::Plugin::JPayment do
     @jpayment.real_payment.send(:raise_exception_on_next_calls)
     lambda { @jpayment.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_plugin, true) }.should raise_error Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException
   end
-  
-  
+
+
   it "should_test_delete_payment_method_ok" do
     @jpayment.delete_payment_method(@kb_payment_method_id)
   end
@@ -94,22 +94,22 @@ describe Killbill::Plugin::JPayment do
     @jpayment.real_payment.send(:raise_exception_on_next_calls)
     lambda { @jpayment.set_default_payment_method(@kb_payment_method_id) }.should raise_error Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException
   end
-  
+
   it "should_get_payment_methods_ok" do
     output = @jpayment.get_payment_methods(@kb_account_id, java.lang.Boolean.new("true"))
 
     output.should be_an_instance_of java.util.ArrayList
     output.size.should == 1
-    
-    current_payment_method = output.get(0)    
-    current_payment_method.get_account_id.to_s.should == @kb_account_id.to_s    
+
+    current_payment_method = output.get(0)
+    current_payment_method.get_account_id.to_s.should == @kb_account_id.to_s
   end
 
   it "should_get_payment_methods_exception" do
     @jpayment.real_payment.send(:raise_exception_on_next_calls)
     lambda { @jpayment.get_payment_methods(@kb_account_id, true) }.should raise_error Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException
   end
-  
+
   it "should_test_reset_payment_methods_ok" do
     @jpayment.reset_payment_methods(java.util.ArrayList.new)
   end

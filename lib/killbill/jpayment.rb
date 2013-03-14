@@ -16,7 +16,7 @@ module Killbill
       include Java::com.ning.billing.payment.plugin.api.PaymentPluginApi
 
       attr_reader :real_payment
-      
+
       def initialize(real_class_name, services = {})
         real_payment_class = class_from_string(real_class_name)
         @real_payment = real_payment_class.new(services)
@@ -29,71 +29,83 @@ module Killbill
 
       java_signature 'Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin processPayment(java.util.UUID, java.util.UUID, java.lang.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
       def charge(*args)
-        do_call_handle_exception(__method__, JPaymentResponse, false, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return JPaymentResponse.new(res)
+        end
       end
 
       java_signature 'Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin getPaymentInfo(java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
       def get_payment_info(*args)
-        do_call_handle_exception(__method__, JPaymentResponse, false, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return JPaymentResponse.new(res)
+        end
       end
 
       java_signature 'Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin processRefund(java.util.UUID, java.lang.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
       def refund(*args)
-        do_call_handle_exception(__method__, JRefundResponse, false, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return JRefundResponse.new(res)
+        end
       end
 
       java_signature 'void addPaymentMethod(java.util.UUID, java.util.UUID, Java::com.ning.billing.payment.api.PaymentMethodPlugin, Java::boolean, Java::com.ning.billing.util.callcontext.CallContext)'
       def add_payment_method(*args)
-        do_call_handle_exception(__method__, nil, false,*args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return nil
+        end
       end
 
       java_signature 'void deletePaymentMethod(java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
       def delete_payment_method(*args)
-        do_call_handle_exception(__method__, nil, false, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return nil
+        end
       end
 
       java_signature 'Java::com.ning.billing.payment.api.PaymentMethodPlugin getPaymentMethodDetail(java.util.UUID, java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
       def get_payment_method_detail(*args)
-        do_call_handle_exception(__method__, JPaymentMethodResponse, false, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return JPaymentMethodResponse.new(res)
+        end
       end
 
       java_signature 'void setDefaultPaymentMethod(java.util.UUID kbPaymentMethodId, Java::com.ning.billing.util.callcontext.CallContext)'
       def set_default_payment_method(*args)
-        do_call_handle_exception(__method__, nil, false, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return nil
+        end
       end
 
       java_signature 'java.util.List getPaymentMethods(java.util.UUID, Java::boolean refreshFromGateway, Java::com.ning.billing.util.callcontext.CallContext)'
       def get_payment_methods(*args)
-        do_call_handle_exception(__method__, JPaymentMethodResponseInternal, true, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          array_res = java.util.ArrayList.new
+          res.each do |el|
+            array_res.add(JPaymentMethodResponseInternal.new(el))
+          end
+          return array_res
+        end
       end
 
       java_signature 'void resetPaymentMethods(java.util.List)'
       def reset_payment_methods(*args)
-        do_call_handle_exception(__method__, nil, false, *args)
+        do_call_handle_exception(__method__, *args) do |res|
+          return nil
+        end
       end
 
       private
-  
-      def do_call_handle_exception(method_name, expected_return_class, is_array_returned, *args)
+
+      def do_call_handle_exception(method_name, *args)
         begin
           rargs = convert_args(method_name, args)
           res = @real_payment.send(method_name, *rargs)
-          if ! expected_return_class.nil?
-            if !is_array_returned
-              expected_return_class.new(res)
-            else
-              array_res = java.util.ArrayList.new
-              res.each do |el|
-                array_res.add(expected_return_class.new(el))
-              end
-              array_res
-            end
-          end
+          yield(res)
         rescue Exception => e
           wrap_and_throw_exception(method_name, e)
         end
       end
-      
+
       def wrap_and_throw_exception(api, e)
         raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", e.message)
       end
@@ -103,7 +115,7 @@ module Killbill
           mod.const_get(class_name)
         end
       end
-      
+
       def convert_args(api, args)
         args.collect! do |a|
          if a.nil?
@@ -122,19 +134,19 @@ module Killbill
              first_element = a.get(0)
              if first_element.java_kind_of? Java::com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin
                a.each do |el|
-                 result << JConverter.from_payment_method_info_plugin(el)                 
+                 result << JConverter.from_payment_method_info_plugin(el)
                end
              else
-               raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{first_element.class} for list")           
+               raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{first_element.class} for list")
              end
            end
            result
          else
-           raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")           
+           raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
          end
         end
       end
-    
+
     end
   end
 end

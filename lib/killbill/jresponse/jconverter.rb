@@ -41,17 +41,17 @@ module Killbill
         def to_boolean(b)
           java.lang.Boolean.new(b)
         end
-        
-        
+
+
         #
         # Convert from java -> ruby
-        #        
+        #
         def from_uuid(uuid)
            uuid.nil? ? nil : uuid.to_s
         end
 
         def from_joda_date_time(joda_time)
-          if joda_time.nil? 
+          if joda_time.nil?
             return nil
           end
 
@@ -81,15 +81,15 @@ module Killbill
         def from_boolean(b)
           (b.nil? || !b) ? false : true
         end
-       
+
         def from_payment_method_plugin(payment_method_plugin)
           JPaymentMethodResponse.to_payment_method_response(payment_method_plugin)
         end
-       
+
         def from_payment_method_info_plugin(payment_method_info_plugin)
          JPaymentMethodResponseInternal.to_payment_method_response_internal(payment_method_info_plugin)
         end
-      end 
+      end
     end
   end
 end
