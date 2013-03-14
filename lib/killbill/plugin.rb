@@ -21,28 +21,28 @@ module Killbill
         @active = false
       end
 
-      attr_accessor :account_user_api,
-                    :analytics_sanity_api,
-                    :analytics_user_api,
-                    :catalog_user_api,
-                    :entitlement_migration_api,
-                    :entitlement_timeline_api,
-                    :entitlement_transfer_api,
-                    :entitlement_user_api,
-                    :invoice_migration_api,
-                    :invoice_payment_api,
-                    :invoice_user_api,
-                    :meter_user_api,
-                    :overdue_user_api,
-                    :payment_api,
-                    :tenant_user_api,
-                    :usage_user_api,
-                    :audit_user_api,
-                    :custom_field_user_api,
-                    :export_user_api,
-                    :tag_user_api,
-                    # Extra services
-                    :root,
+      attr_writer :account_user_api,
+                  :analytics_sanity_api,
+                  :analytics_user_api,
+                  :catalog_user_api,
+                  :entitlement_migration_api,
+                  :entitlement_timeline_api,
+                  :entitlement_transfer_api,
+                  :entitlement_user_api,
+                  :invoice_migration_api,
+                  :invoice_payment_api,
+                  :invoice_user_api,
+                  :meter_user_api,
+                  :overdue_user_api,
+                  :payment_api,
+                  :tenant_user_api,
+                  :usage_user_api,
+                  :audit_user_api,
+                  :custom_field_user_api,
+                  :export_user_api,
+                  :tag_user_api
+      # Extra services
+      attr_accessor :root,
                     :logger
 
       # Called by the Killbill lifecycle when instantiating the plugin
@@ -81,9 +81,15 @@ module Killbill
 
       def method_missing(m, *args, &block)
         # m being a symbol, to_s is required for Ruby 1.8
-        raise APINotAvailableError.new("API #{m} is not available") if m.to_s =~ /_api$/
+        if m.to_s =~ /_api$/
+          api = self.instance_variable_get("@#{m.to_s}")
+          if api.nil?
+            raise APINotAvailableError.new("API #{m} is not available")
+          else
+            api
+          end
+        end
       end
-
     end
   end
 end

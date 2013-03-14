@@ -19,6 +19,11 @@ describe Killbill::Plugin::PluginBase do
     plugin = Killbill::Plugin::PluginBase.new(:account_user_api => MockAccountUserApi.new)
 
     plugin.account_user_api.get_accounts(nil).size.should == 0
+    # Existing API, present
+    lambda { plugin.account_user_api.do_foo('with my bar') }.should_not raise_error Killbill::Plugin::PluginBase::APINotAvailableError
+    # Existing API, absent
+    lambda { plugin.payment_api.do_foo('with my bar') }.should raise_error Killbill::Plugin::PluginBase::APINotAvailableError
+    # Non-existing API
     lambda { plugin.foobar_user_api.do_foo('with my bar') }.should raise_error Killbill::Plugin::PluginBase::APINotAvailableError
   end
 

@@ -54,10 +54,18 @@ describe Killbill::Plugin::JConverter do
     end
 
     it "should_test_big_decimal_converter" do
-      input = 12.376
-      output = Killbill::Plugin::JConverter.to_big_decimal(input)
-      output.should be_an_instance_of java.math.BigDecimal
-      output.to_s.should == input.to_s
+      {
+        nil => '0',
+        1 => '0.01',
+        0 => '0',
+        -1 => '-0.01',
+        12376 => '12.376',
+        -532 => '-5.32'
+      }.each do |input,output|
+        output = Killbill::Plugin::JConverter.to_big_decimal(input)
+        output.should be_an_instance_of java.math.BigDecimal
+        output.to_s.should == output.to_s
+      end
     end
 
     it "should_test_boolean_true_converter" do

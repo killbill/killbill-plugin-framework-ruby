@@ -16,7 +16,7 @@ module Killbill
                   :gateway_error_code
 
       def initialize(payment_response)
-        @amount = JConverter.to_big_decimal(payment_response.amount)
+        @amount = JConverter.to_big_decimal(payment_response.amount_in_cents)
         @created_date = JConverter.to_joda_date_time(payment_response.created_date)
         @effective_date = JConverter.to_joda_date_time(payment_response.effective_date)
         @status = JConverter.to_payment_plugin_status(payment_response.status)
