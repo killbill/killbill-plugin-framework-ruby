@@ -20,7 +20,7 @@ describe Killbill::Plugin::JPayment do
   it "should_test_charge_ok" do
     output = @jpayment.charge(@kb_payment_id, @kb_payment_method_id, @amount_in_cents)
     output.get_amount.should be_an_instance_of java.math.BigDecimal
-    output.get_amount.to_s.should == @amount_in_cents.to_s;
+    output.get_amount.to_s.should == "50.00";
     output.get_status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus
     output.get_status.to_s.should == "PROCESSED"
   end
@@ -46,7 +46,7 @@ describe Killbill::Plugin::JPayment do
   it "should_test_refund_ok" do
     output = @jpayment.refund(@kb_payment_method_id, @amount_in_cents)
     output.get_amount.should be_an_instance_of java.math.BigDecimal
-    output.get_amount.to_s.should == @amount_in_cents.to_s;
+    output.get_amount.to_s.should == "50.00";
     output.get_status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus
     output.get_status.to_s.should == "PROCESSED"
   end
