@@ -6,41 +6,16 @@ module Killbill
 
     class JPaymentMethodProperty < Java::com.ning.billing.payment.api.PaymentMethodPlugin::PaymentMethodKVInfo
 
-=begin
-      attr_reader :key,
-                  :value,
-                  :is_updatable
-=end
-
       class << self
         def create_from(payment_method_prop)
 
           key = JConverter.to_string(payment_method_prop.key)
           value = JConverter.to_string(payment_method_prop.value)
           is_updatable = JConverter.to_boolean(payment_method_prop.is_updatable)
-=begin
-          ctor = Java::com.ning.billing.payment.api.PaymentMethodPlugin::PaymentMethodKVInfo.java_class.constructor(java.lang.String, java.lang.Object, java.lang.Boolean)
-          ctor.new_instance(key, value, is_updatable)
-=end
           Java::com.ning.billing.payment.api.PaymentMethodPlugin::PaymentMethodKVInfo.new(key, value, is_updatable)
         end
       end
-=begin
-      java_signature 'java.lang.String getKey()'
-      def get_key
-        getKey()
-      end
 
-      java_signature 'java.lang.Object getValue()'
-      def get_value
-        value
-      end
-
-      java_signature 'java.lang.Boolean getIsUpdatable()'
-      def is_updateable
-        is_updateable
-      end
-=end
     end
 
     class JPaymentMethodResponse
