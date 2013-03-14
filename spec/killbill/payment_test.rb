@@ -74,11 +74,11 @@ module Killbill
           raise StandardError.new("Test exception")
         end
       end
-      
+
       def raise_exception_on_next_calls
         @raise_exception = true
       end
-      
+
       def clear_exception_on_next_calls
         @raise_exception = false
       end

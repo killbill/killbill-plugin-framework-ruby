@@ -4,6 +4,7 @@ require 'killbill/jresponse/jconverter'
 module Killbill
   module Plugin
 
+    java_package 'com.ning.billing.payment.plugin.api'
     class JPaymentResponse
 
       include Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin
