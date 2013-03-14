@@ -1,4 +1,5 @@
 
+require 'date'
 require 'killbill/response/payment_status'
 
 module Killbill
@@ -8,6 +9,9 @@ module Killbill
 
       class << self
 
+        #
+        # Convert from ruby -> java
+        #
         def to_uuid(uuid)
           uuid.nil? ? nil : java.util.UUID.fromString(uuid.to_s)
         end
@@ -37,8 +41,55 @@ module Killbill
         def to_boolean(b)
           java.lang.Boolean.new(b)
         end
+        
+        
+        #
+        # Convert from java -> ruby
+        #        
+        def from_uuid(uuid)
+           uuid.nil? ? nil : uuid.to_s
+        end
 
-      end
+        def from_joda_date_time(joda_time)
+          if joda_time.nil? 
+            return nil
+          end
+
+          fmt = org.joda.time.format.ISODateTimeFormat.date_time
+          str = fmt.print(joda_time);
+          DateTime.iso8601(str)
+        end
+
+        def from_string(str)
+          str
+        end
+
+        def from_payment_plugin_status(status)
+          if status == Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus::PROCESSED
+            PaymentStatus::SUCCESS
+          elsif status == Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus::ERROR
+            PaymentStatus::ERROR
+          else
+            PaymentStatus::UNDEFINED
+          end
+        end
+
+        def from_big_decimal(big_decimal)
+          big_decimal.nil? ? 0 : big_decimal.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+        end
+
+        def from_boolean(b)
+          (b.nil? || !b) ? false : true
+        end
+       
+        def from_payment_method_plugin(payment_method_plugin)
+          JPaymentMethodResponse.to_payment_method_response(payment_method_plugin)
+        end
+       
+        def from_payment_method_info_plugin(payment_method_info_plugin)
+         JPaymentMethodResponseInternal.to_payment_method_response_internal(payment_method_info_plugin)
+        end
+      end 
     end
   end
 end
