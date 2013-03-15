@@ -1,11 +1,15 @@
 require 'spec_helper'
 require 'date'
 
+require 'killbill/response/payment_method_response'
+require 'killbill/response/payment_method_response_internal'
 require 'killbill/response/payment_status'
 require 'killbill/response/payment_response'
 require 'killbill/response/refund_response'
 
 require 'killbill/jresponse/jconverter'
+require 'killbill/jresponse/jpayment_method_response'
+require 'killbill/jresponse/jpayment_method_response_internal'
 
 describe Killbill::Plugin::JConverter do
 
@@ -82,4 +86,123 @@ describe Killbill::Plugin::JConverter do
       output.to_s == "false"
     end
 
+    it "should_test_uuid_from_converter" do
+      input = java.util.UUID.random_uuid
+      output = Killbill::Plugin::JConverter.from_uuid(input)
+      output.should be_an_instance_of String
+      output.to_s.should == input.to_s
+    end
+
+
+    it "should_test_boolean_from_nil_converter" do
+      input = nil
+      output = Killbill::Plugin::JConverter.from_boolean(input)
+      output.should be_an_instance_of FalseClass
+      output.to_s == "false"
+    end
+
+    it "should_test_boolean_from_false_converter" do
+      input = java.lang.Boolean.new("false")
+      output = Killbill::Plugin::JConverter.from_boolean(input)
+      output.should be_an_instance_of FalseClass
+      output.to_s == "false"
+    end
+
+    it "should_test_boolean_from_false2_converter" do
+      input = java.lang.Boolean.new("false").boolean_value
+      output = Killbill::Plugin::JConverter.from_boolean(input)
+      output.should be_an_instance_of FalseClass
+      output.to_s == "false"
+    end
+
+
+    it "should_test_boolean_from_true_converter" do
+      input = java.lang.Boolean.new("true")
+      output = Killbill::Plugin::JConverter.from_boolean(input)
+      output.should be_an_instance_of TrueClass
+      output.to_s == "true"
+    end
+
+    it "should_test_boolean_from_true2_converter" do
+      input = java.lang.Boolean.new("true").boolean_value
+      output = Killbill::Plugin::JConverter.from_boolean(input)
+      output.should be_an_instance_of TrueClass
+      output.to_s == "true"
+    end
+
+
+    it "should_test_joda_time_from_converter" do
+      input = org.joda.time.DateTime.new
+      input = input.minus_millis(input.millis_of_second)
+      output = Killbill::Plugin::JConverter.from_joda_date_time(input)
+      output.should be_an_instance_of DateTime
+
+      input_match = Killbill::Plugin::JConverter.to_joda_date_time(output)
+      input_match.to_s.should == input.to_s
+    end
+
+    it "should_test_payment_status_from_converter" do
+      input = Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus::PROCESSED
+      output = Killbill::Plugin::JConverter.from_payment_plugin_status(input)
+      output.should == Killbill::Plugin::PaymentStatus::SUCCESS
+    end
+
+    it "should_test_big_decimal_from_converter" do
+      input = java.math.BigDecimal::TEN
+      output = Killbill::Plugin::JConverter.from_big_decimal(input)
+      output.should be_an_instance_of Fixnum
+      output.to_s.should == "1000"
+    end
+
+    it "should_test_payment_method_plugin_from_converter" do
+      prop = Killbill::Plugin::PaymentMethodProperty.new("key", "value", true)
+      payment_method_response = Killbill::Plugin::PaymentMethodResponse.new("external_payment_method_id", true, [prop])
+      input = Killbill::Plugin::JPaymentMethodResponse.new(payment_method_response)
+      output = Killbill::Plugin::JConverter.from_payment_method_plugin(input)
+
+      output.should be_an_instance_of Killbill::Plugin::PaymentMethodResponse
+
+      output.external_payment_method_id.should be_an_instance_of String
+      output.external_payment_method_id.should == payment_method_response.external_payment_method_id
+
+      output.is_default.should be_an_instance_of TrueClass
+      output.is_default.should == payment_method_response.is_default
+
+      output.properties.should be_an_instance_of Array
+      output.properties.size.should == 1
+
+      output_prop = output.properties[0]
+      output_prop.should be_an_instance_of Killbill::Plugin::PaymentMethodProperty
+
+      output_prop.key.should be_an_instance_of String
+      output_prop.key.should == prop.key
+
+      output_prop.value.should be_an_instance_of String
+      output_prop.value.should == prop.value
+
+      output_prop.is_updatable.should be_an_instance_of TrueClass
+      output_prop.is_updatable.should == prop.is_updatable
+    end
+
+    it "should_test_payment_method_info_plugin__from_converter" do
+
+      payment_method_info = Killbill::Plugin::PaymentMethodResponseInternal.new("bf5c926e-3d9c-470e-b34b-0719d7b58323", "ca5c926e-3d9c-470e-b34b-0719d7b58312", false, "external_payment_method_id")
+      input = Killbill::Plugin::JPaymentMethodResponseInternal.new(payment_method_info)
+      output = Killbill::Plugin::JConverter.from_payment_method_info_plugin(input)
+
+      output.should be_an_instance_of Killbill::Plugin::PaymentMethodResponseInternal
+
+      output.kb_account_id.should be_an_instance_of String
+      output.kb_account_id.should == payment_method_info.kb_account_id
+
+      output.kb_payment_method_id.should be_an_instance_of String
+      output.kb_payment_method_id.should == payment_method_info.kb_payment_method_id
+
+      output.is_default.should be_an_instance_of FalseClass
+      output.is_default.should == payment_method_info.is_default
+
+      output.external_payment_method_id.should be_an_instance_of String
+      output.external_payment_method_id.should == payment_method_info.external_payment_method_id
+
+     end
 end

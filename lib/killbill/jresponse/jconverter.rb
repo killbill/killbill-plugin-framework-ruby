@@ -61,7 +61,7 @@ module Killbill
         end
 
         def from_string(str)
-          str
+          str.nil? ? nil : str.to_s
         end
 
         def from_payment_plugin_status(status)
@@ -79,7 +79,12 @@ module Killbill
         end
 
         def from_boolean(b)
-          (b.nil? || !b) ? false : true
+          if b.nil?
+            return false
+          end
+
+          b_value = (b.java_kind_of? java.lang.Boolean) ? b.boolean_value : b
+          return b_value ? true : false
         end
 
         def from_payment_method_plugin(payment_method_plugin)

@@ -38,7 +38,7 @@ module Killbill
       class << self
         def to_payment_method_response(jpayment_method_response)
           props = Array.new
-          jpayment_method_response.get_roperties.each do |p|
+          jpayment_method_response.get_properties.each do |p|
             props << JPaymentMethodProperty.to_payment_method_property(p)
           end
           pmid = JConverter.from_string(jpayment_method_response.get_external_payment_method_id)
