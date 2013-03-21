@@ -2,6 +2,8 @@ require 'java'
 
 require 'bundler'
 require 'killbill'
+# JRuby specific, not required by default
+require 'killbill/http_servlet'
 
 require 'killbill/payment_test'
 

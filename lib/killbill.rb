@@ -42,6 +42,5 @@ rescue LoadError => e
 end
 
 
-require 'killbill/http_servlet'
 require 'killbill/notification'
 require 'killbill/payment'
