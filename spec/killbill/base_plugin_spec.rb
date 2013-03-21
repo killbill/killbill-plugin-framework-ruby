@@ -29,6 +29,17 @@ describe Killbill::Plugin::PluginBase do
     lambda { plugin.blablabla }.should raise_error NoMethodError
   end
 
+  it 'should be able to default to the ruby logger for tests' do
+    logger = Logger.new(STDOUT)
+    logger.level = Logger::DEBUG
+
+    plugin = Killbill::Plugin::PluginBase.new
+    plugin.logger = logger
+    plugin.start_plugin
+
+    plugin.logger.level.should == logger.level
+  end
+
   it 'should be able to add custom code in the startup/shutdown sequence' do
     plugin = LifecycleNotificationPlugin.new
 

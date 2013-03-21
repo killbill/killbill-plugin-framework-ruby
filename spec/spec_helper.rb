@@ -1,6 +1,8 @@
 require 'java'
 
 require 'bundler'
+require 'logger'
+
 require 'killbill'
 # JRuby specific, not required by default
 require 'killbill/http_servlet'
