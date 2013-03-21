@@ -1,5 +1,7 @@
 begin
+
   require 'java'
+  require 'killbill/jplugin'
 
   KILLBILL_APIS = %w(
     com.ning.billing.account.api.AccountUserApi
@@ -44,4 +46,3 @@ end
 
 require 'killbill/notification'
 require 'killbill/payment'
-require 'killbill/jplugin'
