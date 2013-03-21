@@ -1,7 +1,5 @@
 begin
-
   require 'java'
-  require 'killbill/jplugin'
 
   KILLBILL_APIS = %w(
     com.ning.billing.account.api.AccountUserApi
@@ -23,6 +21,7 @@ begin
     com.ning.billing.util.api.CustomFieldUserApi
     com.ning.billing.util.api.ExportUserApi
     com.ning.billing.util.api.TagUserApi
+    javax.servlet.http.HttpServlet
   )
 
   begin
@@ -38,11 +37,11 @@ begin
     end
   end
 
+  # jbundler needs to be loaded first!
+  require 'killbill/jplugin'
 rescue LoadError => e
   warn 'You need JRuby to run Killbill plugins'
-  #raise e
 end
-
 
 require 'killbill/notification'
 require 'killbill/payment'
