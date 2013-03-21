@@ -1,5 +1,8 @@
+require 'pathname'
+
 require 'killbill/http_servlet'
 require 'killbill/logger'
+require 'killbill/creator'
 
 module Killbill
   # There are various types of plugins one can write for Killbill:
@@ -19,6 +22,10 @@ module Killbill
       # Called by the Killbill lifecycle when stopping the plugin
       def stop_plugin
         @delegate_plugin.stop_plugin
+      end
+
+      def is_active
+        @delegate_plugin.active
       end
 
       # Called by the Killbill lifecycle when instantiating the plugin
