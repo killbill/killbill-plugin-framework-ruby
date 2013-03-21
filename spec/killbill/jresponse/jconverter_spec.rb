@@ -22,7 +22,7 @@ describe Killbill::Plugin::JConverter do
 
     it "should_test_joda_date_time_converter" do
       input_str = '2013-03-11T16:05:11-07:00'
-      expected_output_str = '2013-03-11T16:05:11.000-07:00'
+      expected_output_str = '2013-03-11T23:05:11.000Z'
       input = org.joda.time.DateTime.parse(input_str)
       output = Killbill::Plugin::JConverter.to_joda_date_time(input)
       output.should be_an_instance_of org.joda.time.DateTime
@@ -132,7 +132,7 @@ describe Killbill::Plugin::JConverter do
 
 
     it "should_test_joda_time_from_converter" do
-      input = org.joda.time.DateTime.new
+      input = org.joda.time.DateTime.new(org.joda.time.DateTimeZone::UTC)
       input = input.minus_millis(input.millis_of_second)
       output = Killbill::Plugin::JConverter.from_joda_date_time(input)
       output.should be_an_instance_of DateTime
