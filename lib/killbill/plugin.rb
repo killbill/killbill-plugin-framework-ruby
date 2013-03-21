@@ -1,4 +1,3 @@
-require 'killbill/http_servlet'
 require 'killbill/logger'
 
 module Killbill
@@ -47,6 +46,7 @@ module Killbill
 
       # Called by the Killbill lifecycle when instantiating the plugin
       def initialize(services = {})
+
         @active = false
 
         services.each do |service_name, service_instance|
@@ -62,18 +62,8 @@ module Killbill
         @logger = Killbill::Plugin::Logger.new(logger)
       end
 
-      # Called by the Killbill lifecycle to register the servlet
-      def rack_handler
-        config_ru = Pathname.new("#{@root}/config.ru").expand_path
-        if config_ru.file?
-          @logger.info "Found Rack configuration file at #{config_ru.to_s}"
-          instance = Killbill::Plugin::RackHandler.instance
-          instance.configure(@logger, config_ru.to_s) unless instance.configured?
-          instance
-        else
-          @logger.info "No Rack configuration file found at #{config_ru.to_s}"
-          nil
-        end
+      def logger
+        @logger ||= Logger.new(STDOUT)
       end
 
       class APINotAvailableError < NotImplementedError

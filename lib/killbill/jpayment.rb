@@ -1,5 +1,6 @@
 require 'singleton'
 
+require 'killbill/creator'
 require 'killbill/plugin'
 require 'killbill/jresponse/jpayment_response'
 require 'killbill/jresponse/jrefund_response'
@@ -18,8 +19,7 @@ module Killbill
       attr_reader :real_payment
 
       def initialize(real_class_name, services = {})
-        real_payment_class = class_from_string(real_class_name)
-        @real_payment = real_payment_class.new(services)
+        @real_payment = Creator.new(real_class_name).create(services)
       end
 
       # TODO STEPH decide what to do the getName()
@@ -110,11 +110,6 @@ module Killbill
         raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", e.message)
       end
 
-      def class_from_string(str)
-        str.split('::').inject(Kernel) do |mod, class_name|
-          mod.const_get(class_name)
-        end
-      end
 
       def convert_args(api, args)
         args.collect! do |a|
