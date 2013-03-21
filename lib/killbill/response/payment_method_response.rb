@@ -26,6 +26,12 @@ module Killbill
          @properties = properties
        end
 
+       def value(key)
+         (@properties || []).each do |prop|
+           return prop.value if prop.key == key
+         end
+         nil
+       end
     end
   end
 end
