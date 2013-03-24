@@ -20,7 +20,7 @@ module Killbill
         @amount = JConverter.to_big_decimal(refund_response.amount_in_cents)
         @created_date = JConverter.to_joda_date_time(refund_response.created_date)
         @effective_date = JConverter.to_joda_date_time(refund_response.effective_date)
-        @status = JConverter.to_payment_plugin_status(refund_response.status)
+        @status = JConverter.to_refund_plugin_status(refund_response.status)
         @gateway_error = JConverter.to_string(refund_response.gateway_error)
         @gateway_error_code = JConverter.to_string(refund_response.gateway_error_code)
       end

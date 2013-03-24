@@ -39,6 +39,7 @@ begin
 
   # jbundler needs to be loaded first!
   require 'killbill/jplugin'
+  require 'killbill/jpayment'
 rescue LoadError => e
   warn 'You need JRuby to run Killbill plugins'
 end

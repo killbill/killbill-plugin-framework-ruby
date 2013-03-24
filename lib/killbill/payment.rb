@@ -16,7 +16,7 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def charge(kb_payment_id, kb_payment_method_id, amount_in_cents, options = {})
+      def process_payment(kb_payment_id, kb_payment_method_id, amount_in_cents, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
@@ -24,7 +24,7 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def refund(kb_payment_id, amount_in_cents, options = {})
+      def process_refund(kb_payment_id, amount_in_cents, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
@@ -44,7 +44,7 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def get_payment_methods(kb_account_id, options = {})
+      def get_payment_methods(kb_account_id, refresh_from_gateway, options = {})
         raise OperationUnsupportedByGatewayError
       end
 

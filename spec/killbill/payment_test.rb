@@ -11,7 +11,7 @@ module Killbill
       def get_name
       end
 
-      def charge(kb_payment_id, kb_payment_method_id, amount_in_cents, options = {})
+      def process_payment(kb_payment_id, kb_payment_method_id, amount_in_cents, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         else
@@ -27,7 +27,7 @@ module Killbill
         end
       end
 
-      def refund(kb_payment_id, amount_in_cents, options = {})
+      def process_refund(kb_payment_id, amount_in_cents, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         else

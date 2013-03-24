@@ -1,3 +1,5 @@
+require 'java'
+
 require 'singleton'
 
 require 'killbill/creator'
@@ -7,19 +9,28 @@ require 'killbill/jresponse/jrefund_response'
 require 'killbill/jresponse/jpayment_method_response'
 require 'killbill/jresponse/jpayment_method_response_internal'
 
+include Java
+
+class String
+   def snake_case
+     return downcase if match(/\A[A-Z]+\z/)
+     gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
+     gsub(/([a-z])([A-Z])/, '\1_\2').
+     downcase
+   end
+end
 
 module Killbill
   module Plugin
 
     java_package 'com.ning.billing.payment.plugin.api'
-    class JPayment
+    class JPayment < JPlugin
 
-      include Java::com.ning.billing.payment.plugin.api.PaymentPluginApi
-
-      attr_reader :real_payment
+#      java_implements com.ning.billing.payment.plugin.api.PaymentPluginApi
+      include com.ning.billing.payment.plugin.api.PaymentPluginApi
 
       def initialize(real_class_name, services = {})
-        @real_payment = Creator.new(real_class_name).create(services)
+        super(real_class_name, services)
       end
 
       # TODO STEPH decide what to do the getName()
@@ -27,8 +38,8 @@ module Killbill
       def get_name
       end
 
-      java_signature 'Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin processPayment(java.util.UUID, java.util.UUID, java.lang.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
-      def charge(*args)
+      java_signature 'com.ning.billing.payment.plugin.api.PaymentInfoPlugin processPayment(java.util.UUID, java.util.UUID, java.lang.BigDecimal, com.ning.billing.util.callcontext.CallContext)'
+      def process_payment(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return JPaymentResponse.new(res)
         end
@@ -42,7 +53,7 @@ module Killbill
       end
 
       java_signature 'Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin processRefund(java.util.UUID, java.lang.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
-      def refund(*args)
+      def process_refund(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return JRefundResponse.new(res)
         end
@@ -99,7 +110,7 @@ module Killbill
       def do_call_handle_exception(method_name, *args)
         begin
           rargs = convert_args(method_name, args)
-          res = @real_payment.send(method_name, *rargs)
+          res = @delegate_plugin.send(method_name.to_s.snake_case.to_sym, *rargs)
           yield(res)
         rescue Exception => e
           wrap_and_throw_exception(method_name, e)
@@ -123,6 +134,9 @@ module Killbill
            JConverter.from_payment_method_plugin(a)
          elsif ((a.java_kind_of? Java::boolean) || (a.java_kind_of? java.lang.Boolean))
            JConverter.from_boolean(a)
+         # Require because it looks like if non boxed value are passed they already arrive as Ruby type
+         elsif ((a.java_kind_of? TrueClass) || (a.java_kind_of? FalseClass))
+           a
          elsif a.java_kind_of? java.util.List
            result = Array.new
            if a.size > 0
@@ -137,7 +151,9 @@ module Killbill
            end
            result
          else
-           raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
+           # Since we don't pass the Context at this point, we can't raise any exceptions for unexpected types.
+           #raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
+           nil
          end
         end
       end

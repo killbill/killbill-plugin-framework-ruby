@@ -29,7 +29,7 @@ describe Killbill::Plugin::JRefundResponse do
       output.get_effective_date.should be_an_instance_of org.joda.time.DateTime
       #output.get_effective_date.to_s.should == effective_date.to_s;
 
-      output.get_status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus
+      output.get_status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin::RefundPluginStatus
       output.get_status.to_s.should == "PROCESSED"
 
       output.get_gateway_error.should be_an_instance_of java.lang.String

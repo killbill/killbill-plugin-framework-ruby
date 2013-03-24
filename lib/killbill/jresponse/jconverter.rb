@@ -34,6 +34,16 @@ module Killbill
           end
         end
 
+        def to_refund_plugin_status(status)
+          if status == PaymentStatus::SUCCESS
+            Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin::RefundPluginStatus::PROCESSED
+          elsif status == PaymentStatus::ERROR
+            Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin::RefundPluginStatus::ERROR
+          else
+            Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin::RefundPluginStatus::UNDEFINED
+          end
+        end
+
         def to_big_decimal(amount_in_cents)
           amount_in_cents.nil? ? java.math.BigDecimal::ZERO : java.math.BigDecimal.new('%.2f' % (amount_in_cents.to_i/100.0))
         end
@@ -68,6 +78,16 @@ module Killbill
           if status == Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus::PROCESSED
             PaymentStatus::SUCCESS
           elsif status == Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus::ERROR
+            PaymentStatus::ERROR
+          else
+            PaymentStatus::UNDEFINED
+          end
+        end
+
+        def from_refund_plugin_status(status)
+          if status == Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin::RefundPluginStatus::PROCESSED
+            PaymentStatus::SUCCESS
+          elsif status == Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin::RefundPluginStatus::ERROR
             PaymentStatus::ERROR
           else
             PaymentStatus::UNDEFINED
