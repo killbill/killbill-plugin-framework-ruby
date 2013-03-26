@@ -11,7 +11,7 @@ module Killbill
       def get_name
       end
 
-      def process_payment(kb_payment_id, kb_payment_method_id, amount_in_cents, options = {})
+      def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount_in_cents, currency, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         else
@@ -19,7 +19,7 @@ module Killbill
         end
       end
 
-      def get_payment_info(kb_payment_id, options = {})
+      def get_payment_info(kb_account_id, kb_payment_id, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         else
@@ -27,7 +27,7 @@ module Killbill
         end
       end
 
-      def process_refund(kb_payment_id, amount_in_cents, options = {})
+      def process_refund(kb_account_id, kb_payment_id, amount_in_cents, currency, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         else
@@ -41,7 +41,7 @@ module Killbill
         end
       end
 
-      def delete_payment_method(kb_payment_method_id, options = {})
+      def delete_payment_method(kb_account_id, kb_payment_method_id, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         end
@@ -55,7 +55,7 @@ module Killbill
         end
       end
 
-      def set_default_payment_method(kb_payment_method_id, options = {})
+      def set_default_payment_method(kb_account_id, kb_payment_method_id, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         end
@@ -69,7 +69,7 @@ module Killbill
         end
       end
 
-      def reset_payment_methods(payment_methods)
+      def reset_payment_methods(kb_account_id, payment_methods)
         if @raise_exception
           raise StandardError.new("Test exception")
         end

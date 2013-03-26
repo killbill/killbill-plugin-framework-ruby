@@ -1,4 +1,4 @@
-require 'killbill/logger'
+require 'killbill/killbill_logger'
 
 module Killbill
   # There are various types of plugins one can write for Killbill:
@@ -61,7 +61,7 @@ module Killbill
       def logger=(logger)
         # logger is an OSGI LogService in the Killbill environment. For testing purposes,
         # allow delegation to a standard logger
-        @logger = logger.respond_to?(:info) ? logger : Killbill::Plugin::Logger.new(logger)
+        @logger = logger.respond_to?(:info) ? logger : Killbill::Plugin::KillbillLogger.new(logger)
       end
 
       def logger

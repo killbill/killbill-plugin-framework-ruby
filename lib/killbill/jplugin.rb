@@ -1,7 +1,6 @@
 require 'pathname'
 
 require 'killbill/http_servlet'
-require 'killbill/logger'
 require 'killbill/creator'
 
 module Killbill
@@ -37,16 +36,20 @@ module Killbill
       def rack_handler
         config_ru = Pathname.new("#{@delegate_plugin.root}/config.ru").expand_path
         if config_ru.file?
-          @delegate_plugin.logger.info "Found Rack configuration file at #{config_ru.to_s}"
+          logger.info "Found Rack configuration file at #{config_ru.to_s}"
           instance = Killbill::Plugin::RackHandler.instance
-          instance.configure(@logger, config_ru.to_s) unless instance.configured?
+          instance.configure(logger, config_ru.to_s) unless instance.configured?
           instance
         else
-          @delegate_plugin.logger.info "No Rack configuration file found at #{config_ru.to_s}"
+          logger.info "No Rack configuration file found at #{config_ru.to_s}"
           nil
         end
       end
 
+      def logger
+        require 'logger'
+        @delegate_plugin.nil? ? ::Logger.new(STDOUT) : @delegate_plugin.logger
+      end
     end
   end
 end

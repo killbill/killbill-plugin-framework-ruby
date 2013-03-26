@@ -118,6 +118,11 @@ module Killbill
       end
 
       def wrap_and_throw_exception(api, e)
+        message = "#{api} failure: #{e}"
+        unless e.backtrace.nil?
+          message = "#{message}\n#{e.backtrace.join("\n")}"
+        end
+        logger.warn message
         raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", e.message)
       end
 
@@ -130,8 +135,8 @@ module Killbill
            JConverter.from_uuid(a)
          elsif a.java_kind_of? java.math.BigDecimal
            JConverter.from_big_decimal(a)
-         elsif a.get_class.is_enum
-           a.nil? ? '' : a.to_string
+         elsif a.java_kind_of? Java::com.ning.billing.catalog.api.Currency
+           a.to_string
          elsif a.java_kind_of? Java::com.ning.billing.payment.api.PaymentMethodPlugin
            JConverter.from_payment_method_plugin(a)
          elsif ((a.java_kind_of? Java::boolean) || (a.java_kind_of? java.lang.Boolean))
