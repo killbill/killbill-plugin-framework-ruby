@@ -38,21 +38,21 @@ module Killbill
       def get_name
       end
 
-      java_signature 'com.ning.billing.payment.plugin.api.PaymentInfoPlugin processPayment(java.util.UUID, java.util.UUID, java.lang.BigDecimal, com.ning.billing.util.callcontext.CallContext)'
+      java_signature 'com.ning.billing.payment.plugin.api.PaymentInfoPlugin processPayment(java.util.UUID, java.util.UUID, java.util.UUID, java.lang.BigDecimal, com.ning.billing.catalog.api.Currency, com.ning.billing.util.callcontext.CallContext)'
       def process_payment(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return JPaymentResponse.new(res)
         end
       end
 
-      java_signature 'Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin getPaymentInfo(java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+      java_signature 'Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin getPaymentInfo(java.util.UUID, java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
       def get_payment_info(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return JPaymentResponse.new(res)
         end
       end
 
-      java_signature 'Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin processRefund(java.util.UUID, java.lang.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
+      java_signature 'Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin processRefund(java.util.UUID, java.util.UUID, java.lang.BigDecimal, com.ning.billing.catalog.api.Currency, Java::com.ning.billing.util.callcontext.CallContext)'
       def process_refund(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return JRefundResponse.new(res)
@@ -66,7 +66,7 @@ module Killbill
         end
       end
 
-      java_signature 'void deletePaymentMethod(java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
+      java_signature 'void deletePaymentMethod(java.util.UUID, java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
       def delete_payment_method(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return nil
@@ -80,14 +80,14 @@ module Killbill
         end
       end
 
-      java_signature 'void setDefaultPaymentMethod(java.util.UUID kbPaymentMethodId, Java::com.ning.billing.util.callcontext.CallContext)'
+      java_signature 'void setDefaultPaymentMethod(java.util.UUID, java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
       def set_default_payment_method(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return nil
         end
       end
 
-      java_signature 'java.util.List getPaymentMethods(java.util.UUID, Java::boolean refreshFromGateway, Java::com.ning.billing.util.callcontext.CallContext)'
+      java_signature 'java.util.List getPaymentMethods(java.util.UUID, Java::boolean, Java::com.ning.billing.util.callcontext.CallContext)'
       def get_payment_methods(*args)
         do_call_handle_exception(__method__, *args) do |res|
           array_res = java.util.ArrayList.new
@@ -98,7 +98,7 @@ module Killbill
         end
       end
 
-      java_signature 'void resetPaymentMethods(java.util.List)'
+      java_signature 'void resetPaymentMethods(java.util.UUID, java.util.List)'
       def reset_payment_methods(*args)
         do_call_handle_exception(__method__, *args) do |res|
           return nil
@@ -130,6 +130,8 @@ module Killbill
            JConverter.from_uuid(a)
          elsif a.java_kind_of? java.math.BigDecimal
            JConverter.from_big_decimal(a)
+         elsif a.get_class.is_enum
+           a.nil? ? '' : a.to_string
          elsif a.java_kind_of? Java::com.ning.billing.payment.api.PaymentMethodPlugin
            JConverter.from_payment_method_plugin(a)
          elsif ((a.java_kind_of? Java::boolean) || (a.java_kind_of? java.lang.Boolean))

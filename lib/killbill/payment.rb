@@ -16,15 +16,15 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def process_payment(kb_payment_id, kb_payment_method_id, amount_in_cents, options = {})
+      def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount_in_cents, currency, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def get_payment_info(kb_payment_id, options = {})
+      def get_payment_info(kb_account_id, kb_payment_id, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def process_refund(kb_payment_id, amount_in_cents, options = {})
+      def process_refund(kb_account_id, kb_payment_id, amount_in_cents, currency, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
@@ -32,7 +32,7 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def delete_payment_method(kb_payment_method_id, options = {})
+      def delete_payment_method(kb_account_id, kb_payment_method_id, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
@@ -40,7 +40,7 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def set_default_payment_method(kb_payment_method_id, options = {})
+      def set_default_payment_method(kb_account_id, kb_payment_method_id, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
@@ -48,7 +48,7 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def reset_payment_methods(payment_methods)
+      def reset_payment_methods(kb_account_id, payment_methods)
         raise OperationUnsupportedByGatewayError
       end
     end
