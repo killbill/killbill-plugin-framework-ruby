@@ -12,10 +12,6 @@ module Killbill
       class OperationUnsupportedByGatewayError < NotImplementedError
       end
 
-      def get_name
-        raise OperationUnsupportedByGatewayError
-      end
-
       def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount_in_cents, currency, options = {})
         raise OperationUnsupportedByGatewayError
       end

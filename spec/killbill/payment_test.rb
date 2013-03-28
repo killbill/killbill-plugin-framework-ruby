@@ -8,9 +8,6 @@ module Killbill
         @raise_exception = false
       end
 
-      def get_name
-      end
-
       def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount_in_cents, currency, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")

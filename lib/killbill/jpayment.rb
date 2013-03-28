@@ -33,11 +33,6 @@ module Killbill
         super(real_class_name, services)
       end
 
-      # TODO STEPH decide what to do the getName()
-      java_signature 'java.lang.String getName()'
-      def get_name
-      end
-
       java_signature 'com.ning.billing.payment.plugin.api.PaymentInfoPlugin processPayment(java.util.UUID, java.util.UUID, java.util.UUID, java.lang.BigDecimal, com.ning.billing.catalog.api.Currency, com.ning.billing.util.callcontext.CallContext)'
       def process_payment(*args)
         do_call_handle_exception(__method__, *args) do |res|
