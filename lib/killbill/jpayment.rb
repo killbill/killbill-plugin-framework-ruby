@@ -114,6 +114,8 @@ module Killbill
           yield(res)
         rescue Exception => e
           wrap_and_throw_exception(method_name, e)
+        ensure
+          @delegate_plugin.after_request
         end
       end
 
@@ -156,6 +158,9 @@ module Killbill
            nil
          end
         end
+        # Remove last argument if this is null (it means we passed a context)
+        args.delete_at(-1) if args[-1].nil?
+        args
       end
 
     end

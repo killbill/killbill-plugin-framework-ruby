@@ -75,6 +75,9 @@ module Killbill
         end
       end
 
+      def after_request
+      end
+
       def raise_exception_on_next_calls
         @raise_exception = true
       end

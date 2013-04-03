@@ -68,6 +68,10 @@ module Killbill
         @logger ||= Logger.new(STDOUT)
       end
 
+      # Will be called by each thread before returning to Killbill
+      def after_request
+      end
+
       class APINotAvailableError < NotImplementedError
       end
 

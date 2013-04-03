@@ -17,7 +17,8 @@ module Killbill
         end
 
         def to_joda_date_time(time)
-          time.nil? ? nil : org.joda.time.DateTime.new(time.to_s, org.joda.time.DateTimeZone::UTC)
+          date_time = (time.kind_of? Time) ? DateTime.parse(time.to_s) : time
+          date_time.nil? ? nil : org.joda.time.DateTime.new(date_time.to_s, org.joda.time.DateTimeZone::UTC)
         end
 
         def to_string(str)
