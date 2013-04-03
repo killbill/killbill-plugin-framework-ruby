@@ -1,7 +1,7 @@
 # Plugin logger that will delegate to the OSGI LogService
 module Killbill
   module Plugin
-    class Logger
+    class KillbillLogger
       def initialize(delegate)
         @logger = delegate
       end
