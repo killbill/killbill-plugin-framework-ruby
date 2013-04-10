@@ -14,7 +14,8 @@ module Killbill
                   :effective_date,
                   :status,
                   :gateway_error,
-                  :gateway_error_code
+                  :gateway_error_code,
+                  :reference_id
 
       def initialize(refund_response)
         @amount = JConverter.to_big_decimal(refund_response.amount_in_cents)
@@ -23,6 +24,7 @@ module Killbill
         @status = JConverter.to_refund_plugin_status(refund_response.status)
         @gateway_error = JConverter.to_string(refund_response.gateway_error)
         @gateway_error_code = JConverter.to_string(refund_response.gateway_error_code)
+        @reference_id = JConverter.to_string(refund_response.reference_id)
       end
 
 
@@ -55,6 +57,12 @@ module Killbill
       def get_gateway_error_code
         @gateway_error_code
       end
+
+      java_signature 'java.lang.String getReferenceId()'
+      def get_reference_id
+        @reference_id
+      end
+
    end
   end
 end

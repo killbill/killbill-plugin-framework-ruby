@@ -83,7 +83,66 @@ module Killbill
         nil
       end
 
-    end
+      java_signature 'java.lang.String getType()'
+      def get_type
+        get_value_string(PaymentMethodResponse::PROP_TYPE)
+      end
 
+      java_signature 'java.lang.String getCCName()'
+      def get_cc_name
+        get_value_string(PaymentMethodResponse::PROP_CC_NAME)
+      end
+
+      java_signature 'java.lang.String getCCType()'
+      def get_cc_type
+        get_value_string(PaymentMethodResponse::PROP_CC_TYPE)
+      end
+
+      java_signature 'java.lang.String getCCExprirationMonth()'
+      def get_cc_expiration_month
+        get_value_string(PaymentMethodResponse::PROP_CC_EXP_MONTH)
+      end
+
+      java_signature 'java.lang.String getCCExprirationYear()'
+      def get_cc_expiration_year
+        get_value_string(PaymentMethodResponse::PROP_CC_EXP_YEAR)
+      end
+
+      java_signature 'java.lang.String getCCLast4()'
+      def get_cc_last_4
+        get_value_string(PaymentMethodResponse::PROP_CC_LAST_4)
+      end
+
+      java_signature 'java.lang.String getAddress1()'
+      def get_address1
+        get_value_string(PaymentMethodResponse::PROP_ADDRESS1)
+      end
+
+      java_signature 'java.lang.String getAddress2()'
+      def get_address2
+        get_value_string(PaymentMethodResponse::PROP_ADDRESS2)
+      end
+
+      java_signature 'java.lang.String getCity()'
+      def get_city
+        get_value_string(PaymentMethodResponse::PROP_CITY)
+      end
+
+      java_signature 'java.lang.String getState()'
+      def get_state
+        get_value_string(PaymentMethodResponse::PROP_STATE)
+      end
+
+      java_signature 'java.lang.String getZip()'
+      def get_zip
+        get_value_string(PaymentMethodResponse::PROP_ZIP)
+      end
+
+      java_signature 'java.lang.String getCountry()'
+      def get_country
+        get_value_string(PaymentMethodResponse::PROP_COUNTRY)
+      end
+
+    end
   end
 end

@@ -54,6 +54,17 @@ module Killbill
         end
       end
 
+      java_signature 'java.util.List  getRefundInfo(java.util.UUID, java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+      def get_refund_info(*args)
+        do_call_handle_exception(__method__, *args) do |res|
+          array_res = java.util.ArrayList.new
+          res.each do |el|
+            array_res.add(JRefundResponse.new(el))
+          end
+          return array_res
+        end
+      end
+
       java_signature 'void addPaymentMethod(java.util.UUID, java.util.UUID, Java::com.ning.billing.payment.api.PaymentMethodPlugin, Java::boolean, Java::com.ning.billing.util.callcontext.CallContext)'
       def add_payment_method(*args)
         do_call_handle_exception(__method__, *args) do |res|

@@ -14,7 +14,9 @@ module Killbill
                   :effective_date,
                   :status,
                   :gateway_error,
-                  :gateway_error_code
+                  :gateway_error_code,
+                  :first_payment_reference_id,
+                  :second_payment_reference_id
 
       def initialize(payment_response)
         @amount = JConverter.to_big_decimal(payment_response.amount_in_cents)
@@ -23,6 +25,8 @@ module Killbill
         @status = JConverter.to_payment_plugin_status(payment_response.status)
         @gateway_error = JConverter.to_string(payment_response.gateway_error)
         @gateway_error_code = JConverter.to_string(payment_response.gateway_error_code)
+        @first_payment_reference_id = JConverter.to_string(payment_response.first_payment_reference_id)
+        @second_payment_reference_id = JConverter.to_string(payment_response.second_payment_reference_id)
       end
 
       java_signature 'java.math.BigDecimal getAmount()'
@@ -54,6 +58,17 @@ module Killbill
       def get_gateway_error_code
         @gateway_error_code
       end
+
+      java_signature 'java.lang.String getFirstPaymentReferenceId()'
+      def get_first_payment_reference_id
+        @first_payment_reference_id
+      end
+
+      java_signature 'java.lang.String getSecondPaymentReferenceId()'
+      def get_second_payment_reference_id
+        @second_payment_reference_id
+      end
+
     end
   end
 end
