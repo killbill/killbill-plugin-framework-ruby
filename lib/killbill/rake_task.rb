@@ -3,6 +3,7 @@ require 'logger'
 require 'pathname'
 require 'rake'
 require 'rake/packagetask'
+require 'rubygems/installer'
 
 module Killbill
   class PluginHelper
