@@ -98,12 +98,12 @@ module Killbill
         get_value_string(PaymentMethodResponse::PROP_CC_TYPE)
       end
 
-      java_signature 'java.lang.String getCCExprirationMonth()'
+      java_signature 'java.lang.String getCCExpirationMonth()'
       def get_cc_expiration_month
         get_value_string(PaymentMethodResponse::PROP_CC_EXP_MONTH)
       end
 
-      java_signature 'java.lang.String getCCExprirationYear()'
+      java_signature 'java.lang.String getCCExpirationYear()'
       def get_cc_expiration_year
         get_value_string(PaymentMethodResponse::PROP_CC_EXP_YEAR)
       end
