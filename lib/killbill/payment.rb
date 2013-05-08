@@ -24,6 +24,10 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
+      def get_refund_info(kb_account_id, kb_payment_id, options = {})
+        raise OperationUnsupportedByGatewayError
+      end
+
       def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, options = {})
         raise OperationUnsupportedByGatewayError
       end
