@@ -6,10 +6,12 @@ require 'killbill/response/payment_method_response_internal'
 require 'killbill/response/payment_status'
 require 'killbill/response/payment_response'
 require 'killbill/response/refund_response'
+require 'killbill/response/event'
 
 require 'killbill/jresponse/jconverter'
 require 'killbill/jresponse/jpayment_method_response'
 require 'killbill/jresponse/jpayment_method_response_internal'
+require 'killbill/jresponse/jevent'
 
 describe Killbill::Plugin::JConverter do
 
@@ -203,6 +205,33 @@ describe Killbill::Plugin::JConverter do
 
       output.external_payment_method_id.should be_an_instance_of String
       output.external_payment_method_id.should == payment_method_info.external_payment_method_id
-
      end
+
+     it "should_test_ext_bus_event__from_converter" do
+
+       object_type = Java::com.ning.billing.ObjectType::INVOICE
+       event_type = Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_CREATION
+       uuid = java.util.UUID.random_uuid
+
+       input = Killbill::Plugin::JEvent.new(event_type, object_type, uuid, uuid, uuid)
+       output = Killbill::Plugin::JConverter.from_ext_bus_event(input)
+
+       output.should be_an_instance_of Killbill::Plugin::Event
+
+       output.event_type.should be_an_instance_of String
+       output.event_type.should == 'INVOICE_CREATION'
+
+       output.object_type.should be_an_instance_of String
+       output.object_type.should == 'INVOICE'
+
+       output.object_id.should be_an_instance_of String
+       output.object_id.should == Killbill::Plugin::JConverter.from_uuid(uuid)
+
+       output.account_id.should be_an_instance_of String
+       output.account_id.should == Killbill::Plugin::JConverter.from_uuid(uuid)
+
+       output.tenant_id.should be_an_instance_of String
+       output.tenant_id.should == Killbill::Plugin::JConverter.from_uuid(uuid)
+
+      end
 end

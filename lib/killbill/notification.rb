@@ -6,7 +6,7 @@ module Killbill
 
       # Override this method in your plugin to act upon received events
       def on_event(event)
-        # no-op
+        # No-op by default
       end
 
     end

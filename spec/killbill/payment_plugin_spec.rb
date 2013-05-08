@@ -24,6 +24,7 @@ describe Killbill::Plugin::Payment do
     lambda { @plugin.process_payment(@kb_account_id, @kb_payment_id, @kb_payment_method_id, @amount_in_cents, @currency) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.process_refund(@kb_account_id, @kb_payment_id, @amount_in_cents, @currency) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.get_payment_info(@kb_account_id, @kb_payment_id) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
+    lambda { @plugin.get_refund_info(@kb_account_id, @kb_payment_id) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.add_payment_method(@kb_account_id, @payment_method, @payment_method_props, true ) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.delete_payment_method(@kb_account_id, @kb_payment_method_id) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.set_default_payment_method(@kb_account_id, @payment_method) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError

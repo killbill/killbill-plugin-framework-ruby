@@ -115,6 +115,11 @@ module Killbill
         def from_payment_method_info_plugin(payment_method_info_plugin)
          JPaymentMethodResponseInternal.to_payment_method_response_internal(payment_method_info_plugin)
         end
+
+        def from_ext_bus_event(ext_bus)
+          JEvent.to_event(ext_bus)
+        end
+
       end
     end
   end
