@@ -42,11 +42,11 @@ module Killbill
                   :tag_user_api
       # Extra services
       attr_accessor :root,
-                    :logger
+                    :logger,
+                    :conf_dir
 
       # Called by the Killbill lifecycle when instantiating the plugin
       def initialize(services = {})
-
         @active = false
 
         services.each do |service_name, service_instance|
