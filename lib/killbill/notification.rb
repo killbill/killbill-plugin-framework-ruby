@@ -1,4 +1,5 @@
 require 'killbill/plugin'
+require 'killbill/response/event'
 
 module Killbill
   module Plugin

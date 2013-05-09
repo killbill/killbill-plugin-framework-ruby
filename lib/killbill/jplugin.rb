@@ -1,7 +1,11 @@
+require 'java'
+
 require 'pathname'
 
 require 'killbill/http_servlet'
 require 'killbill/creator'
+
+include Java
 
 module Killbill
   # There are various types of plugins one can write for Killbill:
@@ -75,7 +79,7 @@ module Killbill
        end
 
        def convert_args(api, args)
-          args.collect! do |a|
+         args.collect! do |a|
            if a.nil?
              nil
            elsif a.java_kind_of? java.util.UUID
@@ -111,11 +115,11 @@ module Killbill
              #raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
              nil
            end
-          end
-          # Remove last argument if this is null (it means we passed a context)
-          args.delete_at(-1) if args[-1].nil?
-          args
         end
+        # Remove last argument if this is null (it means we passed a context)
+        args.delete_at(-1) if args[-1].nil?
+        args
+      end
 
     end
   end

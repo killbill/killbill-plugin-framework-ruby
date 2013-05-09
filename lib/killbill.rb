@@ -36,12 +36,12 @@ begin
       warn 'Unable to load killbill-api. For development purposes, use JBundler (create the following Jarfile: http://git.io/eobYXA and run: `bundle install && jbundle install\')'
     end
   end
-
   # jbundler needs to be loaded first!
   require 'killbill/jplugin'
   require 'killbill/jpayment'
+  require 'killbill/jnotification'
 rescue LoadError => e
-  warn 'You need JRuby to run Killbill plugins'
+  warn "You need JRuby to run Killbill plugins #{e}"
 end
 
 require 'killbill/notification'

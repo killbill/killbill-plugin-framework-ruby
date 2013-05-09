@@ -1,7 +1,9 @@
+require 'killbill/jresponse/jconverter'
+
 module Killbill
   module Plugin
 
-    java_package'com.ning.billing.beatrix.bus.api'
+    java_package 'com.ning.billing.beatrix.bus.api'
     class JEvent
 
       include Java::com.ning.billing.beatrix.bus.api.ExtBusEvent
