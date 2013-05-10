@@ -38,6 +38,13 @@ describe Killbill::Plugin::JConverter do
       output.should == input
     end
 
+    it "should_test_to_string_converter_from_non_string" do
+      input = 12
+      output = Killbill::Plugin::JConverter.to_string(input)
+      output.should be_an_instance_of java.lang.String
+      output.should == input.to_s
+    end
+
     it "should_test_payment_plugin_status_success_converter" do
       input = Killbill::Plugin::PaymentStatus::SUCCESS
       output = Killbill::Plugin::JConverter.to_payment_plugin_status(input)

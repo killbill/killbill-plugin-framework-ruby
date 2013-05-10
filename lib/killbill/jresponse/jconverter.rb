@@ -22,7 +22,7 @@ module Killbill
         end
 
         def to_string(str)
-          str.nil? ? nil : java.lang.String.new(str)
+          str.nil? ? nil : java.lang.String.new(str.to_s)
         end
 
         def to_payment_plugin_status(status)
