@@ -15,6 +15,7 @@ class LifecycleNotificationPlugin < Killbill::Plugin::PluginBase
 end
 
 describe Killbill::Plugin::PluginBase do
+=begin
   it 'should be able to register Killbill API instances' do
     plugin = Killbill::Plugin::PluginBase.new(:account_user_api => MockAccountUserApi.new)
 
@@ -28,7 +29,7 @@ describe Killbill::Plugin::PluginBase do
     # Default method missing behavior
     lambda { plugin.blablabla }.should raise_error NoMethodError
   end
-
+=end
   it 'should be able to default to the ruby logger for tests' do
     logger = Logger.new(STDOUT)
     logger.level = Logger::DEBUG

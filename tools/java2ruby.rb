@@ -5,6 +5,7 @@ require 'optparse'
 # Relative path from Killbill repo
 API_DIR_SRC="api/src/main/java"
 
+
 # Interfaces to consider
 INTERFACES = ["AccountData",
               "AccountEmail",
@@ -14,11 +15,10 @@ INTERFACES = ["AccountData",
               "Invoice",
               "InvoiceItem",
               "InvoicePayment",
-              "Payment",
+              #"Payment",
               "Refund",
               "AuditLog",
               "CallContext",
-              "CallOrigin",
               "TenantContext",
               "CustomField",
               "Tag",
@@ -35,38 +35,45 @@ end
 
 
 class PoJo
-  
+
   attr_accessor :name, :fields
-  
+
   def initialize
     @name = nil
     @fields = []
   end
-  
+
   def generate(out)
     out.write("\n")
     out.write("\#\n")
     out.write("\# Ruby classes automatically generated from java classes-- don't edit\n")
     out.write("\#\n")
-    out.write("class #{name}\n")
+    out.write("module Killbill\n")
+    out.write("  module Plugin\n")
+    out.write("    module Gen\n")
     out.write("\n")
-    out.write("  attr_reader #{fields.collect { |i| ":#{i}"}.join(", ")}\n")
+    out.write("      class #{name}\n")
     out.write("\n")
-    out.write("  def initialize(#{@fields.join(", ")})\n")
+    out.write("        attr_reader #{fields.collect { |i| ":#{i}"}.join(", ")}\n")
+    out.write("\n")
+    out.write("        def initialize(#{@fields.join(", ")})\n")
     fields.each do |f|
-      out.write("    @#{f} = #{f}\n")
+      out.write("          @#{f} = #{f}\n")
     end
+    out.write("        end\n")
+    out.write("      end\n")
+    out.write("    end\n")
     out.write("  end\n")
-    out.write("end\n")   
-    out.flush 
+    out.write("end\n")
+    out.flush
   end
-  
+
   def export(output_dir)
-    File.open("#{output_dir}/#{name}.rb", "w+") do |f|
+    File.open("#{output_dir}/#{name.snake_case}.rb", "w+") do |f|
       generate(f)
     end
   end
-  
+
   def to_s
     "#{@name} : #{@fields.join(",")}"
   end
@@ -76,7 +83,7 @@ end
 class Visitor
 
   attr_reader :pojo
-  
+
   def initialize
     @pojo = PoJo.new
   end
@@ -84,34 +91,44 @@ class Visitor
   def add_name(interface)
     @pojo.name = interface
   end
-  
+
   def add_getter(getter)
     @pojo.fields << getter.snake_case
   end
 end
 
 class Generator
-  
+
   attr_reader :output_dir, :files
-  
+
   def initialize(output_dir, files)
     @output_dir = output_dir
     @files = files
   end
-  
+
   def generate_all
-    @files.each do |i| 
-      generate_file(i) do |pojo|        
+    gen_files = []
+    @files.each do |i|
+      puts "Starting processing file #{i}"
+      generate_file(i) do |pojo|
+        gen_files << pojo.name.snake_case
         pojo.export(@output_dir)
       end
+
+      File.open("#{output_dir}/require_gen.rb", "w+") do |f|
+        gen_files.each do |r|
+          f.write("require \'killbill/gen/#{r}\'\n")
+        end
+      end
+      puts "Completing processing file #{i}"
     end
   end
-  
+
   def generate_file(file)
-    visitor = Visitor.new  
+    visitor = Visitor.new
     File.open(file, "r") do |f|
       while (line = f.gets)
-        
+
         re = /public\s+interface\s+(\w+)\s*/
         if re.match(line)
           visitor.add_name($1)
@@ -120,7 +137,7 @@ class Generator
         if re.match(line)
           visitor.add_getter($1)
         end
-        re = /(?:public){0,1}\s+(?:\w+)\s+is(\w+)()\s*/
+        re = /(?:public){0,1}\s+(?:\w+)\s+(is\w+)()\s*/
         if re.match(line)
           visitor.add_getter($1)
         end
@@ -132,14 +149,14 @@ end
 
 
 class Finder
-  
+
   attr_reader :interfaces, :src_dir
-  
+
   def initialize(interfaces, src_dir)
     @interfaces = interfaces
     @src_dir = src_dir
   end
-  
+
   def search
     res = []
     Dir.chdir(@src_dir)
@@ -157,17 +174,17 @@ end
 
 
 class CommandParser
-  
+
   attr_reader :options, :args, :interfaces, :src_relative_path
-  
+
   def initialize(args, interfaces, src_relative_path)
     @options = {}
     @args = args
     @interfaces = interfaces
     @src_relative_path = src_relative_path
   end
-  
-  
+
+
   def run
     parse
     puts "Generating ruby classes under: #{@options[:output]}"
@@ -177,18 +194,18 @@ class CommandParser
   end
 
   private
-  
+
   def parse()
     optparse = OptionParser.new do |opts|
       opts.banner = "Usage: java2ruby.rb [options]"
-      
+
       opts.separator ""
-      
+
       opts.on("-o", "--output OUTPUT",
       "Output directory") do |o|
         @options[:output] = o
       end
-      
+
       opts.on("-s", "--src SRC",
       "Killbill source directory") do |s|
         @options[:src] = s
@@ -196,7 +213,7 @@ class CommandParser
     end
     optparse.parse!(@args)
   end
-  
+
 end
 
 parser = CommandParser.new(ARGV, INTERFACES, API_DIR_SRC)

@@ -1,5 +1,5 @@
 require 'killbill/response/payment_method_response_internal'
-require 'killbill/jresponse/jconverter'
+require 'killbill/jconverter'
 
 module Killbill
   module Plugin

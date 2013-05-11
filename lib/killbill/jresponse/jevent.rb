@@ -1,4 +1,4 @@
-require 'killbill/jresponse/jconverter'
+require 'killbill/jconverter'
 
 module Killbill
   module Plugin

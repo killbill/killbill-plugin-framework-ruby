@@ -1,5 +1,5 @@
 require 'killbill/response/refund_response'
-require 'killbill/jresponse/jconverter'
+require 'killbill/jconverter'
 
 module Killbill
   module Plugin

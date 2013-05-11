@@ -1,3 +1,9 @@
+require 'java'
+
+require 'killbill/jkillbill_api'
+require 'killbill/killbill_api'
+
+include Java
 
 module Killbill
   module Plugin
@@ -10,8 +16,12 @@ module Killbill
       end
 
       def create(*args)
+         japi_proxy = JKillbillApi.new(@target_class_name, *args)
+         kb_apis = KillbillApi.new(japi_proxy)
          real_class = class_from_string
-          args.nil? ? real_class.new : real_class.new(*args)
+         plugin_delegate = real_class.new
+         plugin_delegate.kb_apis = kb_apis
+         plugin_delegate
       end
 
       private

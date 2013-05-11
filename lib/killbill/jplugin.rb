@@ -15,6 +15,7 @@ module Killbill
   module Plugin
     class JPlugin
 
+
       attr_reader :delegate_plugin
 
       # Called by the Killbill lifecycle when initializing the plugin

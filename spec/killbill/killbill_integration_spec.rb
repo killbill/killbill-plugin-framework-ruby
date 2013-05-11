@@ -10,7 +10,7 @@ describe Killbill::Plugin do
   end
 
   it 'should be able to access Killbill mock APIs' do
-    @account_user_api.createAccount(UUID.randomUUID,
+    @account_user_api.createAccountFromParams(UUID.randomUUID,
                                     'externalKey',
                                     'email',
                                     'name',
