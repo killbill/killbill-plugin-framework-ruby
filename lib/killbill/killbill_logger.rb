@@ -7,19 +7,19 @@ module Killbill
       end
 
       def debug(msg)
-        @logger.log(4, msg)
+        @logger.log(4, msg.nil? ? "(nil)" : msg.to_s)
       end
 
       def info(msg)
-        @logger.log(3, msg)
+        @logger.log(3, msg.nil? ? "(nil)" : msg.to_s)
       end
 
       def warn(msg)
-        @logger.log(2, msg)
+        @logger.log(2, msg.nil? ? "(nil)" : msg.to_s)
       end
 
       def error(msg)
-        @logger.log(1, msg)
+        @logger.log(1, msg.nil? ? "(nil)" : msg.to_s)
       end
 
       alias_method :fatal, :error
