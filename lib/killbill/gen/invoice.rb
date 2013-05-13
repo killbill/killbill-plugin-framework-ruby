@@ -8,9 +8,12 @@ module Killbill
 
       class Invoice
 
-        attr_reader :number_of_items, :number_of_payments, :account_id, :invoice_number, :invoice_date, :target_date, :currency, :paid_amount, :original_charged_amount, :charged_amount, :credited_amount, :refunded_amount, :balance, :is_migration_invoice
+        attr_reader :id, :created_date, :updated_date, :number_of_items, :number_of_payments, :account_id, :invoice_number, :invoice_date, :target_date, :currency, :paid_amount, :original_charged_amount, :charged_amount, :credited_amount, :refunded_amount, :balance, :is_migration_invoice
 
-        def initialize(number_of_items, number_of_payments, account_id, invoice_number, invoice_date, target_date, currency, paid_amount, original_charged_amount, charged_amount, credited_amount, refunded_amount, balance, is_migration_invoice)
+        def initialize(id, created_date, updated_date, number_of_items, number_of_payments, account_id, invoice_number, invoice_date, target_date, currency, paid_amount, original_charged_amount, charged_amount, credited_amount, refunded_amount, balance, is_migration_invoice)
+          @id = id
+          @created_date = created_date
+          @updated_date = updated_date
           @number_of_items = number_of_items
           @number_of_payments = number_of_payments
           @account_id = account_id

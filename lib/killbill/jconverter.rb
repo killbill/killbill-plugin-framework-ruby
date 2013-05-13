@@ -113,6 +113,9 @@ module Killbill
 
         def from_account(data)
           Killbill::Plugin::Gen::Account.new(from_uuid(data.id),
+                                            from_blocking_state(data.blocking_state),
+                                            from_joda_date_time(data.created_date),
+                                            from_joda_date_time(data.updated_date),
                                             from_string(data.external_key),
                                             from_string(data.name),
                                             data.first_name_length,
@@ -132,6 +135,12 @@ module Killbill
                                             from_string(data.phone),
                                             from_boolean(data.is_migrated),
                                             from_boolean(data.is_notified_for_invoices))
+        end
+
+        def from_blocking_state(data)
+          if data.nil?
+            return nil
+          end
 
         end
 

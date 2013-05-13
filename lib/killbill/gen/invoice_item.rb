@@ -8,9 +8,12 @@ module Killbill
 
       class InvoiceItem
 
-        attr_reader :invoice_item_type, :invoice_id, :account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :rate, :linked_item_id
+        attr_reader :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :rate, :linked_item_id
 
-        def initialize(invoice_item_type, invoice_id, account_id, start_date, end_date, amount, currency, description, bundle_id, subscription_id, plan_name, phase_name, rate, linked_item_id)
+        def initialize(id, created_date, updated_date, invoice_item_type, invoice_id, account_id, start_date, end_date, amount, currency, description, bundle_id, subscription_id, plan_name, phase_name, rate, linked_item_id)
+          @id = id
+          @created_date = created_date
+          @updated_date = updated_date
           @invoice_item_type = invoice_item_type
           @invoice_id = invoice_id
           @account_id = account_id

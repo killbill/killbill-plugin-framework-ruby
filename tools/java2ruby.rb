@@ -7,22 +7,26 @@ API_DIR_SRC="api/src/main/java"
 
 
 # Interfaces to consider
-INTERFACES = ["AccountData",
+INTERFACES = ["Account",
+              "AccountData",
               "AccountEmail",
+              "BlockingState",
               "ExtBusEvent",
               "Subscription",
               "SubscriptionBundle",
               "Invoice",
               "InvoiceItem",
               "InvoicePayment",
-              #"Payment",
+              "Payment",
+              "PaymentAttempt",
               "Refund",
               "AuditLog",
               "CallContext",
               "TenantContext",
               "CustomField",
               "Tag",
-              "TagDefinition"]
+              "TagDefinition",
+              "Currency"]
 
 class String
    def snake_case
@@ -33,14 +37,62 @@ class String
    end
 end
 
-
-class PoJo
+class Pojo
 
   attr_accessor :name, :fields
 
   def initialize
-    @name = nil
-    @fields = []
+     @name = nil
+     @fields = []
+  end
+end
+
+
+class PojoEnum < Pojo
+
+  def initialize
+    super
+  end
+
+  def generate(out)
+    out.write("\n")
+    out.write("\#\n")
+    out.write("\# Ruby classes automatically generated from java classes-- don't edit\n")
+    out.write("\#\n")
+    out.write("module Killbill\n")
+    out.write("  module Plugin\n")
+    out.write("    module Gen\n")
+    out.write("\n")
+    out.write("      module #{name}\n")
+    out.write("\n")
+    fields.each_with_index do |f, i|
+      out.write("        #{f} = #{i}\n")
+    end
+    out.write("      end\n")
+    out.write("    end\n")
+    out.write("  end\n")
+    out.write("end\n")
+    out.flush
+  end
+
+  def export(output_dir, parents_pojo)
+    @fields.uniq!
+    File.open("#{output_dir}/#{name.snake_case}.rb", "w+") do |f|
+      generate(f)
+    end
+  end
+
+
+
+end
+
+class PojoIfce < Pojo
+
+  attr_accessor :parents
+
+  def initialize
+    super
+    @parents = []
   end
 
   def generate(out)
@@ -68,7 +120,13 @@ class PoJo
     out.flush
   end
 
-  def export(output_dir)
+  def export(output_dir, parents_pojo)
+    parents.each do |p|
+      if ! parents_pojo[p].nil?
+        (@fields.unshift(parents_pojo[p].fields)).flatten!
+      end
+    end
+    @fields.uniq!
     File.open("#{output_dir}/#{name.snake_case}.rb", "w+") do |f|
       generate(f)
     end
@@ -78,68 +136,153 @@ class PoJo
     "#{@name} : #{@fields.join(",")}"
   end
 
+
 end
+
 
 class Visitor
 
   attr_reader :pojo
 
   def initialize
-    @pojo = PoJo.new
+    @pojo = nil
   end
 
-  def add_name(interface)
-    @pojo.name = interface
+  def create_interface(name)
+    @pojo = PojoIfce.new
+    @pojo.name = name
+  end
+
+  def create_enum(name)
+    @pojo = PojoEnum.new
+    @pojo.name = name
+  end
+
+  def add_parents(parents)
+    (@pojo.parents << parents).flatten!
   end
 
   def add_getter(getter)
     @pojo.fields << getter.snake_case
   end
+
+  def add_enum_field(enum_field)
+    @pojo.fields << enum_field
+  end
 end
 
 class Generator
 
-  attr_reader :output_dir, :files
+  attr_reader :output_dir, :finder, :files
 
-  def initialize(output_dir, files)
+  def initialize(output_dir, interfaces, finder)
     @output_dir = output_dir
-    @files = files
+    @finder = finder
+    @files = finder.search(interfaces)
   end
 
   def generate_all
-    gen_files = []
+
+    pojos = []
     @files.each do |i|
-      puts "Starting processing file #{i}"
       generate_file(i) do |pojo|
-        gen_files << pojo.name.snake_case
-        pojo.export(@output_dir)
+        pojos << pojo
       end
+    end
+
+    parent_pojos = {}
+
+    parent_ifces = []
+    pojos.each do |pojo|
+      if pojo.is_a? PojoIfce
+        (parent_ifces << pojo.parents).flatten!
+      end
+    end
+    parent_ifces.uniq!
+
+    puts "UNIQ PARENTS = #{parent_ifces.to_s}"
+
+    parent_files = finder.search(parent_ifces)
+    puts "PARENT FILES  = #{parent_files}"
+    parent_files.each do |i|
+      puts "Starting processing parent file #{i}"
+      generate_file(i) do |pojo|
+        parent_pojos[pojo.name] = pojo
+      end
+    end
+
+    pojos.each do |pojo|
+      puts "Starting processing file #{pojo.name}"
+
+      pojo.export(@output_dir, parent_pojos)
 
       File.open("#{output_dir}/require_gen.rb", "w+") do |f|
-        gen_files.each do |r|
-          f.write("require \'killbill/gen/#{r}\'\n")
+        pojos.each do |pojo|
+          f.write("require \'killbill/gen/#{pojo.name.snake_case}\'\n")
         end
       end
-      puts "Completing processing file #{i}"
+      puts "Completing processing file #{pojo.name}"
     end
   end
+
+  private
+
 
   def generate_file(file)
     visitor = Visitor.new
     File.open(file, "r") do |f|
+
+      is_enum = false
+      is_interface = false
       while (line = f.gets)
 
-        re = /public\s+interface\s+(\w+)\s*/
+        # Interface
+        re = /public\s+interface\s+(\w+)\s+(extends(?:\w|,|\s|<|>)+){0,1}\s*{\s*/
         if re.match(line)
-          visitor.add_name($1)
+          interface = $1
+          visitor.create_interface(interface)
+          is_interface = true
+
+          if ! $2.nil?
+
+            re = /\s*extends\s+(.*)/
+            extends_ifces = $2
+            if re.match(extends_ifces)
+              # extract each parent and remove trailing, leading space
+              parents = $1.split(",").collect { |e| e.strip}
+              # remove generics
+              re = /(\w+)(?:<\w+>){0,1}/
+              parents.collect! { |e| re.match(e); $1 }
+              visitor.add_parents(parents)
+            end
+          end
         end
-        re = /(?:public){0,1}\s+(?:\w+)\s+get(\w+)()\s*/
+
+        # Enum
+        re = /public\s+enum\s+(\w+)\s+/
         if re.match(line)
-          visitor.add_getter($1)
+          enum_name = $1
+          visitor.create_enum(enum_name)
+          is_enum = true
         end
-        re = /(?:public){0,1}\s+(?:\w+)\s+(is\w+)()\s*/
-        if re.match(line)
-          visitor.add_getter($1)
+
+        # Non static getters for interfaces
+        re = /(?:public){0,1}\s+(?:static\s+\w+)\s+(?:get|is).*/
+        if is_interface && !re.match(line)
+          re = /(?:public){0,1}\s+(?:\w+)\s+get(\w+)()\s*/
+          if re.match(line)
+            visitor.add_getter($1)
+          end
+          re = /(?:public){0,1}\s+(?:\w+)\s+(is\w+)()\s*/
+          if re.match(line)
+            visitor.add_getter($1)
+          end
+        end
+
+        # Enum fields
+        re = /\s+(\w+)(?:\((?:\w|\s)+\)){0,1}\s*(?:,|;){1}/
+        if is_enum && re.match(line)
+          visitor.add_enum_field($1.strip)
         end
       end
     end
@@ -152,19 +295,21 @@ class Finder
 
   attr_reader :interfaces, :src_dir
 
-  def initialize(interfaces, src_dir)
+  def initialize(src_dir)
     @interfaces = interfaces
     @src_dir = src_dir
   end
 
-  def search
+  def search(interfaces)
     res = []
-    Dir.chdir(@src_dir)
-    Dir.glob("**/*") do |e|
-      if File.file?(e)
-        basename = File.basename(e, ".java")
-        if @interfaces.include? basename
-          res << e
+    if !interfaces.nil? && interfaces.size > 0
+      Dir.chdir(@src_dir)
+      Dir.glob("**/*") do |e|
+        if File.file?(e)
+          basename = File.basename(e, ".java")
+          if interfaces.include? basename
+            res << e
+          end
         end
       end
     end
@@ -188,8 +333,8 @@ class CommandParser
   def run
     parse
     puts "Generating ruby classes under: #{@options[:output]}"
-    finder = Finder.new(@interfaces, "#{@options[:src]}/#{@src_relative_path}")
-    gen = Generator.new(@options[:output], finder.search)
+    finder = Finder.new("#{@options[:src]}/#{@src_relative_path}")
+    gen = Generator.new(@options[:output], @interfaces, finder)
     gen.generate_all
   end
 

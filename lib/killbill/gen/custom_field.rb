@@ -8,9 +8,12 @@ module Killbill
 
       class CustomField
 
-        attr_reader :object_id, :object_type, :field_name, :field_value
+        attr_reader :id, :created_date, :updated_date, :object_id, :object_type, :field_name, :field_value
 
-        def initialize(object_id, object_type, field_name, field_value)
+        def initialize(id, created_date, updated_date, object_id, object_type, field_name, field_value)
+          @id = id
+          @created_date = created_date
+          @updated_date = updated_date
           @object_id = object_id
           @object_type = object_type
           @field_name = field_name

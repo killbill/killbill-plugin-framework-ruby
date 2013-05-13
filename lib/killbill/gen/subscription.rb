@@ -8,9 +8,13 @@ module Killbill
 
       class Subscription
 
-        attr_reader :bundle_id, :state, :source_type, :start_date, :end_date, :future_end_date, :current_plan, :last_active_plan, :current_price_list, :current_phase, :last_active_product_name, :last_active_price_list_name, :last_active_category_name, :last_active_billing_period, :charged_through_date, :paid_through_date, :category, :pending_transition, :previous_transition
+        attr_reader :id, :blocking_state, :created_date, :updated_date, :bundle_id, :state, :source_type, :start_date, :end_date, :future_end_date, :current_plan, :last_active_plan, :current_price_list, :current_phase, :last_active_product_name, :last_active_price_list_name, :last_active_category_name, :last_active_billing_period, :charged_through_date, :paid_through_date, :category, :pending_transition, :previous_transition
 
-        def initialize(bundle_id, state, source_type, start_date, end_date, future_end_date, current_plan, last_active_plan, current_price_list, current_phase, last_active_product_name, last_active_price_list_name, last_active_category_name, last_active_billing_period, charged_through_date, paid_through_date, category, pending_transition, previous_transition)
+        def initialize(id, blocking_state, created_date, updated_date, bundle_id, state, source_type, start_date, end_date, future_end_date, current_plan, last_active_plan, current_price_list, current_phase, last_active_product_name, last_active_price_list_name, last_active_category_name, last_active_billing_period, charged_through_date, paid_through_date, category, pending_transition, previous_transition)
+          @id = id
+          @blocking_state = blocking_state
+          @created_date = created_date
+          @updated_date = updated_date
           @bundle_id = bundle_id
           @state = state
           @source_type = source_type

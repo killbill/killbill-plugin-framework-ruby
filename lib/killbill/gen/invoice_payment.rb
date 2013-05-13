@@ -8,9 +8,12 @@ module Killbill
 
       class InvoicePayment
 
-        attr_reader :payment_id, :type, :invoice_id, :payment_date, :amount, :currency, :linked_invoice_payment_id, :payment_cookie_id
+        attr_reader :id, :created_date, :updated_date, :payment_id, :type, :invoice_id, :payment_date, :amount, :currency, :linked_invoice_payment_id, :payment_cookie_id
 
-        def initialize(payment_id, type, invoice_id, payment_date, amount, currency, linked_invoice_payment_id, payment_cookie_id)
+        def initialize(id, created_date, updated_date, payment_id, type, invoice_id, payment_date, amount, currency, linked_invoice_payment_id, payment_cookie_id)
+          @id = id
+          @created_date = created_date
+          @updated_date = updated_date
           @payment_id = payment_id
           @type = type
           @invoice_id = invoice_id

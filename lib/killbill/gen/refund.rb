@@ -8,10 +8,12 @@ module Killbill
 
       class Refund
 
-        attr_reader :id, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :plugin_detail
+        attr_reader :id, :created_date, :updated_date, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :plugin_detail
 
-        def initialize(id, payment_id, is_adjusted, refund_amount, currency, effective_date, plugin_detail)
+        def initialize(id, created_date, updated_date, payment_id, is_adjusted, refund_amount, currency, effective_date, plugin_detail)
           @id = id
+          @created_date = created_date
+          @updated_date = updated_date
           @payment_id = payment_id
           @is_adjusted = is_adjusted
           @refund_amount = refund_amount

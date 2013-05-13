@@ -8,12 +8,14 @@ module Killbill
 
       class AuditLog
 
-        attr_reader :change_type, :user_name, :created_date, :reason_code, :user_token, :comment
+        attr_reader :id, :created_date, :updated_date, :change_type, :user_name, :reason_code, :user_token, :comment
 
-        def initialize(change_type, user_name, created_date, reason_code, user_token, comment)
+        def initialize(id, created_date, updated_date, change_type, user_name, reason_code, user_token, comment)
+          @id = id
+          @created_date = created_date
+          @updated_date = updated_date
           @change_type = change_type
           @user_name = user_name
-          @created_date = created_date
           @reason_code = reason_code
           @user_token = user_token
           @comment = comment

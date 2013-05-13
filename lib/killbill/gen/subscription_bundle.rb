@@ -8,9 +8,13 @@ module Killbill
 
       class SubscriptionBundle
 
-        attr_reader :account_id, :external_key
+        attr_reader :id, :created_date, :updated_date, :blocking_state, :account_id, :external_key
 
-        def initialize(account_id, external_key)
+        def initialize(id, created_date, updated_date, blocking_state, account_id, external_key)
+          @id = id
+          @created_date = created_date
+          @updated_date = updated_date
+          @blocking_state = blocking_state
           @account_id = account_id
           @external_key = external_key
         end

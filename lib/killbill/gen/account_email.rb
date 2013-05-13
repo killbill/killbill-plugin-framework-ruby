@@ -8,9 +8,12 @@ module Killbill
 
       class AccountEmail
 
-        attr_reader :account_id, :email
+        attr_reader :id, :created_date, :updated_date, :account_id, :email
 
-        def initialize(account_id, email)
+        def initialize(id, created_date, updated_date, account_id, email)
+          @id = id
+          @created_date = created_date
+          @updated_date = updated_date
           @account_id = account_id
           @email = email
         end
