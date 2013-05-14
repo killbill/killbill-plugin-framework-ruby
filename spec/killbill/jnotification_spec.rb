@@ -6,7 +6,7 @@ describe Killbill::Plugin::JNotification do
 
   before(:all) do
     logger = ::Logger.new(STDOUT)
-    @jnotification =  Killbill::Plugin::JNotification.new("Killbill::Plugin::NotificationTest", { :logger => logger })
+    @jnotification =  Killbill::Plugin::JNotification.new("Killbill::Plugin::NotificationTest", { "logger" => logger })
   end
 
 

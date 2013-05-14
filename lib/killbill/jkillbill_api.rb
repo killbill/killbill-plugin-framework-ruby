@@ -35,7 +35,8 @@ module Killbill
             self.send("#{service_name}=", service_instance)
             @plugged_services << service_instance
           rescue NoMethodError
-            warn "Ignoring unsupported service: #{service_name}"
+            # Expected for non APIs (e.g. logger)
+            #warn "Ignoring unsupported service: #{service_name}"
           end
         end
       end
