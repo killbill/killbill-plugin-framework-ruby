@@ -67,9 +67,10 @@ module Killbill
                 'rack.multithread' => true,
                 'rack.multiprocess' => false,
                 'rack.input' => input,
-                # TODO
-                'rack.errors' => java::lang::System::err.to_io,
-                'rack.logger' => java::lang::System::out.to_io,
+                # Don't use java::lang::System::err.to_io here!
+                # JRuby ChannelStream's finalize() may close it
+                'rack.errors' => @logger,
+                'rack.logger' => @logger,
                 'rack.url_scheme' => scheme,
                 'REQUEST_METHOD' => method,
                 'SCRIPT_NAME' => '',

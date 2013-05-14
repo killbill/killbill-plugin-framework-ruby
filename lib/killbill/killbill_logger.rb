@@ -1,4 +1,6 @@
 # Plugin logger that will delegate to the OSGI LogService
+# Used for regular logging for plugins, as well as Rack logger and Error Stream
+# Methods to implement for rack are described here: http://rack.rubyforge.org/doc/SPEC.html
 module Killbill
   module Plugin
     class KillbillLogger
@@ -6,20 +8,41 @@ module Killbill
         @logger = delegate
       end
 
-      def debug(msg)
-        @logger.log(4, msg.nil? ? "(nil)" : msg.to_s)
+      def debug(message, &block)
+        @logger.log(4, build_message(message, &block))
       end
 
-      def info(msg)
-        @logger.log(3, msg.nil? ? "(nil)" : msg.to_s)
+      def info(message, &block)
+        @logger.log(3, build_message(message, &block))
       end
 
-      def warn(msg)
-        @logger.log(2, msg.nil? ? "(nil)" : msg.to_s)
+      def warn(message, &block)
+        @logger.log(2, build_message(message, &block))
       end
 
-      def error(msg)
-        @logger.log(1, msg.nil? ? "(nil)" : msg.to_s)
+      def error(message, &block)
+        @logger.log(1, build_message(message, &block))
+      end
+
+      # Rack Error stream
+      alias_method :puts, :warn
+      alias_method :write, :warn
+
+      def flush
+      end
+
+      def close
+      end
+
+      def build_message(message, &block)
+        if message.nil?
+          if block_given?
+            message = yield
+          else
+            message = "(nil)"
+          end
+        end
+        message.nil? ? "(nil)" : message.to_s
       end
 
       alias_method :fatal, :error
