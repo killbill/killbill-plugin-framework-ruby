@@ -15,14 +15,15 @@ module Killbill
         @target_class_name = target_class_name
       end
 
-      def create(*args)
-         japi_proxy = JKillbillApi.new(@target_class_name, *args)
+      def create(services)
+         japi_proxy = JKillbillApi.new(@target_class_name, services)
+         
          kb_apis = KillbillApi.new(japi_proxy)
          real_class = class_from_string
          plugin_delegate = real_class.new
-         plugin_delegate.root = args[:root]
-         plugin_delegate.logger = args[:logger]
-         plugin_delegate.conf_dir = args[:conf_dir]
+         plugin_delegate.root = services[:root]
+         plugin_delegate.logger = services[:logger]
+         plugin_delegate.conf_dir = services[:conf_dir]
          plugin_delegate.kb_apis = kb_apis
          plugin_delegate
       end

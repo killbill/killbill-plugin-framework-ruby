@@ -5,7 +5,8 @@ require 'killbill/jpayment'
 describe Killbill::Plugin::JPayment do
 
   before(:all) do
-    @jpayment =  Killbill::Plugin::JPayment.new("Killbill::Plugin::PaymentTest")
+    logger = ::Logger.new(STDOUT)
+    @jpayment =  Killbill::Plugin::JPayment.new("Killbill::Plugin::PaymentTest", { :logger => logger })
     @kb_account_id = java.util.UUID.fromString("aa5c926e-3d9d-4435-b44b-719d7b583256")
     @kb_payment_id = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
     @kb_payment_method_id = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
