@@ -1,5 +1,4 @@
 
-Dir['gen/*.rb', ".rb"].collect { |e| e.sub(/\.\w+$/,'')}.each { |x| require "killbill/#{x}" }
 
 module Killbill
   module Plugin

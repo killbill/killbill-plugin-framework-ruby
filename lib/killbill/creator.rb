@@ -20,6 +20,9 @@ module Killbill
          kb_apis = KillbillApi.new(japi_proxy)
          real_class = class_from_string
          plugin_delegate = real_class.new
+         plugin_delegate.root = args[:root]
+         plugin_delegate.logger = args[:logger]
+         plugin_delegate.conf_dir = args[:conf_dir]
          plugin_delegate.kb_apis = kb_apis
          plugin_delegate
       end
