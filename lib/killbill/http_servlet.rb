@@ -15,6 +15,10 @@ module Killbill
         @app = Rack::Builder.parse_file(config_ru).first
       end
 
+      def unconfigure
+        @app = nil
+      end
+
       def configured?
         !@app.nil?
       end
@@ -62,6 +66,8 @@ module Killbill
       end
 
       def rack_service(request_uri = '/', method = 'GET', query_string = '', input = '', scheme = 'http', server_name = 'localhost', server_port = 4567, content_type = 'text/plain', content_length = 0, headers = {})
+        return 503, {}, [] if @app.nil?
+
         rack_env = {
                 'rack.version' => Rack::VERSION,
                 'rack.multithread' => true,
