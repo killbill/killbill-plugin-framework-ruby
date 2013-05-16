@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class InvoiceItem
+
+        include com.ning.billing.invoice.api.InvoiceItem
 
         attr_reader :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :rate, :linked_item_id
 

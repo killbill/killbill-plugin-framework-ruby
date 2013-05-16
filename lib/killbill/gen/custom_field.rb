@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class CustomField
+
+        include com.ning.billing.util.customfield.CustomField
 
         attr_reader :id, :created_date, :updated_date, :object_id, :object_type, :field_name, :field_value
 

@@ -5,7 +5,7 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       module DateTimeZone
         UTC = 1

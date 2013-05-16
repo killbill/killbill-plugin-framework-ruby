@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class TenantContext
+
+        include com.ning.billing.util.callcontext.TenantContext
 
         attr_reader :tenant_id
 

@@ -15,32 +15,6 @@ begin
   #
   # The Killbill Java APIs imported into that jruby bridge
   #
-=begin
-  IMPORT_KILLBILL_APIS = %w(
-    com.ning.billing.account.api.AccountUserApi
-    com.ning.billing.analytics.api.sanity.AnalyticsSanityApi
-    com.ning.billing.analytics.api.user.AnalyticsUserApi
-    com.ning.billing.catalog.api.CatalogUserApi
-    com.ning.billing.entitlement.api.migration.EntitlementMigrationApi
-    com.ning.billing.entitlement.api.timeline.EntitlementTimelineApi
-    com.ning.billing.entitlement.api.transfer.EntitlementTransferApi
-    com.ning.billing.entitlement.api.user.EntitlementUserApi
-    com.ning.billing.invoice.api.InvoiceMigrationApi
-    com.ning.billing.invoice.api.InvoicePaymentApi
-    com.ning.billing.invoice.api.InvoiceUserApi
-    com.ning.billing.overdue.OverdueUserApi
-    com.ning.billing.payment.api.PaymentApi
-    com.ning.billing.tenant.api.TenantUserApi
-    com.ning.billing.usage.api.UsageUserApi
-    com.ning.billing.util.api.AuditUserApi
-    com.ning.billing.util.api.CustomFieldUserApi
-    com.ning.billing.util.api.ExportUserApi
-    com.ning.billing.util.api.TagUserApi
-    javax.servlet.http.HttpServlet
-  )
-=end
-
-
   IMPORT_KILLBILL_APIS = %w(
     com.ning.billing.account.api.AccountUserApi
     com.ning.billing.catalog.api.CatalogUserApi

@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class PaymentMethodPlugin
+
+        include com.ning.billing.payment.api.PaymentMethodPlugin
 
         attr_reader :external_payment_method_id, :is_default_payment_method, :properties, :value_string, :type, :cc_name, :cc_type, :cc_expiration_month, :cc_expiration_year, :cc_last4, :address1, :address2, :city, :state, :zip, :country
 

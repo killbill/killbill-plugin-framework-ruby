@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class ExtBusEvent
+
+        include com.ning.billing.beatrix.bus.api.ExtBusEvent
 
         attr_reader :event_type, :object_type, :object_id, :account_id, :tenant_id
 

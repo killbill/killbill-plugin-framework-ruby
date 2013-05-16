@@ -35,21 +35,21 @@ describe Killbill::Plugin::JConverter do
     end
 
     it "should_test_payment_plugin_status_success_converter" do
-      input = Killbill::Plugin::Gen::PaymentPluginStatus::PROCESSED
+      input = Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED
       output = Killbill::Plugin::JConverter.to_payment_plugin_status(input)
       output.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
       output.should == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::PROCESSED
     end
 
     it "should_test_payment_plugin_status_failed_converter" do
-      input = Killbill::Plugin::Gen::PaymentPluginStatus::ERROR
+      input = Killbill::Plugin::Model::PaymentPluginStatus::ERROR
       output = Killbill::Plugin::JConverter.to_payment_plugin_status(input)
       output.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
       output.should == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::ERROR
     end
 
     it "should_test_payment_plugin_status_undefined_converter" do
-      input = Killbill::Plugin::Gen::PaymentPluginStatus::UNDEFINED
+      input = Killbill::Plugin::Model::PaymentPluginStatus::UNDEFINED
       output = Killbill::Plugin::JConverter.to_payment_plugin_status(input)
       output.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
       output.should == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::UNDEFINED
@@ -87,7 +87,7 @@ describe Killbill::Plugin::JConverter do
     it "should_test_uuid_from_converter" do
       input = java.util.UUID.random_uuid
       output = Killbill::Plugin::JConverter.from_uuid(input)
-      output.should be_an_instance_of Killbill::Plugin::Gen::UUID
+      output.should be_an_instance_of Killbill::Plugin::Model::UUID
       output.to_s.should == input.to_s
     end
 
@@ -142,7 +142,7 @@ describe Killbill::Plugin::JConverter do
     it "should_test_payment_status_from_converter" do
       input = Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::PROCESSED
       output = Killbill::Plugin::JConverter.from_payment_plugin_status(input)
-      output.should == Killbill::Plugin::Gen::PaymentPluginStatus::PROCESSED
+      output.should == Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED
     end
 
     it "should_test_big_decimal_from_converter" do
@@ -158,22 +158,22 @@ describe Killbill::Plugin::JConverter do
        event_type = Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_CREATION
        uuid = java.util.UUID.random_uuid
 
-       input = Killbill::Plugin::Gen::ExtBusEvent.new(event_type, object_type, uuid, uuid, uuid)
+       input = Killbill::Plugin::Model::ExtBusEvent.new(event_type, object_type, uuid, uuid, uuid)
        output = Killbill::Plugin::JConverter.from_ext_bus_event(input)
 
-       output.should be_an_instance_of Killbill::Plugin::Gen::ExtBusEvent
+       output.should be_an_instance_of Killbill::Plugin::Model::ExtBusEvent
 
-       output.event_type.should == Killbill::Plugin::Gen::ExtBusEventType::INVOICE_CREATION
+       output.event_type.should == Killbill::Plugin::Model::ExtBusEventType::INVOICE_CREATION
 
-       output.object_type.should == Killbill::Plugin::Gen::ObjectType::INVOICE
+       output.object_type.should == Killbill::Plugin::Model::ObjectType::INVOICE
 
-       output.object_id.should be_an_instance_of Killbill::Plugin::Gen::UUID
+       output.object_id.should be_an_instance_of Killbill::Plugin::Model::UUID
        output.object_id.to_s.should == Killbill::Plugin::JConverter.from_uuid(uuid).to_s
 
-       output.account_id.should be_an_instance_of Killbill::Plugin::Gen::UUID
+       output.account_id.should be_an_instance_of Killbill::Plugin::Model::UUID
        output.account_id.to_s.should == Killbill::Plugin::JConverter.from_uuid(uuid).to_s
 
-       output.tenant_id.should be_an_instance_of Killbill::Plugin::Gen::UUID
+       output.tenant_id.should be_an_instance_of Killbill::Plugin::Model::UUID
        output.tenant_id.to_s.should == Killbill::Plugin::JConverter.from_uuid(uuid).to_s
 
       end

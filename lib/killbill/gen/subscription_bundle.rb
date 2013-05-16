@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class SubscriptionBundle
+
+        include com.ning.billing.entitlement.api.user.SubscriptionBundle
 
         attr_reader :id, :created_date, :updated_date, :blocking_state, :account_id, :external_key, :overdue_state
 

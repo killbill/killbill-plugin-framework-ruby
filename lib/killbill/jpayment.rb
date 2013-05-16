@@ -15,7 +15,6 @@ module Killbill
     java_package 'com.ning.billing.payment.plugin.api'
     class JPayment < JPlugin
 
-#      java_implements com.ning.billing.payment.plugin.api.PaymentPluginApi
       include com.ning.billing.payment.plugin.api.PaymentPluginApi
 
       def initialize(real_class_name, services = {})

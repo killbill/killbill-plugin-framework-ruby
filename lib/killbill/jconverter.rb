@@ -12,7 +12,7 @@ module Killbill
         # Convert from ruby -> java
         #
         def to_account_data(data)
-          Killbill::Plugin::Gen::AccountData.new(to_string(data.external_key),
+          Killbill::Plugin::Model::AccountData.new(to_string(data.external_key),
                                                  to_string(data.name),
                                                  data.first_name_length,
                                                  to_string(data.email),
@@ -34,7 +34,7 @@ module Killbill
         end
 
         def to_payment_info_plugin(payment_response)
-          Killbill::Plugin::Gen::PaymentInfoPlugin.new(to_big_decimal(payment_response.amount),
+          Killbill::Plugin::Model::PaymentInfoPlugin.new(to_big_decimal(payment_response.amount),
                                                        to_joda_date_time(payment_response.created_date),
                                                        to_joda_date_time(payment_response.effective_date),
                                                        to_payment_plugin_status(payment_response.status),
@@ -45,7 +45,7 @@ module Killbill
         end
 
         def to_refund_info_plugin(refund_response)
-          Killbill::Plugin::Gen::RefundInfoPlugin.new(to_big_decimal(refund_response.amount),
+          Killbill::Plugin::Model::RefundInfoPlugin.new(to_big_decimal(refund_response.amount),
                                                       to_joda_date_time(refund_response.created_date),
                                                       to_joda_date_time(refund_response.effective_date),
                                                       to_refund_plugin_status(refund_response.status),
@@ -57,10 +57,10 @@ module Killbill
         def to_payment_method_response(pm)
           props = java.util.ArrayList.new
           pm.properties.each do |p|
-            jp = Killbill::Plugin::Gen::PaymentMethodKVInfo.new(p.is_updatable, p.key, p.value)
+            jp = Killbill::Plugin::Model::PaymentMethodKVInfo.new(p.is_updatable, p.key, p.value)
             @props.add(jp)
           end
-          Killbill::Plugin::Gen::PaymentMethodPlugin.new(to_string(pm.external_payment_method_id),
+          Killbill::Plugin::Model::PaymentMethodPlugin.new(to_string(pm.external_payment_method_id),
                                                          to_boolean(pm.is_default_payment_method),
                                                          props,
                                                          nil,
@@ -79,7 +79,7 @@ module Killbill
         end
 
         def to_payment_method_info_plugin(pm)
-          Killbill::Plugin::Gen::PaymentMethodInfoPlugin.new(to_uuid(pm.account_id),
+          Killbill::Plugin::Model::PaymentMethodInfoPlugin.new(to_uuid(pm.account_id),
                                                              to_uuid(pm.payment_method_id),
                                                              to_boolean(pm.is_default),
                                                              to_string(pm.external_payment_method_id))
@@ -90,17 +90,17 @@ module Killbill
           if currency.nil?
             return nil
           end
-          if currency == Killbill::Plugin::Gen::Currency::GBP
+          if currency == Killbill::Plugin::Model::Currency::GBP
              return Java::com.ning.billing.catalog.api.Currency::GBP
-          elsif currency == Killbill::Plugin::Gen::Currency::MXN
+          elsif currency == Killbill::Plugin::Model::Currency::MXN
             return Java::com.ning.billing.catalog.api.Currency::MXN
-          elsif currency == Killbill::Plugin::Gen::Currency::BRL
+          elsif currency == Killbill::Plugin::Model::Currency::BRL
               return Java::com.ning.billing.catalog.api.Currency::BRL
-          elsif currency == Killbill::Plugin::Gen::Currency::EUR
+          elsif currency == Killbill::Plugin::Model::Currency::EUR
               return Java::com.ning.billing.catalog.api.Currency::EUR
-          elsif currency == Killbill::Plugin::Gen::Currency::AUD
+          elsif currency == Killbill::Plugin::Model::Currency::AUD
               return Java::com.ning.billing.catalog.api.Currency::AUD
-          elsif currency == Killbill::Plugin::Gen::Currency::USD
+          elsif currency == Killbill::Plugin::Model::Currency::USD
               return Java::com.ning.billing.catalog.api.Currency::USD
           end
           nil
@@ -110,7 +110,7 @@ module Killbill
           if date_time_zone.nil?
             return nil
           end
-          if date_time_zone == Killbill::Plugin::Gen::DateTimeZone::UTC
+          if date_time_zone == Killbill::Plugin::Model::DateTimeZone::UTC
             return org.joda.time.DateTimeZone::UTC
           end
           nil
@@ -130,9 +130,9 @@ module Killbill
         end
 
         def to_payment_plugin_status(status)
-          if status == Killbill::Plugin::Gen::PaymentPluginStatus::PROCESSED
+          if status == Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED
             Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::PROCESSED
-          elsif status == Killbill::Plugin::Gen::PaymentPluginStatus::ERROR
+          elsif status == Killbill::Plugin::Model::PaymentPluginStatus::ERROR
             Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::ERROR
           else
             Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::UNDEFINED
@@ -140,9 +140,9 @@ module Killbill
         end
 
         def to_refund_plugin_status(status)
-          if status == Killbill::Plugin::Gen::RefundPluginStatus::PROCESSED
+          if status == Killbill::Plugin::Model::RefundPluginStatus::PROCESSED
             Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::PROCESSED
-          elsif status == Killbill::Plugin::Gen::RefundPluginStatus::ERROR
+          elsif status == Killbill::Plugin::Model::RefundPluginStatus::ERROR
             Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::ERROR
           else
             Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::UNDEFINED
@@ -164,7 +164,7 @@ module Killbill
 
 
         def from_account(data)
-          Killbill::Plugin::Gen::Account.new(from_uuid(data.id),
+          Killbill::Plugin::Model::Account.new(from_uuid(data.id),
                                             nil,
                                             #from_blocking_state(data.blocking_state),
                                             from_joda_date_time(data.created_date),
@@ -201,17 +201,17 @@ module Killbill
             return nil
           end
           if currency == Java::com.ning.billing.catalog.api.Currency::GBP
-             return Killbill::Plugin::Gen::Currency::GBP
+             return Killbill::Plugin::Model::Currency::GBP
           elsif currency == Java::com.ning.billing.catalog.api.Currency::MXN
-            return Killbill::Plugin::Gen::Currency::MXN
+            return Killbill::Plugin::Model::Currency::MXN
           elsif currency == Java::com.ning.billing.catalog.api.Currency::BRL
-              return Killbill::Plugin::Gen::Currency::BRL
+              return Killbill::Plugin::Model::Currency::BRL
           elsif currency == Java::com.ning.billing.catalog.api.Currency::EUR
-              return Killbill::Plugin::Gen::Currency::EUR
+              return Killbill::Plugin::Model::Currency::EUR
           elsif currency == Java::com.ning.billing.catalog.api.Currency::AUD
-              return Killbill::Plugin::Gen::Currency::AUD
+              return Killbill::Plugin::Model::Currency::AUD
           elsif currency == Java::com.ning.billing.catalog.api.Currency::USD
-              return Killbill::Plugin::Gen::Currency::USD
+              return Killbill::Plugin::Model::Currency::USD
           end
           nil
         end
@@ -221,13 +221,13 @@ module Killbill
             return nil
           end
           if date_time_zone == org.joda.time.DateTimeZone::UTC
-            return Killbill::Plugin::Gen::DateTimeZone::UTC
+            return Killbill::Plugin::Model::DateTimeZone::UTC
           end
           nil
         end
 
         def from_uuid(uuid)
-           uuid.nil? ? nil : Killbill::Plugin::Gen::UUID.new(uuid.to_s)
+           uuid.nil? ? nil : Killbill::Plugin::Model::UUID.new(uuid.to_s)
         end
 
         def from_joda_date_time(joda_time)
@@ -246,21 +246,21 @@ module Killbill
 
         def from_payment_plugin_status(status)
           if status == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::PROCESSED
-            Killbill::Plugin::Gen::PaymentPluginStatus::PROCESSED
+            Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED
           elsif status == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::ERROR
-            Killbill::Plugin::Gen::PaymentPluginStatus::ERROR
+            Killbill::Plugin::Model::PaymentPluginStatus::ERROR
           else
-            Killbill::Plugin::Gen::PaymentPluginStatus::UNDEFINED
+            Killbill::Plugin::Model::PaymentPluginStatus::UNDEFINED
           end
         end
 
         def from_refund_plugin_status(status)
           if status == Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::PROCESSED
-            Killbill::Plugin::Gen::RefundPluginStatus::PROCESSED
+            Killbill::Plugin::Model::RefundPluginStatus::PROCESSED
           elsif status == Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::ERROR
-            Killbill::Plugin::Gen::RefundPluginStatus::ERROR
+            Killbill::Plugin::Model::RefundPluginStatus::ERROR
           else
-            Killbill::Plugin::Gen::RefundPluginStatus::UNDEFINED
+            Killbill::Plugin::Model::RefundPluginStatus::UNDEFINED
           end
         end
 
@@ -283,12 +283,12 @@ module Killbill
             key = from_string(p.key)
             value = from_string(p.value)
             is_updatable = from_boolean(p.is_updatable)
-            props << Killbill::Plugin::Gen::PaymentMethodKVInfo.new(is_updatable, key, value)
+            props << Killbill::Plugin::Model::PaymentMethodKVInfo.new(is_updatable, key, value)
           end
 
           pmid = from_string(pm.external_payment_method_id)
           default = from_boolean(pm.is_default_payment_method)
-          Killbill::Plugin::Gen::PaymentMethodPlugin.new(from_string(pm.external_payment_method_id),
+          Killbill::Plugin::Model::PaymentMethodPlugin.new(from_string(pm.external_payment_method_id),
                                                          from_boolean(pm.is_default_payment_method),
                                                          props,
                                                          nil,
@@ -307,7 +307,7 @@ module Killbill
         end
 
         def from_payment_method_info_plugin(pm)
-          Killbill::Plugin::Gen::PaymentMethodInfoPlugin.new(from_uuid(pm.account_id),
+          Killbill::Plugin::Model::PaymentMethodInfoPlugin.new(from_uuid(pm.account_id),
                                                              from_uuid(pm.payment_method_id),
                                                              from_boolean(pm.is_default),
                                                              from_string(pm.external_payment_method_id))
@@ -315,7 +315,7 @@ module Killbill
 
 
         def from_ext_bus_event(event)
-          Killbill::Plugin::Gen::ExtBusEvent.new(from_bus_event_type(event.event_type),
+          Killbill::Plugin::Model::ExtBusEvent.new(from_bus_event_type(event.event_type),
                           from_object_type(event.object_type),
                           from_uuid(event.object_id),
                           from_uuid(event.account_id),
@@ -324,77 +324,77 @@ module Killbill
 
         def from_object_type(type)
           if type ==  Java::com.ning.billing.ObjectType::ACCOUNT
-            Killbill::Plugin::Gen::ObjectType::ACCOUNT
+            Killbill::Plugin::Model::ObjectType::ACCOUNT
           elsif type ==  Java::com.ning.billing.ObjectType::ACCOUNT_EMAIL
-              Killbill::Plugin::Gen::ObjectType::ACCOUNT_EMAIL
+              Killbill::Plugin::Model::ObjectType::ACCOUNT_EMAIL
           elsif  type ==  Java::com.ning.billing.ObjectType::BLOCKING_STATES
-              Killbill::Plugin::Gen::ObjectType::BLOCKING_STATES
+              Killbill::Plugin::Model::ObjectType::BLOCKING_STATES
           elsif type ==  Java::com.ning.billing.ObjectType::BUNDLE
-              Killbill::Plugin::Gen::ObjectType::BUNDLE
+              Killbill::Plugin::Model::ObjectType::BUNDLE
           elsif  type ==  Java::com.ning.billing.ObjectType::CUSTOM_FIELD
-              Killbill::Plugin::Gen::ObjectType::CUSTOM_FIELD
+              Killbill::Plugin::Model::ObjectType::CUSTOM_FIELD
           elsif type ==  Java::com.ning.billing.ObjectType::INVOICE
-              Killbill::Plugin::Gen::ObjectType::INVOICE
+              Killbill::Plugin::Model::ObjectType::INVOICE
           elsif  type ==  Java::com.ning.billing.ObjectType::PAYMENT
-              Killbill::Plugin::Gen::ObjectType::PAYMENT
+              Killbill::Plugin::Model::ObjectType::PAYMENT
           elsif type ==  Java::com.ning.billing.ObjectType::INVOICE_ITEM
-              Killbill::Plugin::Gen::ObjectType::INVOICE_ITEM
+              Killbill::Plugin::Model::ObjectType::INVOICE_ITEM
           elsif  type ==  Java::com.ning.billing.ObjectType::INVOICE_PAYMENT
-              Killbill::Plugin::Gen::ObjectType::INVOICE_PAYMENT
+              Killbill::Plugin::Model::ObjectType::INVOICE_PAYMENT
           elsif type ==  Java::com.ning.billing.ObjectType::SUBSCRIPTION
-              Killbill::Plugin::Gen::ObjectType::SUBSCRIPTION
+              Killbill::Plugin::Model::ObjectType::SUBSCRIPTION
           elsif  type ==  Java::com.ning.billing.ObjectType::SUBSCRIPTION_EVENT
-              Killbill::Plugin::Gen::ObjectType::SUBSCRIPTION_EVENT
+              Killbill::Plugin::Model::ObjectType::SUBSCRIPTION_EVENT
           elsif type ==  Java::com.ning.billing.ObjectType::PAYMENT_ATTEMPT
-              Killbill::Plugin::Gen::ObjectType::PAYMENT_ATTEMPT
+              Killbill::Plugin::Model::ObjectType::PAYMENT_ATTEMPT
           elsif  type ==  Java::com.ning.billing.ObjectType::PAYMENT_METHOD
-              Killbill::Plugin::Gen::ObjectType::PAYMENT_METHOD
+              Killbill::Plugin::Model::ObjectType::PAYMENT_METHOD
           elsif type ==  Java::com.ning.billing.ObjectType::REFUND
-              Killbill::Plugin::Gen::ObjectType::REFUND
+              Killbill::Plugin::Model::ObjectType::REFUND
           elsif type ==  Java::com.ning.billing.ObjectType::TAG
-            Killbill::Plugin::Gen::ObjectType::TAG
+            Killbill::Plugin::Model::ObjectType::TAG
           elsif type ==  Java::com.ning.billing.ObjectType::TAG_DEFINITION
-              Killbill::Plugin::Gen::ObjectType::TAG_DEFINITION
+              Killbill::Plugin::Model::ObjectType::TAG_DEFINITION
           elsif  type ==  Java::com.ning.billing.ObjectType::TENANT
-              Killbill::Plugin::Gen::ObjectType::TENANT
+              Killbill::Plugin::Model::ObjectType::TENANT
           else
-              Killbill::Plugin::Gen::ObjectType::TENANT_KVS
+              Killbill::Plugin::Model::ObjectType::TENANT_KVS
           end
         end
 
         def from_bus_event_type(type)
           if type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::ACCOUNT_CREATION
-            Killbill::Plugin::Gen::ExtBusEventType::ACCOUNT_CREATION
+            Killbill::Plugin::Model::ExtBusEventType::ACCOUNT_CREATION
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::ACCOUNT_CHANGE
-              Killbill::Plugin::Gen::ExtBusEventType::ACCOUNT_CHANGE
+              Killbill::Plugin::Model::ExtBusEventType::ACCOUNT_CHANGE
           elsif  type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_CREATION
-              Killbill::Plugin::Gen::ExtBusEventType::SUBSCRIPTION_CREATION
+              Killbill::Plugin::Model::ExtBusEventType::SUBSCRIPTION_CREATION
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_PHASE
-              Killbill::Plugin::Gen::ExtBusEventType::SUBSCRIPTION_PHASE
+              Killbill::Plugin::Model::ExtBusEventType::SUBSCRIPTION_PHASE
           elsif  type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_CHANGE
-              Killbill::Plugin::Gen::ExtBusEventType::SUBSCRIPTION_CHANGE
+              Killbill::Plugin::Model::ExtBusEventType::SUBSCRIPTION_CHANGE
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_CANCEL
-              Killbill::Plugin::Gen::ExtBusEventType::SUBSCRIPTION_CANCEL
+              Killbill::Plugin::Model::ExtBusEventType::SUBSCRIPTION_CANCEL
           elsif  type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_UNCANCEL
-              Killbill::Plugin::Gen::ExtBusEventType::SUBSCRIPTION_UNCANCEL
+              Killbill::Plugin::Model::ExtBusEventType::SUBSCRIPTION_UNCANCEL
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::OVERDUE_CHANGE
-              Killbill::Plugin::Gen::ExtBusEventType::OVERDUE_CHANGE
+              Killbill::Plugin::Model::ExtBusEventType::OVERDUE_CHANGE
           elsif  type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_CREATION
-              Killbill::Plugin::Gen::ExtBusEventType::INVOICE_CREATION
+              Killbill::Plugin::Model::ExtBusEventType::INVOICE_CREATION
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_ADJUSTMENT
-              Killbill::Plugin::Gen::ExtBusEventType::INVOICE_ADJUSTMENT
+              Killbill::Plugin::Model::ExtBusEventType::INVOICE_ADJUSTMENT
           elsif  type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::PAYMENT_SUCCESS
-              Killbill::Plugin::Gen::ExtBusEventType::PAYMENT_SUCCESS
+              Killbill::Plugin::Model::ExtBusEventType::PAYMENT_SUCCESS
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::PAYMENT_FAILED
-              Killbill::Plugin::Gen::ExtBusEventType::PAYMENT_FAILED
+              Killbill::Plugin::Model::ExtBusEventType::PAYMENT_FAILED
           elsif  type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::TAG_CREATION
-              Killbill::Plugin::Gen::ExtBusEventType::TAG_CREATION
+              Killbill::Plugin::Model::ExtBusEventType::TAG_CREATION
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::TAG_DELETION
-              Killbill::Plugin::Gen::ExtBusEventType::TAG_DELETION
+              Killbill::Plugin::Model::ExtBusEventType::TAG_DELETION
           elsif type ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::CUSTOM_FIELD_CREATION
-              Killbill::Plugin::Gen::ExtBusEventType::CUSTOM_FIELD_CREATION
+              Killbill::Plugin::Model::ExtBusEventType::CUSTOM_FIELD_CREATION
           else
-              Killbill::Plugin::Gen::ExtBusEventType::CUSTOM_FIELD_DELETION
+              Killbill::Plugin::Model::ExtBusEventType::CUSTOM_FIELD_DELETION
           end
         end
 

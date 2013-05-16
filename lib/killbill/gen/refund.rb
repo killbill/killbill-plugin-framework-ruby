@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class Refund
+
+        include com.ning.billing.payment.api.Refund
 
         attr_reader :id, :created_date, :updated_date, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :plugin_detail
 

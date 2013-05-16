@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class AuditLog
+
+        include com.ning.billing.util.audit.AuditLog
 
         attr_reader :id, :created_date, :updated_date, :change_type, :user_name, :reason_code, :user_token, :comment
 

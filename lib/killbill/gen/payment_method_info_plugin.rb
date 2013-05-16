@@ -4,11 +4,10 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class PaymentMethodInfoPlugin
 
-        # TODO STEPH added by hand
         include com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin
 
         attr_reader :account_id, :payment_method_id, :is_default, :external_payment_method_id

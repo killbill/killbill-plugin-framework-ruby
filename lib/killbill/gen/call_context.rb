@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class CallContext
+
+        include com.ning.billing.util.callcontext.CallContext
 
         attr_reader :tenant_id, :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date
 

@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class PaymentInfoPlugin
+
+        include com.ning.billing.payment.plugin.api.PaymentInfoPlugin
 
         attr_reader :amount, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_payment_reference_id, :second_payment_reference_id
 

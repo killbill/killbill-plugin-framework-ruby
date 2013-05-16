@@ -3,7 +3,7 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class UUID
 

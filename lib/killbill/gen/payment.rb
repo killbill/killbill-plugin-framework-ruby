@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class Payment
+
+        include com.ning.billing.payment.api.Payment
 
         attr_reader :id, :created_date, :updated_date, :account_id, :invoice_id, :payment_method_id, :payment_number, :amount, :paid_amount, :effective_date, :currency, :payment_status, :attempts, :ext_first_payment_id_ref, :ext_second_payment_id_ref, :payment_info_plugin
 

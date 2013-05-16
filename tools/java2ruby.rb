@@ -51,10 +51,11 @@ end
 
 class Pojo
 
-  attr_accessor :name, :fields
+  attr_accessor :name, :package,  :fields
 
-  def initialize
+  def initialize(dummy=nil)
      @name = nil
+     @package = nil
      @fields = []
   end
 end
@@ -73,7 +74,7 @@ class PojoEnum < Pojo
     out.write("\#\n")
     out.write("module Killbill\n")
     out.write("  module Plugin\n")
-    out.write("    module Gen\n")
+    out.write("    module Model\n")
     out.write("\n")
     out.write("      module #{name}\n")
     out.write("\n")
@@ -98,12 +99,13 @@ class PojoEnum < Pojo
 
 end
 
-class PojoIfce < Pojo
+class PojoIfceOrClass < Pojo
 
-  attr_accessor :parents
+  attr_accessor :interface, :parents
 
-  def initialize
+  def initialize(is_interface)
     super
+    @interface = is_interface
     @parents = []
   end
 
@@ -114,10 +116,14 @@ class PojoIfce < Pojo
     out.write("\#\n")
     out.write("module Killbill\n")
     out.write("  module Plugin\n")
-    out.write("    module Gen\n")
+    out.write("    module Model\n")
     out.write("\n")
     out.write("      class #{name}\n")
     out.write("\n")
+    if @interface
+      out.write("        include #{@package}.#{@name}\n")
+      out.write("\n")
+    end
     out.write("        attr_reader #{fields.collect { |i| ":#{i}"}.join(", ")}\n")
     out.write("\n")
     out.write("        def initialize(#{@fields.join(", ")})\n")
@@ -159,15 +165,23 @@ class Visitor
   def initialize
     @pojo = nil
   end
-
-  def create_interface(name)
-    @pojo = PojoIfce.new
+  
+  def create_interface(name, package)
+    @pojo = PojoIfceOrClass.new(true)
     @pojo.name = name
+    @pojo.package = package
   end
 
-  def create_enum(name)
+  def create_class(name, package)
+    @pojo = PojoIfceOrClass.new(false)
+    @pojo.name = name
+    @pojo.package = package
+  end
+
+  def create_enum(name, package)
     @pojo = PojoEnum.new
     @pojo.name = name
+    @pojo.package = package
   end
 
   def add_parents(parents)
@@ -206,7 +220,7 @@ class Generator
 
     parent_ifces = []
     pojos.each do |pojo|
-      if pojo.is_a? PojoIfce
+      if pojo.is_a? PojoIfceOrClass
         (parent_ifces << pojo.parents).flatten!
       end
     end
@@ -246,19 +260,27 @@ class Generator
 
       is_enum = false
       is_interface = false
+      is_class = false
+      package = nil
       while (line = f.gets)
 
-        # Interface
-        re = /public\s+(?:interface|class)\s+(\w+)\s+(extends(?:\w|,|\s|<|>)+){0,1}\s*{\s*/
+        # Package
+        re = /\s*package\s+((?:\w|\.)+)\s*;/
         if re.match(line)
-          interface = $1
-          visitor.create_interface(interface)
-          is_interface = true
-
-          if ! $2.nil?
-
+          package = $1
+        end
+        
+        # Interface
+        re = /public\s+(interface|class)\s+(\w+)\s+(extends(?:\w|,|\s|<|>)+){0,1}\s*{\s*/
+        if re.match(line)
+          is_interface = ($1 == "interface")
+          is_class = ($1 == "class")
+          name = $2
+          visitor.create_interface(name, package) if is_interface
+          visitor.create_class(name, package) if is_class
+          if ! $3.nil?
             re = /\s*extends\s+(.*)/
-            extends_ifces = $2
+            extends_ifces = $3
             if re.match(extends_ifces)
               # extract each parent and remove trailing, leading space
               parents = $1.split(",").collect { |e| e.strip}
@@ -274,14 +296,14 @@ class Generator
         re = /public\s+enum\s+(\w+)\s+/
         if re.match(line)
           enum_name = $1
-          visitor.create_enum(enum_name)
+          visitor.create_enum(enum_name, package)
           is_enum = true
           is_enum_complete = false
         end
 
         # Non static getters for interfaces
         re = /(?:public){0,1}\s+(?:static\s+(?:\w|<|>)+)\s+(?:get|is).*/
-        if is_interface && !re.match(line)
+        if (is_interface || is_class) && !re.match(line)
           re = /(?:public){0,1}\s+(?:(?:\w|<|>)+)\s+get(\w+)()\s*/
           if re.match(line)
             visitor.add_getter($1)

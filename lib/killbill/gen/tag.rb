@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class Tag
+
+        include com.ning.billing.util.tag.Tag
 
         attr_reader :id, :created_date, :updated_date, :tag_definition_id, :object_type, :object_id
 

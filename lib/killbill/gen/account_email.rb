@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class AccountEmail
+
+        include com.ning.billing.account.api.AccountEmail
 
         attr_reader :id, :created_date, :updated_date, :account_id, :email
 

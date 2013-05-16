@@ -82,9 +82,9 @@ module Killbill
 
       def convert_args(api, args)
         args.collect! do |a|
-          if a.is_a? Killbill::Plugin::Gen::AccountData
+          if a.is_a? Killbill::Plugin::Model::AccountData
             return JConverter.to_account_data(a)
-          elsif a.is_a? Killbill::Plugin::Gen::UUID
+          elsif a.is_a? Killbill::Plugin::Model::UUID
             return JConverter.to_uuid(a)
           else
             a
@@ -94,15 +94,15 @@ module Killbill
 
 
       def create_tenant_context(tenant_id)
-        Killbill::Plugin::Gen::TenantContext.new(0)
+        Killbill::Plugin::Model::TenantContext.new(0)
       end
 
       def create_call_context(tenant_id, user_token, reason_code, comments)
         user_token = user_token.nil? ? java.util.UUID.randomUUID() : to_uuid(user_token)
         created_date = org.joda.time.DateTime.new(org.joda.time.DateTimeZone::UTC)
         updated_date = created_date
-
-        Killbill::Plugin::Gen::CallContext.new(tenant_id,
+#user_token, user_name, call_origin, user_type, reason_code, comments, created_date, updated_date
+        Killbill::Plugin::Model::CallContext.new(tenant_id,
                                                user_token,
                                                @plugin_name,
                                                Java::com.ning.billing.util.callcontext.CallOrigin::EXTERNAL,

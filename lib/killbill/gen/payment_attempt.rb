@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class PaymentAttempt
+
+        include com.ning.billing.payment.api.PaymentAttempt
 
         attr_reader :id, :created_date, :updated_date, :effective_date, :gateway_error_code, :gateway_error_msg, :payment_status
 

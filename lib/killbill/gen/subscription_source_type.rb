@@ -4,7 +4,7 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       module SubscriptionSourceType
 

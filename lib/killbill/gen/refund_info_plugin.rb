@@ -4,9 +4,11 @@
 #
 module Killbill
   module Plugin
-    module Gen
+    module Model
 
       class RefundInfoPlugin
+
+        include com.ning.billing.payment.plugin.api.RefundInfoPlugin
 
         attr_reader :amount, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :reference_id
 
