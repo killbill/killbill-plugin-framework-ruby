@@ -8,9 +8,9 @@ module Killbill
 
       class Payment
 
-        attr_reader :id, :created_date, :updated_date, :account_id, :invoice_id, :payment_method_id, :payment_number, :amount, :paid_amount, :effective_date, :currency, :payment_status, :ext_first_payment_id_ref, :ext_second_payment_id_ref, :payment_info_plugin
+        attr_reader :id, :created_date, :updated_date, :account_id, :invoice_id, :payment_method_id, :payment_number, :amount, :paid_amount, :effective_date, :currency, :payment_status, :attempts, :ext_first_payment_id_ref, :ext_second_payment_id_ref, :payment_info_plugin
 
-        def initialize(id, created_date, updated_date, account_id, invoice_id, payment_method_id, payment_number, amount, paid_amount, effective_date, currency, payment_status, ext_first_payment_id_ref, ext_second_payment_id_ref, payment_info_plugin)
+        def initialize(id, created_date, updated_date, account_id, invoice_id, payment_method_id, payment_number, amount, paid_amount, effective_date, currency, payment_status, attempts, ext_first_payment_id_ref, ext_second_payment_id_ref, payment_info_plugin)
           @id = id
           @created_date = created_date
           @updated_date = updated_date
@@ -23,6 +23,7 @@ module Killbill
           @effective_date = effective_date
           @currency = currency
           @payment_status = payment_status
+          @attempts = attempts
           @ext_first_payment_id_ref = ext_first_payment_id_ref
           @ext_second_payment_id_ref = ext_second_payment_id_ref
           @payment_info_plugin = payment_info_plugin

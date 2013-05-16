@@ -6,11 +6,10 @@ module Killbill
   module Plugin
     module Gen
 
-      module SubscriptionSourceType
+      module SubscriptionState
 
-        NATIVE = 0
-        MIGRATED = 1
-        TRANSFERED = 2
+        ACTIVE = 0
+        CANCELLED = 1
       end
     end
   end

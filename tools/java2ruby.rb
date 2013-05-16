@@ -14,10 +14,13 @@ INTERFACES = ["Account",
               "ExtBusEventType",
               "ObjectType",
               "Subscription",
+              "SubscriptionState",
+              "SubscriptionSourceType",
               "SubscriptionBundle",
               "Invoice",
               "InvoiceItem",
               "InvoicePayment",
+              "InvoicePaymentType",
               "Payment",
               "PaymentAttempt",
               "Refund",
@@ -35,8 +38,6 @@ INTERFACES = ["Account",
               "PaymentMethodKVInfo",
               "PaymentMethodPlugin",
               "PaymentMethodInfoPlugin"]
-
-#INTERFACES = ["ObjectType"]
 
 
 class String

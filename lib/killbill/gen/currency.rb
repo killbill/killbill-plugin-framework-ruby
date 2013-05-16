@@ -14,7 +14,6 @@ module Killbill
         EUR = 3
         AUD = 4
         USD = 5
-        CAD = 6
       end
     end
   end

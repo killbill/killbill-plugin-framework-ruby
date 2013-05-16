@@ -10,6 +10,7 @@ module Killbill
 
         ATTEMPT = 0
         CHARGED_BACK = 1
+        REFUND = 2
       end
     end
   end

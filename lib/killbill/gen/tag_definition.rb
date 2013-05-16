@@ -8,15 +8,16 @@ module Killbill
 
       class TagDefinition
 
-        attr_reader :id, :created_date, :updated_date, :name, :description, :is_control_tag
+        attr_reader :id, :created_date, :updated_date, :name, :description, :is_control_tag, :applicable_object_types
 
-        def initialize(id, created_date, updated_date, name, description, is_control_tag)
+        def initialize(id, created_date, updated_date, name, description, is_control_tag, applicable_object_types)
           @id = id
           @created_date = created_date
           @updated_date = updated_date
           @name = name
           @description = description
           @is_control_tag = is_control_tag
+          @applicable_object_types = applicable_object_types
         end
       end
     end
