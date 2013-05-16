@@ -92,7 +92,8 @@ module Killbill
            elsif a.java_kind_of? java.util.UUID
              JConverter.from_uuid(a)
            elsif a.java_kind_of? java.math.BigDecimal
-             JConverter.from_big_decimal(a)
+             # A bit fragile if what we recieve is not a price...
+             JConverter.from_big_decimal_with_cents_conversion(a)
            elsif a.java_kind_of? Java::com.ning.billing.catalog.api.Currency
              a.to_string
            elsif a.java_kind_of? Java::com.ning.billing.payment.api.PaymentMethodPlugin

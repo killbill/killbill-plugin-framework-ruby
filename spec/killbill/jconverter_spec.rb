@@ -64,7 +64,7 @@ describe Killbill::Plugin::JConverter do
         12376 => '12.376',
         -532 => '-5.32'
       }.each do |input,output|
-        output = Killbill::Plugin::JConverter.to_big_decimal(input)
+        output = Killbill::Plugin::JConverter.to_big_decimal_with_cents_conversion(input)
         output.should be_an_instance_of java.math.BigDecimal
         output.to_s.should == output.to_s
       end
@@ -147,7 +147,7 @@ describe Killbill::Plugin::JConverter do
 
     it "should_test_big_decimal_from_converter" do
       input = java.math.BigDecimal::TEN
-      output = Killbill::Plugin::JConverter.from_big_decimal(input)
+      output = Killbill::Plugin::JConverter.from_big_decimal_with_cents_conversion(input)
       output.should be_an_instance_of Fixnum
       output.to_s.should == "1000"
     end

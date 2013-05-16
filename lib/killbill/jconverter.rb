@@ -34,7 +34,7 @@ module Killbill
         end
 
         def to_payment_info_plugin(payment_response)
-          Killbill::Plugin::Model::PaymentInfoPlugin.new(to_big_decimal(payment_response.amount),
+          Killbill::Plugin::Model::PaymentInfoPlugin.new(to_big_decimal_with_cents_conversion(payment_response.amount),
                                                        to_joda_date_time(payment_response.created_date),
                                                        to_joda_date_time(payment_response.effective_date),
                                                        to_payment_plugin_status(payment_response.status),
@@ -45,7 +45,7 @@ module Killbill
         end
 
         def to_refund_info_plugin(refund_response)
-          Killbill::Plugin::Model::RefundInfoPlugin.new(to_big_decimal(refund_response.amount),
+          Killbill::Plugin::Model::RefundInfoPlugin.new(to_big_decimal_with_cents_conversion(refund_response.amount),
                                                       to_joda_date_time(refund_response.created_date),
                                                       to_joda_date_time(refund_response.effective_date),
                                                       to_refund_plugin_status(refund_response.status),
@@ -149,7 +149,7 @@ module Killbill
           end
         end
 
-        def to_big_decimal(amount_in_cents)
+        def to_big_decimal_with_cents_conversion(amount_in_cents)
           amount_in_cents.nil? ? java.math.BigDecimal::ZERO : java.math.BigDecimal.new('%.2f' % (amount_in_cents.to_i/100.0))
         end
 
@@ -312,7 +312,7 @@ module Killbill
           end
         end
 
-        def from_big_decimal(big_decimal)
+        def from_big_decimal_with_cents_conversion(big_decimal)
           big_decimal.nil? ? 0 : big_decimal.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
         end
 
