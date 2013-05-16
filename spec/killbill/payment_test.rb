@@ -12,7 +12,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          PaymentResponse.new(amount_in_cents, DateTime.now, DateTime.now, PaymentStatus::SUCCESS, "gateway_error", "gateway_error_code")
+          Killbill::Plugin::Gen::PaymentInfoPlugin.new(amount_in_cents, DateTime.now, DateTime.now, Killbill::Plugin::Gen::PaymentPluginStatus::PROCESSED, "gateway_error", "gateway_error_code", nil, nil)
         end
       end
 
@@ -20,7 +20,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          PaymentResponse.new(0, DateTime.now, DateTime.now, PaymentStatus::SUCCESS, "gateway_error", "gateway_error_code")
+          Killbill::Plugin::Gen::PaymentInfoPlugin.new(0, DateTime.now, DateTime.now, Killbill::Plugin::Gen::PaymentPluginStatus::PROCESSED, "gateway_error", "gateway_error_code", nil, nil)
         end
       end
 
@@ -28,7 +28,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          RefundResponse.new(amount_in_cents, DateTime.now, DateTime.now, PaymentStatus::SUCCESS, "gateway_error", "gateway_error_code")
+          Killbill::Plugin::Gen::RefundInfoPlugin.new(5000, DateTime.now, DateTime.now, Killbill::Plugin::Gen::RefundPluginStatus::PROCESSED, "gateway_error", "gateway_error_code", nil)
         end
       end
 
@@ -48,7 +48,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          PaymentMethodResponse.new("foo", true, [])
+          Killbill::Plugin::Gen::PaymentMethodPlugin.new("foo", true, [], nil, "type", "cc_name", "cc_type", "cc_expiration_month", "cc_expiration_year", "cc_last4", "address1", "address2", "city", "state", "zip", "country")
         end
       end
 
@@ -62,7 +62,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          [PaymentMethodResponseInternal.new(kb_account_id, kb_account_id, true, "external_payment_method_id")]
+          [Killbill::Plugin::Gen::PaymentMethodInfoPlugin.new(kb_account_id, kb_account_id, true, "external_payment_method_id")]
         end
       end
 

@@ -4,7 +4,6 @@ require 'singleton'
 
 require 'killbill/creator'
 require 'killbill/plugin'
-require 'killbill/jresponse/jevent'
 
 include Java
 

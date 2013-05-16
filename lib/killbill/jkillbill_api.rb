@@ -57,7 +57,7 @@ module Killbill
       def do_call_handle_exception(delegate_service, method_name, *args)
         begin
           # STEPH TODO hack tenant_id
-          call_context = create_call_context(0, nil, nil, nil)
+          call_context = create_call_context(nil, nil, nil, nil)
           jargs = convert_args(method_name, args)
           #puts "JARGS = #{jargs}"
           res = delegate_service.send(method_name, *jargs, call_context)

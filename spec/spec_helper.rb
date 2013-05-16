@@ -1,3 +1,5 @@
+
+
 require 'java'
 
 require 'bundler'
@@ -10,8 +12,6 @@ require 'killbill/http_servlet'
 
 require 'killbill/payment_test'
 require 'killbill/notification_test'
-
-require 'killbill/gen/require_gen.rb'
 
 
 %w(

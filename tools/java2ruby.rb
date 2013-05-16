@@ -5,13 +5,14 @@ require 'optparse'
 # Relative path from Killbill repo
 API_DIR_SRC="api/src/main/java"
 
-
 # Interfaces to consider
 INTERFACES = ["Account",
               "AccountData",
               "AccountEmail",
               "BlockingState",
               "ExtBusEvent",
+              "ExtBusEventType",
+              "ObjectType",
               "Subscription",
               "SubscriptionBundle",
               "Invoice",
@@ -26,7 +27,17 @@ INTERFACES = ["Account",
               "CustomField",
               "Tag",
               "TagDefinition",
-              "Currency"]
+              "Currency",
+              "PaymentInfoPlugin",
+              "PaymentPluginStatus",
+              "RefundInfoPlugin",
+              "RefundPluginStatus",
+              "PaymentMethodKVInfo",
+              "PaymentMethodPlugin",
+              "PaymentMethodInfoPlugin"]
+
+#INTERFACES = ["ObjectType"]
+
 
 class String
    def snake_case
@@ -237,7 +248,7 @@ class Generator
       while (line = f.gets)
 
         # Interface
-        re = /public\s+interface\s+(\w+)\s+(extends(?:\w|,|\s|<|>)+){0,1}\s*{\s*/
+        re = /public\s+(?:interface|class)\s+(\w+)\s+(extends(?:\w|,|\s|<|>)+){0,1}\s*{\s*/
         if re.match(line)
           interface = $1
           visitor.create_interface(interface)
@@ -264,25 +275,29 @@ class Generator
           enum_name = $1
           visitor.create_enum(enum_name)
           is_enum = true
+          is_enum_complete = false
         end
 
         # Non static getters for interfaces
-        re = /(?:public){0,1}\s+(?:static\s+\w+)\s+(?:get|is).*/
+        re = /(?:public){0,1}\s+(?:static\s+(?:\w|<|>)+)\s+(?:get|is).*/
         if is_interface && !re.match(line)
-          re = /(?:public){0,1}\s+(?:\w+)\s+get(\w+)()\s*/
+          re = /(?:public){0,1}\s+(?:(?:\w|<|>)+)\s+get(\w+)()\s*/
           if re.match(line)
             visitor.add_getter($1)
           end
-          re = /(?:public){0,1}\s+(?:\w+)\s+(is\w+)()\s*/
+          re = /(?:public){0,1}\s+(?:(?:\w|<|>)+)\s+(is\w+)()\s*/
           if re.match(line)
             visitor.add_getter($1)
           end
         end
 
         # Enum fields
-        re = /\s+(\w+)(?:\((?:\w|\s)+\)){0,1}\s*(?:,|;){1}/
-        if is_enum && re.match(line)
+        re = /\s+((?:\w|_)+)(?:\((?:\w|\s|\")+\)){0,1}\s*(,|;){1}/
+        if !is_enum_complete && is_enum && re.match(line)
           visitor.add_enum_field($1.strip)
+          if $2 == ';'
+            is_enum_complete = true
+          end
         end
       end
     end

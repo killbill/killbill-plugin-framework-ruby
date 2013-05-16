@@ -1,9 +1,4 @@
 require 'killbill/plugin'
-require 'killbill/response/payment_status'
-require 'killbill/response/payment_response'
-require 'killbill/response/refund_response'
-require 'killbill/response/payment_method_response'
-require 'killbill/response/payment_method_response_internal'
 
 module Killbill
   module Plugin

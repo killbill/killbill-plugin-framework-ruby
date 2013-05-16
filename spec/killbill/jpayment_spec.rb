@@ -21,10 +21,10 @@ describe Killbill::Plugin::JPayment do
 
   it "should_test_charge_ok" do
     output = @jpayment.process_payment(@kb_account_id, @kb_payment_id, @kb_payment_method_id, @amount, @currency)
-    output.get_amount.should be_an_instance_of java.math.BigDecimal
-    output.get_amount.to_s.should == "50.00";
-    output.get_status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus
-    output.get_status.to_s.should == "PROCESSED"
+    output.amount.should be_an_instance_of java.math.BigDecimal
+    output.amount.to_s.should == "50.00";
+    output.status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
+    output.status.to_s.should == "PROCESSED"
   end
 
   it "should_test_charge_exception" do
@@ -34,10 +34,10 @@ describe Killbill::Plugin::JPayment do
 
   it "should_test_get_payment_info_ok" do
     output = @jpayment.get_payment_info(@kb_account_id, @kb_payment_method_id)
-    output.get_amount.should be_an_instance_of java.math.BigDecimal
-    output.get_amount.to_s.should == "0.00";
-    output.get_status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentInfoPlugin::PaymentPluginStatus
-    output.get_status.to_s.should == "PROCESSED"
+    output.amount.should be_an_instance_of java.math.BigDecimal
+    output.amount.to_s.should == "0.00";
+    output.status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
+    output.status.to_s.should == "PROCESSED"
   end
 
   it "should_test_get_payment_info_exception" do
@@ -47,10 +47,10 @@ describe Killbill::Plugin::JPayment do
 
   it "should_test_refund_ok" do
     output = @jpayment.process_refund(@kb_account_id, @kb_payment_method_id, @amount, @currency)
-    output.get_amount.should be_an_instance_of java.math.BigDecimal
-    output.get_amount.to_s.should == "50.00";
-    output.get_status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin::RefundPluginStatus
-    output.get_status.to_s.should == "PROCESSED"
+    output.amount.should be_an_instance_of java.math.BigDecimal
+    output.amount.to_s.should == "50.00";
+    output.status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.RefundPluginStatus
+    output.status.to_s.should == "PROCESSED"
   end
 
   it "should_test_refund_exception" do
@@ -78,8 +78,8 @@ describe Killbill::Plugin::JPayment do
 
   it "should_test_get_payment_method_detail_ok" do
     output = @jpayment.get_payment_method_detail(@kb_account_id, @kb_payment_method_id)
-    output.get_external_payment_method_id.should be_an_instance_of java.lang.String
-    output.get_external_payment_method_id.should == "foo"
+    output.external_payment_method_id.should be_an_instance_of java.lang.String
+    output.external_payment_method_id.should == "foo"
   end
 
   it "should_test_get_payment_method_detail_exception" do
@@ -103,7 +103,7 @@ describe Killbill::Plugin::JPayment do
     output.size.should == 1
 
     current_payment_method = output.get(0)
-    current_payment_method.get_account_id.to_s.should == @kb_account_id.to_s
+    current_payment_method.account_id.to_s.should == @kb_account_id.to_s
   end
 
   it "should_get_payment_methods_exception" do
