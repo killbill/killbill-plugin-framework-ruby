@@ -216,6 +216,54 @@ module Killbill
           nil
         end
 
+        def from_tenant_context(context)
+          return Killbill::Plugin::Model::TenantContext.new(from_uuid(context.tenant_id))
+        end
+
+        def from_call_context(context)
+          return Killbill::Plugin::Model::CallContext.new(from_uuid(context.tenant_id),
+                                                      from_uuid(context.user_token),
+                                                      from_string(context.user_name),
+                                                      from_call_origin(context.call_origin),
+                                                      from_user_type(context.user_type),
+                                                      from_string(context.reason_code),
+                                                      from_string(context.comments),
+                                                      from_joda_date_time(context.created_date),
+                                                      from_joda_date_time(context.updated_date))
+        end
+
+        def from_call_origin(origin)
+          if origin.nil?
+            return nil
+          end
+
+          if origin == Java::com.ning.billing.util.callcontext.CallOrigin::INTERNAL
+            return Killbill::Plugin::Model::CallOrigin::INTERNAL
+          elsif origin == Java::com.ning.billing.util.callcontext.CallOrigin::EXTERNAL
+            return Killbill::Plugin::Model::CallOrigin::EXTERNAL
+          else
+            return Killbill::Plugin::Model::CallOrigin::TEST
+          end
+        end
+
+        def from_user_type(user)
+          if user.nil?
+            return nil
+          end
+
+          if user == Java::com.ning.billing.util.callcontext.UserType::SYSTEM
+            return Killbill::Plugin::Model::UserType::SYSTEM
+          elsif user == Java::com.ning.billing.util.callcontext.UserType::ADMIN
+            return Killbill::Plugin::Model::UserType::ADMIN
+          elsif user == Java::com.ning.billing.util.callcontext.UserType::CUSTOMER
+            return Killbill::Plugin::Model::UserType::CUSTOMER
+          elsif user == Java::com.ning.billing.util.callcontext.UserType::MIGRATION
+            return Killbill::Plugin::Model::UserType::MIGRATION
+          else # user == Java::com.ning.billing.util.callcontext.UserType::TEST
+            return Killbill::Plugin::Model::UserType::TEST
+          end
+        end
+
         def from_date_time_zone(date_time_zone)
           if date_time_zone.nil?
             return nil

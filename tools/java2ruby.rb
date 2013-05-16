@@ -26,6 +26,8 @@ INTERFACES = ["Account",
               "Refund",
               "AuditLog",
               "CallContext",
+              "CallOrigin",
+              "UserType",
               "TenantContext",
               "CustomField",
               "Tag",
@@ -165,7 +167,7 @@ class Visitor
   def initialize
     @pojo = nil
   end
-  
+
   def create_interface(name, package)
     @pojo = PojoIfceOrClass.new(true)
     @pojo.name = name
@@ -269,7 +271,7 @@ class Generator
         if re.match(line)
           package = $1
         end
-        
+
         # Interface
         re = /public\s+(interface|class)\s+(\w+)\s+(extends(?:\w|,|\s|<|>)+){0,1}\s*{\s*/
         if re.match(line)

@@ -117,15 +117,18 @@ module Killbill
                end
              end
              result
+           elsif a.java_kind_of? Java::com.ning.billing.util.callcontext.CallContext
+             JConverter.from_call_context(a)
+           elsif a.java_kind_of? Java::com.ning.billing.util.callcontext.TenantContext
+             JConverter.from_tenant_context(a)
            else
              # Since we don't pass the Context at this point, we can't raise any exceptions for unexpected types.
-             #raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
-             nil
+             raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
            end
         end
         # Remove last argument if this is null (it means we passed a context)
-        args.delete_at(-1) if args[-1].nil?
-        args
+        #args.delete_at(-1) if args[-1].nil?
+        #args
       end
 
     end
