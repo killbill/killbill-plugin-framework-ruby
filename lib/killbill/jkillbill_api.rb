@@ -1,5 +1,6 @@
 require 'killbill/jconverter'
 
+
 module Killbill
   module Plugin
 
@@ -43,7 +44,6 @@ module Killbill
 
       def proxy_api(method_name, *args)
         @plugged_services.each do |s|
-          puts "#{s.inspect}"
           if s.class.method_defined?(method_name)
             puts "Found service #{s.to_s} : #{method_name}"
             return do_call_handle_exception(s, method_name, *args)
@@ -57,13 +57,21 @@ module Killbill
       def do_call_handle_exception(delegate_service, method_name, *args)
         begin
           # STEPH TODO hack tenant_id
-          call_context = create_call_context(nil, nil, nil, nil)
-          jargs = convert_args(method_name, args)
-          #puts "JARGS = #{jargs}"
+          call_context = create_call_context(nil, nil, nil, nil)          
+          #puts "INPUT ARGS = #{args}"          
+          jargs = convert_args(method_name, args)          
+          #puts "OUTPUT JARGS = #{jargs.collect { |e| e.class}.join(", ")}"
           res = delegate_service.send(method_name, *jargs, call_context)
           if res.java_kind_of? Java::com.ning.billing.account.api.Account
             return JConverter.from_account(res)
+          elsif res.java_kind_of? Java::com.ning.billing.util.tag.TagDefinition
+            return JConverter.from_tag_definition(res)
+          elsif res.java_kind_of? Java::com.ning.billing.util.tag.Tag
+            return JConverter.from_tag(res)
+          else
+            return res
           end
+            
         rescue Exception => e
           wrap_and_throw_exception(method_name, e)
         end
@@ -81,11 +89,17 @@ module Killbill
       end
 
       def convert_args(api, args)
+        
+        
         args.collect! do |a|
-          if a.is_a? Killbill::Plugin::Model::AccountData
-            return JConverter.to_account_data(a)
+          if a.is_a? Killbill::Plugin::Model::Account
+            JConverter.to_account(a)
+          elsif a.is_a? Killbill::Plugin::Model::AccountData
+            JConverter.to_account_data(a)
           elsif a.is_a? Killbill::Plugin::Model::UUID
-            return JConverter.to_uuid(a)
+            JConverter.to_uuid(a)
+          elsif a.is_a? Killbill::Plugin::Model::ObjectType
+            JConverter.to_object_type(a)
           else
             a
           end
@@ -101,7 +115,6 @@ module Killbill
         user_token = user_token.nil? ? java.util.UUID.randomUUID() : to_uuid(user_token)
         created_date = org.joda.time.DateTime.new(org.joda.time.DateTimeZone::UTC)
         updated_date = created_date
-#user_token, user_name, call_origin, user_type, reason_code, comments, created_date, updated_date
         Killbill::Plugin::Model::CallContext.new(tenant_id,
                                                user_token,
                                                @plugin_name,

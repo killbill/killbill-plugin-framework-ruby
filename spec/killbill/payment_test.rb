@@ -12,7 +12,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::PaymentInfoPlugin.new(amount_in_cents, DateTime.now, DateTime.now, Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED, "gateway_error", "gateway_error_code", nil, nil)
+          Killbill::Plugin::Model::PaymentInfoPlugin.new(amount_in_cents, DateTime.now, DateTime.now, Killbill::Plugin::Model::PaymentPluginStatus.new(:PROCESSED), "gateway_error", "gateway_error_code", nil, nil)
         end
       end
 
@@ -20,7 +20,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::PaymentInfoPlugin.new(0, DateTime.now, DateTime.now, Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED, "gateway_error", "gateway_error_code", nil, nil)
+          Killbill::Plugin::Model::PaymentInfoPlugin.new(0, DateTime.now, DateTime.now, Killbill::Plugin::Model::PaymentPluginStatus.new(:PROCESSED), "gateway_error", "gateway_error_code", nil, nil)
         end
       end
 
@@ -28,7 +28,7 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::RefundInfoPlugin.new(5000, DateTime.now, DateTime.now, Killbill::Plugin::Model::RefundPluginStatus::PROCESSED, "gateway_error", "gateway_error_code", nil)
+          Killbill::Plugin::Model::RefundInfoPlugin.new(5000, DateTime.now, DateTime.now, Killbill::Plugin::Model::RefundPluginStatus.new(:PROCESSED), "gateway_error", "gateway_error_code", nil)
         end
       end
 

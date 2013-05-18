@@ -6,26 +6,28 @@ module Killbill
   module Plugin
     module Model
 
-      module ObjectType
+      class ObjectType
 
-        ACCOUNT = 0
-        ACCOUNT_EMAIL = 1
-        BLOCKING_STATES = 2
-        BUNDLE = 3
-        CUSTOM_FIELD = 4
-        INVOICE = 5
-        PAYMENT = 6
-        INVOICE_ITEM = 7
-        INVOICE_PAYMENT = 8
-        SUBSCRIPTION = 9
-        SUBSCRIPTION_EVENT = 10
-        PAYMENT_ATTEMPT = 11
-        PAYMENT_METHOD = 12
-        REFUND = 13
-        TAG = 14
-        TAG_DEFINITION = 15
-        TENANT = 16
-        TENANT_KVS = 17
+        @@admissible_values  = [:ACCOUNT, :ACCOUNT_EMAIL, :BLOCKING_STATES, :BUNDLE, :CUSTOM_FIELD, :INVOICE, :PAYMENT, :INVOICE_ITEM, :INVOICE_PAYMENT, :SUBSCRIPTION, :SUBSCRIPTION_EVENT, :PAYMENT_ATTEMPT, :PAYMENT_METHOD, :REFUND, :TAG, :TAG_DEFINITION, :TENANT, :TENANT_KVS]
+        attr_reader :enum
+
+        def initialize(value)
+          raise ArgumentError.new("Enum ObjectType does not have such value : #{value}") if ! ObjectType.is_admissible_value?(value)
+          @enum = value
+        end
+
+        def ==(other)
+          return false if other.nil?
+          self.enum == other.enum
+        end
+
+        def self.is_admissible_value?(value)
+          @@admissible_values.include?(value)
+        end
+
+        def self.admissible_values 
+          @@admissible_values
+        end
       end
     end
   end

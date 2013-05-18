@@ -62,6 +62,24 @@ class Pojo
   end
 end
 
+=begin
+  class ObjectType
+
+    @@admissible_values  = [:ACCOUNT, :ACCOUNT_EMAIL]
+    attr_reader :enum
+
+    def initialize(value)
+      @enum = value
+    end
+
+  def self.is_admissible_value(value)
+    @@admissible_values.include?(value)
+  end
+  
+  def self.admissible_values 
+     @@admissible_values
+   end
+=end
 
 class PojoEnum < Pojo
 
@@ -78,11 +96,28 @@ class PojoEnum < Pojo
     out.write("  module Plugin\n")
     out.write("    module Model\n")
     out.write("\n")
-    out.write("      module #{name}\n")
+    out.write("      class #{name}\n")
     out.write("\n")
-    fields.each_with_index do |f, i|
-      out.write("        #{f} = #{i}\n")
-    end
+    out.write("        @@admissible_values  = #{@fields.collect {|e| e.to_sym }}\n")
+    out.write("        attr_reader :enum\n")    
+    out.write("\n")
+    out.write("        def initialize(value)\n")
+    out.write("          raise ArgumentError.new(\"Enum #{name} does not have such value : \#{value}\") if ! #{name}.is_admissible_value?(value)\n")
+    out.write("          @enum = value\n")
+    out.write("        end\n")
+    out.write("\n")
+    out.write("        def ==(other)\n")
+    out.write("          return false if other.nil?\n")
+    out.write("          self.enum == other.enum\n")
+    out.write("        end\n")    
+    out.write("\n")
+    out.write("        def self.is_admissible_value?(value)\n")
+    out.write("          @@admissible_values.include?(value)\n")
+    out.write("        end\n")
+    out.write("\n")
+    out.write("        def self.admissible_values \n")
+    out.write("          @@admissible_values\n")
+    out.write("        end\n")
     out.write("      end\n")
     out.write("    end\n")
     out.write("  end\n")

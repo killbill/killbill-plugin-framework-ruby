@@ -35,21 +35,21 @@ describe Killbill::Plugin::JConverter do
     end
 
     it "should_test_payment_plugin_status_success_converter" do
-      input = Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED
+      input = Killbill::Plugin::Model::PaymentPluginStatus.new(:PROCESSED)
       output = Killbill::Plugin::JConverter.to_payment_plugin_status(input)
       output.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
       output.should == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::PROCESSED
     end
 
     it "should_test_payment_plugin_status_failed_converter" do
-      input = Killbill::Plugin::Model::PaymentPluginStatus::ERROR
+      input = Killbill::Plugin::Model::PaymentPluginStatus.new(:ERROR)
       output = Killbill::Plugin::JConverter.to_payment_plugin_status(input)
       output.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
       output.should == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::ERROR
     end
 
     it "should_test_payment_plugin_status_undefined_converter" do
-      input = Killbill::Plugin::Model::PaymentPluginStatus::UNDEFINED
+      input = Killbill::Plugin::Model::PaymentPluginStatus.new(:UNDEFINED)
       output = Killbill::Plugin::JConverter.to_payment_plugin_status(input)
       output.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
       output.should == Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::UNDEFINED
@@ -113,7 +113,6 @@ describe Killbill::Plugin::JConverter do
       output.to_s == "false"
     end
 
-
     it "should_test_boolean_from_true_converter" do
       input = java.lang.Boolean.new("true")
       output = Killbill::Plugin::JConverter.from_boolean(input)
@@ -142,7 +141,7 @@ describe Killbill::Plugin::JConverter do
     it "should_test_payment_status_from_converter" do
       input = Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus::PROCESSED
       output = Killbill::Plugin::JConverter.from_payment_plugin_status(input)
-      output.should == Killbill::Plugin::Model::PaymentPluginStatus::PROCESSED
+      output.should == Killbill::Plugin::Model::PaymentPluginStatus.new(:PROCESSED)
     end
 
     it "should_test_big_decimal_from_converter" do
@@ -163,9 +162,9 @@ describe Killbill::Plugin::JConverter do
 
        output.should be_an_instance_of Killbill::Plugin::Model::ExtBusEvent
 
-       output.event_type.should == Killbill::Plugin::Model::ExtBusEventType::INVOICE_CREATION
+       output.event_type.should == Killbill::Plugin::Model::ExtBusEventType.new(:INVOICE_CREATION)
 
-       output.object_type.should == Killbill::Plugin::Model::ObjectType::INVOICE
+       output.object_type.should == Killbill::Plugin::Model::ObjectType.new(:INVOICE)
 
        output.object_id.should be_an_instance_of Killbill::Plugin::Model::UUID
        output.object_id.to_s.should == Killbill::Plugin::JConverter.from_uuid(uuid).to_s
@@ -176,5 +175,19 @@ describe Killbill::Plugin::JConverter do
        output.tenant_id.should be_an_instance_of Killbill::Plugin::Model::UUID
        output.tenant_id.to_s.should == Killbill::Plugin::JConverter.from_uuid(uuid).to_s
 
+      end
+      it "should_test_enum_object_type_from_converter" do
+
+        java_object_type = Java::com.ning.billing.ObjectType::ACCOUNT
+        
+        ruby_object_type = Killbill::Plugin::JConverter.from_object_type(java_object_type)
+        ruby_object_type.should be_an_instance_of Killbill::Plugin::Model::ObjectType
+        ruby_object_type.enum.to_s.should == java_object_type.to_s
+
+        java_object_type_back = Killbill::Plugin::JConverter.to_object_type(ruby_object_type)
+        java_object_type_back.should be_an_instance_of Java::com.ning.billing.ObjectType
+        java_object_type_back.to_s.should  == java_object_type.to_s
+        java_object_type_back.to_s.should == "ACCOUNT"
+             
       end
 end

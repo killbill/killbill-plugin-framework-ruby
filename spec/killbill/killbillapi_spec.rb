@@ -15,7 +15,7 @@ describe Killbill::Plugin do
     @account_user_api_mock = MockAccountUserApi.new
     @japi_proxy = Killbill::Plugin::JKillbillApi.new("foo", {:account_user_api => @account_user_api_mock})
     @kb_apis = Killbill::Plugin::KillbillApi.new(@japi_proxy)
-    @account = Killbill::Plugin::Model::AccountData.new("external_key", "name", 3, "email", 1, Killbill::Plugin::Model::Currency::USD, nil, Killbill::Plugin::Model::DateTimeZone::UTC, "locale", "address1", nil,
+    @account = Killbill::Plugin::Model::AccountData.new("external_key", "name", 3, "email", 1, Killbill::Plugin::Model::Currency.new(:USD), nil, Killbill::Plugin::Model::DateTimeZone.new(:UTC), "locale", "address1", nil,
 "company_name", "city", "state_or_province", "postal_code", "country", "phone", true, false)
   end
 
@@ -33,11 +33,11 @@ describe Killbill::Plugin do
     account_fetched.first_name_length.should == 3
     account_fetched.email.should == "email"
     account_fetched.bill_cycle_day_local.should == 1
-    account_fetched.currency.should == Killbill::Plugin::Model::Currency::USD
+    account_fetched.currency.should == Killbill::Plugin::Model::Currency.new(:USD)
     account_fetched.locale.should == "locale"
     account_fetched.address1.should == "address1"
     account_fetched.address2.should == nil
-    account_fetched.time_zone.should == Killbill::Plugin::Model::DateTimeZone::UTC
+    account_fetched.time_zone.should == Killbill::Plugin::Model::DateTimeZone.new(:UTC)
     account_fetched.company_name.should == "company_name"
     account_fetched.city.should == "city"
     account_fetched.state_or_province.should == "state_or_province"

@@ -6,24 +6,28 @@ module Killbill
   module Plugin
     module Model
 
-      module ExtBusEventType
+      class ExtBusEventType
 
-        ACCOUNT_CREATION = 0
-        ACCOUNT_CHANGE = 1
-        SUBSCRIPTION_CREATION = 2
-        SUBSCRIPTION_PHASE = 3
-        SUBSCRIPTION_CHANGE = 4
-        SUBSCRIPTION_CANCEL = 5
-        SUBSCRIPTION_UNCANCEL = 6
-        OVERDUE_CHANGE = 7
-        INVOICE_CREATION = 8
-        INVOICE_ADJUSTMENT = 9
-        PAYMENT_SUCCESS = 10
-        PAYMENT_FAILED = 11
-        TAG_CREATION = 12
-        TAG_DELETION = 13
-        CUSTOM_FIELD_CREATION = 14
-        CUSTOM_FIELD_DELETION = 15
+        @@admissible_values  = [:ACCOUNT_CREATION, :ACCOUNT_CHANGE, :SUBSCRIPTION_CREATION, :SUBSCRIPTION_PHASE, :SUBSCRIPTION_CHANGE, :SUBSCRIPTION_CANCEL, :SUBSCRIPTION_UNCANCEL, :OVERDUE_CHANGE, :INVOICE_CREATION, :INVOICE_ADJUSTMENT, :PAYMENT_SUCCESS, :PAYMENT_FAILED, :TAG_CREATION, :TAG_DELETION, :CUSTOM_FIELD_CREATION, :CUSTOM_FIELD_DELETION]
+        attr_reader :enum
+
+        def initialize(value)
+          raise ArgumentError.new("Enum ExtBusEventType does not have such value : #{value}") if ! ExtBusEventType.is_admissible_value?(value)
+          @enum = value
+        end
+
+        def ==(other)
+          return false if other.nil?
+          self.enum == other.enum
+        end
+
+        def self.is_admissible_value?(value)
+          @@admissible_values.include?(value)
+        end
+
+        def self.admissible_values 
+          @@admissible_values
+        end
       end
     end
   end
