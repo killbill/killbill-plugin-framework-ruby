@@ -75,8 +75,8 @@ end
   def self.is_admissible_value(value)
     @@admissible_values.include?(value)
   end
-  
-  def self.admissible_values 
+
+  def self.admissible_values
      @@admissible_values
    end
 =end
@@ -99,7 +99,7 @@ class PojoEnum < Pojo
     out.write("      class #{name}\n")
     out.write("\n")
     out.write("        @@admissible_values  = #{@fields.collect {|e| e.to_sym }}\n")
-    out.write("        attr_reader :enum\n")    
+    out.write("        attr_reader :enum\n")
     out.write("\n")
     out.write("        def initialize(value)\n")
     out.write("          raise ArgumentError.new(\"Enum #{name} does not have such value : \#{value}\") if ! #{name}.is_admissible_value?(value)\n")
@@ -109,7 +109,7 @@ class PojoEnum < Pojo
     out.write("        def ==(other)\n")
     out.write("          return false if other.nil?\n")
     out.write("          self.enum == other.enum\n")
-    out.write("        end\n")    
+    out.write("        end\n")
     out.write("\n")
     out.write("        def self.is_admissible_value?(value)\n")
     out.write("          @@admissible_values.include?(value)\n")

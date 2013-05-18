@@ -36,8 +36,8 @@ module Killbill
                                                   to_boolean(data.is_migrated),
                                                   to_boolean(data.is_notified_for_invoices))
         end
-        
-        
+
+
         def to_account_data(data)
           Killbill::Plugin::Model::AccountData.new(to_string(data.external_key),
                                                  to_string(data.name),
@@ -126,7 +126,7 @@ module Killbill
           str.nil? ? nil : java.lang.String.new(str.to_s)
         end
 
-              
+
         def to_currency(currency)
           if currency.nil?
             return nil
@@ -183,7 +183,7 @@ module Killbill
           if type.enum == :ACCOUNT
             Java::com.ning.billing.ObjectType::ACCOUNT
           elsif type.enum == :ACCOUNT_EMAIL
-            Java::com.ning.billing.ObjectType::ACCOUNT_EMAIL            
+            Java::com.ning.billing.ObjectType::ACCOUNT_EMAIL
           elsif type.enum == :BLOCKING_STATES
             Java::com.ning.billing.ObjectType::BLOCKING_STATES
           elsif type.enum == :BUNDLE
@@ -269,7 +269,7 @@ module Killbill
                                                     from_boolean(data.is_control_tag),
                                                     nil)
         end
-        
+
         def from_blocking_state(data)
           if data.nil?
             return nil
@@ -293,7 +293,7 @@ module Killbill
                                                       from_joda_date_time(context.updated_date))
         end
 
-  
+
         def from_uuid(uuid)
            uuid.nil? ? nil : Killbill::Plugin::Model::UUID.new(uuid.to_s)
         end
@@ -311,8 +311,8 @@ module Killbill
         def from_string(str)
           str.nil? ? nil : str.to_s
         end
-        
- 
+
+
         def from_currency(currency)
            if currency.nil?
              return nil
@@ -338,7 +338,7 @@ module Killbill
              return nil
            end
 
-           if origin.to_s  == Java::com.ning.billing.util.callcontext.CallOrigin::INTERNAL.to_s 
+           if origin.to_s  == Java::com.ning.billing.util.callcontext.CallOrigin::INTERNAL.to_s
              return Killbill::Plugin::Model::CallOrigin.new(:INTERNAL)
            elsif origin.to_s  == Java::com.ning.billing.util.callcontext.CallOrigin::EXTERNAL.to_s
              return Killbill::Plugin::Model::CallOrigin.new(:EXTERNAL)
@@ -352,13 +352,13 @@ module Killbill
              return nil
            end
 
-           if user.to_s  == Java::com.ning.billing.util.callcontext.UserType::SYSTEM.to_s 
+           if user.to_s  == Java::com.ning.billing.util.callcontext.UserType::SYSTEM.to_s
              return Killbill::Plugin::Model::UserType.new(:SYSTEM)
-           elsif user.to_s  == Java::com.ning.billing.util.callcontext.UserType::ADMIN.to_s 
+           elsif user.to_s  == Java::com.ning.billing.util.callcontext.UserType::ADMIN.to_s
              return Killbill::Plugin::Model::UserType.new(:ADMIN)
-           elsif user.to_s  == Java::com.ning.billing.util.callcontext.UserType::CUSTOMER.to_s 
+           elsif user.to_s  == Java::com.ning.billing.util.callcontext.UserType::CUSTOMER.to_s
              return Killbill::Plugin::Model::UserType.new(:CUSTOMER)
-           elsif user.to_s  == Java::com.ning.billing.util.callcontext.UserType::MIGRATION.to_s 
+           elsif user.to_s  == Java::com.ning.billing.util.callcontext.UserType::MIGRATION.to_s
              return Killbill::Plugin::Model::UserType.new(:MIGRATION)
            else # user == Java::com.ning.billing.util.callcontext.UserType::TEST
              return Killbill::Plugin::Model::UserType.new(:TEST)
@@ -369,7 +369,7 @@ module Killbill
            if date_time_zone.nil?
              return nil
            end
-           if date_time_zone.to_s == org.joda.time.DateTimeZone::UTC.to_s 
+           if date_time_zone.to_s == org.joda.time.DateTimeZone::UTC.to_s
              return Killbill::Plugin::Model::DateTimeZone.new(:UTC)
            end
            nil
@@ -387,9 +387,9 @@ module Killbill
          end
 
          def from_refund_plugin_status(status)
-           if status.to_s  == Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::PROCESSED.to_s 
+           if status.to_s  == Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::PROCESSED.to_s
              Killbill::Plugin::Model::RefundPluginStatus.new(:PROCESSED)
-           elsif status.to_s  == Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::ERROR.to_s 
+           elsif status.to_s  == Java::com.ning.billing.payment.plugin.api.RefundPluginStatus::ERROR.to_s
              Killbill::Plugin::Model::RefundPluginStatus.new(:ERROR)
            else
              Killbill::Plugin::Model::RefundPluginStatus.new(:UNDEFINED)
@@ -498,7 +498,7 @@ module Killbill
          end
 
         def from_bus_event_type(type)
-          
+
           if type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::ACCOUNT_CREATION.to_s
             Killbill::Plugin::Model::ExtBusEventType.new(:ACCOUNT_CREATION)
           elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::ACCOUNT_CHANGE.to_s

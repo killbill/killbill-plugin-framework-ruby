@@ -179,7 +179,7 @@ describe Killbill::Plugin::JConverter do
       it "should_test_enum_object_type_from_converter" do
 
         java_object_type = Java::com.ning.billing.ObjectType::ACCOUNT
-        
+
         ruby_object_type = Killbill::Plugin::JConverter.from_object_type(java_object_type)
         ruby_object_type.should be_an_instance_of Killbill::Plugin::Model::ObjectType
         ruby_object_type.enum.to_s.should == java_object_type.to_s
@@ -188,6 +188,6 @@ describe Killbill::Plugin::JConverter do
         java_object_type_back.should be_an_instance_of Java::com.ning.billing.ObjectType
         java_object_type_back.to_s.should  == java_object_type.to_s
         java_object_type_back.to_s.should == "ACCOUNT"
-             
+
       end
 end

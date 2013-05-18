@@ -25,7 +25,7 @@ module Killbill
           @@admissible_values.include?(value)
         end
 
-        def self.admissible_values 
+        def self.admissible_values
           @@admissible_values
         end
       end

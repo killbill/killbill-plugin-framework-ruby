@@ -57,9 +57,9 @@ module Killbill
       def do_call_handle_exception(delegate_service, method_name, *args)
         begin
           # STEPH TODO hack tenant_id
-          call_context = create_call_context(nil, nil, nil, nil)          
-          #puts "INPUT ARGS = #{args}"          
-          jargs = convert_args(method_name, args)          
+          call_context = create_call_context(nil, nil, nil, nil)
+          #puts "INPUT ARGS = #{args}"
+          jargs = convert_args(method_name, args)
           #puts "OUTPUT JARGS = #{jargs.collect { |e| e.class}.join(", ")}"
           res = delegate_service.send(method_name, *jargs, call_context)
           if res.java_kind_of? Java::com.ning.billing.account.api.Account
@@ -71,7 +71,7 @@ module Killbill
           else
             return res
           end
-            
+
         rescue Exception => e
           wrap_and_throw_exception(method_name, e)
         end
@@ -89,8 +89,8 @@ module Killbill
       end
 
       def convert_args(api, args)
-        
-        
+
+
         args.collect! do |a|
           if a.is_a? Killbill::Plugin::Model::Account
             JConverter.to_account(a)
