@@ -7,39 +7,39 @@ module Killbill
       class OperationUnsupportedByGatewayError < NotImplementedError
       end
 
-      def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount_in_cents, currency, options = {})
+      def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount_in_cents, currency, call_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def get_payment_info(kb_account_id, kb_payment_id, options = {})
+      def get_payment_info(kb_account_id, kb_payment_id, tenant_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def process_refund(kb_account_id, kb_payment_id, amount_in_cents, currency, options = {})
+      def process_refund(kb_account_id, kb_payment_id, amount_in_cents, currency, call_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def get_refund_info(kb_account_id, kb_payment_id, options = {})
+      def get_refund_info(kb_account_id, kb_payment_id, tenant_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, options = {})
+      def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, call_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def delete_payment_method(kb_account_id, kb_payment_method_id, options = {})
+      def delete_payment_method(kb_account_id, kb_payment_method_id, call_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def get_payment_method_detail(kb_account_id, kb_payment_method_id, options = {})
+      def get_payment_method_detail(kb_account_id, kb_payment_method_id, tenant_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def set_default_payment_method(kb_account_id, kb_payment_method_id, options = {})
+      def set_default_payment_method(kb_account_id, kb_payment_method_id, call_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
-      def get_payment_methods(kb_account_id, refresh_from_gateway, options = {})
+      def get_payment_methods(kb_account_id, refresh_from_gateway, call_context, options = {})
         raise OperationUnsupportedByGatewayError
       end
 
