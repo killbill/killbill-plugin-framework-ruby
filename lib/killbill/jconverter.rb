@@ -85,7 +85,7 @@ module Killbill
           props = java.util.ArrayList.new
           pm.properties.each do |p|
             jp = Killbill::Plugin::Model::PaymentMethodKVInfo.new(p.is_updatable, p.key, p.value)
-            @props.add(jp)
+            props.add(jp)
           end
           Killbill::Plugin::Model::PaymentMethodPlugin.new(to_string(pm.external_payment_method_id),
                                                          to_boolean(pm.is_default_payment_method),
