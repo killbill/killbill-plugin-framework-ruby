@@ -84,7 +84,7 @@ module Killbill
         def to_payment_method_response(pm)
           props = java.util.ArrayList.new
           pm.properties.each do |p|
-            jp = Killbill::Plugin::Model::PaymentMethodKVInfo.new(p.is_updatable, p.key, p.value)
+            jp = com.ning.billing.payment.api.PaymentMethodKVInfo.new(p.key, p.value, p.is_updatable)
             props.add(jp)
           end
           Killbill::Plugin::Model::PaymentMethodPlugin.new(to_string(pm.external_payment_method_id),
