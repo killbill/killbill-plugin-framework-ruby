@@ -455,9 +455,6 @@ module Killbill
          end
 
          def from_object_type(type)
-
-           puts "from_object_type #{type.to_s}, type = #{type.inspect} #{Java::com.ning.billing.ObjectType::ACCOUNT.inspect} #{type.to_s == Java::com.ning.billing.ObjectType::ACCOUNT.to_s}"
-
            if type.to_s == Java::com.ning.billing.ObjectType::ACCOUNT.to_s
              Killbill::Plugin::Model::ObjectType.new(:ACCOUNT)
            elsif type.to_s == Java::com.ning.billing.ObjectType::ACCOUNT_EMAIL.to_s
