@@ -39,67 +39,67 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for object_id [type = java.util.UUID]
-          object_id = java.util.UUID.fromString(object_id.to_s) if !object_id.nil?
+          @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
-          object_type = "Java::com.ning.billing.ObjectType::#{object_type.to_s}" if !object_type.nil?
+          @object_type = Java::com.ning.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
 
           # conversion for field_name [type = java.lang.String]
-          field_name = field_name.to_s if !field_name.nil?
+          @field_name = @field_name.to_s unless @field_name.nil?
 
           # conversion for field_value [type = java.lang.String]
-          field_value = field_value.to_s if !field_value.nil?
+          @field_value = @field_value.to_s unless @field_value.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for object_id [type = java.util.UUID]
-          object_id = j_obj.object_id
-          object_id = object_id.nil? ? nil : uuid.to_s
+          @object_id = j_obj.object_id
+          @object_id = @object_id.nil? ? nil : @object_id.to_s
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
-          object_type = j_obj.object_type
-          object_type = object_type.to_s if !object_type.nil?
+          @object_type = j_obj.object_type
+          @object_type = @object_type.to_s unless @object_type.nil?
 
           # conversion for field_name [type = java.lang.String]
-          field_name = j_obj.field_name
+          @field_name = j_obj.field_name
 
           # conversion for field_value [type = java.lang.String]
-          field_value = j_obj.field_value
+          @field_value = j_obj.field_value
         end
 
       end

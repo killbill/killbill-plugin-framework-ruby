@@ -39,19 +39,19 @@ module Killbill
 
         def to_java()
           # conversion for unit [type = com.ning.billing.catalog.api.TimeUnit]
-          unit = "Java::com.ning.billing.catalog.api.TimeUnit::#{unit.to_s}" if !unit.nil?
+          @unit = Java::com.ning.billing.catalog.api.TimeUnit.value_of("#{@unit.to_s}") unless @unit.nil?
 
           # conversion for number [type = int]
-          number = number
+          @number = @number
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for unit [type = com.ning.billing.catalog.api.TimeUnit]
-          unit = j_obj.unit
-          unit = unit.to_s if !unit.nil?
+          @unit = j_obj.unit
+          @unit = @unit.to_s unless @unit.nil?
 
           # conversion for number [type = int]
-          number = j_obj.number
+          @number = j_obj.number
         end
 
       end

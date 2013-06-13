@@ -39,79 +39,79 @@ module Killbill
 
         def to_java()
           # conversion for tenant_id [type = java.util.UUID]
-          tenant_id = java.util.UUID.fromString(tenant_id.to_s) if !tenant_id.nil?
+          @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
 
           # conversion for user_token [type = java.util.UUID]
-          user_token = java.util.UUID.fromString(user_token.to_s) if !user_token.nil?
+          @user_token = java.util.UUID.fromString(@user_token.to_s) unless @user_token.nil?
 
           # conversion for user_name [type = java.lang.String]
-          user_name = user_name.to_s if !user_name.nil?
+          @user_name = @user_name.to_s unless @user_name.nil?
 
           # conversion for call_origin [type = com.ning.billing.util.callcontext.CallOrigin]
-          call_origin = "Java::com.ning.billing.util.callcontext.CallOrigin::#{call_origin.to_s}" if !call_origin.nil?
+          @call_origin = Java::com.ning.billing.util.callcontext.CallOrigin.value_of("#{@call_origin.to_s}") unless @call_origin.nil?
 
           # conversion for user_type [type = com.ning.billing.util.callcontext.UserType]
-          user_type = "Java::com.ning.billing.util.callcontext.UserType::#{user_type.to_s}" if !user_type.nil?
+          @user_type = Java::com.ning.billing.util.callcontext.UserType.value_of("#{@user_type.to_s}") unless @user_type.nil?
 
           # conversion for reason_code [type = java.lang.String]
-          reason_code = reason_code.to_s if !reason_code.nil?
+          @reason_code = @reason_code.to_s unless @reason_code.nil?
 
           # conversion for comments [type = java.lang.String]
-          comments = comments.to_s if !comments.nil?
+          @comments = @comments.to_s unless @comments.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for tenant_id [type = java.util.UUID]
-          tenant_id = j_obj.tenant_id
-          tenant_id = tenant_id.nil? ? nil : uuid.to_s
+          @tenant_id = j_obj.tenant_id
+          @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
 
           # conversion for user_token [type = java.util.UUID]
-          user_token = j_obj.user_token
-          user_token = user_token.nil? ? nil : uuid.to_s
+          @user_token = j_obj.user_token
+          @user_token = @user_token.nil? ? nil : @user_token.to_s
 
           # conversion for user_name [type = java.lang.String]
-          user_name = j_obj.user_name
+          @user_name = j_obj.user_name
 
           # conversion for call_origin [type = com.ning.billing.util.callcontext.CallOrigin]
-          call_origin = j_obj.call_origin
-          call_origin = call_origin.to_s if !call_origin.nil?
+          @call_origin = j_obj.call_origin
+          @call_origin = @call_origin.to_s unless @call_origin.nil?
 
           # conversion for user_type [type = com.ning.billing.util.callcontext.UserType]
-          user_type = j_obj.user_type
-          user_type = user_type.to_s if !user_type.nil?
+          @user_type = j_obj.user_type
+          @user_type = @user_type.to_s unless @user_type.nil?
 
           # conversion for reason_code [type = java.lang.String]
-          reason_code = j_obj.reason_code
+          @reason_code = j_obj.reason_code
 
           # conversion for comments [type = java.lang.String]
-          comments = j_obj.comments
+          @comments = j_obj.comments
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
         end
 

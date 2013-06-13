@@ -27,19 +27,23 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.entity'
-      class Entity
+      java_package 'com.ning.billing.payment.plugin.api'
+      class RefundInfoPlugin
 
-        include com.ning.billing.util.entity.Entity
+        include com.ning.billing.payment.plugin.api.RefundInfoPlugin
 
-        attr_accessor :id, :created_date, :updated_date
+        attr_accessor :amount, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :reference_id
 
         def initialize()
         end
 
         def to_java()
-          # conversion for id [type = java.util.UUID]
-          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
+          # conversion for amount [type = java.math.BigDecimal]
+          if @amount.nil?
+            @amount = java.math.BigDecimal::ZERO
+          else
+            @amount = java.math.BigDecimal.new(@amount.to_i)
+          end
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
@@ -47,17 +51,29 @@ module Killbill
             @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          if !@updated_date.nil?
-            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
-            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          if !@effective_date.nil?
+            @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
+            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
+
+          # conversion for status [type = com.ning.billing.payment.plugin.api.RefundPluginStatus]
+          @status = Java::com.ning.billing.payment.plugin.api.RefundPluginStatus.value_of("#{@status.to_s}") unless @status.nil?
+
+          # conversion for gateway_error [type = java.lang.String]
+          @gateway_error = @gateway_error.to_s unless @gateway_error.nil?
+
+          # conversion for gateway_error_code [type = java.lang.String]
+          @gateway_error_code = @gateway_error_code.to_s unless @gateway_error_code.nil?
+
+          # conversion for reference_id [type = java.lang.String]
+          @reference_id = @reference_id.to_s unless @reference_id.nil?
         end
 
         def to_ruby(j_obj)
-          # conversion for id [type = java.util.UUID]
-          @id = j_obj.id
-          @id = @id.nil? ? nil : @id.to_s
+          # conversion for amount [type = java.math.BigDecimal]
+          @amount = j_obj.amount
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
 
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date
@@ -67,13 +83,26 @@ module Killbill
             @created_date = DateTime.iso8601(str)
           end
 
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          @updated_date = j_obj.updated_date
-          if !@updated_date.nil?
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          @effective_date = j_obj.effective_date
+          if !@effective_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(@updated_date)
-            @updated_date = DateTime.iso8601(str)
+            str = fmt.print(@effective_date)
+            @effective_date = DateTime.iso8601(str)
           end
+
+          # conversion for status [type = com.ning.billing.payment.plugin.api.RefundPluginStatus]
+          @status = j_obj.status
+          @status = @status.to_s unless @status.nil?
+
+          # conversion for gateway_error [type = java.lang.String]
+          @gateway_error = j_obj.gateway_error
+
+          # conversion for gateway_error_code [type = java.lang.String]
+          @gateway_error_code = j_obj.gateway_error_code
+
+          # conversion for reference_id [type = java.lang.String]
+          @reference_id = j_obj.reference_id
         end
 
       end

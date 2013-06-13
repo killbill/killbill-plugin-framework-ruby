@@ -39,121 +39,122 @@ module Killbill
 
         def to_java()
           # conversion for external_payment_method_id [type = java.lang.String]
-          external_payment_method_id = external_payment_method_id.to_s if !external_payment_method_id.nil?
+          @external_payment_method_id = @external_payment_method_id.to_s unless @external_payment_method_id.nil?
 
           # conversion for is_default_payment_method [type = boolean]
-          is_default_payment_method = is_default_payment_method.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_default_payment_method)
+          @is_default_payment_method = @is_default_payment_method.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_default_payment_method)
 
           # conversion for properties [type = java.util.List]
           tmp = java.util.ArrayList.new
-          properties.each do |m|
+          @properties.each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
-            m = m.to_java if !m.nil?
+            @m = @m.to_java unless @m.nil?
             tmp.add(m)
           end
-          properties = tmp
+          @properties = tmp
 
           # conversion for value_string [type = java.lang.String]
-          value_string = value_string.to_s if !value_string.nil?
+          @value_string = @value_string.to_s unless @value_string.nil?
 
           # conversion for type [type = java.lang.String]
-          type = type.to_s if !type.nil?
+          @type = @type.to_s unless @type.nil?
 
           # conversion for cc_name [type = java.lang.String]
-          cc_name = cc_name.to_s if !cc_name.nil?
+          @cc_name = @cc_name.to_s unless @cc_name.nil?
 
           # conversion for cc_type [type = java.lang.String]
-          cc_type = cc_type.to_s if !cc_type.nil?
+          @cc_type = @cc_type.to_s unless @cc_type.nil?
 
           # conversion for cc_expiration_month [type = java.lang.String]
-          cc_expiration_month = cc_expiration_month.to_s if !cc_expiration_month.nil?
+          @cc_expiration_month = @cc_expiration_month.to_s unless @cc_expiration_month.nil?
 
           # conversion for cc_expiration_year [type = java.lang.String]
-          cc_expiration_year = cc_expiration_year.to_s if !cc_expiration_year.nil?
+          @cc_expiration_year = @cc_expiration_year.to_s unless @cc_expiration_year.nil?
 
           # conversion for cc_last4 [type = java.lang.String]
-          cc_last4 = cc_last4.to_s if !cc_last4.nil?
+          @cc_last4 = @cc_last4.to_s unless @cc_last4.nil?
 
           # conversion for address1 [type = java.lang.String]
-          address1 = address1.to_s if !address1.nil?
+          @address1 = @address1.to_s unless @address1.nil?
 
           # conversion for address2 [type = java.lang.String]
-          address2 = address2.to_s if !address2.nil?
+          @address2 = @address2.to_s unless @address2.nil?
 
           # conversion for city [type = java.lang.String]
-          city = city.to_s if !city.nil?
+          @city = @city.to_s unless @city.nil?
 
           # conversion for state [type = java.lang.String]
-          state = state.to_s if !state.nil?
+          @state = @state.to_s unless @state.nil?
 
           # conversion for zip [type = java.lang.String]
-          zip = zip.to_s if !zip.nil?
+          @zip = @zip.to_s unless @zip.nil?
 
           # conversion for country [type = java.lang.String]
-          country = country.to_s if !country.nil?
+          @country = @country.to_s unless @country.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for external_payment_method_id [type = java.lang.String]
-          external_payment_method_id = j_obj.external_payment_method_id
+          @external_payment_method_id = j_obj.external_payment_method_id
 
           # conversion for is_default_payment_method [type = boolean]
-          is_default_payment_method = j_obj.is_default_payment_method
-          if is_default_payment_method.nil?
-            return false
+          @is_default_payment_method = j_obj.is_default_payment_method
+          if @is_default_payment_method.nil?
+            @is_default_payment_method = false
+          else
+            tmp_bool = (@is_default_payment_method.java_kind_of? java.lang.Boolean) ? @is_default_payment_method.boolean_value : @is_default_payment_method
+            @is_default_payment_method = tmp_bool ? true : false
           end
-          b_value = (is_default_payment_method.java_kind_of? java.lang.Boolean) ? is_default_payment_method.boolean_value : is_default_payment_method
-          return b_value ? true : false
 
           # conversion for properties [type = java.util.List]
-          properties = j_obj.properties
+          @properties = j_obj.properties
           tmp = []
-          properties.each do |m|
+          @properties.each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
-            m = j_obj.m
-            m = Killbill::Plugin::Model::PaymentMethodKVInfo.to_ruby(m) if !m.nil?
+            @m = j_obj.m
+            @m = Killbill::Plugin::Model::PaymentMethodKVInfo.new.to_ruby(@m) unless @m.nil?
             tmp << m
           end
-          properties = tmp
+          @properties = tmp
 
           # conversion for value_string [type = java.lang.String]
-          value_string = j_obj.value_string
+          @value_string = j_obj.value_string
 
           # conversion for type [type = java.lang.String]
-          type = j_obj.type
+          @type = j_obj.type
 
           # conversion for cc_name [type = java.lang.String]
-          cc_name = j_obj.cc_name
+          @cc_name = j_obj.cc_name
 
           # conversion for cc_type [type = java.lang.String]
-          cc_type = j_obj.cc_type
+          @cc_type = j_obj.cc_type
 
           # conversion for cc_expiration_month [type = java.lang.String]
-          cc_expiration_month = j_obj.cc_expiration_month
+          @cc_expiration_month = j_obj.cc_expiration_month
 
           # conversion for cc_expiration_year [type = java.lang.String]
-          cc_expiration_year = j_obj.cc_expiration_year
+          @cc_expiration_year = j_obj.cc_expiration_year
 
           # conversion for cc_last4 [type = java.lang.String]
-          cc_last4 = j_obj.cc_last4
+          @cc_last4 = j_obj.cc_last4
 
           # conversion for address1 [type = java.lang.String]
-          address1 = j_obj.address1
+          @address1 = j_obj.address1
 
           # conversion for address2 [type = java.lang.String]
-          address2 = j_obj.address2
+          @address2 = j_obj.address2
 
           # conversion for city [type = java.lang.String]
-          city = j_obj.city
+          @city = j_obj.city
 
           # conversion for state [type = java.lang.String]
-          state = j_obj.state
+          @state = j_obj.state
 
           # conversion for zip [type = java.lang.String]
-          zip = j_obj.zip
+          @zip = j_obj.zip
 
           # conversion for country [type = java.lang.String]
-          country = j_obj.country
+          @country = j_obj.country
         end
 
       end

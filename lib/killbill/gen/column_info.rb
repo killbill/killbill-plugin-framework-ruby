@@ -39,24 +39,24 @@ module Killbill
 
         def to_java()
           # conversion for table_name [type = java.lang.String]
-          table_name = table_name.to_s if !table_name.nil?
+          @table_name = @table_name.to_s unless @table_name.nil?
 
           # conversion for column_name [type = java.lang.String]
-          column_name = column_name.to_s if !column_name.nil?
+          @column_name = @column_name.to_s unless @column_name.nil?
 
           # conversion for data_type [type = java.lang.String]
-          data_type = data_type.to_s if !data_type.nil?
+          @data_type = @data_type.to_s unless @data_type.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for table_name [type = java.lang.String]
-          table_name = j_obj.table_name
+          @table_name = j_obj.table_name
 
           # conversion for column_name [type = java.lang.String]
-          column_name = j_obj.column_name
+          @column_name = j_obj.column_name
 
           # conversion for data_type [type = java.lang.String]
-          data_type = j_obj.data_type
+          @data_type = j_obj.data_type
         end
 
       end

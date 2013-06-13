@@ -39,99 +39,100 @@ module Killbill
 
         def to_java()
           # conversion for initial_phases [type = com.ning.billing.catalog.api.PlanPhase]
-          initial_phases = initial_phases.to_java if !initial_phases.nil?
+          @initial_phases = @initial_phases.to_java unless @initial_phases.nil?
 
           # conversion for product [type = com.ning.billing.catalog.api.Product]
-          product = product.to_java if !product.nil?
+          @product = @product.to_java unless @product.nil?
 
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
 
           # conversion for is_retired [type = boolean]
-          is_retired = is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_retired)
+          @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           tmp = java.util.ArrayList.new
-          initial_phase_iterator.each do |m|
+          @initial_phase_iterator.each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
-            m = m.to_java if !m.nil?
+            @m = @m.to_java unless @m.nil?
             tmp.add(m)
           end
-          initial_phase_iterator = tmp
+          @initial_phase_iterator = tmp
 
           # conversion for final_phase [type = com.ning.billing.catalog.api.PlanPhase]
-          final_phase = final_phase.to_java if !final_phase.nil?
+          @final_phase = @final_phase.to_java unless @final_phase.nil?
 
           # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          billing_period = "Java::com.ning.billing.catalog.api.BillingPeriod::#{billing_period.to_s}" if !billing_period.nil?
+          @billing_period = Java::com.ning.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
-          plans_allowed_in_bundle = plans_allowed_in_bundle
+          @plans_allowed_in_bundle = @plans_allowed_in_bundle
 
           # conversion for all_phases [type = com.ning.billing.catalog.api.PlanPhase]
-          all_phases = all_phases.to_java if !all_phases.nil?
+          @all_phases = @all_phases.to_java unless @all_phases.nil?
 
           # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
-          if !effective_date_for_existing_subscriptons.nil?
-            effective_date_for_existing_subscriptons =  (effective_date_for_existing_subscriptons.kind_of? Time) ? DateTime.parse(effective_date_for_existing_subscriptons.to_s) : effective_date_for_existing_subscriptons
-            effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(effective_date_for_existing_subscriptons.to_s, Java::org.joda.time.DateTimeZone::UTC)
-            effective_date_for_existing_subscriptons = effective_date_for_existing_subscriptons.to_date
+          if !@effective_date_for_existing_subscriptons.nil?
+            @effective_date_for_existing_subscriptons =  (@effective_date_for_existing_subscriptons.kind_of? Time) ? DateTime.parse(@effective_date_for_existing_subscriptons.to_s) : @effective_date_for_existing_subscriptons
+            @effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptons.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            @effective_date_for_existing_subscriptons = @effective_date_for_existing_subscriptons.to_date
           end
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for initial_phases [type = com.ning.billing.catalog.api.PlanPhase]
-          initial_phases = j_obj.initial_phases
-          initial_phases = Killbill::Plugin::Model::PlanPhase.to_ruby(initial_phases) if !initial_phases.nil?
+          @initial_phases = j_obj.initial_phases
+          @initial_phases = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@initial_phases) unless @initial_phases.nil?
 
           # conversion for product [type = com.ning.billing.catalog.api.Product]
-          product = j_obj.product
-          product = Killbill::Plugin::Model::Product.to_ruby(product) if !product.nil?
+          @product = j_obj.product
+          @product = Killbill::Plugin::Model::Product.new.to_ruby(@product) unless @product.nil?
 
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
 
           # conversion for is_retired [type = boolean]
-          is_retired = j_obj.is_retired
-          if is_retired.nil?
-            return false
+          @is_retired = j_obj.is_retired
+          if @is_retired.nil?
+            @is_retired = false
+          else
+            tmp_bool = (@is_retired.java_kind_of? java.lang.Boolean) ? @is_retired.boolean_value : @is_retired
+            @is_retired = tmp_bool ? true : false
           end
-          b_value = (is_retired.java_kind_of? java.lang.Boolean) ? is_retired.boolean_value : is_retired
-          return b_value ? true : false
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
-          initial_phase_iterator = j_obj.initial_phase_iterator
+          @initial_phase_iterator = j_obj.initial_phase_iterator
           tmp = []
-          initial_phase_iterator.each do |m|
+          @initial_phase_iterator.each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
-            m = j_obj.m
-            m = Killbill::Plugin::Model::PlanPhase.to_ruby(m) if !m.nil?
+            @m = j_obj.m
+            @m = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@m) unless @m.nil?
             tmp << m
           end
-          initial_phase_iterator = tmp
+          @initial_phase_iterator = tmp
 
           # conversion for final_phase [type = com.ning.billing.catalog.api.PlanPhase]
-          final_phase = j_obj.final_phase
-          final_phase = Killbill::Plugin::Model::PlanPhase.to_ruby(final_phase) if !final_phase.nil?
+          @final_phase = j_obj.final_phase
+          @final_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@final_phase) unless @final_phase.nil?
 
           # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          billing_period = j_obj.billing_period
-          billing_period = billing_period.to_s if !billing_period.nil?
+          @billing_period = j_obj.billing_period
+          @billing_period = @billing_period.to_s unless @billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
-          plans_allowed_in_bundle = j_obj.plans_allowed_in_bundle
+          @plans_allowed_in_bundle = j_obj.plans_allowed_in_bundle
 
           # conversion for all_phases [type = com.ning.billing.catalog.api.PlanPhase]
-          all_phases = j_obj.all_phases
-          all_phases = Killbill::Plugin::Model::PlanPhase.to_ruby(all_phases) if !all_phases.nil?
+          @all_phases = j_obj.all_phases
+          @all_phases = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@all_phases) unless @all_phases.nil?
 
           # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
-          effective_date_for_existing_subscriptons = j_obj.effective_date_for_existing_subscriptons
-          if !effective_date_for_existing_subscriptons.nil?
-            effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(effective_date_for_existing_subscriptons)
+          @effective_date_for_existing_subscriptons = j_obj.effective_date_for_existing_subscriptons
+          if !@effective_date_for_existing_subscriptons.nil?
+            @effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptons)
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(effective_date_for_existing_subscriptons)
-            effective_date_for_existing_subscriptons = DateTime.iso8601(str)
+            str = fmt.print(@effective_date_for_existing_subscriptons)
+            @effective_date_for_existing_subscriptons = DateTime.iso8601(str)
           end
         end
 

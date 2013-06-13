@@ -27,30 +27,28 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.api'
-      class PaymentAttempt
+      java_package 'com.ning.billing.payment.plugin.api'
+      class PaymentInfoPlugin
 
-        include com.ning.billing.payment.api.PaymentAttempt
+        include com.ning.billing.payment.plugin.api.PaymentInfoPlugin
 
-        attr_accessor :id, :created_date, :updated_date, :effective_date, :gateway_error_code, :gateway_error_msg, :payment_status
+        attr_accessor :amount, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_payment_reference_id, :second_payment_reference_id
 
         def initialize()
         end
 
         def to_java()
-          # conversion for id [type = java.util.UUID]
-          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
+          # conversion for amount [type = java.math.BigDecimal]
+          if @amount.nil?
+            @amount = java.math.BigDecimal::ZERO
+          else
+            @amount = java.math.BigDecimal.new(@amount.to_i)
+          end
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
             @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
             @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
-          end
-
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          if !@updated_date.nil?
-            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
-            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for effective_date [type = org.joda.time.DateTime]
@@ -59,20 +57,26 @@ module Killbill
             @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
+          # conversion for status [type = com.ning.billing.payment.plugin.api.PaymentPluginStatus]
+          @status = Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus.value_of("#{@status.to_s}") unless @status.nil?
+
+          # conversion for gateway_error [type = java.lang.String]
+          @gateway_error = @gateway_error.to_s unless @gateway_error.nil?
+
           # conversion for gateway_error_code [type = java.lang.String]
           @gateway_error_code = @gateway_error_code.to_s unless @gateway_error_code.nil?
 
-          # conversion for gateway_error_msg [type = java.lang.String]
-          @gateway_error_msg = @gateway_error_msg.to_s unless @gateway_error_msg.nil?
+          # conversion for first_payment_reference_id [type = java.lang.String]
+          @first_payment_reference_id = @first_payment_reference_id.to_s unless @first_payment_reference_id.nil?
 
-          # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
-          @payment_status = Java::com.ning.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
+          # conversion for second_payment_reference_id [type = java.lang.String]
+          @second_payment_reference_id = @second_payment_reference_id.to_s unless @second_payment_reference_id.nil?
         end
 
         def to_ruby(j_obj)
-          # conversion for id [type = java.util.UUID]
-          @id = j_obj.id
-          @id = @id.nil? ? nil : @id.to_s
+          # conversion for amount [type = java.math.BigDecimal]
+          @amount = j_obj.amount
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
 
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date
@@ -80,14 +84,6 @@ module Killbill
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
             str = fmt.print(@created_date)
             @created_date = DateTime.iso8601(str)
-          end
-
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          @updated_date = j_obj.updated_date
-          if !@updated_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(@updated_date)
-            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for effective_date [type = org.joda.time.DateTime]
@@ -98,15 +94,21 @@ module Killbill
             @effective_date = DateTime.iso8601(str)
           end
 
+          # conversion for status [type = com.ning.billing.payment.plugin.api.PaymentPluginStatus]
+          @status = j_obj.status
+          @status = @status.to_s unless @status.nil?
+
+          # conversion for gateway_error [type = java.lang.String]
+          @gateway_error = j_obj.gateway_error
+
           # conversion for gateway_error_code [type = java.lang.String]
           @gateway_error_code = j_obj.gateway_error_code
 
-          # conversion for gateway_error_msg [type = java.lang.String]
-          @gateway_error_msg = j_obj.gateway_error_msg
+          # conversion for first_payment_reference_id [type = java.lang.String]
+          @first_payment_reference_id = j_obj.first_payment_reference_id
 
-          # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
-          @payment_status = j_obj.payment_status
-          @payment_status = @payment_status.to_s unless @payment_status.nil?
+          # conversion for second_payment_reference_id [type = java.lang.String]
+          @second_payment_reference_id = j_obj.second_payment_reference_id
         end
 
       end

@@ -1,5 +1,3 @@
-
-
 module Killbill
   module Plugin
 
@@ -8,19 +6,28 @@ module Killbill
     #
     class KillbillApi
 
-
-      def initialize(japi_proxy)
-        @japi_proxy = japi_proxy
-        EXPORT_KILLBILL_API.each do |api|
-
+      def initialize(plugin_name, java_service_map)
+        @plugin_name = plugin_name
+        @services = {}
+        java_service_map.each do |k,v|
+          @services[k] = create_proxy_api(k, v)
         end
       end
 
+      #
+      # Returns the proxy to the java api
+      #
       def method_missing(m, *args, &block)
         # m being a symbol, to_s is required for Ruby 1.8
-        puts "Got missing method #{m.to_s}"
-        return @japi_proxy.proxy_api(m.to_s, *args) if EXPORT_KILLBILL_API.include? m.to_s
+        return @services[m.to_s] if @services.include? m.to_s
         raise NoMethodError.new("undefined method `#{m}' for #{self}")
+      end
+
+      private
+
+      def create_proxy_api(api_name, java_api)
+        proxy_class_name = "Killbill::Plugin::Api::#{api_name.split('_').map{|e| e.capitalize}.join}".new(java_api)
+        proxy_class_name.to_class.new(java_api)
       end
 
     end

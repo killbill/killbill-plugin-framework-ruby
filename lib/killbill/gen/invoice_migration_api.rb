@@ -39,29 +39,25 @@ module Killbill
 
         java_signature 'Java::java.util.UUID createMigrationInvoice(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::java.math.BigDecimal, Java::com.ning.billing.catalog.api.Currency, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_migration_invoice(accountId, targetDate, balance, currency, context)
-          if !accountId.nil? && accountId.respond_to? :to_java
-            accountId = accountId.to_java
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+          # conversion for targetDate [type = org.joda.time.LocalDate]
+          if !targetDate.nil?
+            targetDate = Java::org.joda.time.LocalDate.parse(targetDate.to_s)
           end
-
-          if !targetDate.nil? && targetDate.respond_to? :to_java
-            targetDate = targetDate.to_java
+          # conversion for balance [type = java.math.BigDecimal]
+          if balance.nil?
+            balance = java.math.BigDecimal::ZERO
+          else
+            balance = java.math.BigDecimal.new(balance.to_i)
           end
-
-          if !balance.nil? && balance.respond_to? :to_java
-            balance = balance.to_java
-          end
-
-          if !currency.nil? && currency.respond_to? :to_java
-            currency = currency.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.create_migration_invoice(accountId, targetDate, balance, currency, context)
           # conversion for res [type = java.util.UUID]
-          res = res.nil? ? nil : uuid.to_s
+          res = res.nil? ? nil : res.to_s
           return res
         end
       end

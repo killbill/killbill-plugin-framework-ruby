@@ -27,10 +27,8 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.api'
       class PaymentMethodKVInfo
 
-        include com.ning.billing.payment.api.PaymentMethodKVInfo
 
         attr_accessor :key, :value, :is_updatable
 
@@ -39,29 +37,30 @@ module Killbill
 
         def to_java()
           # conversion for key [type = java.lang.String]
-          key = key.to_s if !key.nil?
+          @key = @key.to_s unless @key.nil?
 
           # conversion for value [type = java.lang.Object]
-          value = value.to_s if !value.nil?
+          @value = @value.to_s unless @value.nil?
 
           # conversion for is_updatable [type = java.lang.Boolean]
-          is_updatable = is_updatable.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_updatable)
+          @is_updatable = @is_updatable.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_updatable)
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for key [type = java.lang.String]
-          key = j_obj.key
+          @key = j_obj.key
 
           # conversion for value [type = java.lang.Object]
-          value = j_obj.value
+          @value = j_obj.value
 
           # conversion for is_updatable [type = java.lang.Boolean]
-          is_updatable = j_obj.is_updatable
-          if is_updatable.nil?
-            return false
+          @is_updatable = j_obj.is_updatable
+          if @is_updatable.nil?
+            @is_updatable = false
+          else
+            tmp_bool = (@is_updatable.java_kind_of? java.lang.Boolean) ? @is_updatable.boolean_value : @is_updatable
+            @is_updatable = tmp_bool ? true : false
           end
-          b_value = (is_updatable.java_kind_of? java.lang.Boolean) ? is_updatable.boolean_value : is_updatable
-          return b_value ? true : false
         end
 
       end

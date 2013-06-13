@@ -39,108 +39,108 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for payment_id [type = java.util.UUID]
-          payment_id = java.util.UUID.fromString(payment_id.to_s) if !payment_id.nil?
+          @payment_id = java.util.UUID.fromString(@payment_id.to_s) unless @payment_id.nil?
 
           # conversion for type [type = com.ning.billing.invoice.api.InvoicePaymentType]
-          type = "Java::com.ning.billing.invoice.api.InvoicePaymentType::#{type.to_s}" if !type.nil?
+          @type = Java::com.ning.billing.invoice.api.InvoicePaymentType.value_of("#{@type.to_s}") unless @type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
-          invoice_id = java.util.UUID.fromString(invoice_id.to_s) if !invoice_id.nil?
+          @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
 
           # conversion for payment_date [type = org.joda.time.DateTime]
-          if !payment_date.nil?
-            payment_date =  (payment_date.kind_of? Time) ? DateTime.parse(payment_date.to_s) : payment_date
-            payment_date = Java::org.joda.time.DateTime.new(payment_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@payment_date.nil?
+            @payment_date =  (@payment_date.kind_of? Time) ? DateTime.parse(@payment_date.to_s) : @payment_date
+            @payment_date = Java::org.joda.time.DateTime.new(@payment_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
+          if @amount.nil?
+            @amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.respond_to?(:cents) ? amount.cents : amount.to_i)
+            @amount = java.math.BigDecimal.new(@amount.to_i)
           end
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = "Java::com.ning.billing.catalog.api.Currency::#{currency.to_s}" if !currency.nil?
+          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for linked_invoice_payment_id [type = java.util.UUID]
-          linked_invoice_payment_id = java.util.UUID.fromString(linked_invoice_payment_id.to_s) if !linked_invoice_payment_id.nil?
+          @linked_invoice_payment_id = java.util.UUID.fromString(@linked_invoice_payment_id.to_s) unless @linked_invoice_payment_id.nil?
 
           # conversion for payment_cookie_id [type = java.util.UUID]
-          payment_cookie_id = java.util.UUID.fromString(payment_cookie_id.to_s) if !payment_cookie_id.nil?
+          @payment_cookie_id = java.util.UUID.fromString(@payment_cookie_id.to_s) unless @payment_cookie_id.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for payment_id [type = java.util.UUID]
-          payment_id = j_obj.payment_id
-          payment_id = payment_id.nil? ? nil : uuid.to_s
+          @payment_id = j_obj.payment_id
+          @payment_id = @payment_id.nil? ? nil : @payment_id.to_s
 
           # conversion for type [type = com.ning.billing.invoice.api.InvoicePaymentType]
-          type = j_obj.type
-          type = type.to_s if !type.nil?
+          @type = j_obj.type
+          @type = @type.to_s unless @type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
-          invoice_id = j_obj.invoice_id
-          invoice_id = invoice_id.nil? ? nil : uuid.to_s
+          @invoice_id = j_obj.invoice_id
+          @invoice_id = @invoice_id.nil? ? nil : @invoice_id.to_s
 
           # conversion for payment_date [type = org.joda.time.DateTime]
-          payment_date = j_obj.payment_date
-          if !payment_date.nil?
+          @payment_date = j_obj.payment_date
+          if !@payment_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(payment_date)
-            payment_date = DateTime.iso8601(str)
+            str = fmt.print(@payment_date)
+            @payment_date = DateTime.iso8601(str)
           end
 
           # conversion for amount [type = java.math.BigDecimal]
-          amount = j_obj.amount
-          amount = amount.nil? ? 0 : amount.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+          @amount = j_obj.amount
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = j_obj.currency
-          currency = currency.to_s if !currency.nil?
+          @currency = j_obj.currency
+          @currency = @currency.to_s unless @currency.nil?
 
           # conversion for linked_invoice_payment_id [type = java.util.UUID]
-          linked_invoice_payment_id = j_obj.linked_invoice_payment_id
-          linked_invoice_payment_id = linked_invoice_payment_id.nil? ? nil : uuid.to_s
+          @linked_invoice_payment_id = j_obj.linked_invoice_payment_id
+          @linked_invoice_payment_id = @linked_invoice_payment_id.nil? ? nil : @linked_invoice_payment_id.to_s
 
           # conversion for payment_cookie_id [type = java.util.UUID]
-          payment_cookie_id = j_obj.payment_cookie_id
-          payment_cookie_id = payment_cookie_id.nil? ? nil : uuid.to_s
+          @payment_cookie_id = j_obj.payment_cookie_id
+          @payment_cookie_id = @payment_cookie_id.nil? ? nil : @payment_cookie_id.to_s
         end
 
       end

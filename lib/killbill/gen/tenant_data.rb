@@ -39,24 +39,24 @@ module Killbill
 
         def to_java()
           # conversion for external_key [type = java.lang.String]
-          external_key = external_key.to_s if !external_key.nil?
+          @external_key = @external_key.to_s unless @external_key.nil?
 
           # conversion for api_key [type = java.lang.String]
-          api_key = api_key.to_s if !api_key.nil?
+          @api_key = @api_key.to_s unless @api_key.nil?
 
           # conversion for api_secret [type = java.lang.String]
-          api_secret = api_secret.to_s if !api_secret.nil?
+          @api_secret = @api_secret.to_s unless @api_secret.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for external_key [type = java.lang.String]
-          external_key = j_obj.external_key
+          @external_key = j_obj.external_key
 
           # conversion for api_key [type = java.lang.String]
-          api_key = j_obj.api_key
+          @api_key = j_obj.api_key
 
           # conversion for api_secret [type = java.lang.String]
-          api_secret = j_obj.api_secret
+          @api_secret = j_obj.api_secret
         end
 
       end

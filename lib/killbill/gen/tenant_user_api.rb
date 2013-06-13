@@ -39,66 +39,54 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.tenant.api.Tenant createTenant(Java::com.ning.billing.tenant.api.TenantData, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_tenant(data, context)
-          if !data.nil? && data.respond_to? :to_java
-            data = data.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for data [type = com.ning.billing.tenant.api.TenantData]
+          data = data.to_java unless data.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_tenant(data, context)
             # conversion for res [type = com.ning.billing.tenant.api.Tenant]
-            res = Killbill::Plugin::Model::Tenant.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::Tenant.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.tenant.api.TenantApiException => e
-            raise Killbill::Plugin::Model::TenantApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::com.ning.billing.tenant.api.Tenant getTenantByApiKey(Java::java.lang.String)'
         def get_tenant_by_api_key(key)
-          if !key.nil? && key.respond_to? :to_java
-            key = key.to_java
-          end
-
+          # conversion for key [type = java.lang.String]
+          key = key.to_s unless key.nil?
           begin
             res = @real_java_api.get_tenant_by_api_key(key)
             # conversion for res [type = com.ning.billing.tenant.api.Tenant]
-            res = Killbill::Plugin::Model::Tenant.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::Tenant.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.tenant.api.TenantApiException => e
-            raise Killbill::Plugin::Model::TenantApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::com.ning.billing.tenant.api.Tenant getTenantById(Java::java.util.UUID)'
         def get_tenant_by_id(tenantId)
-          if !tenantId.nil? && tenantId.respond_to? :to_java
-            tenantId = tenantId.to_java
-          end
-
+          # conversion for tenantId [type = java.util.UUID]
+          tenantId = java.util.UUID.fromString(tenantId.to_s) unless tenantId.nil?
           begin
             res = @real_java_api.get_tenant_by_id(tenantId)
             # conversion for res [type = com.ning.billing.tenant.api.Tenant]
-            res = Killbill::Plugin::Model::Tenant.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::Tenant.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.tenant.api.TenantApiException => e
-            raise Killbill::Plugin::Model::TenantApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::java.util.List getTenantValueForKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tenant_value_for_key(key, context)
-          if !key.nil? && key.respond_to? :to_java
-            key = key.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for key [type = java.lang.String]
+          key = key.to_s unless key.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_tenant_value_for_key(key, context)
             # conversion for res [type = java.util.List]
@@ -110,37 +98,27 @@ module Killbill
             res = tmp
             return res
           rescue Java::com.ning.billing.tenant.api.TenantApiException => e
-            raise Killbill::Plugin::Model::TenantApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::void addTenantKeyValue(Java::java.lang.String, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
         def add_tenant_key_value(key, value, context)
-          if !key.nil? && key.respond_to? :to_java
-            key = key.to_java
-          end
-
-          if !value.nil? && value.respond_to? :to_java
-            value = value.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for key [type = java.lang.String]
+          key = key.to_s unless key.nil?
+          # conversion for value [type = java.lang.String]
+          value = value.to_s unless value.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
           @real_java_api.add_tenant_key_value(key, value, context)
         end
 
         java_signature 'Java::void deleteTenantKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
         def delete_tenant_key(key, context)
-          if !key.nil? && key.respond_to? :to_java
-            key = key.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for key [type = java.lang.String]
+          key = key.to_s unless key.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
           @real_java_api.delete_tenant_key(key, context)
         end
       end

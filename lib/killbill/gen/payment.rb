@@ -39,157 +39,157 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for account_id [type = java.util.UUID]
-          account_id = java.util.UUID.fromString(account_id.to_s) if !account_id.nil?
+          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
-          invoice_id = java.util.UUID.fromString(invoice_id.to_s) if !invoice_id.nil?
+          @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
 
           # conversion for payment_method_id [type = java.util.UUID]
-          payment_method_id = java.util.UUID.fromString(payment_method_id.to_s) if !payment_method_id.nil?
+          @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
 
           # conversion for payment_number [type = java.lang.Integer]
-          payment_number = payment_number
+          @payment_number = @payment_number
 
           # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
+          if @amount.nil?
+            @amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.respond_to?(:cents) ? amount.cents : amount.to_i)
+            @amount = java.math.BigDecimal.new(@amount.to_i)
           end
 
           # conversion for paid_amount [type = java.math.BigDecimal]
-          if paid_amount.nil?
-            paid_amount = java.math.BigDecimal::ZERO
+          if @paid_amount.nil?
+            @paid_amount = java.math.BigDecimal::ZERO
           else
-            paid_amount = java.math.BigDecimal.new(paid_amount.respond_to?(:cents) ? paid_amount.cents : paid_amount.to_i)
+            @paid_amount = java.math.BigDecimal.new(@paid_amount.to_i)
           end
 
           # conversion for effective_date [type = org.joda.time.DateTime]
-          if !effective_date.nil?
-            effective_date =  (effective_date.kind_of? Time) ? DateTime.parse(effective_date.to_s) : effective_date
-            effective_date = Java::org.joda.time.DateTime.new(effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@effective_date.nil?
+            @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
+            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = "Java::com.ning.billing.catalog.api.Currency::#{currency.to_s}" if !currency.nil?
+          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
-          payment_status = "Java::com.ning.billing.payment.api.PaymentStatus::#{payment_status.to_s}" if !payment_status.nil?
+          @payment_status = Java::com.ning.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
 
           # conversion for attempts [type = java.util.List]
           tmp = java.util.ArrayList.new
-          attempts.each do |m|
+          @attempts.each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
-            m = m.to_java if !m.nil?
+            @m = @m.to_java unless @m.nil?
             tmp.add(m)
           end
-          attempts = tmp
+          @attempts = tmp
 
           # conversion for ext_first_payment_id_ref [type = java.lang.String]
-          ext_first_payment_id_ref = ext_first_payment_id_ref.to_s if !ext_first_payment_id_ref.nil?
+          @ext_first_payment_id_ref = @ext_first_payment_id_ref.to_s unless @ext_first_payment_id_ref.nil?
 
           # conversion for ext_second_payment_id_ref [type = java.lang.String]
-          ext_second_payment_id_ref = ext_second_payment_id_ref.to_s if !ext_second_payment_id_ref.nil?
+          @ext_second_payment_id_ref = @ext_second_payment_id_ref.to_s unless @ext_second_payment_id_ref.nil?
 
           # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
-          payment_info_plugin = payment_info_plugin.to_java if !payment_info_plugin.nil?
+          @payment_info_plugin = @payment_info_plugin.to_java unless @payment_info_plugin.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for account_id [type = java.util.UUID]
-          account_id = j_obj.account_id
-          account_id = account_id.nil? ? nil : uuid.to_s
+          @account_id = j_obj.account_id
+          @account_id = @account_id.nil? ? nil : @account_id.to_s
 
           # conversion for invoice_id [type = java.util.UUID]
-          invoice_id = j_obj.invoice_id
-          invoice_id = invoice_id.nil? ? nil : uuid.to_s
+          @invoice_id = j_obj.invoice_id
+          @invoice_id = @invoice_id.nil? ? nil : @invoice_id.to_s
 
           # conversion for payment_method_id [type = java.util.UUID]
-          payment_method_id = j_obj.payment_method_id
-          payment_method_id = payment_method_id.nil? ? nil : uuid.to_s
+          @payment_method_id = j_obj.payment_method_id
+          @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
 
           # conversion for payment_number [type = java.lang.Integer]
-          payment_number = j_obj.payment_number
+          @payment_number = j_obj.payment_number
 
           # conversion for amount [type = java.math.BigDecimal]
-          amount = j_obj.amount
-          amount = amount.nil? ? 0 : amount.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+          @amount = j_obj.amount
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
 
           # conversion for paid_amount [type = java.math.BigDecimal]
-          paid_amount = j_obj.paid_amount
-          paid_amount = paid_amount.nil? ? 0 : paid_amount.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+          @paid_amount = j_obj.paid_amount
+          @paid_amount = @paid_amount.nil? ? 0 : @paid_amount.to_s.to_i
 
           # conversion for effective_date [type = org.joda.time.DateTime]
-          effective_date = j_obj.effective_date
-          if !effective_date.nil?
+          @effective_date = j_obj.effective_date
+          if !@effective_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(effective_date)
-            effective_date = DateTime.iso8601(str)
+            str = fmt.print(@effective_date)
+            @effective_date = DateTime.iso8601(str)
           end
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = j_obj.currency
-          currency = currency.to_s if !currency.nil?
+          @currency = j_obj.currency
+          @currency = @currency.to_s unless @currency.nil?
 
           # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
-          payment_status = j_obj.payment_status
-          payment_status = payment_status.to_s if !payment_status.nil?
+          @payment_status = j_obj.payment_status
+          @payment_status = @payment_status.to_s unless @payment_status.nil?
 
           # conversion for attempts [type = java.util.List]
-          attempts = j_obj.attempts
+          @attempts = j_obj.attempts
           tmp = []
-          attempts.each do |m|
+          @attempts.each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
-            m = j_obj.m
-            m = Killbill::Plugin::Model::PaymentAttempt.to_ruby(m) if !m.nil?
+            @m = j_obj.m
+            @m = Killbill::Plugin::Model::PaymentAttempt.new.to_ruby(@m) unless @m.nil?
             tmp << m
           end
-          attempts = tmp
+          @attempts = tmp
 
           # conversion for ext_first_payment_id_ref [type = java.lang.String]
-          ext_first_payment_id_ref = j_obj.ext_first_payment_id_ref
+          @ext_first_payment_id_ref = j_obj.ext_first_payment_id_ref
 
           # conversion for ext_second_payment_id_ref [type = java.lang.String]
-          ext_second_payment_id_ref = j_obj.ext_second_payment_id_ref
+          @ext_second_payment_id_ref = j_obj.ext_second_payment_id_ref
 
           # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
-          payment_info_plugin = j_obj.payment_info_plugin
-          payment_info_plugin = Killbill::Plugin::Model::PaymentInfoPlugin.to_ruby(payment_info_plugin) if !payment_info_plugin.nil?
+          @payment_info_plugin = j_obj.payment_info_plugin
+          @payment_info_plugin = Killbill::Plugin::Model::PaymentInfoPlugin.new.to_ruby(@payment_info_plugin) unless @payment_info_plugin.nil?
         end
 
       end

@@ -39,61 +39,61 @@ module Killbill
 
         def to_java()
           # conversion for recurring_price [type = com.ning.billing.catalog.api.InternationalPrice]
-          recurring_price = recurring_price.to_java if !recurring_price.nil?
+          @recurring_price = @recurring_price.to_java unless @recurring_price.nil?
 
           # conversion for fixed_price [type = com.ning.billing.catalog.api.InternationalPrice]
-          fixed_price = fixed_price.to_java if !fixed_price.nil?
+          @fixed_price = @fixed_price.to_java unless @fixed_price.nil?
 
           # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          billing_period = "Java::com.ning.billing.catalog.api.BillingPeriod::#{billing_period.to_s}" if !billing_period.nil?
+          @billing_period = Java::com.ning.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
 
           # conversion for plan [type = com.ning.billing.catalog.api.Plan]
-          plan = plan.to_java if !plan.nil?
+          @plan = @plan.to_java unless @plan.nil?
 
           # conversion for duration [type = com.ning.billing.catalog.api.Duration]
-          duration = duration.to_java if !duration.nil?
+          @duration = @duration.to_java unless @duration.nil?
 
           # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
-          phase_type = "Java::com.ning.billing.catalog.api.PhaseType::#{phase_type.to_s}" if !phase_type.nil?
+          @phase_type = Java::com.ning.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
 
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
-          limits = limits.to_java if !limits.nil?
+          @limits = @limits.to_java unless @limits.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for recurring_price [type = com.ning.billing.catalog.api.InternationalPrice]
-          recurring_price = j_obj.recurring_price
-          recurring_price = Killbill::Plugin::Model::InternationalPrice.to_ruby(recurring_price) if !recurring_price.nil?
+          @recurring_price = j_obj.recurring_price
+          @recurring_price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@recurring_price) unless @recurring_price.nil?
 
           # conversion for fixed_price [type = com.ning.billing.catalog.api.InternationalPrice]
-          fixed_price = j_obj.fixed_price
-          fixed_price = Killbill::Plugin::Model::InternationalPrice.to_ruby(fixed_price) if !fixed_price.nil?
+          @fixed_price = j_obj.fixed_price
+          @fixed_price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@fixed_price) unless @fixed_price.nil?
 
           # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          billing_period = j_obj.billing_period
-          billing_period = billing_period.to_s if !billing_period.nil?
+          @billing_period = j_obj.billing_period
+          @billing_period = @billing_period.to_s unless @billing_period.nil?
 
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
 
           # conversion for plan [type = com.ning.billing.catalog.api.Plan]
-          plan = j_obj.plan
-          plan = Killbill::Plugin::Model::Plan.to_ruby(plan) if !plan.nil?
+          @plan = j_obj.plan
+          @plan = Killbill::Plugin::Model::Plan.new.to_ruby(@plan) unless @plan.nil?
 
           # conversion for duration [type = com.ning.billing.catalog.api.Duration]
-          duration = j_obj.duration
-          duration = Killbill::Plugin::Model::Duration.to_ruby(duration) if !duration.nil?
+          @duration = j_obj.duration
+          @duration = Killbill::Plugin::Model::Duration.new.to_ruby(@duration) unless @duration.nil?
 
           # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
-          phase_type = j_obj.phase_type
-          phase_type = phase_type.to_s if !phase_type.nil?
+          @phase_type = j_obj.phase_type
+          @phase_type = @phase_type.to_s unless @phase_type.nil?
 
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
-          limits = j_obj.limits
-          limits = Killbill::Plugin::Model::Limit.to_ruby(limits) if !limits.nil?
+          @limits = j_obj.limits
+          @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
         end
 
       end

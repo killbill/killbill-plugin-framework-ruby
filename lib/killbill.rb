@@ -9,6 +9,12 @@ begin
        gsub(/([a-z])([A-Z])/, '\1_\2').
        downcase
      end
+
+     def to_class
+       self.split('::').inject(Kernel) do |mod, class_name|
+         mod.const_get(class_name)
+       end
+     end
   end
 
 
@@ -27,57 +33,6 @@ begin
     com.ning.billing.util.api.TagUserApi
     javax.servlet.http.HttpServlet
   )
-
-  #
-  # The Killbill ruby APIs exported for all the ruby plugins
-  #
-  EXPORT_KILLBILL_API = %w(
-    createAccount
-    updateAccount
-    getAccountById
-    getBundleFromId
-    getSubscriptionFromId
-    getBundlesForAccount
-    getSubscriptionsForBundle
-    getBaseSubscription
-    createBundleForAccount
-    createSubscription
-    getNextBillingDate
-    getAllInvoicesByAccount
-    getInvoice
-    getInvoicePayments
-    getInvoicePaymentForAttempt
-    getRemainingAmountPaid
-    getChargebacksByAccountId
-    getAccountIdFromInvoicePaymentId
-    getChargebacksByPaymentId
-    getChargebackById
-    getInvoicesByAccount
-    getAccountBalance
-    getAccountCBA
-    getInvoice
-    getUnpaidInvoicesByAccountId
-    getOverdueStateFor
-    getAccountRefunds
-    getPaymentRefunds
-    getInvoicePayments
-    getAccountPayments
-    getPayment
-    getPaymentMethods
-    getPaymentMethodById
-    addCustomFields
-    getCustomFieldsForAccount
-    getTagDefinitions
-    createTagDefinition
-    deleteTagDefinition
-    getTagDefinition
-    getTagDefinitions
-    addTags
-    addTag
-    removeTags
-    removeTag
-    getTagsForAccount
-  ).collect { |e| e.snake_case }
 
   begin
     IMPORT_KILLBILL_APIS.each { |api| java_import api }

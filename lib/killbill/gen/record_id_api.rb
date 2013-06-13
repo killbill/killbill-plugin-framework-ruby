@@ -39,18 +39,12 @@ module Killbill
 
         java_signature 'Java::java.lang.Long getRecordId(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_record_id(objectId, objectType, tenantContext)
-          if !objectId.nil? && objectId.respond_to? :to_java
-            objectId = objectId.to_java
-          end
-
-          if !objectType.nil? && objectType.respond_to? :to_java
-            objectType = objectType.to_java
-          end
-
-          if !tenantContext.nil? && tenantContext.respond_to? :to_java
-            tenantContext = tenantContext.to_java
-          end
-
+          # conversion for objectId [type = java.util.UUID]
+          objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
+          # conversion for objectType [type = com.ning.billing.ObjectType]
+          objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          # conversion for tenantContext [type = com.ning.billing.util.callcontext.TenantContext]
+          tenantContext = tenantContext.to_java unless tenantContext.nil?
           res = @real_java_api.get_record_id(objectId, objectType, tenantContext)
           # conversion for res [type = java.lang.Long]
           return res

@@ -39,24 +39,24 @@ module Killbill
 
         def to_java()
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = "Java::com.ning.billing.catalog.api.Currency::#{currency.to_s}" if !currency.nil?
+          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for value [type = java.math.BigDecimal]
-          if value.nil?
-            value = java.math.BigDecimal::ZERO
+          if @value.nil?
+            @value = java.math.BigDecimal::ZERO
           else
-            value = java.math.BigDecimal.new(value.respond_to?(:cents) ? value.cents : value.to_i)
+            @value = java.math.BigDecimal.new(@value.to_i)
           end
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = j_obj.currency
-          currency = currency.to_s if !currency.nil?
+          @currency = j_obj.currency
+          @currency = @currency.to_s unless @currency.nil?
 
           # conversion for value [type = java.math.BigDecimal]
-          value = j_obj.value
-          value = value.nil? ? 0 : value.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+          @value = j_obj.value
+          @value = @value.nil? ? 0 : @value.to_s.to_i
         end
 
       end

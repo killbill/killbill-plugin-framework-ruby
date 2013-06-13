@@ -39,69 +39,69 @@ module Killbill
 
         def to_java()
           # conversion for tag_definition_id [type = java.util.UUID]
-          tag_definition_id = java.util.UUID.fromString(tag_definition_id.to_s) if !tag_definition_id.nil?
+          @tag_definition_id = java.util.UUID.fromString(@tag_definition_id.to_s) unless @tag_definition_id.nil?
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
-          object_type = "Java::com.ning.billing.ObjectType::#{object_type.to_s}" if !object_type.nil?
+          @object_type = Java::com.ning.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
-          object_id = java.util.UUID.fromString(object_id.to_s) if !object_id.nil?
+          @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
 
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for control_tag_type [type = com.ning.billing.util.tag.ControlTagType]
-          control_tag_type = "Java::com.ning.billing.util.tag.ControlTagType::#{control_tag_type.to_s}" if !control_tag_type.nil?
+          @control_tag_type = Java::com.ning.billing.util.tag.ControlTagType.value_of("#{@control_tag_type.to_s}") unless @control_tag_type.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for tag_definition_id [type = java.util.UUID]
-          tag_definition_id = j_obj.tag_definition_id
-          tag_definition_id = tag_definition_id.nil? ? nil : uuid.to_s
+          @tag_definition_id = j_obj.tag_definition_id
+          @tag_definition_id = @tag_definition_id.nil? ? nil : @tag_definition_id.to_s
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
-          object_type = j_obj.object_type
-          object_type = object_type.to_s if !object_type.nil?
+          @object_type = j_obj.object_type
+          @object_type = @object_type.to_s unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
-          object_id = j_obj.object_id
-          object_id = object_id.nil? ? nil : uuid.to_s
+          @object_id = j_obj.object_id
+          @object_id = @object_id.nil? ? nil : @object_id.to_s
 
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for control_tag_type [type = com.ning.billing.util.tag.ControlTagType]
-          control_tag_type = j_obj.control_tag_type
-          control_tag_type = control_tag_type.to_s if !control_tag_type.nil?
+          @control_tag_type = j_obj.control_tag_type
+          @control_tag_type = @control_tag_type.to_s unless @control_tag_type.nil?
         end
 
       end

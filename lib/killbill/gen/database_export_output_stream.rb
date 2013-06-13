@@ -40,7 +40,7 @@ module Killbill
         def to_java()
       end
 
-      def self.to_ruby(j_obj)
+      def to_ruby(j_obj)
     end
 
   end

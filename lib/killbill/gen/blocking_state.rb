@@ -39,120 +39,123 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for blocked_id [type = java.util.UUID]
-          blocked_id = java.util.UUID.fromString(blocked_id.to_s) if !blocked_id.nil?
+          @blocked_id = java.util.UUID.fromString(@blocked_id.to_s) unless @blocked_id.nil?
 
           # conversion for state_name [type = java.lang.String]
-          state_name = state_name.to_s if !state_name.nil?
+          @state_name = @state_name.to_s unless @state_name.nil?
 
           # conversion for type [type = com.ning.billing.junction.api.Type]
-          type = "Java::com.ning.billing.junction.api.Type::#{type.to_s}" if !type.nil?
+          @type = Java::com.ning.billing.junction.api.Type.value_of("#{@type.to_s}") unless @type.nil?
 
           # conversion for timestamp [type = org.joda.time.DateTime]
-          if !timestamp.nil?
-            timestamp =  (timestamp.kind_of? Time) ? DateTime.parse(timestamp.to_s) : timestamp
-            timestamp = Java::org.joda.time.DateTime.new(timestamp.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@timestamp.nil?
+            @timestamp =  (@timestamp.kind_of? Time) ? DateTime.parse(@timestamp.to_s) : @timestamp
+            @timestamp = Java::org.joda.time.DateTime.new(@timestamp.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for is_block_change [type = boolean]
-          is_block_change = is_block_change.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_block_change)
+          @is_block_change = @is_block_change.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_block_change)
 
           # conversion for is_block_entitlement [type = boolean]
-          is_block_entitlement = is_block_entitlement.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_block_entitlement)
+          @is_block_entitlement = @is_block_entitlement.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_block_entitlement)
 
           # conversion for is_block_billing [type = boolean]
-          is_block_billing = is_block_billing.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_block_billing)
+          @is_block_billing = @is_block_billing.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_block_billing)
 
           # conversion for description [type = java.lang.String]
-          description = description.to_s if !description.nil?
+          @description = @description.to_s unless @description.nil?
 
           # conversion for service [type = java.lang.String]
-          service = service.to_s if !service.nil?
+          @service = @service.to_s unless @service.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for blocked_id [type = java.util.UUID]
-          blocked_id = j_obj.blocked_id
-          blocked_id = blocked_id.nil? ? nil : uuid.to_s
+          @blocked_id = j_obj.blocked_id
+          @blocked_id = @blocked_id.nil? ? nil : @blocked_id.to_s
 
           # conversion for state_name [type = java.lang.String]
-          state_name = j_obj.state_name
+          @state_name = j_obj.state_name
 
           # conversion for type [type = com.ning.billing.junction.api.Type]
-          type = j_obj.type
-          type = type.to_s if !type.nil?
+          @type = j_obj.type
+          @type = @type.to_s unless @type.nil?
 
           # conversion for timestamp [type = org.joda.time.DateTime]
-          timestamp = j_obj.timestamp
-          if !timestamp.nil?
+          @timestamp = j_obj.timestamp
+          if !@timestamp.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(timestamp)
-            timestamp = DateTime.iso8601(str)
+            str = fmt.print(@timestamp)
+            @timestamp = DateTime.iso8601(str)
           end
 
           # conversion for is_block_change [type = boolean]
-          is_block_change = j_obj.is_block_change
-          if is_block_change.nil?
-            return false
+          @is_block_change = j_obj.is_block_change
+          if @is_block_change.nil?
+            @is_block_change = false
+          else
+            tmp_bool = (@is_block_change.java_kind_of? java.lang.Boolean) ? @is_block_change.boolean_value : @is_block_change
+            @is_block_change = tmp_bool ? true : false
           end
-          b_value = (is_block_change.java_kind_of? java.lang.Boolean) ? is_block_change.boolean_value : is_block_change
-          return b_value ? true : false
 
           # conversion for is_block_entitlement [type = boolean]
-          is_block_entitlement = j_obj.is_block_entitlement
-          if is_block_entitlement.nil?
-            return false
+          @is_block_entitlement = j_obj.is_block_entitlement
+          if @is_block_entitlement.nil?
+            @is_block_entitlement = false
+          else
+            tmp_bool = (@is_block_entitlement.java_kind_of? java.lang.Boolean) ? @is_block_entitlement.boolean_value : @is_block_entitlement
+            @is_block_entitlement = tmp_bool ? true : false
           end
-          b_value = (is_block_entitlement.java_kind_of? java.lang.Boolean) ? is_block_entitlement.boolean_value : is_block_entitlement
-          return b_value ? true : false
 
           # conversion for is_block_billing [type = boolean]
-          is_block_billing = j_obj.is_block_billing
-          if is_block_billing.nil?
-            return false
+          @is_block_billing = j_obj.is_block_billing
+          if @is_block_billing.nil?
+            @is_block_billing = false
+          else
+            tmp_bool = (@is_block_billing.java_kind_of? java.lang.Boolean) ? @is_block_billing.boolean_value : @is_block_billing
+            @is_block_billing = tmp_bool ? true : false
           end
-          b_value = (is_block_billing.java_kind_of? java.lang.Boolean) ? is_block_billing.boolean_value : is_block_billing
-          return b_value ? true : false
 
           # conversion for description [type = java.lang.String]
-          description = j_obj.description
+          @description = j_obj.description
 
           # conversion for service [type = java.lang.String]
-          service = j_obj.service
+          @service = j_obj.service
         end
 
       end

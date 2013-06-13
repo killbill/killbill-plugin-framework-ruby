@@ -27,53 +27,50 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.beatrix.bus.api'
-      class ExtBusEvent
+      java_package 'com.ning.billing.payment.plugin.api'
+      class PaymentMethodInfoPlugin
 
-        include com.ning.billing.beatrix.bus.api.ExtBusEvent
+        include com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin
 
-        attr_accessor :event_type, :object_type, :object_id, :account_id, :tenant_id
+        attr_accessor :account_id, :payment_method_id, :is_default, :external_payment_method_id
 
         def initialize()
         end
 
         def to_java()
-          # conversion for event_type [type = com.ning.billing.beatrix.bus.api.ExtBusEventType]
-          @event_type = Java::com.ning.billing.beatrix.bus.api.ExtBusEventType.value_of("#{@event_type.to_s}") unless @event_type.nil?
-
-          # conversion for object_type [type = com.ning.billing.ObjectType]
-          @object_type = Java::com.ning.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
-
-          # conversion for object_id [type = java.util.UUID]
-          @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
 
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
+          # conversion for payment_method_id [type = java.util.UUID]
+          @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
+
+          # conversion for is_default [type = boolean]
+          @is_default = @is_default.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_default)
+
+          # conversion for external_payment_method_id [type = java.lang.String]
+          @external_payment_method_id = @external_payment_method_id.to_s unless @external_payment_method_id.nil?
         end
 
         def to_ruby(j_obj)
-          # conversion for event_type [type = com.ning.billing.beatrix.bus.api.ExtBusEventType]
-          @event_type = j_obj.event_type
-          @event_type = @event_type.to_s unless @event_type.nil?
-
-          # conversion for object_type [type = com.ning.billing.ObjectType]
-          @object_type = j_obj.object_type
-          @object_type = @object_type.to_s unless @object_type.nil?
-
-          # conversion for object_id [type = java.util.UUID]
-          @object_id = j_obj.object_id
-          @object_id = @object_id.nil? ? nil : @object_id.to_s
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = j_obj.account_id
           @account_id = @account_id.nil? ? nil : @account_id.to_s
 
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = j_obj.tenant_id
-          @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
+          # conversion for payment_method_id [type = java.util.UUID]
+          @payment_method_id = j_obj.payment_method_id
+          @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
+
+          # conversion for is_default [type = boolean]
+          @is_default = j_obj.is_default
+          if @is_default.nil?
+            @is_default = false
+          else
+            tmp_bool = (@is_default.java_kind_of? java.lang.Boolean) ? @is_default.boolean_value : @is_default
+            @is_default = tmp_bool ? true : false
+          end
+
+          # conversion for external_payment_method_id [type = java.lang.String]
+          @external_payment_method_id = j_obj.external_payment_method_id
         end
 
       end

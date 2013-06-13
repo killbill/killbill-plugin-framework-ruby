@@ -39,19 +39,19 @@ module Killbill
 
         def to_java()
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
 
           # conversion for payment_api [type = com.ning.billing.payment.api.PaymentApi]
-          payment_api = payment_api.to_java if !payment_api.nil?
+          @payment_api = @payment_api.to_java unless @payment_api.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
 
           # conversion for payment_api [type = com.ning.billing.payment.api.PaymentApi]
-          payment_api = j_obj.payment_api
-          payment_api = Killbill::Plugin::Model::PaymentApi.to_ruby(payment_api) if !payment_api.nil?
+          @payment_api = j_obj.payment_api
+          @payment_api = Killbill::Plugin::Model::PaymentApi.new.to_ruby(@payment_api) unless @payment_api.nil?
         end
 
       end

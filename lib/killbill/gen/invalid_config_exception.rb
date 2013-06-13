@@ -27,10 +27,8 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
       class InvalidConfigException
 
-        include com.ning.billing.catalog.api.InvalidConfigException
 
         attr_accessor 
 
@@ -40,7 +38,7 @@ module Killbill
         def to_java()
       end
 
-      def self.to_ruby(j_obj)
+      def to_ruby(j_obj)
     end
 
   end

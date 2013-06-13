@@ -39,57 +39,58 @@ module Killbill
 
         def to_java()
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
 
           # conversion for is_retired [type = boolean]
-          is_retired = is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_retired)
+          @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
           # conversion for available [type = com.ning.billing.catalog.api.Product]
-          available = available.to_java if !available.nil?
+          @available = @available.to_java unless @available.nil?
 
           # conversion for included [type = com.ning.billing.catalog.api.Product]
-          included = included.to_java if !included.nil?
+          @included = @included.to_java unless @included.nil?
 
           # conversion for category [type = com.ning.billing.catalog.api.ProductCategory]
-          category = "Java::com.ning.billing.catalog.api.ProductCategory::#{category.to_s}" if !category.nil?
+          @category = Java::com.ning.billing.catalog.api.ProductCategory.value_of("#{@category.to_s}") unless @category.nil?
 
           # conversion for catalog_name [type = java.lang.String]
-          catalog_name = catalog_name.to_s if !catalog_name.nil?
+          @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
 
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
-          limits = limits.to_java if !limits.nil?
+          @limits = @limits.to_java unless @limits.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
 
           # conversion for is_retired [type = boolean]
-          is_retired = j_obj.is_retired
-          if is_retired.nil?
-            return false
+          @is_retired = j_obj.is_retired
+          if @is_retired.nil?
+            @is_retired = false
+          else
+            tmp_bool = (@is_retired.java_kind_of? java.lang.Boolean) ? @is_retired.boolean_value : @is_retired
+            @is_retired = tmp_bool ? true : false
           end
-          b_value = (is_retired.java_kind_of? java.lang.Boolean) ? is_retired.boolean_value : is_retired
-          return b_value ? true : false
 
           # conversion for available [type = com.ning.billing.catalog.api.Product]
-          available = j_obj.available
-          available = Killbill::Plugin::Model::Product.to_ruby(available) if !available.nil?
+          @available = j_obj.available
+          @available = Killbill::Plugin::Model::Product.new.to_ruby(@available) unless @available.nil?
 
           # conversion for included [type = com.ning.billing.catalog.api.Product]
-          included = j_obj.included
-          included = Killbill::Plugin::Model::Product.to_ruby(included) if !included.nil?
+          @included = j_obj.included
+          @included = Killbill::Plugin::Model::Product.new.to_ruby(@included) unless @included.nil?
 
           # conversion for category [type = com.ning.billing.catalog.api.ProductCategory]
-          category = j_obj.category
-          category = category.to_s if !category.nil?
+          @category = j_obj.category
+          @category = @category.to_s unless @category.nil?
 
           # conversion for catalog_name [type = java.lang.String]
-          catalog_name = j_obj.catalog_name
+          @catalog_name = j_obj.catalog_name
 
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
-          limits = j_obj.limits
-          limits = Killbill::Plugin::Model::Limit.to_ruby(limits) if !limits.nil?
+          @limits = j_obj.limits
+          @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
         end
 
       end

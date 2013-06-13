@@ -39,20 +39,16 @@ module Killbill
 
         java_signature 'Java::java.util.List getAllInvoicesByAccount(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_all_invoices_by_account(accountId, context)
-          if !accountId.nil? && accountId.respond_to? :to_java
-            accountId = accountId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_all_invoices_by_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           res.each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.Invoice]
-            m = Killbill::Plugin::Model::Invoice.to_ruby(m) if !m.nil?
+            m = Killbill::Plugin::Model::Invoice.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           res = tmp
@@ -61,40 +57,32 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.invoice.api.Invoice getInvoice(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_invoice(invoiceId, context)
-          if !invoiceId.nil? && invoiceId.respond_to? :to_java
-            invoiceId = invoiceId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for invoiceId [type = java.util.UUID]
+          invoiceId = java.util.UUID.fromString(invoiceId.to_s) unless invoiceId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_invoice(invoiceId, context)
             # conversion for res [type = com.ning.billing.invoice.api.Invoice]
-            res = Killbill::Plugin::Model::Invoice.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::Invoice.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::java.util.List getInvoicePayments(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_invoice_payments(paymentId, context)
-          if !paymentId.nil? && paymentId.respond_to? :to_java
-            paymentId = paymentId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_invoice_payments(paymentId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           res.each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
-            m = Killbill::Plugin::Model::InvoicePayment.to_ruby(m) if !m.nil?
+            m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           res = tmp
@@ -103,76 +91,62 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.invoice.api.InvoicePayment getInvoicePaymentForAttempt(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_invoice_payment_for_attempt(paymentId, context)
-          if !paymentId.nil? && paymentId.respond_to? :to_java
-            paymentId = paymentId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_invoice_payment_for_attempt(paymentId, context)
           # conversion for res [type = com.ning.billing.invoice.api.InvoicePayment]
-          res = Killbill::Plugin::Model::InvoicePayment.to_ruby(res) if !res.nil?
+          res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
           return res
         end
 
         java_signature 'Java::com.ning.billing.invoice.api.InvoicePayment createChargeback(Java::java.util.UUID, Java::java.math.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_chargeback(invoicePaymentId, amount, context)
-          if !invoicePaymentId.nil? && invoicePaymentId.respond_to? :to_java
-            invoicePaymentId = invoicePaymentId.to_java
+          # conversion for invoicePaymentId [type = java.util.UUID]
+          invoicePaymentId = java.util.UUID.fromString(invoicePaymentId.to_s) unless invoicePaymentId.nil?
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_i)
           end
-
-          if !amount.nil? && amount.respond_to? :to_java
-            amount = amount.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_chargeback(invoicePaymentId, amount, context)
             # conversion for res [type = com.ning.billing.invoice.api.InvoicePayment]
-            res = Killbill::Plugin::Model::InvoicePayment.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::java.math.BigDecimal getRemainingAmountPaid(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_remaining_amount_paid(invoicePaymentId, context)
-          if !invoicePaymentId.nil? && invoicePaymentId.respond_to? :to_java
-            invoicePaymentId = invoicePaymentId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for invoicePaymentId [type = java.util.UUID]
+          invoicePaymentId = java.util.UUID.fromString(invoicePaymentId.to_s) unless invoicePaymentId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_remaining_amount_paid(invoicePaymentId, context)
           # conversion for res [type = java.math.BigDecimal]
-          res = res.nil? ? 0 : res.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+          res = res.nil? ? 0 : res.to_s.to_i
           return res
         end
 
         java_signature 'Java::java.util.List getChargebacksByAccountId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_chargebacks_by_account_id(accountId, context)
-          if !accountId.nil? && accountId.respond_to? :to_java
-            accountId = accountId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_chargebacks_by_account_id(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           res.each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
-            m = Killbill::Plugin::Model::InvoicePayment.to_ruby(m) if !m.nil?
+            m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           res = tmp
@@ -181,40 +155,32 @@ module Killbill
 
         java_signature 'Java::java.util.UUID getAccountIdFromInvoicePaymentId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_account_id_from_invoice_payment_id(uuid, context)
-          if !uuid.nil? && uuid.respond_to? :to_java
-            uuid = uuid.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for uuid [type = java.util.UUID]
+          uuid = java.util.UUID.fromString(uuid.to_s) unless uuid.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_account_id_from_invoice_payment_id(uuid, context)
             # conversion for res [type = java.util.UUID]
-            res = res.nil? ? nil : uuid.to_s
+            res = res.nil? ? nil : res.to_s
             return res
           rescue Java::com.ning.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::java.util.List getChargebacksByPaymentId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_chargebacks_by_payment_id(paymentId, context)
-          if !paymentId.nil? && paymentId.respond_to? :to_java
-            paymentId = paymentId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_chargebacks_by_payment_id(paymentId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           res.each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
-            m = Killbill::Plugin::Model::InvoicePayment.to_ruby(m) if !m.nil?
+            m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           res = tmp
@@ -223,21 +189,17 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.invoice.api.InvoicePayment getChargebackById(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_chargeback_by_id(chargebackId, context)
-          if !chargebackId.nil? && chargebackId.respond_to? :to_java
-            chargebackId = chargebackId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for chargebackId [type = java.util.UUID]
+          chargebackId = java.util.UUID.fromString(chargebackId.to_s) unless chargebackId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_chargeback_by_id(chargebackId, context)
             # conversion for res [type = com.ning.billing.invoice.api.InvoicePayment]
-            res = Killbill::Plugin::Model::InvoicePayment.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
           end
         end
       end

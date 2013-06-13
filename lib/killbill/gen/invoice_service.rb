@@ -39,12 +39,12 @@ module Killbill
 
         def to_java()
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
         end
 
       end

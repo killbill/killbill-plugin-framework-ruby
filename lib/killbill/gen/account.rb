@@ -39,179 +39,181 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
-          blocking_state = blocking_state.to_java if !blocking_state.nil?
+          @blocking_state = @blocking_state.to_java unless @blocking_state.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for external_key [type = java.lang.String]
-          external_key = external_key.to_s if !external_key.nil?
+          @external_key = @external_key.to_s unless @external_key.nil?
 
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
 
           # conversion for first_name_length [type = java.lang.Integer]
-          first_name_length = first_name_length
+          @first_name_length = @first_name_length
 
           # conversion for email [type = java.lang.String]
-          email = email.to_s if !email.nil?
+          @email = @email.to_s unless @email.nil?
 
           # conversion for bill_cycle_day_local [type = java.lang.Integer]
-          bill_cycle_day_local = bill_cycle_day_local
+          @bill_cycle_day_local = @bill_cycle_day_local
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = "Java::com.ning.billing.catalog.api.Currency::#{currency.to_s}" if !currency.nil?
+          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for payment_method_id [type = java.util.UUID]
-          payment_method_id = java.util.UUID.fromString(payment_method_id.to_s) if !payment_method_id.nil?
+          @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
 
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
-          if !time_zone.nil?
-            time_zone = Java::org.joda.time.DateTimeZone.forID(time_zone.respond_to?(:identifier) ? time_zone.identifier : time_zone.to_s)
+          if !@time_zone.nil?
+            @time_zone = Java::org.joda.time.DateTimeZone.forID(@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s)
           end
 
           # conversion for locale [type = java.lang.String]
-          locale = locale.to_s if !locale.nil?
+          @locale = @locale.to_s unless @locale.nil?
 
           # conversion for address1 [type = java.lang.String]
-          address1 = address1.to_s if !address1.nil?
+          @address1 = @address1.to_s unless @address1.nil?
 
           # conversion for address2 [type = java.lang.String]
-          address2 = address2.to_s if !address2.nil?
+          @address2 = @address2.to_s unless @address2.nil?
 
           # conversion for company_name [type = java.lang.String]
-          company_name = company_name.to_s if !company_name.nil?
+          @company_name = @company_name.to_s unless @company_name.nil?
 
           # conversion for city [type = java.lang.String]
-          city = city.to_s if !city.nil?
+          @city = @city.to_s unless @city.nil?
 
           # conversion for state_or_province [type = java.lang.String]
-          state_or_province = state_or_province.to_s if !state_or_province.nil?
+          @state_or_province = @state_or_province.to_s unless @state_or_province.nil?
 
           # conversion for postal_code [type = java.lang.String]
-          postal_code = postal_code.to_s if !postal_code.nil?
+          @postal_code = @postal_code.to_s unless @postal_code.nil?
 
           # conversion for country [type = java.lang.String]
-          country = country.to_s if !country.nil?
+          @country = @country.to_s unless @country.nil?
 
           # conversion for phone [type = java.lang.String]
-          phone = phone.to_s if !phone.nil?
+          @phone = @phone.to_s unless @phone.nil?
 
           # conversion for is_migrated [type = java.lang.Boolean]
-          is_migrated = is_migrated.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_migrated)
+          @is_migrated = @is_migrated.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_migrated)
 
           # conversion for is_notified_for_invoices [type = java.lang.Boolean]
-          is_notified_for_invoices = is_notified_for_invoices.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_notified_for_invoices)
+          @is_notified_for_invoices = @is_notified_for_invoices.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_notified_for_invoices)
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
-          blocking_state = j_obj.blocking_state
-          blocking_state = Killbill::Plugin::Model::BlockingState.to_ruby(blocking_state) if !blocking_state.nil?
+          @blocking_state = j_obj.blocking_state
+          @blocking_state = Killbill::Plugin::Model::BlockingState.new.to_ruby(@blocking_state) unless @blocking_state.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for external_key [type = java.lang.String]
-          external_key = j_obj.external_key
+          @external_key = j_obj.external_key
 
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
 
           # conversion for first_name_length [type = java.lang.Integer]
-          first_name_length = j_obj.first_name_length
+          @first_name_length = j_obj.first_name_length
 
           # conversion for email [type = java.lang.String]
-          email = j_obj.email
+          @email = j_obj.email
 
           # conversion for bill_cycle_day_local [type = java.lang.Integer]
-          bill_cycle_day_local = j_obj.bill_cycle_day_local
+          @bill_cycle_day_local = j_obj.bill_cycle_day_local
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = j_obj.currency
-          currency = currency.to_s if !currency.nil?
+          @currency = j_obj.currency
+          @currency = @currency.to_s unless @currency.nil?
 
           # conversion for payment_method_id [type = java.util.UUID]
-          payment_method_id = j_obj.payment_method_id
-          payment_method_id = payment_method_id.nil? ? nil : uuid.to_s
+          @payment_method_id = j_obj.payment_method_id
+          @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
 
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
-          time_zone = j_obj.time_zone
-          if !time_zone.nil?
-            time_zone = TZInfo::Timezone.get(time_zone.get_id)
+          @time_zone = j_obj.time_zone
+          if !@time_zone.nil?
+            @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
           end
 
           # conversion for locale [type = java.lang.String]
-          locale = j_obj.locale
+          @locale = j_obj.locale
 
           # conversion for address1 [type = java.lang.String]
-          address1 = j_obj.address1
+          @address1 = j_obj.address1
 
           # conversion for address2 [type = java.lang.String]
-          address2 = j_obj.address2
+          @address2 = j_obj.address2
 
           # conversion for company_name [type = java.lang.String]
-          company_name = j_obj.company_name
+          @company_name = j_obj.company_name
 
           # conversion for city [type = java.lang.String]
-          city = j_obj.city
+          @city = j_obj.city
 
           # conversion for state_or_province [type = java.lang.String]
-          state_or_province = j_obj.state_or_province
+          @state_or_province = j_obj.state_or_province
 
           # conversion for postal_code [type = java.lang.String]
-          postal_code = j_obj.postal_code
+          @postal_code = j_obj.postal_code
 
           # conversion for country [type = java.lang.String]
-          country = j_obj.country
+          @country = j_obj.country
 
           # conversion for phone [type = java.lang.String]
-          phone = j_obj.phone
+          @phone = j_obj.phone
 
           # conversion for is_migrated [type = java.lang.Boolean]
-          is_migrated = j_obj.is_migrated
-          if is_migrated.nil?
-            return false
+          @is_migrated = j_obj.is_migrated
+          if @is_migrated.nil?
+            @is_migrated = false
+          else
+            tmp_bool = (@is_migrated.java_kind_of? java.lang.Boolean) ? @is_migrated.boolean_value : @is_migrated
+            @is_migrated = tmp_bool ? true : false
           end
-          b_value = (is_migrated.java_kind_of? java.lang.Boolean) ? is_migrated.boolean_value : is_migrated
-          return b_value ? true : false
 
           # conversion for is_notified_for_invoices [type = java.lang.Boolean]
-          is_notified_for_invoices = j_obj.is_notified_for_invoices
-          if is_notified_for_invoices.nil?
-            return false
+          @is_notified_for_invoices = j_obj.is_notified_for_invoices
+          if @is_notified_for_invoices.nil?
+            @is_notified_for_invoices = false
+          else
+            tmp_bool = (@is_notified_for_invoices.java_kind_of? java.lang.Boolean) ? @is_notified_for_invoices.boolean_value : @is_notified_for_invoices
+            @is_notified_for_invoices = tmp_bool ? true : false
           end
-          b_value = (is_notified_for_invoices.java_kind_of? java.lang.Boolean) ? is_notified_for_invoices.boolean_value : is_notified_for_invoices
-          return b_value ? true : false
         end
 
       end

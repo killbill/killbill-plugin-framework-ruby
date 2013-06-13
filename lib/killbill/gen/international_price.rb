@@ -39,35 +39,36 @@ module Killbill
 
         def to_java()
           # conversion for prices [type = com.ning.billing.catalog.api.Price]
-          prices = prices.to_java if !prices.nil?
+          @prices = @prices.to_java unless @prices.nil?
 
           # conversion for price [type = java.math.BigDecimal]
-          if price.nil?
-            price = java.math.BigDecimal::ZERO
+          if @price.nil?
+            @price = java.math.BigDecimal::ZERO
           else
-            price = java.math.BigDecimal.new(price.respond_to?(:cents) ? price.cents : price.to_i)
+            @price = java.math.BigDecimal.new(@price.to_i)
           end
 
           # conversion for is_zero [type = boolean]
-          is_zero = is_zero.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_zero)
+          @is_zero = @is_zero.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_zero)
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for prices [type = com.ning.billing.catalog.api.Price]
-          prices = j_obj.prices
-          prices = Killbill::Plugin::Model::Price.to_ruby(prices) if !prices.nil?
+          @prices = j_obj.prices
+          @prices = Killbill::Plugin::Model::Price.new.to_ruby(@prices) unless @prices.nil?
 
           # conversion for price [type = java.math.BigDecimal]
-          price = j_obj.price
-          price = price.nil? ? 0 : price.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+          @price = j_obj.price
+          @price = @price.nil? ? 0 : @price.to_s.to_i
 
           # conversion for is_zero [type = boolean]
-          is_zero = j_obj.is_zero
-          if is_zero.nil?
-            return false
+          @is_zero = j_obj.is_zero
+          if @is_zero.nil?
+            @is_zero = false
+          else
+            tmp_bool = (@is_zero.java_kind_of? java.lang.Boolean) ? @is_zero.boolean_value : @is_zero
+            @is_zero = tmp_bool ? true : false
           end
-          b_value = (is_zero.java_kind_of? java.lang.Boolean) ? is_zero.boolean_value : is_zero
-          return b_value ? true : false
         end
 
       end

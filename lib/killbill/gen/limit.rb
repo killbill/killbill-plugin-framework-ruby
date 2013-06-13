@@ -39,25 +39,25 @@ module Killbill
 
         def to_java()
           # conversion for unit [type = com.ning.billing.catalog.api.Unit]
-          unit = unit.to_java if !unit.nil?
+          @unit = @unit.to_java unless @unit.nil?
 
           # conversion for max [type = java.lang.Double]
-          max = max
+          @max = @max
 
           # conversion for min [type = java.lang.Double]
-          min = min
+          @min = @min
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for unit [type = com.ning.billing.catalog.api.Unit]
-          unit = j_obj.unit
-          unit = Killbill::Plugin::Model::Unit.to_ruby(unit) if !unit.nil?
+          @unit = j_obj.unit
+          @unit = Killbill::Plugin::Model::Unit.new.to_ruby(@unit) unless @unit.nil?
 
           # conversion for max [type = java.lang.Double]
-          max = j_obj.max
+          @max = j_obj.max
 
           # conversion for min [type = java.lang.Double]
-          min = j_obj.min
+          @min = j_obj.min
         end
 
       end

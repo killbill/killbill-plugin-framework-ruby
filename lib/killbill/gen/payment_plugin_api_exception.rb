@@ -27,43 +27,28 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
-      class PriceList
+      class PaymentPluginApiException
 
-        include com.ning.billing.catalog.api.PriceList
 
-        attr_accessor :name, :is_retired, :plans
+        attr_accessor :error_type, :error_message
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
+          # conversion for error_type [type = java.lang.String]
+          @error_type = @error_type.to_s unless @error_type.nil?
 
-          # conversion for is_retired [type = boolean]
-          @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
-
-          # conversion for plans [type = com.ning.billing.catalog.api.Plan]
-          @plans = @plans.to_java unless @plans.nil?
+          # conversion for error_message [type = java.lang.String]
+          @error_message = @error_message.to_s unless @error_message.nil?
         end
 
         def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
+          # conversion for error_type [type = java.lang.String]
+          @error_type = j_obj.error_type
 
-          # conversion for is_retired [type = boolean]
-          @is_retired = j_obj.is_retired
-          if @is_retired.nil?
-            @is_retired = false
-          else
-            tmp_bool = (@is_retired.java_kind_of? java.lang.Boolean) ? @is_retired.boolean_value : @is_retired
-            @is_retired = tmp_bool ? true : false
-          end
-
-          # conversion for plans [type = com.ning.billing.catalog.api.Plan]
-          @plans = j_obj.plans
-          @plans = Killbill::Plugin::Model::Plan.new.to_ruby(@plans) unless @plans.nil?
+          # conversion for error_message [type = java.lang.String]
+          @error_message = j_obj.error_message
         end
 
       end

@@ -27,10 +27,8 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.account.api'
       class AccountApiException
 
-        include com.ning.billing.account.api.AccountApiException
 
         attr_accessor :message, :cause, :code
 
@@ -39,25 +37,25 @@ module Killbill
 
         def to_java()
           # conversion for message [type = java.lang.String]
-          message = message.to_s if !message.nil?
+          @message = @message.to_s unless @message.nil?
 
           # conversion for cause [type = java.lang.Throwable]
-          cause = cause.to_s if !cause.nil?
+          @cause = @cause.to_s unless cause.nil?
 
           # conversion for code [type = int]
-          code = code
+          @code = @code
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for message [type = java.lang.String]
-          message = j_obj.message
+          @message = j_obj.message
 
           # conversion for cause [type = java.lang.Throwable]
-          cause = j_obj.cause
-          cause = cause.to_s if ! cause.nil?
+          @cause = j_obj.cause
+          @cause = @cause.to_s unless @cause.nil?
 
           # conversion for code [type = int]
-          code = j_obj.code
+          @code = j_obj.code
         end
 
       end

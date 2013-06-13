@@ -39,155 +39,155 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
-          invoice_item_type = "Java::com.ning.billing.invoice.api.InvoiceItemType::#{invoice_item_type.to_s}" if !invoice_item_type.nil?
+          @invoice_item_type = Java::com.ning.billing.invoice.api.InvoiceItemType.value_of("#{@invoice_item_type.to_s}") unless @invoice_item_type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
-          invoice_id = java.util.UUID.fromString(invoice_id.to_s) if !invoice_id.nil?
+          @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
 
           # conversion for account_id [type = java.util.UUID]
-          account_id = java.util.UUID.fromString(account_id.to_s) if !account_id.nil?
+          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
 
           # conversion for start_date [type = org.joda.time.LocalDate]
-          if !start_date.nil?
-          start_date = Java::org.joda.time.LocalDate.parse(start_date.to_s)
+          if !@start_date.nil?
+            @start_date = Java::org.joda.time.LocalDate.parse(@start_date.to_s)
+          end
+
+          # conversion for end_date [type = org.joda.time.LocalDate]
+          if !@end_date.nil?
+            @end_date = Java::org.joda.time.LocalDate.parse(@end_date.to_s)
+          end
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if @amount.nil?
+            @amount = java.math.BigDecimal::ZERO
+          else
+            @amount = java.math.BigDecimal.new(@amount.to_i)
+          end
+
+          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+
+          # conversion for description [type = java.lang.String]
+          @description = @description.to_s unless @description.nil?
+
+          # conversion for bundle_id [type = java.util.UUID]
+          @bundle_id = java.util.UUID.fromString(@bundle_id.to_s) unless @bundle_id.nil?
+
+          # conversion for subscription_id [type = java.util.UUID]
+          @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?
+
+          # conversion for plan_name [type = java.lang.String]
+          @plan_name = @plan_name.to_s unless @plan_name.nil?
+
+          # conversion for phase_name [type = java.lang.String]
+          @phase_name = @phase_name.to_s unless @phase_name.nil?
+
+          # conversion for rate [type = java.math.BigDecimal]
+          if @rate.nil?
+            @rate = java.math.BigDecimal::ZERO
+          else
+            @rate = java.math.BigDecimal.new(@rate.to_i)
+          end
+
+          # conversion for linked_item_id [type = java.util.UUID]
+          @linked_item_id = java.util.UUID.fromString(@linked_item_id.to_s) unless @linked_item_id.nil?
         end
 
-        # conversion for end_date [type = org.joda.time.LocalDate]
-        if !end_date.nil?
-        end_date = Java::org.joda.time.LocalDate.parse(end_date.to_s)
+        def to_ruby(j_obj)
+          # conversion for id [type = java.util.UUID]
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
+
+          # conversion for created_date [type = org.joda.time.DateTime]
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
+          end
+
+          # conversion for updated_date [type = org.joda.time.DateTime]
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
+          end
+
+          # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
+          @invoice_item_type = j_obj.invoice_item_type
+          @invoice_item_type = @invoice_item_type.to_s unless @invoice_item_type.nil?
+
+          # conversion for invoice_id [type = java.util.UUID]
+          @invoice_id = j_obj.invoice_id
+          @invoice_id = @invoice_id.nil? ? nil : @invoice_id.to_s
+
+          # conversion for account_id [type = java.util.UUID]
+          @account_id = j_obj.account_id
+          @account_id = @account_id.nil? ? nil : @account_id.to_s
+
+          # conversion for start_date [type = org.joda.time.LocalDate]
+          @start_date = j_obj.start_date
+          if !@start_date.nil?
+            @start_date = @start_date.to_s
+          end
+
+          # conversion for end_date [type = org.joda.time.LocalDate]
+          @end_date = j_obj.end_date
+          if !@end_date.nil?
+            @end_date = @end_date.to_s
+          end
+
+          # conversion for amount [type = java.math.BigDecimal]
+          @amount = j_obj.amount
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
+
+          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          @currency = j_obj.currency
+          @currency = @currency.to_s unless @currency.nil?
+
+          # conversion for description [type = java.lang.String]
+          @description = j_obj.description
+
+          # conversion for bundle_id [type = java.util.UUID]
+          @bundle_id = j_obj.bundle_id
+          @bundle_id = @bundle_id.nil? ? nil : @bundle_id.to_s
+
+          # conversion for subscription_id [type = java.util.UUID]
+          @subscription_id = j_obj.subscription_id
+          @subscription_id = @subscription_id.nil? ? nil : @subscription_id.to_s
+
+          # conversion for plan_name [type = java.lang.String]
+          @plan_name = j_obj.plan_name
+
+          # conversion for phase_name [type = java.lang.String]
+          @phase_name = j_obj.phase_name
+
+          # conversion for rate [type = java.math.BigDecimal]
+          @rate = j_obj.rate
+          @rate = @rate.nil? ? 0 : @rate.to_s.to_i
+
+          # conversion for linked_item_id [type = java.util.UUID]
+          @linked_item_id = j_obj.linked_item_id
+          @linked_item_id = @linked_item_id.nil? ? nil : @linked_item_id.to_s
+        end
+
       end
-
-      # conversion for amount [type = java.math.BigDecimal]
-      if amount.nil?
-        amount = java.math.BigDecimal::ZERO
-      else
-        amount = java.math.BigDecimal.new(amount.respond_to?(:cents) ? amount.cents : amount.to_i)
-      end
-
-      # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-      currency = "Java::com.ning.billing.catalog.api.Currency::#{currency.to_s}" if !currency.nil?
-
-      # conversion for description [type = java.lang.String]
-      description = description.to_s if !description.nil?
-
-      # conversion for bundle_id [type = java.util.UUID]
-      bundle_id = java.util.UUID.fromString(bundle_id.to_s) if !bundle_id.nil?
-
-      # conversion for subscription_id [type = java.util.UUID]
-      subscription_id = java.util.UUID.fromString(subscription_id.to_s) if !subscription_id.nil?
-
-      # conversion for plan_name [type = java.lang.String]
-      plan_name = plan_name.to_s if !plan_name.nil?
-
-      # conversion for phase_name [type = java.lang.String]
-      phase_name = phase_name.to_s if !phase_name.nil?
-
-      # conversion for rate [type = java.math.BigDecimal]
-      if rate.nil?
-        rate = java.math.BigDecimal::ZERO
-      else
-        rate = java.math.BigDecimal.new(rate.respond_to?(:cents) ? rate.cents : rate.to_i)
-      end
-
-      # conversion for linked_item_id [type = java.util.UUID]
-      linked_item_id = java.util.UUID.fromString(linked_item_id.to_s) if !linked_item_id.nil?
     end
-
-    def self.to_ruby(j_obj)
-      # conversion for id [type = java.util.UUID]
-      id = j_obj.id
-      id = id.nil? ? nil : uuid.to_s
-
-      # conversion for created_date [type = org.joda.time.DateTime]
-      created_date = j_obj.created_date
-      if !created_date.nil?
-        fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-        str = fmt.print(created_date)
-        created_date = DateTime.iso8601(str)
-      end
-
-      # conversion for updated_date [type = org.joda.time.DateTime]
-      updated_date = j_obj.updated_date
-      if !updated_date.nil?
-        fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-        str = fmt.print(updated_date)
-        updated_date = DateTime.iso8601(str)
-      end
-
-      # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
-      invoice_item_type = j_obj.invoice_item_type
-      invoice_item_type = invoice_item_type.to_s if !invoice_item_type.nil?
-
-      # conversion for invoice_id [type = java.util.UUID]
-      invoice_id = j_obj.invoice_id
-      invoice_id = invoice_id.nil? ? nil : uuid.to_s
-
-      # conversion for account_id [type = java.util.UUID]
-      account_id = j_obj.account_id
-      account_id = account_id.nil? ? nil : uuid.to_s
-
-      # conversion for start_date [type = org.joda.time.LocalDate]
-      start_date = j_obj.start_date
-      if !start_date.nil?
-        start_date = start_date.to_s
-      end
-
-      # conversion for end_date [type = org.joda.time.LocalDate]
-      end_date = j_obj.end_date
-      if !end_date.nil?
-        end_date = end_date.to_s
-      end
-
-      # conversion for amount [type = java.math.BigDecimal]
-      amount = j_obj.amount
-      amount = amount.nil? ? 0 : amount.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
-
-      # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-      currency = j_obj.currency
-      currency = currency.to_s if !currency.nil?
-
-      # conversion for description [type = java.lang.String]
-      description = j_obj.description
-
-      # conversion for bundle_id [type = java.util.UUID]
-      bundle_id = j_obj.bundle_id
-      bundle_id = bundle_id.nil? ? nil : uuid.to_s
-
-      # conversion for subscription_id [type = java.util.UUID]
-      subscription_id = j_obj.subscription_id
-      subscription_id = subscription_id.nil? ? nil : uuid.to_s
-
-      # conversion for plan_name [type = java.lang.String]
-      plan_name = j_obj.plan_name
-
-      # conversion for phase_name [type = java.lang.String]
-      phase_name = j_obj.phase_name
-
-      # conversion for rate [type = java.math.BigDecimal]
-      rate = j_obj.rate
-      rate = rate.nil? ? 0 : rate.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
-
-      # conversion for linked_item_id [type = java.util.UUID]
-      linked_item_id = j_obj.linked_item_id
-      linked_item_id = linked_item_id.nil? ? nil : uuid.to_s
-    end
-
   end
-end
-end
 end

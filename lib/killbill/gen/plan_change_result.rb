@@ -27,10 +27,8 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
       class PlanChangeResult
 
-        include com.ning.billing.catalog.api.PlanChangeResult
 
         attr_accessor :new_price_list, :policy, :alignment
 
@@ -39,27 +37,27 @@ module Killbill
 
         def to_java()
           # conversion for new_price_list [type = com.ning.billing.catalog.api.PriceList]
-          new_price_list = new_price_list.to_java if !new_price_list.nil?
+          @new_price_list = @new_price_list.to_java unless @new_price_list.nil?
 
           # conversion for policy [type = com.ning.billing.catalog.api.ActionPolicy]
-          policy = "Java::com.ning.billing.catalog.api.ActionPolicy::#{policy.to_s}" if !policy.nil?
+          @policy = Java::com.ning.billing.catalog.api.ActionPolicy.value_of("#{@policy.to_s}") unless @policy.nil?
 
           # conversion for alignment [type = com.ning.billing.catalog.api.PlanAlignmentChange]
-          alignment = "Java::com.ning.billing.catalog.api.PlanAlignmentChange::#{alignment.to_s}" if !alignment.nil?
+          @alignment = Java::com.ning.billing.catalog.api.PlanAlignmentChange.value_of("#{@alignment.to_s}") unless @alignment.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for new_price_list [type = com.ning.billing.catalog.api.PriceList]
-          new_price_list = j_obj.new_price_list
-          new_price_list = Killbill::Plugin::Model::PriceList.to_ruby(new_price_list) if !new_price_list.nil?
+          @new_price_list = j_obj.new_price_list
+          @new_price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@new_price_list) unless @new_price_list.nil?
 
           # conversion for policy [type = com.ning.billing.catalog.api.ActionPolicy]
-          policy = j_obj.policy
-          policy = policy.to_s if !policy.nil?
+          @policy = j_obj.policy
+          @policy = @policy.to_s unless @policy.nil?
 
           # conversion for alignment [type = com.ning.billing.catalog.api.PlanAlignmentChange]
-          alignment = j_obj.alignment
-          alignment = alignment.to_s if !alignment.nil?
+          @alignment = j_obj.alignment
+          @alignment = @alignment.to_s unless @alignment.nil?
         end
 
       end

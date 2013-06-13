@@ -39,26 +39,26 @@ module Killbill
 
         def to_java()
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
 
           # conversion for full_catalog [type = com.ning.billing.catalog.api.Catalog]
-          full_catalog = full_catalog.to_java if !full_catalog.nil?
+          @full_catalog = @full_catalog.to_java unless @full_catalog.nil?
 
           # conversion for current_catalog [type = com.ning.billing.catalog.api.StaticCatalog]
-          current_catalog = current_catalog.to_java if !current_catalog.nil?
+          @current_catalog = @current_catalog.to_java unless @current_catalog.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
 
           # conversion for full_catalog [type = com.ning.billing.catalog.api.Catalog]
-          full_catalog = j_obj.full_catalog
-          full_catalog = Killbill::Plugin::Model::Catalog.to_ruby(full_catalog) if !full_catalog.nil?
+          @full_catalog = j_obj.full_catalog
+          @full_catalog = Killbill::Plugin::Model::Catalog.new.to_ruby(@full_catalog) unless @full_catalog.nil?
 
           # conversion for current_catalog [type = com.ning.billing.catalog.api.StaticCatalog]
-          current_catalog = j_obj.current_catalog
-          current_catalog = Killbill::Plugin::Model::StaticCatalog.to_ruby(current_catalog) if !current_catalog.nil?
+          @current_catalog = j_obj.current_catalog
+          @current_catalog = Killbill::Plugin::Model::StaticCatalog.new.to_ruby(@current_catalog) unless @current_catalog.nil?
         end
 
       end

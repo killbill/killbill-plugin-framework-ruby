@@ -12,7 +12,10 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::PaymentInfoPlugin.new(amount_in_cents, DateTime.now, DateTime.now, Killbill::Plugin::Model::PaymentPluginStatus.new(:PROCESSED), "gateway_error", "gateway_error_code", nil, nil)
+          res = Killbill::Plugin::Model::PaymentInfoPlugin.new
+          res.amount=amount_in_cents
+          res.status=:PROCESSED
+          res
         end
       end
 

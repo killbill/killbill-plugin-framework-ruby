@@ -39,110 +39,88 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.entitlement.api.user.SubscriptionBundle getBundleFromId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_bundle_from_id(id, context)
-          if !id.nil? && id.respond_to? :to_java
-            id = id.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for id [type = java.util.UUID]
+          id = java.util.UUID.fromString(id.to_s) unless id.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_bundle_from_id(id, context)
             # conversion for res [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
-            res = Killbill::Plugin::Model::SubscriptionBundle.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::com.ning.billing.entitlement.api.user.Subscription getSubscriptionFromId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_subscription_from_id(id, context)
-          if !id.nil? && id.respond_to? :to_java
-            id = id.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for id [type = java.util.UUID]
+          id = java.util.UUID.fromString(id.to_s) unless id.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_subscription_from_id(id, context)
             # conversion for res [type = com.ning.billing.entitlement.api.user.Subscription]
-            res = Killbill::Plugin::Model::Subscription.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::java.util.List getBundlesForKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_bundles_for_key(bundleKey, context)
-          if !bundleKey.nil? && bundleKey.respond_to? :to_java
-            bundleKey = bundleKey.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for bundleKey [type = java.lang.String]
+          bundleKey = bundleKey.to_s unless bundleKey.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_bundles_for_key(bundleKey, context)
             # conversion for res [type = java.util.List]
             tmp = []
             res.each do |m|
               # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
-              m = Killbill::Plugin::Model::SubscriptionBundle.to_ruby(m) if !m.nil?
+              m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::com.ning.billing.entitlement.api.user.SubscriptionBundle getBundleForAccountAndKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_bundle_for_account_and_key(accountId, bundleKey, context)
-          if !accountId.nil? && accountId.respond_to? :to_java
-            accountId = accountId.to_java
-          end
-
-          if !bundleKey.nil? && bundleKey.respond_to? :to_java
-            bundleKey = bundleKey.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+          # conversion for bundleKey [type = java.lang.String]
+          bundleKey = bundleKey.to_s unless bundleKey.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_bundle_for_account_and_key(accountId, bundleKey, context)
             # conversion for res [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
-            res = Killbill::Plugin::Model::SubscriptionBundle.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::java.util.List getBundlesForAccount(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_bundles_for_account(accountId, context)
-          if !accountId.nil? && accountId.respond_to? :to_java
-            accountId = accountId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_bundles_for_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           res.each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
-            m = Killbill::Plugin::Model::SubscriptionBundle.to_ruby(m) if !m.nil?
+            m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           res = tmp
@@ -151,20 +129,16 @@ module Killbill
 
         java_signature 'Java::java.util.List getSubscriptionsForBundle(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_subscriptions_for_bundle(bundleId, context)
-          if !bundleId.nil? && bundleId.respond_to? :to_java
-            bundleId = bundleId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for bundleId [type = java.util.UUID]
+          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_subscriptions_for_bundle(bundleId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           res.each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.Subscription]
-            m = Killbill::Plugin::Model::Subscription.to_ruby(m) if !m.nil?
+            m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           res = tmp
@@ -173,24 +147,18 @@ module Killbill
 
         java_signature 'Java::java.util.List getSubscriptionsForAccountAndKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_subscriptions_for_account_and_key(accountId, bundleKey, context)
-          if !accountId.nil? && accountId.respond_to? :to_java
-            accountId = accountId.to_java
-          end
-
-          if !bundleKey.nil? && bundleKey.respond_to? :to_java
-            bundleKey = bundleKey.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+          # conversion for bundleKey [type = java.lang.String]
+          bundleKey = bundleKey.to_s unless bundleKey.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_subscriptions_for_account_and_key(accountId, bundleKey, context)
           # conversion for res [type = java.util.List]
           tmp = []
           res.each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.Subscription]
-            m = Killbill::Plugin::Model::Subscription.to_ruby(m) if !m.nil?
+            m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           res = tmp
@@ -199,120 +167,96 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.entitlement.api.user.Subscription getBaseSubscription(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_base_subscription(bundleId, context)
-          if !bundleId.nil? && bundleId.respond_to? :to_java
-            bundleId = bundleId.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for bundleId [type = java.util.UUID]
+          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_base_subscription(bundleId, context)
             # conversion for res [type = com.ning.billing.entitlement.api.user.Subscription]
-            res = Killbill::Plugin::Model::Subscription.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::com.ning.billing.entitlement.api.user.SubscriptionBundle createBundleForAccount(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_bundle_for_account(accountId, bundleKey, context)
-          if !accountId.nil? && accountId.respond_to? :to_java
-            accountId = accountId.to_java
-          end
-
-          if !bundleKey.nil? && bundleKey.respond_to? :to_java
-            bundleKey = bundleKey.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+          # conversion for bundleKey [type = java.lang.String]
+          bundleKey = bundleKey.to_s unless bundleKey.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_bundle_for_account(accountId, bundleKey, context)
             # conversion for res [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
-            res = Killbill::Plugin::Model::SubscriptionBundle.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::com.ning.billing.entitlement.api.user.Subscription createSubscription(Java::java.util.UUID, Java::com.ning.billing.catalog.api.PlanPhaseSpecifier, Java::org.joda.time.DateTime, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_subscription(bundleId, spec, requestedDate, context)
-          if !bundleId.nil? && bundleId.respond_to? :to_java
-            bundleId = bundleId.to_java
+          # conversion for bundleId [type = java.util.UUID]
+          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
+          # conversion for spec [type = com.ning.billing.catalog.api.PlanPhaseSpecifier]
+          spec = spec.to_java unless spec.nil?
+          # conversion for requestedDate [type = org.joda.time.DateTime]
+          if !requestedDate.nil?
+            requestedDate =  (requestedDate.kind_of? Time) ? DateTime.parse(requestedDate.to_s) : requestedDate
+            requestedDate = Java::org.joda.time.DateTime.new(requestedDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
-
-          if !spec.nil? && spec.respond_to? :to_java
-            spec = spec.to_java
-          end
-
-          if !requestedDate.nil? && requestedDate.respond_to? :to_java
-            requestedDate = requestedDate.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_subscription(bundleId, spec, requestedDate, context)
             # conversion for res [type = com.ning.billing.entitlement.api.user.Subscription]
-            res = Killbill::Plugin::Model::Subscription.to_ruby(res) if !res.nil?
+            res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::java.util.List getDryRunChangePlanStatus(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.DateTime, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_dry_run_change_plan_status(subscriptionId, productName, requestedDate, context)
-          if !subscriptionId.nil? && subscriptionId.respond_to? :to_java
-            subscriptionId = subscriptionId.to_java
+          # conversion for subscriptionId [type = java.util.UUID]
+          subscriptionId = java.util.UUID.fromString(subscriptionId.to_s) unless subscriptionId.nil?
+          # conversion for productName [type = java.lang.String]
+          productName = productName.to_s unless productName.nil?
+          # conversion for requestedDate [type = org.joda.time.DateTime]
+          if !requestedDate.nil?
+            requestedDate =  (requestedDate.kind_of? Time) ? DateTime.parse(requestedDate.to_s) : requestedDate
+            requestedDate = Java::org.joda.time.DateTime.new(requestedDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
-
-          if !productName.nil? && productName.respond_to? :to_java
-            productName = productName.to_java
-          end
-
-          if !requestedDate.nil? && requestedDate.respond_to? :to_java
-            requestedDate = requestedDate.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_dry_run_change_plan_status(subscriptionId, productName, requestedDate, context)
             # conversion for res [type = java.util.List]
             tmp = []
             res.each do |m|
               # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionStatusDryRun]
-              m = Killbill::Plugin::Model::SubscriptionStatusDryRun.to_ruby(m) if !m.nil?
+              m = Killbill::Plugin::Model::SubscriptionStatusDryRun.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
           rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.to_ruby(e)
+            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
           end
         end
 
         java_signature 'Java::org.joda.time.DateTime getNextBillingDate(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_next_billing_date(account, context)
-          if !account.nil? && account.respond_to? :to_java
-            account = account.to_java
-          end
-
-          if !context.nil? && context.respond_to? :to_java
-            context = context.to_java
-          end
-
+          # conversion for account [type = java.util.UUID]
+          account = java.util.UUID.fromString(account.to_s) unless account.nil?
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
           res = @real_java_api.get_next_billing_date(account, context)
           # conversion for res [type = org.joda.time.DateTime]
           if !res.nil?

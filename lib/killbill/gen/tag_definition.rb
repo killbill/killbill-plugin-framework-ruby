@@ -39,84 +39,85 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for name [type = java.lang.String]
-          name = name.to_s if !name.nil?
+          @name = @name.to_s unless @name.nil?
 
           # conversion for description [type = java.lang.String]
-          description = description.to_s if !description.nil?
+          @description = @description.to_s unless @description.nil?
 
           # conversion for is_control_tag [type = java.lang.Boolean]
-          is_control_tag = is_control_tag.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_control_tag)
+          @is_control_tag = @is_control_tag.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_control_tag)
 
           # conversion for applicable_object_types [type = java.util.List]
           tmp = java.util.ArrayList.new
-          applicable_object_types.each do |m|
+          @applicable_object_types.each do |m|
             # conversion for m [type = com.ning.billing.ObjectType]
-            m = "Java::com.ning.billing.ObjectType::#{m.to_s}" if !m.nil?
+            @m = Java::com.ning.billing.ObjectType.value_of("#{@m.to_s}") unless @m.nil?
             tmp.add(m)
           end
-          applicable_object_types = tmp
+          @applicable_object_types = tmp
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for name [type = java.lang.String]
-          name = j_obj.name
+          @name = j_obj.name
 
           # conversion for description [type = java.lang.String]
-          description = j_obj.description
+          @description = j_obj.description
 
           # conversion for is_control_tag [type = java.lang.Boolean]
-          is_control_tag = j_obj.is_control_tag
-          if is_control_tag.nil?
-            return false
+          @is_control_tag = j_obj.is_control_tag
+          if @is_control_tag.nil?
+            @is_control_tag = false
+          else
+            tmp_bool = (@is_control_tag.java_kind_of? java.lang.Boolean) ? @is_control_tag.boolean_value : @is_control_tag
+            @is_control_tag = tmp_bool ? true : false
           end
-          b_value = (is_control_tag.java_kind_of? java.lang.Boolean) ? is_control_tag.boolean_value : is_control_tag
-          return b_value ? true : false
 
           # conversion for applicable_object_types [type = java.util.List]
-          applicable_object_types = j_obj.applicable_object_types
+          @applicable_object_types = j_obj.applicable_object_types
           tmp = []
-          applicable_object_types.each do |m|
+          @applicable_object_types.each do |m|
             # conversion for m [type = com.ning.billing.ObjectType]
-            m = j_obj.m
-            m = m.to_s if !m.nil?
+            @m = j_obj.m
+            @m = @m.to_s unless @m.nil?
             tmp << m
           end
-          applicable_object_types = tmp
+          @applicable_object_types = tmp
         end
 
       end

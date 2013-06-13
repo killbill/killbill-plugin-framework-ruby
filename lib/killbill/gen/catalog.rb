@@ -39,33 +39,33 @@ module Killbill
 
         def to_java()
           # conversion for catalog_name [type = java.lang.String]
-          catalog_name = catalog_name.to_s if !catalog_name.nil?
+          @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
 
           # conversion for supported_currencies [type = com.ning.billing.catalog.api.Currency]
-          supported_currencies = "Java::com.ning.billing.catalog.api.Currency::#{supported_currencies.to_s}" if !supported_currencies.nil?
+          @supported_currencies = Java::com.ning.billing.catalog.api.Currency.value_of("#{@supported_currencies.to_s}") unless @supported_currencies.nil?
 
           # conversion for products [type = com.ning.billing.catalog.api.Product]
-          products = products.to_java if !products.nil?
+          @products = @products.to_java unless @products.nil?
 
           # conversion for plans [type = com.ning.billing.catalog.api.Plan]
-          plans = plans.to_java if !plans.nil?
+          @plans = @plans.to_java unless @plans.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for catalog_name [type = java.lang.String]
-          catalog_name = j_obj.catalog_name
+          @catalog_name = j_obj.catalog_name
 
           # conversion for supported_currencies [type = com.ning.billing.catalog.api.Currency]
-          supported_currencies = j_obj.supported_currencies
-          supported_currencies = supported_currencies.to_s if !supported_currencies.nil?
+          @supported_currencies = j_obj.supported_currencies
+          @supported_currencies = @supported_currencies.to_s unless @supported_currencies.nil?
 
           # conversion for products [type = com.ning.billing.catalog.api.Product]
-          products = j_obj.products
-          products = Killbill::Plugin::Model::Product.to_ruby(products) if !products.nil?
+          @products = j_obj.products
+          @products = Killbill::Plugin::Model::Product.new.to_ruby(@products) unless @products.nil?
 
           # conversion for plans [type = com.ning.billing.catalog.api.Plan]
-          plans = j_obj.plans
-          plans = Killbill::Plugin::Model::Plan.to_ruby(plans) if !plans.nil?
+          @plans = j_obj.plans
+          @plans = Killbill::Plugin::Model::Plan.new.to_ruby(@plans) unless @plans.nil?
         end
 
       end

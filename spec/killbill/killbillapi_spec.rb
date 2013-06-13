@@ -1,11 +1,8 @@
 require 'spec_helper'
 
-require 'killbill/jkillbill_api'
 require 'killbill/killbill_api'
 
 require 'killbill/gen/account_data'
-require 'killbill/gen/currency'
-require 'killbill/gen/date_time_zone'
 
 
 

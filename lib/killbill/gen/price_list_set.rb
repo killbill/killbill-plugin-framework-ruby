@@ -39,13 +39,13 @@ module Killbill
 
         def to_java()
           # conversion for plan_list_from [type = com.ning.billing.catalog.api.Plan]
-          plan_list_from = plan_list_from.to_java if !plan_list_from.nil?
+          @plan_list_from = @plan_list_from.to_java unless @plan_list_from.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for plan_list_from [type = com.ning.billing.catalog.api.Plan]
-          plan_list_from = j_obj.plan_list_from
-          plan_list_from = Killbill::Plugin::Model::Plan.to_ruby(plan_list_from) if !plan_list_from.nil?
+          @plan_list_from = j_obj.plan_list_from
+          @plan_list_from = Killbill::Plugin::Model::Plan.new.to_ruby(@plan_list_from) unless @plan_list_from.nil?
         end
 
       end

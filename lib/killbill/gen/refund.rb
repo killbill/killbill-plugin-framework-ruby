@@ -39,98 +39,99 @@ module Killbill
 
         def to_java()
           # conversion for id [type = java.util.UUID]
-          id = java.util.UUID.fromString(id.to_s) if !id.nil?
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          if !created_date.nil?
-            created_date =  (created_date.kind_of? Time) ? DateTime.parse(created_date.to_s) : created_date
-            created_date = Java::org.joda.time.DateTime.new(created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          if !updated_date.nil?
-            updated_date =  (updated_date.kind_of? Time) ? DateTime.parse(updated_date.to_s) : updated_date
-            updated_date = Java::org.joda.time.DateTime.new(updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for payment_id [type = java.util.UUID]
-          payment_id = java.util.UUID.fromString(payment_id.to_s) if !payment_id.nil?
+          @payment_id = java.util.UUID.fromString(@payment_id.to_s) unless @payment_id.nil?
 
           # conversion for is_adjusted [type = boolean]
-          is_adjusted = is_adjusted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(is_adjusted)
+          @is_adjusted = @is_adjusted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_adjusted)
 
           # conversion for refund_amount [type = java.math.BigDecimal]
-          if refund_amount.nil?
-            refund_amount = java.math.BigDecimal::ZERO
+          if @refund_amount.nil?
+            @refund_amount = java.math.BigDecimal::ZERO
           else
-            refund_amount = java.math.BigDecimal.new(refund_amount.respond_to?(:cents) ? refund_amount.cents : refund_amount.to_i)
+            @refund_amount = java.math.BigDecimal.new(@refund_amount.to_i)
           end
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = "Java::com.ning.billing.catalog.api.Currency::#{currency.to_s}" if !currency.nil?
+          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for effective_date [type = org.joda.time.DateTime]
-          if !effective_date.nil?
-            effective_date =  (effective_date.kind_of? Time) ? DateTime.parse(effective_date.to_s) : effective_date
-            effective_date = Java::org.joda.time.DateTime.new(effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          if !@effective_date.nil?
+            @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
+            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
-          plugin_detail = plugin_detail.to_java if !plugin_detail.nil?
+          @plugin_detail = @plugin_detail.to_java unless @plugin_detail.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for id [type = java.util.UUID]
-          id = j_obj.id
-          id = id.nil? ? nil : uuid.to_s
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
 
           # conversion for created_date [type = org.joda.time.DateTime]
-          created_date = j_obj.created_date
-          if !created_date.nil?
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(created_date)
-            created_date = DateTime.iso8601(str)
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
           end
 
           # conversion for updated_date [type = org.joda.time.DateTime]
-          updated_date = j_obj.updated_date
-          if !updated_date.nil?
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(updated_date)
-            updated_date = DateTime.iso8601(str)
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
           end
 
           # conversion for payment_id [type = java.util.UUID]
-          payment_id = j_obj.payment_id
-          payment_id = payment_id.nil? ? nil : uuid.to_s
+          @payment_id = j_obj.payment_id
+          @payment_id = @payment_id.nil? ? nil : @payment_id.to_s
 
           # conversion for is_adjusted [type = boolean]
-          is_adjusted = j_obj.is_adjusted
-          if is_adjusted.nil?
-            return false
+          @is_adjusted = j_obj.is_adjusted
+          if @is_adjusted.nil?
+            @is_adjusted = false
+          else
+            tmp_bool = (@is_adjusted.java_kind_of? java.lang.Boolean) ? @is_adjusted.boolean_value : @is_adjusted
+            @is_adjusted = tmp_bool ? true : false
           end
-          b_value = (is_adjusted.java_kind_of? java.lang.Boolean) ? is_adjusted.boolean_value : is_adjusted
-          return b_value ? true : false
 
           # conversion for refund_amount [type = java.math.BigDecimal]
-          refund_amount = j_obj.refund_amount
-          refund_amount = refund_amount.nil? ? 0 : refund_amount.multiply(java.math.BigDecimal.valueOf(100)).to_s.to_i
+          @refund_amount = j_obj.refund_amount
+          @refund_amount = @refund_amount.nil? ? 0 : @refund_amount.to_s.to_i
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          currency = j_obj.currency
-          currency = currency.to_s if !currency.nil?
+          @currency = j_obj.currency
+          @currency = @currency.to_s unless @currency.nil?
 
           # conversion for effective_date [type = org.joda.time.DateTime]
-          effective_date = j_obj.effective_date
-          if !effective_date.nil?
+          @effective_date = j_obj.effective_date
+          if !@effective_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(effective_date)
-            effective_date = DateTime.iso8601(str)
+            str = fmt.print(@effective_date)
+            @effective_date = DateTime.iso8601(str)
           end
 
           # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
-          plugin_detail = j_obj.plugin_detail
-          plugin_detail = Killbill::Plugin::Model::RefundInfoPlugin.to_ruby(plugin_detail) if !plugin_detail.nil?
+          @plugin_detail = j_obj.plugin_detail
+          @plugin_detail = Killbill::Plugin::Model::RefundInfoPlugin.new.to_ruby(@plugin_detail) unless @plugin_detail.nil?
         end
 
       end

@@ -65,67 +65,72 @@ module Killbill
       end
 
       def do_call_handle_exception(method_name, *args)
-         begin
-           rargs = convert_args(method_name, args)
-           res = @delegate_plugin.send(method_name.to_s.snake_case.to_sym, *rargs)
-           yield(res)
-         rescue Exception => e
-           wrap_and_throw_exception(method_name, e)
-         ensure
-           @delegate_plugin.after_request
-         end
-       end
+        begin
+          rargs = convert_args(method_name, args)
+          res = @delegate_plugin.send(method_name.to_s.snake_case.to_sym, *rargs)
+          yield(res)
+        rescue Exception => e
+          wrap_and_throw_exception(method_name, e)
+        ensure
+          @delegate_plugin.after_request
+        end
+      end
 
-       def wrap_and_throw_exception(api, e)
-         message = "#{api} failure: #{e}"
-         unless e.backtrace.nil?
-           message = "#{message}\n#{e.backtrace.join("\n")}"
-         end
-         logger.warn message
-         raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", e.message)
-       end
+      def wrap_and_throw_exception(api, e)
+        message = "#{api} failure: #{e}"
+        unless e.backtrace.nil?
+          message = "#{message}\n#{e.backtrace.join("\n")}"
+        end
+        logger.warn message
+        raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", e.message)
+      end
 
-       def convert_args(api, args)
-         args.collect! do |a|
-           if a.nil?
-             nil
-           elsif a.java_kind_of? java.util.UUID
-             JConverter.from_uuid(a)
-           elsif a.java_kind_of? java.math.BigDecimal
-             # A bit fragile if what we recieve is not a price...
-             JConverter.from_big_decimal_with_cents_conversion(a)
-           elsif a.java_kind_of? Java::com.ning.billing.catalog.api.Currency
-             a.to_string
-           elsif a.java_kind_of? Java::com.ning.billing.payment.api.PaymentMethodPlugin
-             JConverter.from_payment_method_plugin(a)
-           elsif a.java_kind_of? Java::com.ning.billing.beatrix.bus.api.ExtBusEvent
-             JConverter.from_ext_bus_event(a)
-           elsif ((a.java_kind_of? Java::boolean) || (a.java_kind_of? java.lang.Boolean))
-             JConverter.from_boolean(a)
-           # Require because it looks like if non boxed value are passed they already arrive as Ruby type
-           elsif ((a.java_kind_of? TrueClass) || (a.java_kind_of? FalseClass))
-             a
-           elsif a.java_kind_of? java.util.List
-             result = Array.new
-             if a.size > 0
-               first_element = a.get(0)
-               if first_element.java_kind_of? Java::com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin
-                 a.each do |el|
-                   result << JConverter.from_payment_method_info_plugin(el)
-                 end
-               else
-                 raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{first_element.class} for list")
-               end
-             end
-             result
-           elsif a.java_kind_of? Java::com.ning.billing.util.callcontext.CallContext
-             JConverter.from_call_context(a)
-           elsif a.java_kind_of? Java::com.ning.billing.util.callcontext.TenantContext
-             JConverter.from_tenant_context(a)
-           else
-             # Since we don't pass the Context at this point, we can't raise any exceptions for unexpected types.
-             raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
-           end
+      def convert_args(api, args)
+        args.collect! do |a|
+          if a.nil?
+            nil
+          elsif a.java_kind_of? java.util.UUID
+            a.nil? ? nil : a.to_s
+          elsif a.java_kind_of? java.math.BigDecimal
+            a.nil? ? 0 : a.to_s.to_i
+          elsif a.java_kind_of? Java::com.ning.billing.catalog.api.Currency
+            a.to_string
+          elsif a.java_kind_of? Java::com.ning.billing.payment.api.PaymentMethodPlugin
+            Killbill::Plugin::Model::PaymentMethodPlugin.new.to_ruby(a)
+          elsif a.java_kind_of? Java::com.ning.billing.beatrix.bus.api.ExtBusEvent
+
+            puts "**************************************************  ExtBusEvent #{a.inspect} ************************************"
+
+            Killbill::Plugin::Model::ExtBusEvent.new.to_ruby(a)
+          elsif ((a.java_kind_of? Java::boolean) || (a.java_kind_of? java.lang.Boolean))
+          elsif ((a.java_kind_of? TrueClass) || (a.java_kind_of? FalseClass))
+            if a.nil?
+              false
+            else
+              b_value = (a.java_kind_of? java.lang.Boolean) ? a.boolean_value : a
+              b_value ? true : false
+            end
+          elsif a.java_kind_of? java.util.List
+            result = Array.new
+            if a.size > 0
+              first_element = a.get(0)
+              if first_element.java_kind_of? Java::com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin
+                a.each do |el|
+                  result << Killbill::Plugin::Model::PaymentMethodInfoPlugin.new.to_ruby(el)
+                end
+              else
+                raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{first_element.class} for list")
+              end
+            end
+            result
+          elsif a.java_kind_of? Java::com.ning.billing.util.callcontext.CallContext
+            Killbill::Plugin::Model::CallContext.new.to_ruby(a)
+          elsif a.java_kind_of? Java::com.ning.billing.util.callcontext.TenantContext
+            Killbill::Plugin::Model::TenantContext.new.to_ruby(a)
+          else
+            # Since we don't pass the Context at this point, we can't raise any exceptions for unexpected types.
+            raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("#{api} failure", "Unexpected parameter type #{a.class}")
+          end
         end
         # Remove last argument if this is null (it means we passed a context)
         #args.delete_at(-1) if args[-1].nil?

@@ -39,20 +39,20 @@ module Killbill
 
         def to_java()
           # conversion for plan [type = com.ning.billing.catalog.api.Plan]
-          plan = plan.to_java if !plan.nil?
+          @plan = @plan.to_java unless @plan.nil?
 
           # conversion for price_list [type = com.ning.billing.catalog.api.PriceList]
-          price_list = price_list.to_java if !price_list.nil?
+          @price_list = @price_list.to_java unless @price_list.nil?
         end
 
-        def self.to_ruby(j_obj)
+        def to_ruby(j_obj)
           # conversion for plan [type = com.ning.billing.catalog.api.Plan]
-          plan = j_obj.plan
-          plan = Killbill::Plugin::Model::Plan.to_ruby(plan) if !plan.nil?
+          @plan = j_obj.plan
+          @plan = Killbill::Plugin::Model::Plan.new.to_ruby(@plan) unless @plan.nil?
 
           # conversion for price_list [type = com.ning.billing.catalog.api.PriceList]
-          price_list = j_obj.price_list
-          price_list = Killbill::Plugin::Model::PriceList.to_ruby(price_list) if !price_list.nil?
+          @price_list = j_obj.price_list
+          @price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@price_list) unless @price_list.nil?
         end
 
       end
