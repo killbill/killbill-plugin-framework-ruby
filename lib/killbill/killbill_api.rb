@@ -1,3 +1,5 @@
+require 'date'
+
 module Killbill
   module Plugin
 
@@ -20,6 +22,21 @@ module Killbill
       def method_missing(m, *args, &block)
         return @services[m] if @services.include? m
         raise NoMethodError.new("undefined method `#{m}' for #{self}")
+      end
+
+
+      def create_context(tenant_id=nil, user_token=nil, reason_code=nil, comments=nil)
+        context = Killbill::Plugin::Model::CallContext.new
+        context.tenant_id= tenant_id
+        context.user_token= user_token
+        context.user_name= @plugin_name
+        context.call_origin= :EXTERNAL
+        context.user_type= :SYSTEM
+        context.reason_code= reason_code
+        context.comments= comments
+        context.created_date= DateTime.new
+        context.updated_date= DateTime.new
+        context
       end
 
       private

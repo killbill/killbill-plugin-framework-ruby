@@ -23,31 +23,14 @@ describe Killbill::Plugin do
     @account.time_zone=:UTC
     @account.city="San Francisco"
 
-    #:tenant_id, :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date
-    @context = Killbill::Plugin::Model::CallContext.new
-    @context.tenant_id=nil
-    @context.user_token="15350dd4-3742-485d-a9c3-584e491ea38b"
-    @context.user_name="foo"
-    @context.call_origin=:EXTERNAL
-    @context.user_type=:SYSTEM
-    @context.reason_code="whatever"
-    @context.comments="yo"
-    @context.created_date=DateTime.new
-    @context.updated_date=DateTime.new
+    @context = @kb_apis.create_context
   end
 
   it 'should test create/get_account_by_id' do
 
-    puts "should test create/get_account_by_id START"
-
     account_user_api = @kb_apis.account_user_api
-
     account_created = account_user_api.create_account(@account, @context)
-
-    puts "account created"
-
     account_created.should be_an_instance_of Killbill::Plugin::Model::Account
-
     account_fetched = account_user_api.get_account_by_id(account_created.id, @context)
     account_fetched.should be_an_instance_of Killbill::Plugin::Model::Account
     account_fetched.id.should be_an_instance_of String
