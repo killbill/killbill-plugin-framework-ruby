@@ -100,6 +100,7 @@ module Killbill
 
           # conversion for transition_type [type = com.ning.billing.entitlement.api.SubscriptionTransitionType]
           @transition_type = Java::com.ning.billing.entitlement.api.SubscriptionTransitionType.value_of("#{@transition_type.to_s}") unless @transition_type.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -113,11 +114,11 @@ module Killbill
 
           # conversion for previous_state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
           @previous_state = j_obj.previous_state
-          @previous_state = @previous_state.to_s unless @previous_state.nil?
+          @previous_state = @previous_state.to_s.to_sym unless @previous_state.nil?
 
           # conversion for next_state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
           @next_state = j_obj.next_state
-          @next_state = @next_state.to_s unless @next_state.nil?
+          @next_state = @next_state.to_s.to_sym unless @next_state.nil?
 
           # conversion for previous_event_id [type = java.util.UUID]
           @previous_event_id = j_obj.previous_event_id
@@ -185,7 +186,8 @@ module Killbill
 
           # conversion for transition_type [type = com.ning.billing.entitlement.api.SubscriptionTransitionType]
           @transition_type = j_obj.transition_type
-          @transition_type = @transition_type.to_s unless @transition_type.nil?
+          @transition_type = @transition_type.to_s.to_sym unless @transition_type.nil?
+          self
         end
 
       end

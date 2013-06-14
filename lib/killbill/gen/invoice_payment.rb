@@ -83,6 +83,7 @@ module Killbill
 
           # conversion for payment_cookie_id [type = java.util.UUID]
           @payment_cookie_id = java.util.UUID.fromString(@payment_cookie_id.to_s) unless @payment_cookie_id.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -112,7 +113,7 @@ module Killbill
 
           # conversion for type [type = com.ning.billing.invoice.api.InvoicePaymentType]
           @type = j_obj.type
-          @type = @type.to_s unless @type.nil?
+          @type = @type.to_s.to_sym unless @type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
           @invoice_id = j_obj.invoice_id
@@ -132,7 +133,7 @@ module Killbill
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for linked_invoice_payment_id [type = java.util.UUID]
           @linked_invoice_payment_id = j_obj.linked_invoice_payment_id
@@ -141,6 +142,7 @@ module Killbill
           # conversion for payment_cookie_id [type = java.util.UUID]
           @payment_cookie_id = j_obj.payment_cookie_id
           @payment_cookie_id = @payment_cookie_id.nil? ? nil : @payment_cookie_id.to_s
+          self
         end
 
       end

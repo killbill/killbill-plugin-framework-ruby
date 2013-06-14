@@ -82,6 +82,7 @@ module Killbill
 
           # conversion for service [type = java.lang.String]
           @service = @service.to_s unless @service.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -114,7 +115,7 @@ module Killbill
 
           # conversion for type [type = com.ning.billing.junction.api.Type]
           @type = j_obj.type
-          @type = @type.to_s unless @type.nil?
+          @type = @type.to_s.to_sym unless @type.nil?
 
           # conversion for timestamp [type = org.joda.time.DateTime]
           @timestamp = j_obj.timestamp
@@ -156,6 +157,7 @@ module Killbill
 
           # conversion for service [type = java.lang.String]
           @service = j_obj.service
+          self
         end
 
       end

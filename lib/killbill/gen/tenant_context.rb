@@ -40,12 +40,14 @@ module Killbill
         def to_java()
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
+          self
         end
 
         def to_ruby(j_obj)
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = j_obj.tenant_id
           @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
+          self
         end
 
       end

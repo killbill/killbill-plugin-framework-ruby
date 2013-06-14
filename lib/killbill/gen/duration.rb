@@ -43,15 +43,17 @@ module Killbill
 
           # conversion for number [type = int]
           @number = @number
+          self
         end
 
         def to_ruby(j_obj)
           # conversion for unit [type = com.ning.billing.catalog.api.TimeUnit]
           @unit = j_obj.unit
-          @unit = @unit.to_s unless @unit.nil?
+          @unit = @unit.to_s.to_sym unless @unit.nil?
 
           # conversion for number [type = int]
           @number = j_obj.number
+          self
         end
 
       end

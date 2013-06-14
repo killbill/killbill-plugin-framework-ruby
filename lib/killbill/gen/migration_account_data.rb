@@ -61,7 +61,7 @@ module Killbill
 
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           if !@time_zone.nil?
-            @time_zone = Java::org.joda.time.DateTimeZone.forID(@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s)
+            @time_zone = Java::org.joda.time.DateTimeZone.forID((@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s))
           end
 
           # conversion for locale [type = java.lang.String]
@@ -111,12 +111,13 @@ module Killbill
 
           # conversion for additional_contact_emails [type = java.util.List]
           tmp = java.util.ArrayList.new
-          @additional_contact_emails.each do |m|
+          (@additional_contact_emails || []).each do |m|
             # conversion for m [type = java.lang.String]
             @m = @m.to_s unless @m.nil?
             tmp.add(m)
           end
           @additional_contact_emails = tmp
+          self
         end
 
         def to_ruby(j_obj)
@@ -137,7 +138,7 @@ module Killbill
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = j_obj.payment_method_id
@@ -213,12 +214,13 @@ module Killbill
           # conversion for additional_contact_emails [type = java.util.List]
           @additional_contact_emails = j_obj.additional_contact_emails
           tmp = []
-          @additional_contact_emails.each do |m|
+          (@additional_contact_emails || []).each do |m|
             # conversion for m [type = java.lang.String]
             @m = j_obj.m
             tmp << m
           end
           @additional_contact_emails = tmp
+          self
         end
 
       end

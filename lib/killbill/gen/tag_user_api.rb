@@ -44,7 +44,7 @@ module Killbill
           res = @real_java_api.get_tag_definitions(context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.tag.TagDefinition]
             m = Killbill::Plugin::Model::TagDefinition.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -120,7 +120,7 @@ module Killbill
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
           # conversion for tagDefinitionIds [type = java.util.Collection]
           tmp = java.util.ArrayList.new
-          tagDefinitionIds.each do |m|
+          (tagDefinitionIds || []).each do |m|
             # conversion for m [type = java.util.UUID]
             m = java.util.UUID.fromString(m.to_s) unless m.nil?
             tmp.add(m)
@@ -152,7 +152,7 @@ module Killbill
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
           # conversion for tagDefinitions [type = java.util.Collection]
           tmp = java.util.ArrayList.new
-          tagDefinitions.each do |m|
+          (tagDefinitions || []).each do |m|
             # conversion for m [type = java.util.UUID]
             m = java.util.UUID.fromString(m.to_s) unless m.nil?
             tmp.add(m)
@@ -187,7 +187,7 @@ module Killbill
           res = @real_java_api.get_tags_for_object(objectId, objectType, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.tag.Tag]
             m = Killbill::Plugin::Model::Tag.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -207,7 +207,7 @@ module Killbill
           res = @real_java_api.get_tags_for_account_type(accountId, objectType, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.tag.Tag]
             m = Killbill::Plugin::Model::Tag.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -225,7 +225,7 @@ module Killbill
           res = @real_java_api.get_tags_for_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.tag.Tag]
             m = Killbill::Plugin::Model::Tag.new.to_ruby(m) unless m.nil?
             tmp << m

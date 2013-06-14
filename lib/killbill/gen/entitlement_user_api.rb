@@ -79,7 +79,7 @@ module Killbill
             res = @real_java_api.get_bundles_for_key(bundleKey, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
               m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
               tmp << m
@@ -118,7 +118,7 @@ module Killbill
           res = @real_java_api.get_bundles_for_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
             m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -136,7 +136,7 @@ module Killbill
           res = @real_java_api.get_subscriptions_for_bundle(bundleId, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.Subscription]
             m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -156,7 +156,7 @@ module Killbill
           res = @real_java_api.get_subscriptions_for_account_and_key(accountId, bundleKey, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.Subscription]
             m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -239,7 +239,7 @@ module Killbill
             res = @real_java_api.get_dry_run_change_plan_status(subscriptionId, productName, requestedDate, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionStatusDryRun]
               m = Killbill::Plugin::Model::SubscriptionStatusDryRun.new.to_ruby(m) unless m.nil?
               tmp << m

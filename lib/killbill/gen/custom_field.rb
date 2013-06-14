@@ -64,6 +64,7 @@ module Killbill
 
           # conversion for field_value [type = java.lang.String]
           @field_value = @field_value.to_s unless @field_value.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -93,13 +94,14 @@ module Killbill
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
           @object_type = j_obj.object_type
-          @object_type = @object_type.to_s unless @object_type.nil?
+          @object_type = @object_type.to_s.to_sym unless @object_type.nil?
 
           # conversion for field_name [type = java.lang.String]
           @field_name = j_obj.field_name
 
           # conversion for field_value [type = java.lang.String]
           @field_value = j_obj.field_value
+          self
         end
 
       end

@@ -70,6 +70,7 @@ module Killbill
             @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
+          self
         end
 
         def to_ruby(j_obj)
@@ -86,11 +87,11 @@ module Killbill
 
           # conversion for call_origin [type = com.ning.billing.util.callcontext.CallOrigin]
           @call_origin = j_obj.call_origin
-          @call_origin = @call_origin.to_s unless @call_origin.nil?
+          @call_origin = @call_origin.to_s.to_sym unless @call_origin.nil?
 
           # conversion for user_type [type = com.ning.billing.util.callcontext.UserType]
           @user_type = j_obj.user_type
-          @user_type = @user_type.to_s unless @user_type.nil?
+          @user_type = @user_type.to_s.to_sym unless @user_type.nil?
 
           # conversion for reason_code [type = java.lang.String]
           @reason_code = j_obj.reason_code
@@ -113,6 +114,7 @@ module Killbill
             str = fmt.print(@updated_date)
             @updated_date = DateTime.iso8601(str)
           end
+          self
         end
 
       end

@@ -58,6 +58,7 @@ module Killbill
 
           # conversion for value [type = java.lang.String]
           @value = @value.to_s unless @value.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -86,6 +87,7 @@ module Killbill
 
           # conversion for value [type = java.lang.String]
           @value = j_obj.value
+          self
         end
 
       end

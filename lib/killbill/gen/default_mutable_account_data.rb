@@ -59,7 +59,7 @@ module Killbill
 
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           if !@time_zone.nil?
-            @time_zone = Java::org.joda.time.DateTimeZone.forID(@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s)
+            @time_zone = Java::org.joda.time.DateTimeZone.forID((@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s))
           end
 
           # conversion for locale [type = java.lang.String]
@@ -94,6 +94,7 @@ module Killbill
 
           # conversion for is_notified_for_invoices [type = java.lang.Boolean]
           @is_notified_for_invoices = @is_notified_for_invoices.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_notified_for_invoices)
+          self
         end
 
         def to_ruby(j_obj)
@@ -111,7 +112,7 @@ module Killbill
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for bill_cycle_day_local [type = java.lang.Integer]
           @bill_cycle_day_local = j_obj.bill_cycle_day_local
@@ -170,6 +171,7 @@ module Killbill
             tmp_bool = (@is_notified_for_invoices.java_kind_of? java.lang.Boolean) ? @is_notified_for_invoices.boolean_value : @is_notified_for_invoices
             @is_notified_for_invoices = tmp_bool ? true : false
           end
+          self
         end
 
       end

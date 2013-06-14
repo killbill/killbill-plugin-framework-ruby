@@ -44,6 +44,7 @@ module Killbill
 
           # conversion for alignment [type = com.ning.billing.catalog.api.PlanAlignmentChange]
           @alignment = Java::com.ning.billing.catalog.api.PlanAlignmentChange.value_of("#{@alignment.to_s}") unless @alignment.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -53,11 +54,12 @@ module Killbill
 
           # conversion for policy [type = com.ning.billing.catalog.api.ActionPolicy]
           @policy = j_obj.policy
-          @policy = @policy.to_s unless @policy.nil?
+          @policy = @policy.to_s.to_sym unless @policy.nil?
 
           # conversion for alignment [type = com.ning.billing.catalog.api.PlanAlignmentChange]
           @alignment = j_obj.alignment
-          @alignment = @alignment.to_s unless @alignment.nil?
+          @alignment = @alignment.to_s.to_sym unless @alignment.nil?
+          self
         end
 
       end

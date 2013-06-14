@@ -54,6 +54,7 @@ rescue LoadError => e
   warn "You need JRuby to run Killbill plugins #{e}"
 end
 
+require 'tzinfo'
 require 'killbill/gen/require_gen'
 require 'killbill/notification'
 require 'killbill/payment'

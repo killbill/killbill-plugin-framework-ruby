@@ -46,7 +46,7 @@ module Killbill
           res = @real_java_api.get_invoices_by_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.Invoice]
             m = Killbill::Plugin::Model::Invoice.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -124,7 +124,7 @@ module Killbill
           res = @real_java_api.get_unpaid_invoices_by_account_id(accountId, upToDate, context)
           # conversion for res [type = java.util.Collection]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.Invoice]
             m = Killbill::Plugin::Model::Invoice.new.to_ruby(m) unless m.nil?
             tmp << m

@@ -44,6 +44,7 @@ module Killbill
 
           # conversion for is_updatable [type = java.lang.Boolean]
           @is_updatable = @is_updatable.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_updatable)
+          self
         end
 
         def to_ruby(j_obj)
@@ -61,6 +62,7 @@ module Killbill
             tmp_bool = (@is_updatable.java_kind_of? java.lang.Boolean) ? @is_updatable.boolean_value : @is_updatable
             @is_updatable = tmp_bool ? true : false
           end
+          self
         end
 
       end

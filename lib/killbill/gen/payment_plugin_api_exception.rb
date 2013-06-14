@@ -41,6 +41,7 @@ module Killbill
 
           # conversion for error_message [type = java.lang.String]
           @error_message = @error_message.to_s unless @error_message.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -49,6 +50,7 @@ module Killbill
 
           # conversion for error_message [type = java.lang.String]
           @error_message = j_obj.error_message
+          self
         end
 
       end

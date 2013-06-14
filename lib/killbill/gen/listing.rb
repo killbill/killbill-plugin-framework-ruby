@@ -43,6 +43,7 @@ module Killbill
 
           # conversion for price_list [type = com.ning.billing.catalog.api.PriceList]
           @price_list = @price_list.to_java unless @price_list.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -53,6 +54,7 @@ module Killbill
           # conversion for price_list [type = com.ning.billing.catalog.api.PriceList]
           @price_list = j_obj.price_list
           @price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@price_list) unless @price_list.nil?
+          self
         end
 
       end

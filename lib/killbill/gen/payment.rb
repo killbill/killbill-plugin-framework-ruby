@@ -93,7 +93,7 @@ module Killbill
 
           # conversion for attempts [type = java.util.List]
           tmp = java.util.ArrayList.new
-          @attempts.each do |m|
+          (@attempts || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
             @m = @m.to_java unless @m.nil?
             tmp.add(m)
@@ -108,6 +108,7 @@ module Killbill
 
           # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
           @payment_info_plugin = @payment_info_plugin.to_java unless @payment_info_plugin.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -164,16 +165,16 @@ module Killbill
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
           @payment_status = j_obj.payment_status
-          @payment_status = @payment_status.to_s unless @payment_status.nil?
+          @payment_status = @payment_status.to_s.to_sym unless @payment_status.nil?
 
           # conversion for attempts [type = java.util.List]
           @attempts = j_obj.attempts
           tmp = []
-          @attempts.each do |m|
+          (@attempts || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
             @m = j_obj.m
             @m = Killbill::Plugin::Model::PaymentAttempt.new.to_ruby(@m) unless @m.nil?
@@ -190,6 +191,7 @@ module Killbill
           # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
           @payment_info_plugin = j_obj.payment_info_plugin
           @payment_info_plugin = Killbill::Plugin::Model::PaymentInfoPlugin.new.to_ruby(@payment_info_plugin) unless @payment_info_plugin.nil?
+          self
         end
 
       end

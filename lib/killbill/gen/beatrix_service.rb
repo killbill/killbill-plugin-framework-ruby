@@ -40,11 +40,13 @@ module Killbill
         def to_java()
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
+          self
         end
 
         def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
+          self
         end
 
       end

@@ -47,6 +47,7 @@ module Killbill
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -55,14 +56,15 @@ module Killbill
 
           # conversion for product_category [type = com.ning.billing.catalog.api.ProductCategory]
           @product_category = j_obj.product_category
-          @product_category = @product_category.to_s unless @product_category.nil?
+          @product_category = @product_category.to_s.to_sym unless @product_category.nil?
 
           # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period
-          @billing_period = @billing_period.to_s unless @billing_period.nil?
+          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = j_obj.price_list_name
+          self
         end
 
       end

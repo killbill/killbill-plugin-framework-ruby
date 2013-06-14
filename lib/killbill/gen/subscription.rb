@@ -130,12 +130,13 @@ module Killbill
 
           # conversion for all_transitions [type = java.util.List]
           tmp = java.util.ArrayList.new
-          @all_transitions.each do |m|
+          (@all_transitions || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
             @m = @m.to_java unless @m.nil?
             tmp.add(m)
           end
           @all_transitions = tmp
+          self
         end
 
         def to_ruby(j_obj)
@@ -169,11 +170,11 @@ module Killbill
 
           # conversion for state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
           @state = j_obj.state
-          @state = @state.to_s unless @state.nil?
+          @state = @state.to_s.to_sym unless @state.nil?
 
           # conversion for source_type [type = com.ning.billing.entitlement.api.user.SubscriptionSourceType]
           @source_type = j_obj.source_type
-          @source_type = @source_type.to_s unless @source_type.nil?
+          @source_type = @source_type.to_s.to_sym unless @source_type.nil?
 
           # conversion for start_date [type = org.joda.time.DateTime]
           @start_date = j_obj.start_date
@@ -245,7 +246,7 @@ module Killbill
 
           # conversion for category [type = com.ning.billing.catalog.api.ProductCategory]
           @category = j_obj.category
-          @category = @category.to_s unless @category.nil?
+          @category = @category.to_s.to_sym unless @category.nil?
 
           # conversion for pending_transition [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
           @pending_transition = j_obj.pending_transition
@@ -258,13 +259,14 @@ module Killbill
           # conversion for all_transitions [type = java.util.List]
           @all_transitions = j_obj.all_transitions
           tmp = []
-          @all_transitions.each do |m|
+          (@all_transitions || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
             @m = j_obj.m
             @m = Killbill::Plugin::Model::SubscriptionTransition.new.to_ruby(@m) unless @m.nil?
             tmp << m
           end
           @all_transitions = tmp
+          self
         end
 
       end

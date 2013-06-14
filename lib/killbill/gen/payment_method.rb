@@ -64,6 +64,7 @@ module Killbill
 
           # conversion for plugin_detail [type = com.ning.billing.payment.api.PaymentMethodPlugin]
           @plugin_detail = @plugin_detail.to_java unless @plugin_detail.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -106,6 +107,7 @@ module Killbill
           # conversion for plugin_detail [type = com.ning.billing.payment.api.PaymentMethodPlugin]
           @plugin_detail = j_obj.plugin_detail
           @plugin_detail = Killbill::Plugin::Model::PaymentMethodPlugin.new.to_ruby(@plugin_detail) unless @plugin_detail.nil?
+          self
         end
 
       end

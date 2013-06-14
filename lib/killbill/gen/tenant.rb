@@ -61,6 +61,7 @@ module Killbill
 
           # conversion for api_secret [type = java.lang.String]
           @api_secret = @api_secret.to_s unless @api_secret.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -92,6 +93,7 @@ module Killbill
 
           # conversion for api_secret [type = java.lang.String]
           @api_secret = j_obj.api_secret
+          self
         end
 
       end

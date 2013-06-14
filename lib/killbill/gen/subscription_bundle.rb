@@ -64,6 +64,7 @@ module Killbill
 
           # conversion for overdue_state [type = com.ning.billing.overdue.OverdueState]
           @overdue_state = @overdue_state.to_java unless @overdue_state.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -101,6 +102,7 @@ module Killbill
           # conversion for overdue_state [type = com.ning.billing.overdue.OverdueState]
           @overdue_state = j_obj.overdue_state
           @overdue_state = Killbill::Plugin::Model::OverdueState.new.to_ruby(@overdue_state) unless @overdue_state.nil?
+          self
         end
 
       end

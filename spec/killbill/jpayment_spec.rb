@@ -29,7 +29,6 @@ describe Killbill::Plugin::JPayment do
     output.status.to_s.should == "PROCESSED"
   end
 
-=begin
   it "should_test_charge_exception" do
     @jpayment.delegate_plugin.send(:raise_exception_on_next_calls)
     lambda { @jpayment.process_payment(@kb_account_id, @kb_payment_id, @kb_payment_method_id, @amount, @currency) }.should raise_error Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException
@@ -38,10 +37,11 @@ describe Killbill::Plugin::JPayment do
   it "should_test_get_payment_info_ok" do
     output = @jpayment.get_payment_info(@kb_account_id, @kb_payment_method_id)
     output.amount.should be_an_instance_of java.math.BigDecimal
-    output.amount.to_s.should == "0.00";
-    output.status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus
+    output.amount.compare_to(java.math.BigDecimal.new(0)).should == 0
+    output.status.java_kind_of?(Java::com.ning.billing.payment.plugin.api.PaymentPluginStatus).should == true
     output.status.to_s.should == "PROCESSED"
   end
+
 
   it "should_test_get_payment_info_exception" do
     @jpayment.delegate_plugin.send(:raise_exception_on_next_calls)
@@ -51,10 +51,11 @@ describe Killbill::Plugin::JPayment do
   it "should_test_refund_ok" do
     output = @jpayment.process_refund(@kb_account_id, @kb_payment_method_id, @amount, @currency)
     output.amount.should be_an_instance_of java.math.BigDecimal
-    output.amount.to_s.should == "50.00";
-    output.status.should be_an_instance_of Java::com.ning.billing.payment.plugin.api.RefundPluginStatus
+    output.amount.compare_to(@amount).should == 0
+    output.status.java_kind_of?(Java::com.ning.billing.payment.plugin.api.RefundPluginStatus).should == true
     output.status.to_s.should == "PROCESSED"
   end
+
 
   it "should_test_refund_exception" do
     @jpayment.delegate_plugin.send(:raise_exception_on_next_calls)
@@ -81,8 +82,8 @@ describe Killbill::Plugin::JPayment do
 
   it "should_test_get_payment_method_detail_ok" do
     output = @jpayment.get_payment_method_detail(@kb_account_id, @kb_payment_method_id)
-    output.external_payment_method_id.should be_an_instance_of java.lang.String
-    output.external_payment_method_id.should == "foo"
+    #output.external_payment_method_id.should be_an_instance_of java.lang.String
+    output.external_payment_method_id.should == "external_payment_method_id"
   end
 
   it "should_test_get_payment_method_detail_exception" do
@@ -122,5 +123,4 @@ describe Killbill::Plugin::JPayment do
     @jpayment.delegate_plugin.send(:raise_exception_on_next_calls)
     lambda { @jpayment.reset_payment_methods(@kb_account_id, java.util.ArrayList.new) }.should raise_error Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException
   end
-=end
 end

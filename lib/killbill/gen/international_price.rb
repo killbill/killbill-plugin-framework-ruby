@@ -50,6 +50,7 @@ module Killbill
 
           # conversion for is_zero [type = boolean]
           @is_zero = @is_zero.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_zero)
+          self
         end
 
         def to_ruby(j_obj)
@@ -69,6 +70,7 @@ module Killbill
             tmp_bool = (@is_zero.java_kind_of? java.lang.Boolean) ? @is_zero.boolean_value : @is_zero
             @is_zero = tmp_bool ? true : false
           end
+          self
         end
 
       end

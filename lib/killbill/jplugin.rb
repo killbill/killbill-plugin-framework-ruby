@@ -98,9 +98,6 @@ module Killbill
           elsif a.java_kind_of? Java::com.ning.billing.payment.api.PaymentMethodPlugin
             Killbill::Plugin::Model::PaymentMethodPlugin.new.to_ruby(a)
           elsif a.java_kind_of? Java::com.ning.billing.beatrix.bus.api.ExtBusEvent
-
-            puts "**************************************************  ExtBusEvent #{a.inspect} ************************************"
-
             Killbill::Plugin::Model::ExtBusEvent.new.to_ruby(a)
           elsif ((a.java_kind_of? Java::boolean) || (a.java_kind_of? java.lang.Boolean))
           elsif ((a.java_kind_of? TrueClass) || (a.java_kind_of? FalseClass))

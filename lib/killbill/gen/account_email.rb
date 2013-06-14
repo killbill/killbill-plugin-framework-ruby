@@ -58,6 +58,7 @@ module Killbill
 
           # conversion for email [type = java.lang.String]
           @email = @email.to_s unless @email.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -87,6 +88,7 @@ module Killbill
 
           # conversion for email [type = java.lang.String]
           @email = j_obj.email
+          self
         end
 
       end

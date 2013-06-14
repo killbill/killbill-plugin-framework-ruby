@@ -61,6 +61,7 @@ module Killbill
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -90,11 +91,12 @@ module Killbill
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
           @object_type = j_obj.object_type
-          @object_type = @object_type.to_s unless @object_type.nil?
+          @object_type = @object_type.to_s.to_sym unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = j_obj.object_id
           @object_id = @object_id.nil? ? nil : @object_id.to_s
+          self
         end
 
       end

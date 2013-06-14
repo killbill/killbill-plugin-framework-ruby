@@ -77,6 +77,7 @@ module Killbill
 
           # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
           @plugin_detail = @plugin_detail.to_java unless @plugin_detail.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -119,7 +120,7 @@ module Killbill
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for effective_date [type = org.joda.time.DateTime]
           @effective_date = j_obj.effective_date
@@ -132,6 +133,7 @@ module Killbill
           # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
           @plugin_detail = j_obj.plugin_detail
           @plugin_detail = Killbill::Plugin::Model::RefundInfoPlugin.new.to_ruby(@plugin_detail) unless @plugin_detail.nil?
+          self
         end
 
       end

@@ -58,6 +58,7 @@ module Killbill
 
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
           @limits = @limits.to_java unless @limits.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -83,7 +84,7 @@ module Killbill
 
           # conversion for category [type = com.ning.billing.catalog.api.ProductCategory]
           @category = j_obj.category
-          @category = @category.to_s unless @category.nil?
+          @category = @category.to_s.to_sym unless @category.nil?
 
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = j_obj.catalog_name
@@ -91,6 +92,7 @@ module Killbill
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
           @limits = j_obj.limits
           @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
+          self
         end
 
       end

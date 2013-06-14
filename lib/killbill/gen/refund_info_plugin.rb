@@ -68,6 +68,7 @@ module Killbill
 
           # conversion for reference_id [type = java.lang.String]
           @reference_id = @reference_id.to_s unless @reference_id.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -93,7 +94,7 @@ module Killbill
 
           # conversion for status [type = com.ning.billing.payment.plugin.api.RefundPluginStatus]
           @status = j_obj.status
-          @status = @status.to_s unless @status.nil?
+          @status = @status.to_s.to_sym unless @status.nil?
 
           # conversion for gateway_error [type = java.lang.String]
           @gateway_error = j_obj.gateway_error
@@ -103,6 +104,7 @@ module Killbill
 
           # conversion for reference_id [type = java.lang.String]
           @reference_id = j_obj.reference_id
+          self
         end
 
       end

@@ -67,6 +67,7 @@ module Killbill
 
           # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
           @payment_status = Java::com.ning.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -106,7 +107,8 @@ module Killbill
 
           # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
           @payment_status = j_obj.payment_status
-          @payment_status = @payment_status.to_s unless @payment_status.nil?
+          @payment_status = @payment_status.to_s.to_sym unless @payment_status.nil?
+          self
         end
 
       end

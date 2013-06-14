@@ -46,7 +46,7 @@ module Killbill
 
           # conversion for properties [type = java.util.List]
           tmp = java.util.ArrayList.new
-          @properties.each do |m|
+          (@properties || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
             @m = @m.to_java unless @m.nil?
             tmp.add(m)
@@ -91,6 +91,7 @@ module Killbill
 
           # conversion for country [type = java.lang.String]
           @country = @country.to_s unless @country.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -109,7 +110,7 @@ module Killbill
           # conversion for properties [type = java.util.List]
           @properties = j_obj.properties
           tmp = []
-          @properties.each do |m|
+          (@properties || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
             @m = j_obj.m
             @m = Killbill::Plugin::Model::PaymentMethodKVInfo.new.to_ruby(@m) unless @m.nil?
@@ -155,6 +156,7 @@ module Killbill
 
           # conversion for country [type = java.lang.String]
           @country = j_obj.country
+          self
         end
 
       end

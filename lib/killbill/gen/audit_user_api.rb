@@ -73,7 +73,7 @@ module Killbill
         def get_audit_logs_for_bundles(bundles, auditLevel, context)
           # conversion for bundles [type = java.util.List]
           tmp = java.util.ArrayList.new
-          bundles.each do |m|
+          (bundles || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.timeline.BundleTimeline]
             m = m.to_java unless m.nil?
             tmp.add(m)
@@ -93,7 +93,7 @@ module Killbill
         def get_audit_logs_for_invoice_payments(invoicePayments, auditLevel, context)
           # conversion for invoicePayments [type = java.util.List]
           tmp = java.util.ArrayList.new
-          invoicePayments.each do |m|
+          (invoicePayments || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
             m = m.to_java unless m.nil?
             tmp.add(m)
@@ -113,7 +113,7 @@ module Killbill
         def get_audit_logs_for_refunds(refunds, auditLevel, context)
           # conversion for refunds [type = java.util.List]
           tmp = java.util.ArrayList.new
-          refunds.each do |m|
+          (refunds || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.Refund]
             m = m.to_java unless m.nil?
             tmp.add(m)
@@ -133,7 +133,7 @@ module Killbill
         def get_audit_logs_for_payments(payments, auditLevel, context)
           # conversion for payments [type = java.util.List]
           tmp = java.util.ArrayList.new
-          payments.each do |m|
+          (payments || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.Payment]
             m = m.to_java unless m.nil?
             tmp.add(m)
@@ -153,7 +153,7 @@ module Killbill
         def get_audit_logs_for_invoices(invoices, auditLevel, context)
           # conversion for invoices [type = java.util.List]
           tmp = java.util.ArrayList.new
-          invoices.each do |m|
+          (invoices || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.Invoice]
             m = m.to_java unless m.nil?
             tmp.add(m)
@@ -182,7 +182,7 @@ module Killbill
           res = @real_java_api.get_audit_logs(objectId, objectType, auditLevel, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.audit.AuditLog]
             m = Killbill::Plugin::Model::AuditLog.new.to_ruby(m) unless m.nil?
             tmp << m

@@ -52,6 +52,7 @@ module Killbill
             @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
+          self
         end
 
         def to_ruby(j_obj)
@@ -74,6 +75,7 @@ module Killbill
             str = fmt.print(@updated_date)
             @updated_date = DateTime.iso8601(str)
           end
+          self
         end
 
       end

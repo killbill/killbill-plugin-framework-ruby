@@ -52,16 +52,17 @@ module Killbill
 
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
+          self
         end
 
         def to_ruby(j_obj)
           # conversion for event_type [type = com.ning.billing.beatrix.bus.api.ExtBusEventType]
           @event_type = j_obj.event_type
-          @event_type = @event_type.to_s unless @event_type.nil?
+          @event_type = @event_type.to_s.to_sym unless @event_type.nil?
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
           @object_type = j_obj.object_type
-          @object_type = @object_type.to_s unless @object_type.nil?
+          @object_type = @object_type.to_s.to_sym unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = j_obj.object_id
@@ -74,6 +75,7 @@ module Killbill
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = j_obj.tenant_id
           @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
+          self
         end
 
       end

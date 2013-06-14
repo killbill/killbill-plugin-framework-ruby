@@ -46,7 +46,7 @@ module Killbill
           res = @real_java_api.get_blocking_history(overdueableId, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.junction.api.BlockingState]
             m = Killbill::Plugin::Model::BlockingState.new.to_ruby(m) unless m.nil?
             tmp << m

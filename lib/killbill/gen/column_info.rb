@@ -46,6 +46,7 @@ module Killbill
 
           # conversion for data_type [type = java.lang.String]
           @data_type = @data_type.to_s unless @data_type.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -57,6 +58,7 @@ module Killbill
 
           # conversion for data_type [type = java.lang.String]
           @data_type = j_obj.data_type
+          self
         end
 
       end

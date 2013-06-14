@@ -46,6 +46,7 @@ module Killbill
 
           # conversion for min [type = java.lang.Double]
           @min = @min
+          self
         end
 
         def to_ruby(j_obj)
@@ -58,6 +59,7 @@ module Killbill
 
           # conversion for min [type = java.lang.Double]
           @min = j_obj.min
+          self
         end
 
       end

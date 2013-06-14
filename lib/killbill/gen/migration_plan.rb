@@ -52,7 +52,7 @@ module Killbill
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           tmp = java.util.ArrayList.new
-          @initial_phase_iterator.each do |m|
+          (@initial_phase_iterator || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
             @m = @m.to_java unless @m.nil?
             tmp.add(m)
@@ -77,6 +77,7 @@ module Killbill
             @effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptons.to_s, Java::org.joda.time.DateTimeZone::UTC)
             @effective_date_for_existing_subscriptons = @effective_date_for_existing_subscriptons.to_date
           end
+          self
         end
 
         def to_ruby(j_obj)
@@ -103,7 +104,7 @@ module Killbill
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = j_obj.initial_phase_iterator
           tmp = []
-          @initial_phase_iterator.each do |m|
+          (@initial_phase_iterator || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
             @m = j_obj.m
             @m = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@m) unless @m.nil?
@@ -117,7 +118,7 @@ module Killbill
 
           # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period
-          @billing_period = @billing_period.to_s unless @billing_period.nil?
+          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = j_obj.plans_allowed_in_bundle
@@ -134,6 +135,7 @@ module Killbill
             str = fmt.print(@effective_date_for_existing_subscriptons)
             @effective_date_for_existing_subscriptons = DateTime.iso8601(str)
           end
+          self
         end
 
       end

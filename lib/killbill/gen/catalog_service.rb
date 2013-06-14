@@ -46,6 +46,7 @@ module Killbill
 
           # conversion for current_catalog [type = com.ning.billing.catalog.api.StaticCatalog]
           @current_catalog = @current_catalog.to_java unless @current_catalog.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -59,6 +60,7 @@ module Killbill
           # conversion for current_catalog [type = com.ning.billing.catalog.api.StaticCatalog]
           @current_catalog = j_obj.current_catalog
           @current_catalog = Killbill::Plugin::Model::StaticCatalog.new.to_ruby(@current_catalog) unless @current_catalog.nil?
+          self
         end
 
       end

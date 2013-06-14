@@ -121,7 +121,7 @@ module Killbill
             res = @real_java_api.get_refund_info(kbAccountId, kbPaymentId, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
               m = Killbill::Plugin::Model::RefundInfoPlugin.new.to_ruby(m) unless m.nil?
               tmp << m
@@ -200,7 +200,7 @@ module Killbill
             res = @real_java_api.get_payment_methods(kbAccountId, refreshFromGateway, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin]
               m = Killbill::Plugin::Model::PaymentMethodInfoPlugin.new.to_ruby(m) unless m.nil?
               tmp << m
@@ -218,7 +218,7 @@ module Killbill
           kbAccountId = java.util.UUID.fromString(kbAccountId.to_s) unless kbAccountId.nil?
           # conversion for paymentMethods [type = java.util.List]
           tmp = java.util.ArrayList.new
-          paymentMethods.each do |m|
+          (paymentMethods || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin]
             m = m.to_java unless m.nil?
             tmp.add(m)

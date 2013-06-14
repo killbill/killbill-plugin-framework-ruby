@@ -44,6 +44,7 @@ module Killbill
 
           # conversion for code [type = int]
           @code = @code
+          self
         end
 
         def to_ruby(j_obj)
@@ -56,6 +57,7 @@ module Killbill
 
           # conversion for code [type = int]
           @code = j_obj.code
+          self
         end
 
       end

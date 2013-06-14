@@ -106,6 +106,7 @@ module Killbill
 
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = java.util.UUID.fromString(@linked_item_id.to_s) unless @linked_item_id.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -131,7 +132,7 @@ module Killbill
 
           # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
           @invoice_item_type = j_obj.invoice_item_type
-          @invoice_item_type = @invoice_item_type.to_s unless @invoice_item_type.nil?
+          @invoice_item_type = @invoice_item_type.to_s.to_sym unless @invoice_item_type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
           @invoice_id = j_obj.invoice_id
@@ -159,7 +160,7 @@ module Killbill
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for description [type = java.lang.String]
           @description = j_obj.description
@@ -185,6 +186,7 @@ module Killbill
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = j_obj.linked_item_id
           @linked_item_id = @linked_item_id.nil? ? nil : @linked_item_id.to_s
+          self
         end
 
       end

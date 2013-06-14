@@ -64,6 +64,7 @@ module Killbill
 
           # conversion for control_tag_type [type = com.ning.billing.util.tag.ControlTagType]
           @control_tag_type = Java::com.ning.billing.util.tag.ControlTagType.value_of("#{@control_tag_type.to_s}") unless @control_tag_type.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -73,7 +74,7 @@ module Killbill
 
           # conversion for object_type [type = com.ning.billing.ObjectType]
           @object_type = j_obj.object_type
-          @object_type = @object_type.to_s unless @object_type.nil?
+          @object_type = @object_type.to_s.to_sym unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = j_obj.object_id
@@ -101,7 +102,8 @@ module Killbill
 
           # conversion for control_tag_type [type = com.ning.billing.util.tag.ControlTagType]
           @control_tag_type = j_obj.control_tag_type
-          @control_tag_type = @control_tag_type.to_s unless @control_tag_type.nil?
+          @control_tag_type = @control_tag_type.to_s.to_sym unless @control_tag_type.nil?
+          self
         end
 
       end

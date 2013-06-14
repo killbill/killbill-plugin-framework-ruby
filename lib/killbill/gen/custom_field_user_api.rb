@@ -41,7 +41,7 @@ module Killbill
         def add_custom_fields(fields, context)
           # conversion for fields [type = java.util.List]
           tmp = java.util.ArrayList.new
-          fields.each do |m|
+          (fields || []).each do |m|
             # conversion for m [type = com.ning.billing.util.customfield.CustomField]
             m = m.to_java unless m.nil?
             tmp.add(m)
@@ -63,7 +63,7 @@ module Killbill
           res = @real_java_api.get_custom_fields_for_object(objectId, objectType, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.customfield.CustomField]
             m = Killbill::Plugin::Model::CustomField.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -83,7 +83,7 @@ module Killbill
           res = @real_java_api.get_custom_fields_for_account_type(accountId, objectType, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.customfield.CustomField]
             m = Killbill::Plugin::Model::CustomField.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -101,7 +101,7 @@ module Killbill
           res = @real_java_api.get_custom_fields_for_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.util.customfield.CustomField]
             m = Killbill::Plugin::Model::CustomField.new.to_ruby(m) unless m.nil?
             tmp << m

@@ -49,6 +49,7 @@ module Killbill
 
           # conversion for plans [type = com.ning.billing.catalog.api.Plan]
           @plans = @plans.to_java unless @plans.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -57,7 +58,7 @@ module Killbill
 
           # conversion for supported_currencies [type = com.ning.billing.catalog.api.Currency]
           @supported_currencies = j_obj.supported_currencies
-          @supported_currencies = @supported_currencies.to_s unless @supported_currencies.nil?
+          @supported_currencies = @supported_currencies.to_s.to_sym unless @supported_currencies.nil?
 
           # conversion for products [type = com.ning.billing.catalog.api.Product]
           @products = j_obj.products
@@ -66,6 +67,7 @@ module Killbill
           # conversion for plans [type = com.ning.billing.catalog.api.Plan]
           @plans = j_obj.plans
           @plans = Killbill::Plugin::Model::Plan.new.to_ruby(@plans) unless @plans.nil?
+          self
         end
 
       end

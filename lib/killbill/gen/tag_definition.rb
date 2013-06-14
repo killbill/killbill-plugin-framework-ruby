@@ -64,12 +64,13 @@ module Killbill
 
           # conversion for applicable_object_types [type = java.util.List]
           tmp = java.util.ArrayList.new
-          @applicable_object_types.each do |m|
+          (@applicable_object_types || []).each do |m|
             # conversion for m [type = com.ning.billing.ObjectType]
             @m = Java::com.ning.billing.ObjectType.value_of("#{@m.to_s}") unless @m.nil?
             tmp.add(m)
           end
           @applicable_object_types = tmp
+          self
         end
 
         def to_ruby(j_obj)
@@ -111,13 +112,14 @@ module Killbill
           # conversion for applicable_object_types [type = java.util.List]
           @applicable_object_types = j_obj.applicable_object_types
           tmp = []
-          @applicable_object_types.each do |m|
+          (@applicable_object_types || []).each do |m|
             # conversion for m [type = com.ning.billing.ObjectType]
             @m = j_obj.m
-            @m = @m.to_s unless @m.nil?
+            @m = @m.to_s.to_sym unless @m.nil?
             tmp << m
           end
           @applicable_object_types = tmp
+          self
         end
 
       end

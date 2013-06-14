@@ -55,6 +55,7 @@ module Killbill
 
           # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
           @blocking_state = @blocking_state.to_java unless @blocking_state.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -81,6 +82,7 @@ module Killbill
           # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
           @blocking_state = j_obj.blocking_state
           @blocking_state = Killbill::Plugin::Model::BlockingState.new.to_ruby(@blocking_state) unless @blocking_state.nil?
+          self
         end
 
       end

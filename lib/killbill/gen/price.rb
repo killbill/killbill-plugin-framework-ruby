@@ -47,16 +47,18 @@ module Killbill
           else
             @value = java.math.BigDecimal.new(@value.to_i)
           end
+          self
         end
 
         def to_ruby(j_obj)
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for value [type = java.math.BigDecimal]
           @value = j_obj.value
           @value = @value.nil? ? 0 : @value.to_s.to_i
+          self
         end
 
       end

@@ -55,7 +55,7 @@ module Killbill
 
           # conversion for invoice_items [type = java.util.List]
           tmp = java.util.ArrayList.new
-          @invoice_items.each do |m|
+          (@invoice_items || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoiceItem]
             @m = @m.to_java unless @m.nil?
             tmp.add(m)
@@ -67,7 +67,7 @@ module Killbill
 
           # conversion for payments [type = java.util.List]
           tmp = java.util.ArrayList.new
-          @payments.each do |m|
+          (@payments || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
             @m = @m.to_java unless @m.nil?
             tmp.add(m)
@@ -140,6 +140,7 @@ module Killbill
 
           # conversion for is_migration_invoice [type = boolean]
           @is_migration_invoice = @is_migration_invoice.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_migration_invoice)
+          self
         end
 
         def to_ruby(j_obj)
@@ -166,7 +167,7 @@ module Killbill
           # conversion for invoice_items [type = java.util.List]
           @invoice_items = j_obj.invoice_items
           tmp = []
-          @invoice_items.each do |m|
+          (@invoice_items || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoiceItem]
             @m = j_obj.m
             @m = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(@m) unless @m.nil?
@@ -180,7 +181,7 @@ module Killbill
           # conversion for payments [type = java.util.List]
           @payments = j_obj.payments
           tmp = []
-          @payments.each do |m|
+          (@payments || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
             @m = j_obj.m
             @m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(@m) unless @m.nil?
@@ -212,7 +213,7 @@ module Killbill
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
-          @currency = @currency.to_s unless @currency.nil?
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for paid_amount [type = java.math.BigDecimal]
           @paid_amount = j_obj.paid_amount
@@ -246,6 +247,7 @@ module Killbill
             tmp_bool = (@is_migration_invoice.java_kind_of? java.lang.Boolean) ? @is_migration_invoice.boolean_value : @is_migration_invoice
             @is_migration_invoice = tmp_bool ? true : false
           end
+          self
         end
 
       end

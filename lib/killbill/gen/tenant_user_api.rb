@@ -91,7 +91,7 @@ module Killbill
             res = @real_java_api.get_tenant_value_for_key(key, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = java.lang.String]
               tmp << m
             end

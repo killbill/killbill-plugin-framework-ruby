@@ -49,6 +49,7 @@ module Killbill
 
           # conversion for external_payment_method_id [type = java.lang.String]
           @external_payment_method_id = @external_payment_method_id.to_s unless @external_payment_method_id.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -71,6 +72,7 @@ module Killbill
 
           # conversion for external_payment_method_id [type = java.lang.String]
           @external_payment_method_id = j_obj.external_payment_method_id
+          self
         end
 
       end

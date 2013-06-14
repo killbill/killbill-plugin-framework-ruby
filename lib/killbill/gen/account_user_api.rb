@@ -117,7 +117,7 @@ module Killbill
           res = @real_java_api.get_accounts(context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.account.api.Account]
             m = Killbill::Plugin::Model::Account.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -151,7 +151,7 @@ module Killbill
           res = @real_java_api.get_emails(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.account.api.AccountEmail]
             m = Killbill::Plugin::Model::AccountEmail.new.to_ruby(m) unless m.nil?
             tmp << m

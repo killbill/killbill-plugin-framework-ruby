@@ -61,6 +61,7 @@ module Killbill
 
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
           @limits = @limits.to_java unless @limits.nil?
+          self
         end
 
         def to_ruby(j_obj)
@@ -74,7 +75,7 @@ module Killbill
 
           # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period
-          @billing_period = @billing_period.to_s unless @billing_period.nil?
+          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
@@ -89,11 +90,12 @@ module Killbill
 
           # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
           @phase_type = j_obj.phase_type
-          @phase_type = @phase_type.to_s unless @phase_type.nil?
+          @phase_type = @phase_type.to_s.to_sym unless @phase_type.nil?
 
           # conversion for limits [type = com.ning.billing.catalog.api.Limit]
           @limits = j_obj.limits
           @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
+          self
         end
 
       end

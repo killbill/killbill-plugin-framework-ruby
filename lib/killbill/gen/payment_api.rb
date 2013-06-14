@@ -177,7 +177,7 @@ module Killbill
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
           # conversion for invoiceItemIds [type = java.util.Set]
           tmp = java.util.ArrayList.new
-          invoiceItemIds.each do |m|
+          (invoiceItemIds || []).each do |m|
             # conversion for m [type = java.util.UUID]
             m = java.util.UUID.fromString(m.to_s) unless m.nil?
             tmp.add(m)
@@ -205,7 +205,7 @@ module Killbill
             res = @real_java_api.get_account_refunds(account, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.payment.api.Refund]
               m = Killbill::Plugin::Model::Refund.new.to_ruby(m) unless m.nil?
               tmp << m
@@ -227,7 +227,7 @@ module Killbill
             res = @real_java_api.get_payment_refunds(paymentId, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.payment.api.Refund]
               m = Killbill::Plugin::Model::Refund.new.to_ruby(m) unless m.nil?
               tmp << m
@@ -249,7 +249,7 @@ module Killbill
             res = @real_java_api.get_invoice_payments(invoiceId, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.payment.api.Payment]
               m = Killbill::Plugin::Model::Payment.new.to_ruby(m) unless m.nil?
               tmp << m
@@ -271,7 +271,7 @@ module Killbill
             res = @real_java_api.get_account_payments(accountId, context)
             # conversion for res [type = java.util.List]
             tmp = []
-            res.each do |m|
+            (res || []).each do |m|
               # conversion for m [type = com.ning.billing.payment.api.Payment]
               m = Killbill::Plugin::Model::Payment.new.to_ruby(m) unless m.nil?
               tmp << m
@@ -306,7 +306,7 @@ module Killbill
         res = @real_java_api.get_available_plugins()
         # conversion for res [type = java.util.Set]
         tmp = []
-        res.each do |m|
+        (res || []).each do |m|
           # conversion for m [type = java.lang.String]
           tmp << m
         end
@@ -348,7 +348,7 @@ module Killbill
           res = @real_java_api.get_payment_methods(account, withPluginInfo, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethod]
             m = Killbill::Plugin::Model::PaymentMethod.new.to_ruby(m) unless m.nil?
             tmp << m
@@ -416,7 +416,7 @@ module Killbill
           res = @real_java_api.refresh_payment_methods(pluginName, account, context)
           # conversion for res [type = java.util.List]
           tmp = []
-          res.each do |m|
+          (res || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethod]
             m = Killbill::Plugin::Model::PaymentMethod.new.to_ruby(m) unless m.nil?
             tmp << m
