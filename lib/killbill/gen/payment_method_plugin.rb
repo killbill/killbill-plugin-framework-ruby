@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.payment.api.PaymentMethodPlugin
 
-        attr_accessor :external_payment_method_id, :is_default_payment_method, :properties, :value_string, :type, :cc_name, :cc_type, :cc_expiration_month, :cc_expiration_year, :cc_last4, :address1, :address2, :city, :state, :zip, :country
+        attr_accessor :external_payment_method_id, :is_default_payment_method, :properties, :type, :cc_name, :cc_type, :cc_expiration_month, :cc_expiration_year, :cc_last4, :address1, :address2, :city, :state, :zip, :country
 
         def initialize()
         end
@@ -48,13 +48,10 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@properties || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @properties = tmp
-
-          # conversion for value_string [type = java.lang.String]
-          @value_string = @value_string.to_s unless @value_string.nil?
 
           # conversion for type [type = java.lang.String]
           @type = @type.to_s unless @type.nil?
@@ -112,14 +109,10 @@ module Killbill
           tmp = []
           (@properties || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::PaymentMethodKVInfo.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::PaymentMethodKVInfo.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @properties = tmp
-
-          # conversion for value_string [type = java.lang.String]
-          @value_string = j_obj.value_string
 
           # conversion for type [type = java.lang.String]
           @type = j_obj.type

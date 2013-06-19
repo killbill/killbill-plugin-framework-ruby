@@ -11,8 +11,9 @@ module Killbill
       def initialize(plugin_name, java_service_map)
         @plugin_name = plugin_name
         @services = {}
+        puts "STEPH :::::::::::::::::  #{java_service_map.inspect}"
         java_service_map.each do |k,v|
-          @services[k] = create_proxy_api(k, v)
+          @services[k.to_sym] = create_proxy_api(k, v)
         end
       end
 
@@ -20,7 +21,10 @@ module Killbill
       # Returns the proxy to the java api
       #
       def method_missing(m, *args, &block)
-        return @services[m] if @services.include? m
+
+        puts "Looking for api #{m}"
+
+        return @services[m.to_sym] if @services.include? m.to_sym
         raise NoMethodError.new("undefined method `#{m}' for #{self}")
       end
 
@@ -42,6 +46,12 @@ module Killbill
       private
 
       def create_proxy_api(api_name, java_api)
+        if api_name == "overdue_user_api"
+          return nil
+        end
+
+        puts "create_proxy_api #{api_name} #{java_api.inspect}"
+
         proxy_class_name = "Killbill::Plugin::Api::#{api_name.to_s.split('_').map{|e| e.capitalize}.join}"
         proxy_class_name.to_class.new(java_api)
       end

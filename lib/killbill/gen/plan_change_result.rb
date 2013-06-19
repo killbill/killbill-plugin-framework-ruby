@@ -44,7 +44,7 @@ module Killbill
 
           # conversion for alignment [type = com.ning.billing.catalog.api.PlanAlignmentChange]
           @alignment = Java::com.ning.billing.catalog.api.PlanAlignmentChange.value_of("#{@alignment.to_s}") unless @alignment.nil?
-          self
+          Java::com.ning.billing.catalog.api.PlanChangeResult.new(@new_price_list, @policy, @alignment)
         end
 
         def to_ruby(j_obj)

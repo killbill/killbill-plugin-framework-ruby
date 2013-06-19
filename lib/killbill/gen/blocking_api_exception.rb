@@ -44,7 +44,7 @@ module Killbill
 
           # conversion for code [type = int]
           @code = @code
-          self
+          Java::com.ning.billing.junction.api.BlockingApiException.new(@message, @cause, @code)
         end
 
         def to_ruby(j_obj)

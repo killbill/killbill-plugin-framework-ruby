@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sinatra', '~> 1.3.4'
   s.add_development_dependency 'tzinfo', '~> 0.3.37'
 
-#  s.requirements << "jar 'com.ning.billing:killbill-api'"
+  #s.requirements << "jar 'com.ning.billing:killbill-api'"
   # For testing only
-#  s.requirements << "jar 'com.ning.billing:killbill-util:tests'"
+  #s.requirements << "jar 'com.ning.billing:killbill-util:tests'"
 end

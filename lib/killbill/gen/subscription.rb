@@ -132,7 +132,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@all_transitions || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @all_transitions = tmp
@@ -261,8 +261,7 @@ module Killbill
           tmp = []
           (@all_transitions || []).each do |m|
             # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::SubscriptionTransition.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::SubscriptionTransition.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @all_transitions = tmp

@@ -94,7 +94,7 @@ module Killbill
 
           # conversion for is_notified_for_invoices [type = java.lang.Boolean]
           @is_notified_for_invoices = @is_notified_for_invoices.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_notified_for_invoices)
-          self
+          Java::com.ning.billing.account.api.DefaultMutableAccountData.new(@external_key, @email, @name, @first_name_length, @currency, @bill_cycle_day_local, @payment_method_id, @time_zone, @locale, @address1, @address2, @company_name, @city, @state_or_province, @country, @postal_code, @phone, @is_migrated, @is_notified_for_invoices)
         end
 
         def to_ruby(j_obj)

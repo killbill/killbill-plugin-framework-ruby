@@ -64,7 +64,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@available_base_plan_listings || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.Listing]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @available_base_plan_listings = tmp
@@ -73,7 +73,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@available_addon_listings || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.Listing]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @available_addon_listings = tmp
@@ -114,8 +114,7 @@ module Killbill
           tmp = []
           (@available_base_plan_listings || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.Listing]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::Listing.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::Listing.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @available_base_plan_listings = tmp
@@ -125,8 +124,7 @@ module Killbill
           tmp = []
           (@available_addon_listings || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.Listing]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::Listing.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::Listing.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @available_addon_listings = tmp

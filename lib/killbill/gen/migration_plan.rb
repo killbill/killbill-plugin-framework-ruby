@@ -54,7 +54,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@initial_phase_iterator || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @initial_phase_iterator = tmp
@@ -106,8 +106,7 @@ module Killbill
           tmp = []
           (@initial_phase_iterator || []).each do |m|
             # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::PlanPhase.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @initial_phase_iterator = tmp

@@ -113,7 +113,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@additional_contact_emails || []).each do |m|
             # conversion for m [type = java.lang.String]
-            @m = @m.to_s unless @m.nil?
+            m = m.to_s unless m.nil?
             tmp.add(m)
           end
           @additional_contact_emails = tmp
@@ -216,7 +216,6 @@ module Killbill
           tmp = []
           (@additional_contact_emails || []).each do |m|
             # conversion for m [type = java.lang.String]
-            @m = j_obj.m
             tmp << m
           end
           @additional_contact_emails = tmp

@@ -47,7 +47,7 @@ module Killbill
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
-          self
+          Java::com.ning.billing.catalog.api.PlanSpecifier.new(@product_name, @product_category, @billing_period, @price_list_name)
         end
 
         def to_ruby(j_obj)

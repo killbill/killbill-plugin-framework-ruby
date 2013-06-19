@@ -66,7 +66,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@applicable_object_types || []).each do |m|
             # conversion for m [type = com.ning.billing.ObjectType]
-            @m = Java::com.ning.billing.ObjectType.value_of("#{@m.to_s}") unless @m.nil?
+            m = Java::com.ning.billing.ObjectType.value_of("#{m.to_s}") unless m.nil?
             tmp.add(m)
           end
           @applicable_object_types = tmp
@@ -114,8 +114,7 @@ module Killbill
           tmp = []
           (@applicable_object_types || []).each do |m|
             # conversion for m [type = com.ning.billing.ObjectType]
-            @m = j_obj.m
-            @m = @m.to_s.to_sym unless @m.nil?
+            m = m.to_s.to_sym unless m.nil?
             tmp << m
           end
           @applicable_object_types = tmp

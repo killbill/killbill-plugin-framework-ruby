@@ -57,7 +57,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@invoice_items || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoiceItem]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @invoice_items = tmp
@@ -69,7 +69,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@payments || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @payments = tmp
@@ -169,8 +169,7 @@ module Killbill
           tmp = []
           (@invoice_items || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoiceItem]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @invoice_items = tmp
@@ -183,8 +182,7 @@ module Killbill
           tmp = []
           (@payments || []).each do |m|
             # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @payments = tmp

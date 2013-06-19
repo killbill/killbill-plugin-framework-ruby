@@ -50,7 +50,7 @@ module Killbill
 
           # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
           @phase_type = Java::com.ning.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
-          self
+          Java::com.ning.billing.catalog.api.PlanPhaseSpecifier.new(@product_name, @product_category, @billing_period, @price_list_name, @phase_type)
         end
 
         def to_ruby(j_obj)

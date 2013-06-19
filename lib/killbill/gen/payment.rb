@@ -95,7 +95,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@attempts || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
-            @m = @m.to_java unless @m.nil?
+            m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @attempts = tmp
@@ -176,8 +176,7 @@ module Killbill
           tmp = []
           (@attempts || []).each do |m|
             # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
-            @m = j_obj.m
-            @m = Killbill::Plugin::Model::PaymentAttempt.new.to_ruby(@m) unless @m.nil?
+            m = Killbill::Plugin::Model::PaymentAttempt.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @attempts = tmp
