@@ -13,7 +13,7 @@ describe Killbill::Plugin::JNotification do
   it "should_test_on_event_ok" do
 
     object_type = Java::com.ning.billing.ObjectType::INVOICE
-    event_type = Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_CREATION
+    event_type = Java::com.ning.billing.notification.plugin.api.ExtBusEventType::INVOICE_CREATION
     uuid = java.util.UUID.random_uuid
 
     event = Java::com.ning.billing.mock.api.MockExtBusEvent.new(event_type, object_type, uuid, uuid, uuid)

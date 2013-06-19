@@ -8,7 +8,7 @@ module Killbill
 
       class ExtBusEvent
 
-        include com.ning.billing.beatrix.bus.api.ExtBusEvent
+        include com.ning.billing.notification.plugin.api.ExtBusEvent
 
         attr_reader :event_type, :object_type, :object_id, :account_id, :tenant_id
 

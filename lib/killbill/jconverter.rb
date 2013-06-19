@@ -496,35 +496,35 @@ module Killbill
 
         def from_bus_event_type(type)
 
-          if type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::ACCOUNT_CREATION.to_s
+          if type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::ACCOUNT_CREATION.to_s
             Killbill::Plugin::Model::ExtBusEventType.new(:ACCOUNT_CREATION)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::ACCOUNT_CHANGE.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::ACCOUNT_CHANGE.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:ACCOUNT_CHANGE)
-          elsif  type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_CREATION.to_s
+          elsif  type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::SUBSCRIPTION_CREATION.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:SUBSCRIPTION_CREATION)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_PHASE.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::SUBSCRIPTION_PHASE.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:SUBSCRIPTION_PHASE)
-          elsif  type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_CHANGE.to_s
+          elsif  type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::SUBSCRIPTION_CHANGE.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:SUBSCRIPTION_CHANGE)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_CANCEL.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::SUBSCRIPTION_CANCEL.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:SUBSCRIPTION_CANCEL)
-          elsif  type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::SUBSCRIPTION_UNCANCEL.to_s
+          elsif  type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::SUBSCRIPTION_UNCANCEL.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:SUBSCRIPTION_UNCANCEL)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::OVERDUE_CHANGE.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::OVERDUE_CHANGE.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:OVERDUE_CHANGE)
-          elsif  type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_CREATION.to_s
+          elsif  type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::INVOICE_CREATION.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:INVOICE_CREATION)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_ADJUSTMENT.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::INVOICE_ADJUSTMENT.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:INVOICE_ADJUSTMENT)
-          elsif  type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::PAYMENT_SUCCESS.to_s
+          elsif  type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::PAYMENT_SUCCESS.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:PAYMENT_SUCCESS)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::PAYMENT_FAILED.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::PAYMENT_FAILED.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:PAYMENT_FAILED)
-          elsif  type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::TAG_CREATION.to_s
+          elsif  type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::TAG_CREATION.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:TAG_CREATION)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::TAG_DELETION.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::TAG_DELETION.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:TAG_DELETION)
-          elsif type.to_s ==  Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::CUSTOM_FIELD_CREATION.to_s
+          elsif type.to_s ==  Java::com.ning.billing.notification.plugin.api.ExtBusEventType::CUSTOM_FIELD_CREATION.to_s
               Killbill::Plugin::Model::ExtBusEventType.new(:CUSTOM_FIELD_CREATION)
           else
               Killbill::Plugin::Model::ExtBusEventType.new(:CUSTOM_FIELD_DELETION)

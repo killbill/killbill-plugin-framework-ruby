@@ -1,3 +1,5 @@
-jar 'com.ning.billing:killbill-api', '0.1.80'
-jar 'com.ning.billing:killbill-util:tests', '0.1.80'
+jar 'com.ning.billing:killbill-api', '0.2.3'
+jar 'com.ning.billing.plugin:killbill-plugin-api-notification', '0.2.3'
+jar 'com.ning.billing.plugin:killbill-plugin-api-payment', '0.2.3'
+jar 'com.ning.billing:killbill-util:tests', '0.2.6-SNAPSHOT'
 jar 'javax.servlet:javax.servlet-api', '3.0.1'

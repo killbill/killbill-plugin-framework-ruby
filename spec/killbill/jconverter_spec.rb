@@ -154,7 +154,7 @@ describe Killbill::Plugin::JConverter do
      it "should_test_ext_bus_event__from_converter" do
 
        object_type = Java::com.ning.billing.ObjectType::INVOICE
-       event_type = Java::com.ning.billing.beatrix.bus.api.ExtBusEventType::INVOICE_CREATION
+       event_type = Java::com.ning.billing.notification.plugin.api.ExtBusEventType::INVOICE_CREATION
        uuid = java.util.UUID.random_uuid
 
        input = Killbill::Plugin::Model::ExtBusEvent.new(event_type, object_type, uuid, uuid, uuid)

@@ -19,7 +19,7 @@ module Killbill
         super(real_class_name, services)
       end
 
-      java_signature 'void onEvent(Java::com.ning.billing.beatrix.bus.api.ExtBusEvent)'
+      java_signature 'void onEvent(Java::com.ning.billing.notification.plugin.api.ExtBusEvent)'
       def on_event(*args)
          do_call_handle_exception(__method__, *args) do |res|
             return nil

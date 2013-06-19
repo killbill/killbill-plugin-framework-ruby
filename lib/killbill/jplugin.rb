@@ -98,7 +98,7 @@ module Killbill
              a.to_string
            elsif a.java_kind_of? Java::com.ning.billing.payment.api.PaymentMethodPlugin
              JConverter.from_payment_method_plugin(a)
-           elsif a.java_kind_of? Java::com.ning.billing.beatrix.bus.api.ExtBusEvent
+           elsif a.java_kind_of? Java::com.ning.billing.notification.plugin.api.ExtBusEvent
              JConverter.from_ext_bus_event(a)
            elsif ((a.java_kind_of? Java::boolean) || (a.java_kind_of? java.lang.Boolean))
              JConverter.from_boolean(a)
