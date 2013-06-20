@@ -9,15 +9,7 @@ describe Killbill::Plugin::Payment do
     @kb_payment_id = SecureRandom.uuid
     @amount_in_cents = rand(100000)
     @currency = 'USD'
-    @call_context = Killbill::Plugin::Model::CallContext.new(SecureRandom.uuid,
-                                                             'token',
-                                                             'rspec tester',
-                                                             'TEST',
-                                                             'user',
-                                                             'testing',
-                                                             'this is from a test',
-                                                             Time.now,
-                                                             Time.now)
+    @call_context = Killbill::Plugin::Model::CallContext.new
 
     @payment_method = Hash.new(:credit_card => SecureRandom.uuid)
     @kb_payment_method_id = SecureRandom.uuid

@@ -12,7 +12,10 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::PaymentInfoPlugin.new(amount_in_cents, DateTime.now, DateTime.now, Killbill::Plugin::Model::PaymentPluginStatus.new(:PROCESSED), "gateway_error", "gateway_error_code", nil, nil)
+          res = Killbill::Plugin::Model::PaymentInfoPlugin.new
+          res.amount=amount_in_cents
+          res.status=:PROCESSED
+          res
         end
       end
 
@@ -20,7 +23,10 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::PaymentInfoPlugin.new(0, DateTime.now, DateTime.now, Killbill::Plugin::Model::PaymentPluginStatus.new(:PROCESSED), "gateway_error", "gateway_error_code", nil, nil)
+          res = Killbill::Plugin::Model::PaymentInfoPlugin.new
+          res.amount=0
+          res.status=:PROCESSED
+          res
         end
       end
 
@@ -28,7 +34,10 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::RefundInfoPlugin.new(5000, DateTime.now, DateTime.now, Killbill::Plugin::Model::RefundPluginStatus.new(:PROCESSED), "gateway_error", "gateway_error_code", nil)
+          res = Killbill::Plugin::Model::RefundInfoPlugin.new
+          res.amount=50
+          res.status=:PROCESSED
+          res
         end
       end
 
@@ -48,7 +57,9 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          Killbill::Plugin::Model::PaymentMethodPlugin.new("foo", true, [], nil, "type", "cc_name", "cc_type", "cc_expiration_month", "cc_expiration_year", "cc_last4", "address1", "address2", "city", "state", "zip", "country")
+          res = Killbill::Plugin::Model::PaymentMethodPlugin.new
+          res.external_payment_method_id="external_payment_method_id"
+          res
         end
       end
 
@@ -62,7 +73,12 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          [Killbill::Plugin::Model::PaymentMethodInfoPlugin.new(kb_account_id, kb_account_id, true, "external_payment_method_id")]
+          res = Killbill::Plugin::Model::PaymentMethodInfoPlugin.new
+          res.account_id=kb_account_id
+          res.payment_method_id=kb_account_id
+          res.is_default=true
+          res.external_payment_method_id="dfdf"
+          [res]
         end
       end
 

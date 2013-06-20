@@ -1,6 +1,5 @@
 require 'java'
 
-require 'killbill/jkillbill_api'
 require 'killbill/killbill_api'
 
 include Java
@@ -16,25 +15,18 @@ module Killbill
       end
 
       def create(services)
-         japi_proxy = JKillbillApi.new(@target_class_name, services)
+        real_class = @target_class_name.to_class
 
-         kb_apis = KillbillApi.new(japi_proxy)
-         real_class = class_from_string
-         plugin_delegate = real_class.new
-         plugin_delegate.root = services["root"]
-         plugin_delegate.logger = services["logger"]
-         plugin_delegate.conf_dir = services["conf_dir"]
-         plugin_delegate.kb_apis = kb_apis
-         plugin_delegate
+        plugin_delegate = real_class.new
+        plugin_delegate.root = services.delete("root")
+        plugin_delegate.logger = services.delete("logger")
+        plugin_delegate.conf_dir = services.delete("conf_dir")
+        # At this point we removed everything from the map which is not API, so we can build the APIs
+        kb_apis = KillbillApi.new(@target_class_name, services)
+        plugin_delegate.kb_apis = kb_apis
+        plugin_delegate
       end
 
-      private
-
-      def class_from_string()
-        @target_class_name.split('::').inject(Kernel) do |mod, class_name|
-          mod.const_get(class_name)
-        end
-      end
 
     end
   end
