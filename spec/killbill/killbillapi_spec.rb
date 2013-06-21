@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'date'
 require 'killbill/killbill_api'
 
-require 'killbill/gen/account_data'
+require 'killbill/gen/api/account_data'
 
 
 

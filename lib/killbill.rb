@@ -48,13 +48,12 @@ begin
   end
   # jbundler needs to be loaded first!
   require 'killbill/jplugin'
-  require 'killbill/jpayment'
-  require 'killbill/jnotification'
 rescue LoadError => e
   warn "You need JRuby to run Killbill plugins #{e}"
 end
 
 require 'tzinfo'
-require 'killbill/gen/require_gen'
+require 'killbill/gen/api/require_gen'
+require 'killbill/gen/plugin-api/require_gen'
 require 'killbill/notification'
 require 'killbill/payment'

@@ -25,41 +25,33 @@
 
 module Killbill
   module Plugin
-    module Model
+    module Api
 
-      class EntityPersistenceException
+      java_package 'com.ning.billing.util.api'
+      class RecordIdApi
 
+        include com.ning.billing.util.api.RecordIdApi
 
-        attr_accessor :message, :cause, :code
-
-        def initialize()
+        def initialize(real_java_api)
+          @real_java_api = real_java_api
         end
 
-        def to_java()
-          # conversion for message [type = java.lang.String]
-          @message = @message.to_s unless @message.nil?
 
-          # conversion for cause [type = java.lang.Throwable]
-          @cause = @cause.to_s unless cause.nil?
+        java_signature 'Java::java.lang.Long getRecordId(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_record_id(objectId, objectType, tenantContext)
 
-          # conversion for code [type = int]
-          @code = @code
-          Java::com.ning.billing.util.entity.EntityPersistenceException.new(@message, @cause, @code)
+          # conversion for objectId [type = java.util.UUID]
+          objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
+
+          # conversion for objectType [type = com.ning.billing.ObjectType]
+          objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+
+          # conversion for tenantContext [type = com.ning.billing.util.callcontext.TenantContext]
+          tenantContext = tenantContext.to_java unless tenantContext.nil?
+          res = @real_java_api.get_record_id(objectId, objectType, tenantContext)
+          # conversion for res [type = java.lang.Long]
+          return res
         end
-
-        def to_ruby(j_obj)
-          # conversion for message [type = java.lang.String]
-          @message = j_obj.message
-
-          # conversion for cause [type = java.lang.Throwable]
-          @cause = j_obj.cause
-          @cause = @cause.to_s unless @cause.nil?
-
-          # conversion for code [type = int]
-          @code = j_obj.code
-          self
-        end
-
       end
     end
   end

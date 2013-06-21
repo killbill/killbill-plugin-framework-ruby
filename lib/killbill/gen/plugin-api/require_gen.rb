@@ -23,38 +23,10 @@
 #
 
 
-module Killbill
-  module Plugin
-    module Api
-
-      java_package 'com.ning.billing.junction.api'
-      class JunctionApi
-
-        include com.ning.billing.junction.api.JunctionApi
-
-        def initialize(real_java_api)
-          @real_java_api = real_java_api
-        end
-
-
-        java_signature 'Java::java.util.List getBlockingHistory(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_blocking_history(overdueableId, context)
-          # conversion for overdueableId [type = java.util.UUID]
-          overdueableId = java.util.UUID.fromString(overdueableId.to_s) unless overdueableId.nil?
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_blocking_history(overdueableId, context)
-          # conversion for res [type = java.util.List]
-          tmp = []
-          (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.junction.api.BlockingState]
-            m = Killbill::Plugin::Model::BlockingState.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          res = tmp
-          return res
-        end
-      end
-    end
-  end
-end
+require 'killbill/gen/plugin-api/payment_method_info_plugin'
+require 'killbill/gen/plugin-api/payment_plugin_api'
+require 'killbill/gen/plugin-api/payment_plugin_api_exception'
+require 'killbill/gen/plugin-api/ext_bus_event'
+require 'killbill/gen/plugin-api/notification_plugin_api'
+require 'killbill/gen/plugin-api/payment_info_plugin'
+require 'killbill/gen/plugin-api/refund_info_plugin'

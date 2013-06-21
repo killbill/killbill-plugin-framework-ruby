@@ -27,29 +27,25 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.invoice.api'
-      class InvoiceService
+      java_package 'com.ning.billing.osgi.api'
+      class OSGIPluginProperties
 
-        include com.ning.billing.invoice.api.InvoiceService
+        include com.ning.billing.osgi.api.OSGIPluginProperties
 
-        attr_accessor :name
+        attr_accessor 
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
-          self
-        end
-
-        def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
-          self
-        end
-
+        self
       end
+
+      def to_ruby(j_obj)
+      self
     end
+
   end
+end
+end
 end

@@ -39,8 +39,10 @@ module Killbill
 
         java_signature 'Java::java.util.List getAllInvoicesByAccount(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_all_invoices_by_account(accountId, context)
+
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_all_invoices_by_account(accountId, context)
@@ -57,8 +59,10 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.invoice.api.Invoice getInvoice(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_invoice(invoiceId, context)
+
           # conversion for invoiceId [type = java.util.UUID]
           invoiceId = java.util.UUID.fromString(invoiceId.to_s) unless invoiceId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
@@ -73,8 +77,10 @@ module Killbill
 
         java_signature 'Java::java.util.List getInvoicePayments(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_invoice_payments(paymentId, context)
+
           # conversion for paymentId [type = java.util.UUID]
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_invoice_payments(paymentId, context)
@@ -91,8 +97,10 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.invoice.api.InvoicePayment getInvoicePaymentForAttempt(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_invoice_payment_for_attempt(paymentId, context)
+
           # conversion for paymentId [type = java.util.UUID]
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_invoice_payment_for_attempt(paymentId, context)
@@ -103,14 +111,17 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.invoice.api.InvoicePayment createChargeback(Java::java.util.UUID, Java::java.math.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_chargeback(invoicePaymentId, amount, context)
+
           # conversion for invoicePaymentId [type = java.util.UUID]
           invoicePaymentId = java.util.UUID.fromString(invoicePaymentId.to_s) unless invoicePaymentId.nil?
+
           # conversion for amount [type = java.math.BigDecimal]
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
             amount = java.math.BigDecimal.new(amount.to_i)
           end
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
@@ -125,8 +136,10 @@ module Killbill
 
         java_signature 'Java::java.math.BigDecimal getRemainingAmountPaid(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_remaining_amount_paid(invoicePaymentId, context)
+
           # conversion for invoicePaymentId [type = java.util.UUID]
           invoicePaymentId = java.util.UUID.fromString(invoicePaymentId.to_s) unless invoicePaymentId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_remaining_amount_paid(invoicePaymentId, context)
@@ -137,8 +150,10 @@ module Killbill
 
         java_signature 'Java::java.util.List getChargebacksByAccountId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_chargebacks_by_account_id(accountId, context)
+
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_chargebacks_by_account_id(accountId, context)
@@ -155,8 +170,10 @@ module Killbill
 
         java_signature 'Java::java.util.UUID getAccountIdFromInvoicePaymentId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_account_id_from_invoice_payment_id(uuid, context)
+
           # conversion for uuid [type = java.util.UUID]
           uuid = java.util.UUID.fromString(uuid.to_s) unless uuid.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
@@ -171,8 +188,10 @@ module Killbill
 
         java_signature 'Java::java.util.List getChargebacksByPaymentId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_chargebacks_by_payment_id(paymentId, context)
+
           # conversion for paymentId [type = java.util.UUID]
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_chargebacks_by_payment_id(paymentId, context)
@@ -189,8 +208,10 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.invoice.api.InvoicePayment getChargebackById(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_chargeback_by_id(chargebackId, context)
+
           # conversion for chargebackId [type = java.util.UUID]
           chargebackId = java.util.UUID.fromString(chargebackId.to_s) unless chargebackId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin

@@ -25,27 +25,32 @@
 
 module Killbill
   module Plugin
-    module Model
+    module Api
 
-      java_package 'com.ning.billing.invoice.api'
-      class InvoiceNotifier
+      java_package 'com.ning.billing.catalog.api'
+      class CatalogUserApi
 
-        include com.ning.billing.invoice.api.InvoiceNotifier
+        include com.ning.billing.catalog.api.CatalogUserApi
 
-        attr_accessor 
-
-        def initialize()
+        def initialize(real_java_api)
+          @real_java_api = real_java_api
         end
 
-        def to_java()
-        self
+
+        java_signature 'Java::com.ning.billing.catalog.api.Catalog getCatalog(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_catalog(catalogName, context)
+
+          # conversion for catalogName [type = java.lang.String]
+          catalogName = catalogName.to_s unless catalogName.nil?
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_catalog(catalogName, context)
+          # conversion for res [type = com.ning.billing.catalog.api.Catalog]
+          res = Killbill::Plugin::Model::Catalog.new.to_ruby(res) unless res.nil?
+          return res
+        end
       end
-
-      def to_ruby(j_obj)
-      self
     end
-
   end
-end
-end
 end

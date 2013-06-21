@@ -39,8 +39,10 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.tenant.api.Tenant createTenant(Java::com.ning.billing.tenant.api.TenantData, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_tenant(data, context)
+
           # conversion for data [type = com.ning.billing.tenant.api.TenantData]
           data = data.to_java unless data.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
@@ -55,6 +57,7 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.tenant.api.Tenant getTenantByApiKey(Java::java.lang.String)'
         def get_tenant_by_api_key(key)
+
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
           begin
@@ -69,6 +72,7 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.tenant.api.Tenant getTenantById(Java::java.util.UUID)'
         def get_tenant_by_id(tenantId)
+
           # conversion for tenantId [type = java.util.UUID]
           tenantId = java.util.UUID.fromString(tenantId.to_s) unless tenantId.nil?
           begin
@@ -83,8 +87,10 @@ module Killbill
 
         java_signature 'Java::java.util.List getTenantValueForKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tenant_value_for_key(key, context)
+
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
@@ -104,10 +110,13 @@ module Killbill
 
         java_signature 'Java::void addTenantKeyValue(Java::java.lang.String, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
         def add_tenant_key_value(key, value, context)
+
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
+
           # conversion for value [type = java.lang.String]
           value = value.to_s unless value.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.add_tenant_key_value(key, value, context)
@@ -115,8 +124,10 @@ module Killbill
 
         java_signature 'Java::void deleteTenantKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
         def delete_tenant_key(key, context)
+
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.delete_tenant_key(key, context)

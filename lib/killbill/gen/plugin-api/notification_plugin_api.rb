@@ -25,30 +25,36 @@
 
 module Killbill
   module Plugin
-    module Model
+    module Api
 
-      java_package 'com.ning.billing.entitlement.api'
-      class EntitlementService
+      java_package 'com.ning.billing.notification.plugin.api'
+      class NotificationPluginApi < JPlugin
 
-        include com.ning.billing.entitlement.api.EntitlementService
+        include com.ning.billing.notification.plugin.api.NotificationPluginApi
 
-        attr_accessor :name
-
-        def initialize()
+        def initialize(real_class_name, services = {})
+          super(real_class_name, services)
         end
 
-        def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
-          self
-        end
 
-        def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
-          self
-        end
+        java_signature 'Java::void onEvent(Java::com.ning.billing.notification.plugin.api.ExtBusEvent)'
+        def on_event(killbillEvent)
 
+          # conversion for killbillEvent [type = com.ning.billing.notification.plugin.api.ExtBusEvent]
+          killbillEvent = Killbill::Plugin::Model::ExtBusEvent.new.to_ruby(killbillEvent) unless killbillEvent.nil?
+          begin
+            @delegate_plugin.on_event(killbillEvent)
+          rescue Exception => e
+            message = "Failure in on_event: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("on_event failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
       end
     end
   end

@@ -39,6 +39,7 @@ module Killbill
 
         java_signature 'Java::java.util.List getTagDefinitions(Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tag_definitions(context)
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_tag_definitions(context)
@@ -55,10 +56,13 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.util.tag.TagDefinition createTagDefinition(Java::java.lang.String, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_tag_definition(definitionName, description, context)
+
           # conversion for definitionName [type = java.lang.String]
           definitionName = definitionName.to_s unless definitionName.nil?
+
           # conversion for description [type = java.lang.String]
           description = description.to_s unless description.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
@@ -73,8 +77,10 @@ module Killbill
 
         java_signature 'Java::void deleteTagDefinition(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
         def delete_tag_definition(tagDefinitionId, context)
+
           # conversion for tagDefinitionId [type = java.util.UUID]
           tagDefinitionId = java.util.UUID.fromString(tagDefinitionId.to_s) unless tagDefinitionId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.delete_tag_definition(tagDefinitionId, context)
@@ -82,8 +88,10 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.util.tag.TagDefinition getTagDefinition(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tag_definition(tagDefinitionId, context)
+
           # conversion for tagDefinitionId [type = java.util.UUID]
           tagDefinitionId = java.util.UUID.fromString(tagDefinitionId.to_s) unless tagDefinitionId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
@@ -98,8 +106,10 @@ module Killbill
 
         java_signature 'Java::com.ning.billing.util.tag.TagDefinition getTagDefinitionForName(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tag_definition_for_name(tageDefinitionName, context)
+
           # conversion for tageDefinitionName [type = java.lang.String]
           tageDefinitionName = tageDefinitionName.to_s unless tageDefinitionName.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
@@ -114,10 +124,13 @@ module Killbill
 
         java_signature 'Java::void addTags(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::java.util.Collection, Java::com.ning.billing.util.callcontext.CallContext)'
         def add_tags(objectId, objectType, tagDefinitionIds, context)
+
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
+
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+
           # conversion for tagDefinitionIds [type = java.util.Collection]
           tmp = java.util.ArrayList.new
           (tagDefinitionIds || []).each do |m|
@@ -126,6 +139,7 @@ module Killbill
             tmp.add(m)
           end
           tagDefinitionIds = tmp
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.add_tags(objectId, objectType, tagDefinitionIds, context)
@@ -133,12 +147,16 @@ module Killbill
 
         java_signature 'Java::void addTag(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
         def add_tag(objectId, objectType, tagDefinitionId, context)
+
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
+
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+
           # conversion for tagDefinitionId [type = java.util.UUID]
           tagDefinitionId = java.util.UUID.fromString(tagDefinitionId.to_s) unless tagDefinitionId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.add_tag(objectId, objectType, tagDefinitionId, context)
@@ -146,10 +164,13 @@ module Killbill
 
         java_signature 'Java::void removeTags(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::java.util.Collection, Java::com.ning.billing.util.callcontext.CallContext)'
         def remove_tags(objectId, objectType, tagDefinitions, context)
+
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
+
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+
           # conversion for tagDefinitions [type = java.util.Collection]
           tmp = java.util.ArrayList.new
           (tagDefinitions || []).each do |m|
@@ -158,6 +179,7 @@ module Killbill
             tmp.add(m)
           end
           tagDefinitions = tmp
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.remove_tags(objectId, objectType, tagDefinitions, context)
@@ -165,12 +187,16 @@ module Killbill
 
         java_signature 'Java::void removeTag(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
         def remove_tag(objectId, objectType, tagDefinitionId, context)
+
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
+
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+
           # conversion for tagDefinitionId [type = java.util.UUID]
           tagDefinitionId = java.util.UUID.fromString(tagDefinitionId.to_s) unless tagDefinitionId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.remove_tag(objectId, objectType, tagDefinitionId, context)
@@ -178,10 +204,13 @@ module Killbill
 
         java_signature 'Java::java.util.List getTagsForObject(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tags_for_object(objectId, objectType, context)
+
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
+
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_tags_for_object(objectId, objectType, context)
@@ -198,10 +227,13 @@ module Killbill
 
         java_signature 'Java::java.util.List getTagsForAccountType(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tags_for_account_type(accountId, objectType, context)
+
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_tags_for_account_type(accountId, objectType, context)
@@ -218,8 +250,10 @@ module Killbill
 
         java_signature 'Java::java.util.List getTagsForAccount(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_tags_for_account(accountId, context)
+
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_tags_for_account(accountId, context)

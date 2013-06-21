@@ -69,7 +69,7 @@ module Killbill
         end
       end
 
-      def get_payment_methods(kb_account_id, options = {})
+      def get_payment_methods(kb_account_id, refresh_from_gateway, options = {})
         if @raise_exception
           raise StandardError.new("Test exception")
         else
