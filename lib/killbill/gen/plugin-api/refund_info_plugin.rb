@@ -74,7 +74,7 @@ module Killbill
         def to_ruby(j_obj)
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
-          @amount = @amount.nil? ? 0 : @amount.to_s.to_f
+          @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date

@@ -144,7 +144,7 @@ module Killbill
           context = context.to_java unless context.nil?
           res = @real_java_api.get_remaining_amount_paid(invoicePaymentId, context)
           # conversion for res [type = java.math.BigDecimal]
-          res = res.nil? ? 0 : res.to_s.to_f
+          res = res.nil? ? 0 : BigDecimal.new(res.to_s)
           return res
         end
 

@@ -215,27 +215,27 @@ module Killbill
 
           # conversion for paid_amount [type = java.math.BigDecimal]
           @paid_amount = j_obj.paid_amount
-          @paid_amount = @paid_amount.nil? ? 0 : @paid_amount.to_s.to_f
+          @paid_amount = @paid_amount.nil? ? 0 : BigDecimal.new(@paid_amount.to_s)
 
           # conversion for original_charged_amount [type = java.math.BigDecimal]
           @original_charged_amount = j_obj.original_charged_amount
-          @original_charged_amount = @original_charged_amount.nil? ? 0 : @original_charged_amount.to_s.to_f
+          @original_charged_amount = @original_charged_amount.nil? ? 0 : BigDecimal.new(@original_charged_amount.to_s)
 
           # conversion for charged_amount [type = java.math.BigDecimal]
           @charged_amount = j_obj.charged_amount
-          @charged_amount = @charged_amount.nil? ? 0 : @charged_amount.to_s.to_f
+          @charged_amount = @charged_amount.nil? ? 0 : BigDecimal.new(@charged_amount.to_s)
 
           # conversion for credited_amount [type = java.math.BigDecimal]
           @credited_amount = j_obj.credited_amount
-          @credited_amount = @credited_amount.nil? ? 0 : @credited_amount.to_s.to_f
+          @credited_amount = @credited_amount.nil? ? 0 : BigDecimal.new(@credited_amount.to_s)
 
           # conversion for refunded_amount [type = java.math.BigDecimal]
           @refunded_amount = j_obj.refunded_amount
-          @refunded_amount = @refunded_amount.nil? ? 0 : @refunded_amount.to_s.to_f
+          @refunded_amount = @refunded_amount.nil? ? 0 : BigDecimal.new(@refunded_amount.to_s)
 
           # conversion for balance [type = java.math.BigDecimal]
           @balance = j_obj.balance
-          @balance = @balance.nil? ? 0 : @balance.to_s.to_f
+          @balance = @balance.nil? ? 0 : BigDecimal.new(@balance.to_s)
 
           # conversion for is_migration_invoice [type = boolean]
           @is_migration_invoice = j_obj.is_migration_invoice

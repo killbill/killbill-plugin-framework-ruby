@@ -57,7 +57,7 @@ module Killbill
 
           # conversion for value [type = java.math.BigDecimal]
           @value = j_obj.value
-          @value = @value.nil? ? 0 : @value.to_s.to_f
+          @value = @value.nil? ? 0 : BigDecimal.new(@value.to_s)
           self
         end
 

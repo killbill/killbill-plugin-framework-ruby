@@ -116,7 +116,7 @@ module Killbill
 
           # conversion for refund_amount [type = java.math.BigDecimal]
           @refund_amount = j_obj.refund_amount
-          @refund_amount = @refund_amount.nil? ? 0 : @refund_amount.to_s.to_f
+          @refund_amount = @refund_amount.nil? ? 0 : BigDecimal.new(@refund_amount.to_s)
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency

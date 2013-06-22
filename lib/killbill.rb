@@ -53,6 +53,7 @@ rescue LoadError => e
 end
 
 require 'tzinfo'
+require 'bigdecimal'
 require 'killbill/gen/api/require_gen'
 require 'killbill/gen/plugin-api/require_gen'
 require 'killbill/notification'

@@ -149,11 +149,11 @@ module Killbill
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
-          @amount = @amount.nil? ? 0 : @amount.to_s.to_f
+          @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
           # conversion for paid_amount [type = java.math.BigDecimal]
           @paid_amount = j_obj.paid_amount
-          @paid_amount = @paid_amount.nil? ? 0 : @paid_amount.to_s.to_f
+          @paid_amount = @paid_amount.nil? ? 0 : BigDecimal.new(@paid_amount.to_s)
 
           # conversion for effective_date [type = org.joda.time.DateTime]
           @effective_date = j_obj.effective_date

@@ -156,7 +156,7 @@ module Killbill
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
-          @amount = @amount.nil? ? 0 : @amount.to_s.to_f
+          @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
@@ -181,7 +181,7 @@ module Killbill
 
           # conversion for rate [type = java.math.BigDecimal]
           @rate = j_obj.rate
-          @rate = @rate.nil? ? 0 : @rate.to_s.to_f
+          @rate = @rate.nil? ? 0 : BigDecimal.new(@rate.to_s)
 
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = j_obj.linked_item_id

@@ -60,7 +60,7 @@ module Killbill
 
           # conversion for price [type = java.math.BigDecimal]
           @price = j_obj.price
-          @price = @price.nil? ? 0 : @price.to_s.to_f
+          @price = @price.nil? ? 0 : BigDecimal.new(@price.to_s)
 
           # conversion for is_zero [type = boolean]
           @is_zero = j_obj.is_zero
