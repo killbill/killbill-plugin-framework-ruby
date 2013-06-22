@@ -62,7 +62,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]

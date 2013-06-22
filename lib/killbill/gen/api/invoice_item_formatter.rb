@@ -61,7 +61,7 @@ module Killbill
           if @amount.nil?
             @amount = java.math.BigDecimal::ZERO
           else
-            @amount = java.math.BigDecimal.new(@amount.to_i)
+            @amount = java.math.BigDecimal.new(@amount.to_s)
           end
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
@@ -86,7 +86,7 @@ module Killbill
           if @rate.nil?
             @rate = java.math.BigDecimal::ZERO
           else
-            @rate = java.math.BigDecimal.new(@rate.to_i)
+            @rate = java.math.BigDecimal.new(@rate.to_s)
           end
 
           # conversion for linked_item_id [type = java.util.UUID]
@@ -145,7 +145,7 @@ module Killbill
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
-          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_f
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency
@@ -170,7 +170,7 @@ module Killbill
 
           # conversion for rate [type = java.math.BigDecimal]
           @rate = j_obj.rate
-          @rate = @rate.nil? ? 0 : @rate.to_s.to_i
+          @rate = @rate.nil? ? 0 : @rate.to_s.to_f
 
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = j_obj.linked_item_id

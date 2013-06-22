@@ -50,7 +50,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
@@ -78,7 +78,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
@@ -127,7 +127,7 @@ module Killbill
           if refundAmount.nil?
             refundAmount = java.math.BigDecimal::ZERO
           else
-            refundAmount = java.math.BigDecimal.new(refundAmount.to_i)
+            refundAmount = java.math.BigDecimal.new(refundAmount.to_s)
           end
 
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
@@ -176,7 +176,7 @@ module Killbill
           if refundAmount.nil?
             refundAmount = java.math.BigDecimal::ZERO
           else
-            refundAmount = java.math.BigDecimal.new(refundAmount.to_i)
+            refundAmount = java.math.BigDecimal.new(refundAmount.to_s)
           end
 
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]

@@ -45,7 +45,7 @@ module Killbill
           if @value.nil?
             @value = java.math.BigDecimal::ZERO
           else
-            @value = java.math.BigDecimal.new(@value.to_i)
+            @value = java.math.BigDecimal.new(@value.to_s)
           end
           self
         end
@@ -57,7 +57,7 @@ module Killbill
 
           # conversion for value [type = java.math.BigDecimal]
           @value = j_obj.value
-          @value = @value.nil? ? 0 : @value.to_s.to_i
+          @value = @value.nil? ? 0 : @value.to_s.to_f
           self
         end
 

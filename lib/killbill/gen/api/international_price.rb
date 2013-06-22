@@ -45,7 +45,7 @@ module Killbill
           if @price.nil?
             @price = java.math.BigDecimal::ZERO
           else
-            @price = java.math.BigDecimal.new(@price.to_i)
+            @price = java.math.BigDecimal.new(@price.to_s)
           end
 
           # conversion for is_zero [type = boolean]
@@ -60,7 +60,7 @@ module Killbill
 
           # conversion for price [type = java.math.BigDecimal]
           @price = j_obj.price
-          @price = @price.nil? ? 0 : @price.to_s.to_i
+          @price = @price.nil? ? 0 : @price.to_s.to_f
 
           # conversion for is_zero [type = boolean]
           @is_zero = j_obj.is_zero

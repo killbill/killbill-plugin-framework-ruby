@@ -60,7 +60,7 @@ module Killbill
           if @amount.nil?
             @amount = java.math.BigDecimal::ZERO
           else
-            @amount = java.math.BigDecimal.new(@amount.to_i)
+            @amount = java.math.BigDecimal.new(@amount.to_s)
           end
           self
         end
@@ -91,7 +91,7 @@ module Killbill
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
-          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_f
           self
         end
 

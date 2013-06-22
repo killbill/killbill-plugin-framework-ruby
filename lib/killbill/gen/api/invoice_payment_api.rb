@@ -119,7 +119,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
@@ -144,7 +144,7 @@ module Killbill
           context = context.to_java unless context.nil?
           res = @real_java_api.get_remaining_amount_paid(invoicePaymentId, context)
           # conversion for res [type = java.math.BigDecimal]
-          res = res.nil? ? 0 : res.to_s.to_i
+          res = res.nil? ? 0 : res.to_s.to_f
           return res
         end
 

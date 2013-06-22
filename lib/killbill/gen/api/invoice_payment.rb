@@ -72,7 +72,7 @@ module Killbill
           if @amount.nil?
             @amount = java.math.BigDecimal::ZERO
           else
-            @amount = java.math.BigDecimal.new(@amount.to_i)
+            @amount = java.math.BigDecimal.new(@amount.to_s)
           end
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
@@ -129,7 +129,7 @@ module Killbill
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
-          @amount = @amount.nil? ? 0 : @amount.to_s.to_i
+          @amount = @amount.nil? ? 0 : @amount.to_s.to_f
 
           # conversion for currency [type = com.ning.billing.catalog.api.Currency]
           @currency = j_obj.currency

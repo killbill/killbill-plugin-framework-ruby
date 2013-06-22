@@ -67,7 +67,7 @@ module Killbill
           context = context.to_java unless context.nil?
           res = @real_java_api.get_account_balance(accountId, context)
           # conversion for res [type = java.math.BigDecimal]
-          res = res.nil? ? 0 : res.to_s.to_i
+          res = res.nil? ? 0 : res.to_s.to_f
           return res
         end
 
@@ -81,7 +81,7 @@ module Killbill
           context = context.to_java unless context.nil?
           res = @real_java_api.get_account_cba(accountId, context)
           # conversion for res [type = java.math.BigDecimal]
-          res = res.nil? ? 0 : res.to_s.to_i
+          res = res.nil? ? 0 : res.to_s.to_f
           return res
         end
 
@@ -222,7 +222,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for description [type = java.lang.String]
@@ -261,7 +261,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for description [type = java.lang.String]
@@ -300,7 +300,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for description [type = java.lang.String]
@@ -342,7 +342,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for description [type = java.lang.String]
@@ -396,7 +396,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for effectiveDate [type = org.joda.time.LocalDate]
@@ -432,7 +432,7 @@ module Killbill
           if amount.nil?
             amount = java.math.BigDecimal::ZERO
           else
-            amount = java.math.BigDecimal.new(amount.to_i)
+            amount = java.math.BigDecimal.new(amount.to_s)
           end
 
           # conversion for effectiveDate [type = org.joda.time.LocalDate]
