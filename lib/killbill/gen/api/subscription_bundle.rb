@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api.user'
+      java_package 'com.ning.billing.subscription.api.user'
       class SubscriptionBundle
 
-        include com.ning.billing.entitlement.api.user.SubscriptionBundle
+        include com.ning.billing.subscription.api.user.SubscriptionBundle
 
         attr_accessor :id, :created_date, :updated_date, :blocking_state, :account_id, :external_key, :overdue_state
 

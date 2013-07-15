@@ -27,17 +27,17 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.entitlement.api.user'
-      class EntitlementUserApi
+      java_package 'com.ning.billing.subscription.api.user'
+      class SubscriptionUserApi
 
-        include com.ning.billing.entitlement.api.user.EntitlementUserApi
+        include com.ning.billing.subscription.api.user.SubscriptionUserApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::com.ning.billing.entitlement.api.user.SubscriptionBundle getBundleFromId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::com.ning.billing.subscription.api.user.SubscriptionBundle getBundleFromId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_bundle_from_id(id, context)
 
           # conversion for id [type = java.util.UUID]
@@ -47,15 +47,15 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_bundle_from_id(id, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
+            # conversion for res [type = com.ning.billing.subscription.api.user.SubscriptionBundle]
             res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.user.Subscription getSubscriptionFromId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::com.ning.billing.subscription.api.user.Subscription getSubscriptionFromId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_subscription_from_id(id, context)
 
           # conversion for id [type = java.util.UUID]
@@ -65,11 +65,11 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_subscription_from_id(id, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.user.Subscription]
+            # conversion for res [type = com.ning.billing.subscription.api.user.Subscription]
             res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 
@@ -86,18 +86,18 @@ module Killbill
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|
-              # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
+              # conversion for m [type = com.ning.billing.subscription.api.user.SubscriptionBundle]
               m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.user.SubscriptionBundle getBundleForAccountAndKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::com.ning.billing.subscription.api.user.SubscriptionBundle getBundleForAccountAndKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_bundle_for_account_and_key(accountId, bundleKey, context)
 
           # conversion for accountId [type = java.util.UUID]
@@ -110,11 +110,11 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_bundle_for_account_and_key(accountId, bundleKey, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
+            # conversion for res [type = com.ning.billing.subscription.api.user.SubscriptionBundle]
             res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 
@@ -130,7 +130,7 @@ module Killbill
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
+            # conversion for m [type = com.ning.billing.subscription.api.user.SubscriptionBundle]
             m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -150,7 +150,7 @@ module Killbill
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.user.Subscription]
+            # conversion for m [type = com.ning.billing.subscription.api.user.Subscription]
             m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -173,7 +173,7 @@ module Killbill
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.user.Subscription]
+            # conversion for m [type = com.ning.billing.subscription.api.user.Subscription]
             m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -181,7 +181,7 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.user.Subscription getBaseSubscription(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::com.ning.billing.subscription.api.user.Subscription getBaseSubscription(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_base_subscription(bundleId, context)
 
           # conversion for bundleId [type = java.util.UUID]
@@ -191,15 +191,15 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_base_subscription(bundleId, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.user.Subscription]
+            # conversion for res [type = com.ning.billing.subscription.api.user.Subscription]
             res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.user.SubscriptionBundle createBundleForAccount(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::com.ning.billing.subscription.api.user.SubscriptionBundle createBundleForAccount(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_bundle_for_account(accountId, bundleKey, context)
 
           # conversion for accountId [type = java.util.UUID]
@@ -212,15 +212,15 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_bundle_for_account(accountId, bundleKey, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.user.SubscriptionBundle]
+            # conversion for res [type = com.ning.billing.subscription.api.user.SubscriptionBundle]
             res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.user.Subscription createSubscription(Java::java.util.UUID, Java::com.ning.billing.catalog.api.PlanPhaseSpecifier, Java::org.joda.time.DateTime, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::com.ning.billing.subscription.api.user.Subscription createSubscription(Java::java.util.UUID, Java::com.ning.billing.catalog.api.PlanPhaseSpecifier, Java::org.joda.time.DateTime, Java::com.ning.billing.util.callcontext.CallContext)'
         def create_subscription(bundleId, spec, requestedDate, context)
 
           # conversion for bundleId [type = java.util.UUID]
@@ -239,11 +239,11 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_subscription(bundleId, spec, requestedDate, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.user.Subscription]
+            # conversion for res [type = com.ning.billing.subscription.api.user.Subscription]
             res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 
@@ -269,14 +269,14 @@ module Killbill
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|
-              # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionStatusDryRun]
+              # conversion for m [type = com.ning.billing.subscription.api.user.SubscriptionStatusDryRun]
               m = Killbill::Plugin::Model::SubscriptionStatusDryRun.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
-          rescue Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException => e
-            raise Killbill::Plugin::Model::EntitlementUserApiException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException => e
+            raise Killbill::Plugin::Model::SubscriptionUserApiException.new.to_ruby(e)
           end
         end
 

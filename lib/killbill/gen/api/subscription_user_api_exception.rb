@@ -27,7 +27,7 @@ module Killbill
   module Plugin
     module Model
 
-      class EntitlementUserApiException
+      class SubscriptionUserApiException
 
 
         attr_accessor :message, :cause, :code
@@ -44,7 +44,7 @@ module Killbill
 
           # conversion for code [type = int]
           @code = @code
-          Java::com.ning.billing.entitlement.api.user.EntitlementUserApiException.new(@message, @cause, @code)
+          Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException.new(@message, @cause, @code)
         end
 
         def to_ruby(j_obj)

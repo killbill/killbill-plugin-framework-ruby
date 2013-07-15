@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api.user'
+      java_package 'com.ning.billing.subscription.api.user'
       class Subscription
 
-        include com.ning.billing.entitlement.api.user.Subscription
+        include com.ning.billing.subscription.api.user.Subscription
 
         attr_accessor :id, :blocking_state, :created_date, :updated_date, :bundle_id, :state, :source_type, :start_date, :end_date, :future_end_date, :current_plan, :last_active_plan, :current_price_list, :current_phase, :last_active_product_name, :last_active_price_list_name, :last_active_category_name, :last_active_billing_period, :charged_through_date, :paid_through_date, :category, :pending_transition, :previous_transition, :all_transitions
 
@@ -59,11 +59,11 @@ module Killbill
           # conversion for bundle_id [type = java.util.UUID]
           @bundle_id = java.util.UUID.fromString(@bundle_id.to_s) unless @bundle_id.nil?
 
-          # conversion for state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
-          @state = Java::com.ning.billing.entitlement.api.user.SubscriptionState.value_of("#{@state.to_s}") unless @state.nil?
+          # conversion for state [type = com.ning.billing.subscription.api.user.SubscriptionState]
+          @state = Java::com.ning.billing.subscription.api.user.SubscriptionState.value_of("#{@state.to_s}") unless @state.nil?
 
-          # conversion for source_type [type = com.ning.billing.entitlement.api.user.SubscriptionSourceType]
-          @source_type = Java::com.ning.billing.entitlement.api.user.SubscriptionSourceType.value_of("#{@source_type.to_s}") unless @source_type.nil?
+          # conversion for source_type [type = com.ning.billing.subscription.api.user.SubscriptionSourceType]
+          @source_type = Java::com.ning.billing.subscription.api.user.SubscriptionSourceType.value_of("#{@source_type.to_s}") unless @source_type.nil?
 
           # conversion for start_date [type = org.joda.time.DateTime]
           if !@start_date.nil?
@@ -122,16 +122,16 @@ module Killbill
           # conversion for category [type = com.ning.billing.catalog.api.ProductCategory]
           @category = Java::com.ning.billing.catalog.api.ProductCategory.value_of("#{@category.to_s}") unless @category.nil?
 
-          # conversion for pending_transition [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
+          # conversion for pending_transition [type = com.ning.billing.subscription.api.user.SubscriptionTransition]
           @pending_transition = @pending_transition.to_java unless @pending_transition.nil?
 
-          # conversion for previous_transition [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
+          # conversion for previous_transition [type = com.ning.billing.subscription.api.user.SubscriptionTransition]
           @previous_transition = @previous_transition.to_java unless @previous_transition.nil?
 
           # conversion for all_transitions [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@all_transitions || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
+            # conversion for m [type = com.ning.billing.subscription.api.user.SubscriptionTransition]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -168,11 +168,11 @@ module Killbill
           @bundle_id = j_obj.bundle_id
           @bundle_id = @bundle_id.nil? ? nil : @bundle_id.to_s
 
-          # conversion for state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
+          # conversion for state [type = com.ning.billing.subscription.api.user.SubscriptionState]
           @state = j_obj.state
           @state = @state.to_s.to_sym unless @state.nil?
 
-          # conversion for source_type [type = com.ning.billing.entitlement.api.user.SubscriptionSourceType]
+          # conversion for source_type [type = com.ning.billing.subscription.api.user.SubscriptionSourceType]
           @source_type = j_obj.source_type
           @source_type = @source_type.to_s.to_sym unless @source_type.nil?
 
@@ -248,11 +248,11 @@ module Killbill
           @category = j_obj.category
           @category = @category.to_s.to_sym unless @category.nil?
 
-          # conversion for pending_transition [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
+          # conversion for pending_transition [type = com.ning.billing.subscription.api.user.SubscriptionTransition]
           @pending_transition = j_obj.pending_transition
           @pending_transition = Killbill::Plugin::Model::SubscriptionTransition.new.to_ruby(@pending_transition) unless @pending_transition.nil?
 
-          # conversion for previous_transition [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
+          # conversion for previous_transition [type = com.ning.billing.subscription.api.user.SubscriptionTransition]
           @previous_transition = j_obj.previous_transition
           @previous_transition = Killbill::Plugin::Model::SubscriptionTransition.new.to_ruby(@previous_transition) unless @previous_transition.nil?
 
@@ -260,7 +260,7 @@ module Killbill
           @all_transitions = j_obj.all_transitions
           tmp = []
           (@all_transitions || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.user.SubscriptionTransition]
+            # conversion for m [type = com.ning.billing.subscription.api.user.SubscriptionTransition]
             m = Killbill::Plugin::Model::SubscriptionTransition.new.to_ruby(m) unless m.nil?
             tmp << m
           end

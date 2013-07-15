@@ -16,7 +16,7 @@ require 'killbill/notification_test'
 
 %w(
   MockAccountUserApi
-  MockEntitlementUserApi
+  MockSubscriptionUserApi
 ).each do |api|
   begin
     java_import "com.ning.billing.mock.api.#{api}"

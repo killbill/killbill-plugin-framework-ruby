@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api.user'
+      java_package 'com.ning.billing.subscription.api.user'
       class SubscriptionStatusDryRun
 
-        include com.ning.billing.entitlement.api.user.SubscriptionStatusDryRun
+        include com.ning.billing.subscription.api.user.SubscriptionStatusDryRun
 
         attr_accessor :id, :product_name, :billing_period, :price_list, :phase_type, :reason
 
@@ -53,8 +53,8 @@ module Killbill
           # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
           @phase_type = Java::com.ning.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
 
-          # conversion for reason [type = com.ning.billing.entitlement.api.user.DryRunChangeReason]
-          @reason = Java::com.ning.billing.entitlement.api.user.DryRunChangeReason.value_of("#{@reason.to_s}") unless @reason.nil?
+          # conversion for reason [type = com.ning.billing.subscription.api.user.DryRunChangeReason]
+          @reason = Java::com.ning.billing.subscription.api.user.DryRunChangeReason.value_of("#{@reason.to_s}") unless @reason.nil?
           self
         end
 
@@ -77,7 +77,7 @@ module Killbill
           @phase_type = j_obj.phase_type
           @phase_type = @phase_type.to_s.to_sym unless @phase_type.nil?
 
-          # conversion for reason [type = com.ning.billing.entitlement.api.user.DryRunChangeReason]
+          # conversion for reason [type = com.ning.billing.subscription.api.user.DryRunChangeReason]
           @reason = j_obj.reason
           @reason = @reason.to_s.to_sym unless @reason.nil?
           self

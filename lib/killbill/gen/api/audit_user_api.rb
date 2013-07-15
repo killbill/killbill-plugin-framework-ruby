@@ -70,8 +70,8 @@ module Killbill
             # conversion for res [type = com.ning.billing.util.audit.AuditLogsForBundles]
             res = Killbill::Plugin::Model::AuditLogsForBundles.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.timeline.EntitlementRepairException => e
-            raise Killbill::Plugin::Model::EntitlementRepairException.new.to_ruby(e)
+          rescue Java::com.ning.billing.subscription.api.timeline.SubscriptionRepairException => e
+            raise Killbill::Plugin::Model::SubscriptionRepairException.new.to_ruby(e)
           end
         end
 
@@ -81,7 +81,7 @@ module Killbill
           # conversion for bundles [type = java.util.List]
           tmp = java.util.ArrayList.new
           (bundles || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.timeline.BundleTimeline]
+            # conversion for m [type = com.ning.billing.subscription.api.timeline.BundleTimeline]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end

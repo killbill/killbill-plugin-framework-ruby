@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api.user'
+      java_package 'com.ning.billing.subscription.api.user'
       class SubscriptionTransition
 
-        include com.ning.billing.entitlement.api.user.SubscriptionTransition
+        include com.ning.billing.subscription.api.user.SubscriptionTransition
 
         attr_accessor :subscription_id, :bundle_id, :previous_state, :next_state, :previous_event_id, :previous_event_created_date, :previous_plan, :next_plan, :previous_phase, :next_event_id, :next_event_created_date, :next_phase, :previous_price_list, :next_price_list, :requested_transition_time, :effective_transition_time, :transition_type
 
@@ -44,11 +44,11 @@ module Killbill
           # conversion for bundle_id [type = java.util.UUID]
           @bundle_id = java.util.UUID.fromString(@bundle_id.to_s) unless @bundle_id.nil?
 
-          # conversion for previous_state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
-          @previous_state = Java::com.ning.billing.entitlement.api.user.SubscriptionState.value_of("#{@previous_state.to_s}") unless @previous_state.nil?
+          # conversion for previous_state [type = com.ning.billing.subscription.api.user.SubscriptionState]
+          @previous_state = Java::com.ning.billing.subscription.api.user.SubscriptionState.value_of("#{@previous_state.to_s}") unless @previous_state.nil?
 
-          # conversion for next_state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
-          @next_state = Java::com.ning.billing.entitlement.api.user.SubscriptionState.value_of("#{@next_state.to_s}") unless @next_state.nil?
+          # conversion for next_state [type = com.ning.billing.subscription.api.user.SubscriptionState]
+          @next_state = Java::com.ning.billing.subscription.api.user.SubscriptionState.value_of("#{@next_state.to_s}") unless @next_state.nil?
 
           # conversion for previous_event_id [type = java.util.UUID]
           @previous_event_id = java.util.UUID.fromString(@previous_event_id.to_s) unless @previous_event_id.nil?
@@ -98,8 +98,8 @@ module Killbill
             @effective_transition_time = Java::org.joda.time.DateTime.new(@effective_transition_time.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for transition_type [type = com.ning.billing.entitlement.api.SubscriptionTransitionType]
-          @transition_type = Java::com.ning.billing.entitlement.api.SubscriptionTransitionType.value_of("#{@transition_type.to_s}") unless @transition_type.nil?
+          # conversion for transition_type [type = com.ning.billing.subscription.api.SubscriptionTransitionType]
+          @transition_type = Java::com.ning.billing.subscription.api.SubscriptionTransitionType.value_of("#{@transition_type.to_s}") unless @transition_type.nil?
           self
         end
 
@@ -112,11 +112,11 @@ module Killbill
           @bundle_id = j_obj.bundle_id
           @bundle_id = @bundle_id.nil? ? nil : @bundle_id.to_s
 
-          # conversion for previous_state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
+          # conversion for previous_state [type = com.ning.billing.subscription.api.user.SubscriptionState]
           @previous_state = j_obj.previous_state
           @previous_state = @previous_state.to_s.to_sym unless @previous_state.nil?
 
-          # conversion for next_state [type = com.ning.billing.entitlement.api.user.SubscriptionState]
+          # conversion for next_state [type = com.ning.billing.subscription.api.user.SubscriptionState]
           @next_state = j_obj.next_state
           @next_state = @next_state.to_s.to_sym unless @next_state.nil?
 
@@ -184,7 +184,7 @@ module Killbill
             @effective_transition_time = DateTime.iso8601(str)
           end
 
-          # conversion for transition_type [type = com.ning.billing.entitlement.api.SubscriptionTransitionType]
+          # conversion for transition_type [type = com.ning.billing.subscription.api.SubscriptionTransitionType]
           @transition_type = j_obj.transition_type
           @transition_type = @transition_type.to_s.to_sym unless @transition_type.nil?
           self
