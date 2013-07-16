@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.junction.api'
+      java_package 'com.ning.billing.entitlement.api'
       class BlockingState
 
-        include com.ning.billing.junction.api.BlockingState
+        include com.ning.billing.entitlement.api.BlockingState
 
         attr_accessor :id, :created_date, :updated_date, :blocked_id, :state_name, :type, :timestamp, :is_block_change, :is_block_entitlement, :is_block_billing, :description, :service
 
@@ -59,8 +59,8 @@ module Killbill
           # conversion for state_name [type = java.lang.String]
           @state_name = @state_name.to_s unless @state_name.nil?
 
-          # conversion for type [type = com.ning.billing.junction.api.Type]
-          @type = Java::com.ning.billing.junction.api.Type.value_of("#{@type.to_s}") unless @type.nil?
+          # conversion for type [type = com.ning.billing.entitlement.api.Type]
+          @type = Java::com.ning.billing.entitlement.api.Type.value_of("#{@type.to_s}") unless @type.nil?
 
           # conversion for timestamp [type = org.joda.time.DateTime]
           if !@timestamp.nil?
@@ -113,7 +113,7 @@ module Killbill
           # conversion for state_name [type = java.lang.String]
           @state_name = j_obj.state_name
 
-          # conversion for type [type = com.ning.billing.junction.api.Type]
+          # conversion for type [type = com.ning.billing.entitlement.api.Type]
           @type = j_obj.type
           @type = @type.to_s.to_sym unless @type.nil?
 

@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.osgi.api.OSGIKillbill
 
-        attr_accessor :account_user_api, :catalog_user_api, :subscription_timeline_api, :subscription_transfer_api, :subscription_user_api, :invoice_payment_api, :invoice_user_api, :overdue_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :junction_api, :record_id_api, :plugin_config_service_api
+        attr_accessor :account_user_api, :catalog_user_api, :subscription_timeline_api, :subscription_transfer_api, :subscription_user_api, :invoice_payment_api, :invoice_user_api, :overdue_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :plugin_config_service_api
 
         def initialize()
         end
@@ -83,8 +83,8 @@ module Killbill
           # conversion for tag_user_api [type = com.ning.billing.util.api.TagUserApi]
           @tag_user_api = @tag_user_api.to_java unless @tag_user_api.nil?
 
-          # conversion for junction_api [type = com.ning.billing.junction.api.JunctionApi]
-          @junction_api = @junction_api.to_java unless @junction_api.nil?
+          # conversion for entitlement_api [type = com.ning.billing.entitlement.api.EntitlementApi]
+          @entitlement_api = @entitlement_api.to_java unless @entitlement_api.nil?
 
           # conversion for record_id_api [type = com.ning.billing.util.api.RecordIdApi]
           @record_id_api = @record_id_api.to_java unless @record_id_api.nil?
@@ -155,9 +155,9 @@ module Killbill
           @tag_user_api = j_obj.tag_user_api
           @tag_user_api = Killbill::Plugin::Model::TagUserApi.new.to_ruby(@tag_user_api) unless @tag_user_api.nil?
 
-          # conversion for junction_api [type = com.ning.billing.junction.api.JunctionApi]
-          @junction_api = j_obj.junction_api
-          @junction_api = Killbill::Plugin::Model::JunctionApi.new.to_ruby(@junction_api) unless @junction_api.nil?
+          # conversion for entitlement_api [type = com.ning.billing.entitlement.api.EntitlementApi]
+          @entitlement_api = j_obj.entitlement_api
+          @entitlement_api = Killbill::Plugin::Model::EntitlementApi.new.to_ruby(@entitlement_api) unless @entitlement_api.nil?
 
           # conversion for record_id_api [type = com.ning.billing.util.api.RecordIdApi]
           @record_id_api = j_obj.record_id_api

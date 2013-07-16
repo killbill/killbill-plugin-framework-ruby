@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.junction.api'
-      class JunctionApi
+      java_package 'com.ning.billing.entitlement.api'
+      class EntitlementApi
 
-        include com.ning.billing.junction.api.JunctionApi
+        include com.ning.billing.entitlement.api.EntitlementApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
@@ -49,7 +49,7 @@ module Killbill
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.junction.api.BlockingState]
+            # conversion for m [type = com.ning.billing.entitlement.api.BlockingState]
             m = Killbill::Plugin::Model::BlockingState.new.to_ruby(m) unless m.nil?
             tmp << m
           end

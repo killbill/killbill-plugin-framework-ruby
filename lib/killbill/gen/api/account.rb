@@ -41,7 +41,7 @@ module Killbill
           # conversion for id [type = java.util.UUID]
           @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
 
-          # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
+          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
           @blocking_state = @blocking_state.to_java unless @blocking_state.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
@@ -122,7 +122,7 @@ module Killbill
           @id = j_obj.id
           @id = @id.nil? ? nil : @id.to_s
 
-          # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
+          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
           @blocking_state = j_obj.blocking_state
           @blocking_state = Killbill::Plugin::Model::BlockingState.new.to_ruby(@blocking_state) unless @blocking_state.nil?
 

@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.junction.api'
+      java_package 'com.ning.billing.entitlement.api'
       class Blockable
 
-        include com.ning.billing.junction.api.Blockable
+        include com.ning.billing.entitlement.api.Blockable
 
         attr_accessor :id, :created_date, :updated_date, :blocking_state
 
@@ -53,7 +53,7 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
+          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
           @blocking_state = @blocking_state.to_java unless @blocking_state.nil?
           self
         end
@@ -79,7 +79,7 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
-          # conversion for blocking_state [type = com.ning.billing.junction.api.BlockingState]
+          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
           @blocking_state = j_obj.blocking_state
           @blocking_state = Killbill::Plugin::Model::BlockingState.new.to_ruby(@blocking_state) unless @blocking_state.nil?
           self
