@@ -323,6 +323,36 @@ module Killbill
           end
         end
 
+        java_signature 'Java::java.util.List searchPaymentMethods(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def search_payment_methods(searchKey, context)
+
+          # conversion for searchKey [type = java.lang.String]
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
+          begin
+            res = @delegate_plugin.search_payment_methods(searchKey, context)
+            # conversion for res [type = java.util.List]
+            tmp = java.util.ArrayList.new
+            (res || []).each do |m|
+              # conversion for m [type = com.ning.billing.payment.api.PaymentMethodPlugin]
+              m = m.to_java unless m.nil?
+              tmp.add(m)
+            end
+            res = tmp
+            return res
+          rescue Exception => e
+            message = "Failure in search_payment_methods: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("search_payment_methods failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
         java_signature 'Java::void resetPaymentMethods(Java::java.util.UUID, Java::java.util.List)'
         def reset_payment_methods(kbAccountId, paymentMethods)
 
