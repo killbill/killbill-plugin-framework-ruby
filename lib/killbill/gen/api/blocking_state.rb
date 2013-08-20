@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.entitlement.api.BlockingState
 
-        attr_accessor :id, :created_date, :updated_date, :blocked_id, :state_name, :type, :timestamp, :is_block_change, :is_block_entitlement, :is_block_billing, :description, :service
+        attr_accessor :id, :created_date, :updated_date, :blocked_id, :state_name, :type, :effective_date, :is_block_change, :is_block_entitlement, :is_block_billing, :description, :service
 
         def initialize()
         end
@@ -59,13 +59,13 @@ module Killbill
           # conversion for state_name [type = java.lang.String]
           @state_name = @state_name.to_s unless @state_name.nil?
 
-          # conversion for type [type = com.ning.billing.entitlement.api.Type]
-          @type = Java::com.ning.billing.entitlement.api.Type.value_of("#{@type.to_s}") unless @type.nil?
+          # conversion for type [type = com.ning.billing.entitlement.api.BlockingStateType]
+          @type = Java::com.ning.billing.entitlement.api.BlockingStateType.value_of("#{@type.to_s}") unless @type.nil?
 
-          # conversion for timestamp [type = org.joda.time.DateTime]
-          if !@timestamp.nil?
-            @timestamp =  (@timestamp.kind_of? Time) ? DateTime.parse(@timestamp.to_s) : @timestamp
-            @timestamp = Java::org.joda.time.DateTime.new(@timestamp.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          if !@effective_date.nil?
+            @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
+            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for is_block_change [type = boolean]
@@ -113,16 +113,16 @@ module Killbill
           # conversion for state_name [type = java.lang.String]
           @state_name = j_obj.state_name
 
-          # conversion for type [type = com.ning.billing.entitlement.api.Type]
+          # conversion for type [type = com.ning.billing.entitlement.api.BlockingStateType]
           @type = j_obj.type
           @type = @type.to_s.to_sym unless @type.nil?
 
-          # conversion for timestamp [type = org.joda.time.DateTime]
-          @timestamp = j_obj.timestamp
-          if !@timestamp.nil?
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          @effective_date = j_obj.effective_date
+          if !@effective_date.nil?
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(@timestamp)
-            @timestamp = DateTime.iso8601(str)
+            str = fmt.print(@effective_date)
+            @effective_date = DateTime.iso8601(str)
           end
 
           # conversion for is_block_change [type = boolean]

@@ -54,34 +54,13 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::com.ning.billing.util.audit.AuditLogsForBundles getAuditLogsForBundle(Java::java.util.UUID, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_audit_logs_for_bundle(bundleId, auditLevel, context)
-
-          # conversion for bundleId [type = java.util.UUID]
-          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
-
-          # conversion for auditLevel [type = com.ning.billing.util.api.AuditLevel]
-          auditLevel = Java::com.ning.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
-
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_audit_logs_for_bundle(bundleId, auditLevel, context)
-            # conversion for res [type = com.ning.billing.util.audit.AuditLogsForBundles]
-            res = Killbill::Plugin::Model::AuditLogsForBundles.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::com.ning.billing.subscription.api.timeline.SubscriptionRepairException => e
-            raise Killbill::Plugin::Model::SubscriptionRepairException.new.to_ruby(e)
-          end
-        end
-
         java_signature 'Java::com.ning.billing.util.audit.AuditLogsForBundles getAuditLogsForBundles(Java::java.util.List, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_audit_logs_for_bundles(bundles, auditLevel, context)
 
           # conversion for bundles [type = java.util.List]
           tmp = java.util.ArrayList.new
           (bundles || []).each do |m|
-            # conversion for m [type = com.ning.billing.subscription.api.timeline.BundleTimeline]
+            # conversion for m [type = com.ning.billing.entitlement.api.SubscriptionBundle]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end

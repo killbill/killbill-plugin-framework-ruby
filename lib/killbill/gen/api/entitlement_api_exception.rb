@@ -27,38 +27,36 @@ module Killbill
   module Plugin
     module Model
 
-      class PlanChangeResult
+      class EntitlementApiException
 
 
-        attr_accessor :new_price_list, :policy, :alignment
+        attr_accessor :message, :cause, :code
 
         def initialize()
         end
 
         def to_java()
-          # conversion for new_price_list [type = com.ning.billing.catalog.api.PriceList]
-          @new_price_list = @new_price_list.to_java unless @new_price_list.nil?
+          # conversion for message [type = java.lang.String]
+          @message = @message.to_s unless @message.nil?
 
-          # conversion for policy [type = com.ning.billing.catalog.api.BillingActionPolicy]
-          @policy = Java::com.ning.billing.catalog.api.BillingActionPolicy.value_of("#{@policy.to_s}") unless @policy.nil?
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = @cause.to_s unless cause.nil?
 
-          # conversion for alignment [type = com.ning.billing.catalog.api.PlanAlignmentChange]
-          @alignment = Java::com.ning.billing.catalog.api.PlanAlignmentChange.value_of("#{@alignment.to_s}") unless @alignment.nil?
-          Java::com.ning.billing.catalog.api.PlanChangeResult.new(@new_price_list, @policy, @alignment)
+          # conversion for code [type = int]
+          @code = @code
+          Java::com.ning.billing.entitlement.api.EntitlementApiException.new(@message, @cause, @code)
         end
 
         def to_ruby(j_obj)
-          # conversion for new_price_list [type = com.ning.billing.catalog.api.PriceList]
-          @new_price_list = j_obj.new_price_list
-          @new_price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@new_price_list) unless @new_price_list.nil?
+          # conversion for message [type = java.lang.String]
+          @message = j_obj.message
 
-          # conversion for policy [type = com.ning.billing.catalog.api.BillingActionPolicy]
-          @policy = j_obj.policy
-          @policy = @policy.to_s.to_sym unless @policy.nil?
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = j_obj.cause
+          @cause = @cause.to_s unless @cause.nil?
 
-          # conversion for alignment [type = com.ning.billing.catalog.api.PlanAlignmentChange]
-          @alignment = j_obj.alignment
-          @alignment = @alignment.to_s.to_sym unless @alignment.nil?
+          # conversion for code [type = int]
+          @code = j_obj.code
           self
         end
 

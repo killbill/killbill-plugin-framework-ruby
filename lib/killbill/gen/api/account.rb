@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.account.api.Account
 
-        attr_accessor :id, :blocking_state, :created_date, :updated_date, :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
+        attr_accessor :id, :created_date, :updated_date, :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
 
         def initialize()
         end
@@ -40,9 +40,6 @@ module Killbill
         def to_java()
           # conversion for id [type = java.util.UUID]
           @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
-
-          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
-          @blocking_state = @blocking_state.to_java unless @blocking_state.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
@@ -121,10 +118,6 @@ module Killbill
           # conversion for id [type = java.util.UUID]
           @id = j_obj.id
           @id = @id.nil? ? nil : @id.to_s
-
-          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
-          @blocking_state = j_obj.blocking_state
-          @blocking_state = Killbill::Plugin::Model::BlockingState.new.to_ruby(@blocking_state) unless @blocking_state.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date

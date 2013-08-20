@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.osgi.api.OSGIKillbill
 
-        attr_accessor :account_user_api, :catalog_user_api, :subscription_timeline_api, :subscription_transfer_api, :subscription_user_api, :invoice_payment_api, :invoice_user_api, :overdue_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :plugin_config_service_api
+        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :plugin_config_service_api
 
         def initialize()
         end
@@ -44,23 +44,14 @@ module Killbill
           # conversion for catalog_user_api [type = com.ning.billing.catalog.api.CatalogUserApi]
           @catalog_user_api = @catalog_user_api.to_java unless @catalog_user_api.nil?
 
-          # conversion for subscription_timeline_api [type = com.ning.billing.subscription.api.timeline.SubscriptionTimelineApi]
-          @subscription_timeline_api = @subscription_timeline_api.to_java unless @subscription_timeline_api.nil?
-
-          # conversion for subscription_transfer_api [type = com.ning.billing.subscription.api.transfer.SubscriptionTransferApi]
-          @subscription_transfer_api = @subscription_transfer_api.to_java unless @subscription_transfer_api.nil?
-
-          # conversion for subscription_user_api [type = com.ning.billing.subscription.api.user.SubscriptionUserApi]
-          @subscription_user_api = @subscription_user_api.to_java unless @subscription_user_api.nil?
+          # conversion for subscription_api [type = com.ning.billing.entitlement.api.SubscriptionApi]
+          @subscription_api = @subscription_api.to_java unless @subscription_api.nil?
 
           # conversion for invoice_payment_api [type = com.ning.billing.invoice.api.InvoicePaymentApi]
           @invoice_payment_api = @invoice_payment_api.to_java unless @invoice_payment_api.nil?
 
           # conversion for invoice_user_api [type = com.ning.billing.invoice.api.InvoiceUserApi]
           @invoice_user_api = @invoice_user_api.to_java unless @invoice_user_api.nil?
-
-          # conversion for overdue_user_api [type = com.ning.billing.overdue.OverdueUserApi]
-          @overdue_user_api = @overdue_user_api.to_java unless @overdue_user_api.nil?
 
           # conversion for payment_api [type = com.ning.billing.payment.api.PaymentApi]
           @payment_api = @payment_api.to_java unless @payment_api.nil?
@@ -103,17 +94,9 @@ module Killbill
           @catalog_user_api = j_obj.catalog_user_api
           @catalog_user_api = Killbill::Plugin::Model::CatalogUserApi.new.to_ruby(@catalog_user_api) unless @catalog_user_api.nil?
 
-          # conversion for subscription_timeline_api [type = com.ning.billing.subscription.api.timeline.SubscriptionTimelineApi]
-          @subscription_timeline_api = j_obj.subscription_timeline_api
-          @subscription_timeline_api = Killbill::Plugin::Model::SubscriptionTimelineApi.new.to_ruby(@subscription_timeline_api) unless @subscription_timeline_api.nil?
-
-          # conversion for subscription_transfer_api [type = com.ning.billing.subscription.api.transfer.SubscriptionTransferApi]
-          @subscription_transfer_api = j_obj.subscription_transfer_api
-          @subscription_transfer_api = Killbill::Plugin::Model::SubscriptionTransferApi.new.to_ruby(@subscription_transfer_api) unless @subscription_transfer_api.nil?
-
-          # conversion for subscription_user_api [type = com.ning.billing.subscription.api.user.SubscriptionUserApi]
-          @subscription_user_api = j_obj.subscription_user_api
-          @subscription_user_api = Killbill::Plugin::Model::SubscriptionUserApi.new.to_ruby(@subscription_user_api) unless @subscription_user_api.nil?
+          # conversion for subscription_api [type = com.ning.billing.entitlement.api.SubscriptionApi]
+          @subscription_api = j_obj.subscription_api
+          @subscription_api = Killbill::Plugin::Model::SubscriptionApi.new.to_ruby(@subscription_api) unless @subscription_api.nil?
 
           # conversion for invoice_payment_api [type = com.ning.billing.invoice.api.InvoicePaymentApi]
           @invoice_payment_api = j_obj.invoice_payment_api
@@ -122,10 +105,6 @@ module Killbill
           # conversion for invoice_user_api [type = com.ning.billing.invoice.api.InvoiceUserApi]
           @invoice_user_api = j_obj.invoice_user_api
           @invoice_user_api = Killbill::Plugin::Model::InvoiceUserApi.new.to_ruby(@invoice_user_api) unless @invoice_user_api.nil?
-
-          # conversion for overdue_user_api [type = com.ning.billing.overdue.OverdueUserApi]
-          @overdue_user_api = j_obj.overdue_user_api
-          @overdue_user_api = Killbill::Plugin::Model::OverdueUserApi.new.to_ruby(@overdue_user_api) unless @overdue_user_api.nil?
 
           # conversion for payment_api [type = com.ning.billing.payment.api.PaymentApi]
           @payment_api = j_obj.payment_api

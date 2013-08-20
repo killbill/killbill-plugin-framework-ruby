@@ -429,26 +429,6 @@ module Killbill
         end
       end
 
-      java_signature 'Java::java.util.List searchPaymentMethods(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
-      def search_payment_methods(searchKey, context)
-
-        # conversion for searchKey [type = java.lang.String]
-        searchKey = searchKey.to_s unless searchKey.nil?
-
-        # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-        context = context.to_java unless context.nil?
-        res = @real_java_api.search_payment_methods(searchKey, context)
-        # conversion for res [type = java.util.List]
-        tmp = []
-        (res || []).each do |m|
-          # conversion for m [type = com.ning.billing.payment.api.PaymentMethod]
-          m = Killbill::Plugin::Model::PaymentMethod.new.to_ruby(m) unless m.nil?
-          tmp << m
-        end
-        res = tmp
-        return res
-      end
-
       java_signature 'Java::void deletedPaymentMethod(Java::com.ning.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::com.ning.billing.util.callcontext.CallContext)'
       def deleted_payment_method(account, paymentMethodId, deleteDefaultPaymentMethodWithAutoPayOff, context)
 

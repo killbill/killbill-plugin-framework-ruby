@@ -27,12 +27,12 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.subscription.api.user'
+      java_package 'com.ning.billing.entitlement.api'
       class SubscriptionBundle
 
-        include com.ning.billing.subscription.api.user.SubscriptionBundle
+        include com.ning.billing.entitlement.api.SubscriptionBundle
 
-        attr_accessor :id, :created_date, :updated_date, :blocking_state, :account_id, :external_key, :overdue_state
+        attr_accessor :id, :created_date, :updated_date, :account_id, :external_key, :subscriptions, :timeline
 
         def initialize()
         end
@@ -53,17 +53,23 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
-          @blocking_state = @blocking_state.to_java unless @blocking_state.nil?
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
 
           # conversion for external_key [type = java.lang.String]
           @external_key = @external_key.to_s unless @external_key.nil?
 
-          # conversion for overdue_state [type = com.ning.billing.overdue.OverdueState]
-          @overdue_state = @overdue_state.to_java unless @overdue_state.nil?
+          # conversion for subscriptions [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@subscriptions || []).each do |m|
+            # conversion for m [type = com.ning.billing.entitlement.api.Subscription]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @subscriptions = tmp
+
+          # conversion for timeline [type = com.ning.billing.entitlement.api.SubscriptionBundleTimeline]
+          @timeline = @timeline.to_java unless @timeline.nil?
           self
         end
 
@@ -88,10 +94,6 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
-          # conversion for blocking_state [type = com.ning.billing.entitlement.api.BlockingState]
-          @blocking_state = j_obj.blocking_state
-          @blocking_state = Killbill::Plugin::Model::BlockingState.new.to_ruby(@blocking_state) unless @blocking_state.nil?
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = j_obj.account_id
           @account_id = @account_id.nil? ? nil : @account_id.to_s
@@ -99,9 +101,19 @@ module Killbill
           # conversion for external_key [type = java.lang.String]
           @external_key = j_obj.external_key
 
-          # conversion for overdue_state [type = com.ning.billing.overdue.OverdueState]
-          @overdue_state = j_obj.overdue_state
-          @overdue_state = Killbill::Plugin::Model::OverdueState.new.to_ruby(@overdue_state) unless @overdue_state.nil?
+          # conversion for subscriptions [type = java.util.List]
+          @subscriptions = j_obj.subscriptions
+          tmp = []
+          (@subscriptions || []).each do |m|
+            # conversion for m [type = com.ning.billing.entitlement.api.Subscription]
+            m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @subscriptions = tmp
+
+          # conversion for timeline [type = com.ning.billing.entitlement.api.SubscriptionBundleTimeline]
+          @timeline = j_obj.timeline
+          @timeline = Killbill::Plugin::Model::SubscriptionBundleTimeline.new.to_ruby(@timeline) unless @timeline.nil?
           self
         end
 

@@ -28,16 +28,31 @@ module Killbill
     module Model
 
       java_package 'com.ning.billing.entitlement.api'
-      class Subscription
+      class Entitlement
 
-        include com.ning.billing.entitlement.api.Subscription
+        include com.ning.billing.entitlement.api.Entitlement
 
-        attr_accessor :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :product, :plan, :price_list, :current_phase, :product_category, :last_active_product, :last_active_plan, :last_active_price_list, :last_active_product_category, :id, :created_date, :updated_date, :billing_start_date, :billing_end_date, :charged_through_date, :bcd, :current_state_for_service
+        attr_accessor :id, :created_date, :updated_date, :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :product, :plan, :price_list, :current_phase, :product_category, :last_active_product, :last_active_plan, :last_active_price_list, :last_active_product_category
 
         def initialize()
         end
 
         def to_java()
+          # conversion for id [type = java.util.UUID]
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
+
+          # conversion for created_date [type = org.joda.time.DateTime]
+          if !@created_date.nil?
+            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
+            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for updated_date [type = org.joda.time.DateTime]
+          if !@updated_date.nil?
+            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
+            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
           # conversion for base_entitlement_id [type = java.util.UUID]
           @base_entitlement_id = java.util.UUID.fromString(@base_entitlement_id.to_s) unless @base_entitlement_id.nil?
 
@@ -92,46 +107,30 @@ module Killbill
 
           # conversion for last_active_product_category [type = com.ning.billing.catalog.api.ProductCategory]
           @last_active_product_category = Java::com.ning.billing.catalog.api.ProductCategory.value_of("#{@last_active_product_category.to_s}") unless @last_active_product_category.nil?
-
-          # conversion for id [type = java.util.UUID]
-          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
-
-          # conversion for created_date [type = org.joda.time.DateTime]
-          if !@created_date.nil?
-            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
-            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
-          end
-
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          if !@updated_date.nil?
-            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
-            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
-          end
-
-          # conversion for billing_start_date [type = org.joda.time.LocalDate]
-          if !@billing_start_date.nil?
-            @billing_start_date = Java::org.joda.time.LocalDate.parse(@billing_start_date.to_s)
-          end
-
-          # conversion for billing_end_date [type = org.joda.time.LocalDate]
-          if !@billing_end_date.nil?
-            @billing_end_date = Java::org.joda.time.LocalDate.parse(@billing_end_date.to_s)
-          end
-
-          # conversion for charged_through_date [type = org.joda.time.LocalDate]
-          if !@charged_through_date.nil?
-            @charged_through_date = Java::org.joda.time.LocalDate.parse(@charged_through_date.to_s)
-          end
-
-          # conversion for bcd [type = int]
-          @bcd = @bcd
-
-          # conversion for current_state_for_service [type = java.lang.String]
-          @current_state_for_service = @current_state_for_service.to_s unless @current_state_for_service.nil?
           self
         end
 
         def to_ruby(j_obj)
+          # conversion for id [type = java.util.UUID]
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
+
+          # conversion for created_date [type = org.joda.time.DateTime]
+          @created_date = j_obj.created_date
+          if !@created_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            str = fmt.print(@created_date)
+            @created_date = DateTime.iso8601(str)
+          end
+
+          # conversion for updated_date [type = org.joda.time.DateTime]
+          @updated_date = j_obj.updated_date
+          if !@updated_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            str = fmt.print(@updated_date)
+            @updated_date = DateTime.iso8601(str)
+          end
+
           # conversion for base_entitlement_id [type = java.util.UUID]
           @base_entitlement_id = j_obj.base_entitlement_id
           @base_entitlement_id = @base_entitlement_id.nil? ? nil : @base_entitlement_id.to_s
@@ -202,50 +201,6 @@ module Killbill
           # conversion for last_active_product_category [type = com.ning.billing.catalog.api.ProductCategory]
           @last_active_product_category = j_obj.last_active_product_category
           @last_active_product_category = @last_active_product_category.to_s.to_sym unless @last_active_product_category.nil?
-
-          # conversion for id [type = java.util.UUID]
-          @id = j_obj.id
-          @id = @id.nil? ? nil : @id.to_s
-
-          # conversion for created_date [type = org.joda.time.DateTime]
-          @created_date = j_obj.created_date
-          if !@created_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(@created_date)
-            @created_date = DateTime.iso8601(str)
-          end
-
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          @updated_date = j_obj.updated_date
-          if !@updated_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(@updated_date)
-            @updated_date = DateTime.iso8601(str)
-          end
-
-          # conversion for billing_start_date [type = org.joda.time.LocalDate]
-          @billing_start_date = j_obj.billing_start_date
-          if !@billing_start_date.nil?
-            @billing_start_date = @billing_start_date.to_s
-          end
-
-          # conversion for billing_end_date [type = org.joda.time.LocalDate]
-          @billing_end_date = j_obj.billing_end_date
-          if !@billing_end_date.nil?
-            @billing_end_date = @billing_end_date.to_s
-          end
-
-          # conversion for charged_through_date [type = org.joda.time.LocalDate]
-          @charged_through_date = j_obj.charged_through_date
-          if !@charged_through_date.nil?
-            @charged_through_date = @charged_through_date.to_s
-          end
-
-          # conversion for bcd [type = int]
-          @bcd = j_obj.bcd
-
-          # conversion for current_state_for_service [type = java.lang.String]
-          @current_state_for_service = j_obj.current_state_for_service
           self
         end
 

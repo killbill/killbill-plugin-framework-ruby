@@ -28,53 +28,57 @@ module Killbill
     module Model
 
       java_package 'com.ning.billing.entitlement.api'
-      class Blockable
+      class SubscriptionBundleTimeline
 
-        include com.ning.billing.entitlement.api.Blockable
+        include com.ning.billing.entitlement.api.SubscriptionBundleTimeline
 
-        attr_accessor :id, :created_date, :updated_date
+        attr_accessor :account_id, :bundle_id, :external_key, :subscription_events
 
         def initialize()
         end
 
         def to_java()
-          # conversion for id [type = java.util.UUID]
-          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
+          # conversion for account_id [type = java.util.UUID]
+          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
 
-          # conversion for created_date [type = org.joda.time.DateTime]
-          if !@created_date.nil?
-            @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
-            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
-          end
+          # conversion for bundle_id [type = java.util.UUID]
+          @bundle_id = java.util.UUID.fromString(@bundle_id.to_s) unless @bundle_id.nil?
 
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          if !@updated_date.nil?
-            @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
-            @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for external_key [type = java.lang.String]
+          @external_key = @external_key.to_s unless @external_key.nil?
+
+          # conversion for subscription_events [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@subscription_events || []).each do |m|
+            # conversion for m [type = com.ning.billing.entitlement.api.SubscriptionEvent]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
           end
+          @subscription_events = tmp
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for id [type = java.util.UUID]
-          @id = j_obj.id
-          @id = @id.nil? ? nil : @id.to_s
+          # conversion for account_id [type = java.util.UUID]
+          @account_id = j_obj.account_id
+          @account_id = @account_id.nil? ? nil : @account_id.to_s
 
-          # conversion for created_date [type = org.joda.time.DateTime]
-          @created_date = j_obj.created_date
-          if !@created_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(@created_date)
-            @created_date = DateTime.iso8601(str)
-          end
+          # conversion for bundle_id [type = java.util.UUID]
+          @bundle_id = j_obj.bundle_id
+          @bundle_id = @bundle_id.nil? ? nil : @bundle_id.to_s
 
-          # conversion for updated_date [type = org.joda.time.DateTime]
-          @updated_date = j_obj.updated_date
-          if !@updated_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
-            str = fmt.print(@updated_date)
-            @updated_date = DateTime.iso8601(str)
+          # conversion for external_key [type = java.lang.String]
+          @external_key = j_obj.external_key
+
+          # conversion for subscription_events [type = java.util.List]
+          @subscription_events = j_obj.subscription_events
+          tmp = []
+          (@subscription_events || []).each do |m|
+            # conversion for m [type = com.ning.billing.entitlement.api.SubscriptionEvent]
+            m = Killbill::Plugin::Model::SubscriptionEvent.new.to_ruby(m) unless m.nil?
+            tmp << m
           end
+          @subscription_events = tmp
           self
         end
 

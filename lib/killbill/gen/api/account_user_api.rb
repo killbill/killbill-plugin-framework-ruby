@@ -102,26 +102,6 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.List searchAccounts(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def search_accounts(searchKey, context)
-
-          # conversion for searchKey [type = java.lang.String]
-          searchKey = searchKey.to_s unless searchKey.nil?
-
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.search_accounts(searchKey, context)
-          # conversion for res [type = java.util.List]
-          tmp = []
-          (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.account.api.Account]
-            m = Killbill::Plugin::Model::Account.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          res = tmp
-          return res
-        end
-
         java_signature 'Java::java.util.List getAccounts(Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_accounts(context)
 

@@ -32,15 +32,12 @@ module Killbill
 
         include com.ning.billing.payment.api.PaymentMethodPlugin
 
-        attr_accessor :kb_payment_method_id, :external_payment_method_id, :is_default_payment_method, :properties, :type, :cc_name, :cc_type, :cc_expiration_month, :cc_expiration_year, :cc_last4, :address1, :address2, :city, :state, :zip, :country
+        attr_accessor :external_payment_method_id, :is_default_payment_method, :properties, :type, :cc_name, :cc_type, :cc_expiration_month, :cc_expiration_year, :cc_last4, :address1, :address2, :city, :state, :zip, :country
 
         def initialize()
         end
 
         def to_java()
-          # conversion for kb_payment_method_id [type = java.util.UUID]
-          @kb_payment_method_id = java.util.UUID.fromString(@kb_payment_method_id.to_s) unless @kb_payment_method_id.nil?
-
           # conversion for external_payment_method_id [type = java.lang.String]
           @external_payment_method_id = @external_payment_method_id.to_s unless @external_payment_method_id.nil?
 
@@ -95,10 +92,6 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for kb_payment_method_id [type = java.util.UUID]
-          @kb_payment_method_id = j_obj.kb_payment_method_id
-          @kb_payment_method_id = @kb_payment_method_id.nil? ? nil : @kb_payment_method_id.to_s
-
           # conversion for external_payment_method_id [type = java.lang.String]
           @external_payment_method_id = j_obj.external_payment_method_id
 

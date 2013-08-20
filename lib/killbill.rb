@@ -24,9 +24,9 @@ begin
   IMPORT_KILLBILL_APIS = %w(
     com.ning.billing.account.api.AccountUserApi
     com.ning.billing.catalog.api.CatalogUserApi
-    com.ning.billing.subscription.api.user.SubscriptionUserApi
     com.ning.billing.invoice.api.InvoicePaymentApi
     com.ning.billing.entitlement.api.EntitlementApi
+    com.ning.billing.entitlement.api.SubscriptionApi
     com.ning.billing.invoice.api.InvoiceUserApi
     com.ning.billing.overdue.OverdueUserApi
     com.ning.billing.payment.api.PaymentApi
