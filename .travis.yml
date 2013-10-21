@@ -2,16 +2,17 @@ language: ruby
 
 notifications:
   email:
-    - killbilling-dev@googlegroups.com
+    - kill-bill-commits@googlegroups.com
 
 rvm:
   - jruby-19mode
+  - jruby-20mode
   - jruby-head
 
 jdk:
+  - openjdk6
   - openjdk7
   - oraclejdk7
-  - openjdk6
 
 matrix:
   allow_failures:
