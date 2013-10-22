@@ -323,23 +323,21 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.List searchPaymentMethods(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def search_payment_methods(searchKey, context)
+        java_signature 'Java::com.ning.billing.util.entity.Pagination searchPaymentMethods(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def search_payment_methods(searchKey, offset, limit, context)
 
           # conversion for searchKey [type = java.lang.String]
+
+          # conversion for offset [type = java.lang.Long]
+
+          # conversion for limit [type = java.lang.Long]
 
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
           begin
-            res = @delegate_plugin.search_payment_methods(searchKey, context)
-            # conversion for res [type = java.util.List]
-            tmp = java.util.ArrayList.new
-            (res || []).each do |m|
-              # conversion for m [type = com.ning.billing.payment.api.PaymentMethodPlugin]
-              m = m.to_java unless m.nil?
-              tmp.add(m)
-            end
-            res = tmp
+            res = @delegate_plugin.search_payment_methods(searchKey, offset, limit, context)
+            # conversion for res [type = com.ning.billing.util.entity.Pagination]
+            res = res.to_java unless res.nil?
             return res
           rescue Exception => e
             message = "Failure in search_payment_methods: #{e}"

@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.payment.api.Payment
 
-        attr_accessor :id, :created_date, :updated_date, :account_id, :invoice_id, :payment_method_id, :payment_number, :amount, :paid_amount, :effective_date, :currency, :payment_status, :attempts, :ext_first_payment_id_ref, :ext_second_payment_id_ref, :payment_info_plugin
+        attr_accessor :id, :created_date, :updated_date, :account_id, :invoice_id, :payment_method_id, :payment_number, :amount, :paid_amount, :effective_date, :currency, :payment_status, :attempts, :payment_info_plugin
 
         def initialize()
         end
@@ -99,12 +99,6 @@ module Killbill
             tmp.add(m)
           end
           @attempts = tmp
-
-          # conversion for ext_first_payment_id_ref [type = java.lang.String]
-          @ext_first_payment_id_ref = @ext_first_payment_id_ref.to_s unless @ext_first_payment_id_ref.nil?
-
-          # conversion for ext_second_payment_id_ref [type = java.lang.String]
-          @ext_second_payment_id_ref = @ext_second_payment_id_ref.to_s unless @ext_second_payment_id_ref.nil?
 
           # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
           @payment_info_plugin = @payment_info_plugin.to_java unless @payment_info_plugin.nil?
@@ -180,12 +174,6 @@ module Killbill
             tmp << m
           end
           @attempts = tmp
-
-          # conversion for ext_first_payment_id_ref [type = java.lang.String]
-          @ext_first_payment_id_ref = j_obj.ext_first_payment_id_ref
-
-          # conversion for ext_second_payment_id_ref [type = java.lang.String]
-          @ext_second_payment_id_ref = j_obj.ext_second_payment_id_ref
 
           # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
           @payment_info_plugin = j_obj.payment_info_plugin

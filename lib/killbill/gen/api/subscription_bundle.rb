@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.entitlement.api.SubscriptionBundle
 
-        attr_accessor :id, :created_date, :updated_date, :account_id, :external_key, :subscriptions, :timeline
+        attr_accessor :id, :created_date, :updated_date, :account_id, :external_key, :original_created_date, :subscriptions, :timeline
 
         def initialize()
         end
@@ -58,6 +58,12 @@ module Killbill
 
           # conversion for external_key [type = java.lang.String]
           @external_key = @external_key.to_s unless @external_key.nil?
+
+          # conversion for original_created_date [type = org.joda.time.DateTime]
+          if !@original_created_date.nil?
+            @original_created_date =  (@original_created_date.kind_of? Time) ? DateTime.parse(@original_created_date.to_s) : @original_created_date
+            @original_created_date = Java::org.joda.time.DateTime.new(@original_created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
 
           # conversion for subscriptions [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -100,6 +106,14 @@ module Killbill
 
           # conversion for external_key [type = java.lang.String]
           @external_key = j_obj.external_key
+
+          # conversion for original_created_date [type = org.joda.time.DateTime]
+          @original_created_date = j_obj.original_created_date
+          if !@original_created_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            str = fmt.print(@original_created_date)
+            @original_created_date = DateTime.iso8601(str)
+          end
 
           # conversion for subscriptions [type = java.util.List]
           @subscriptions = j_obj.subscriptions

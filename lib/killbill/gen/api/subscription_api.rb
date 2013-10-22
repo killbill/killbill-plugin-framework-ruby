@@ -73,8 +73,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.SubscriptionBundle getSubscriptionBundleForAccountIdAndExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_subscription_bundle_for_account_id_and_external_key(accountId, externalKey, context)
+        java_signature 'Java::java.util.List getSubscriptionBundlesForAccountIdAndExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_subscription_bundles_for_account_id_and_external_key(accountId, externalKey, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -85,7 +85,31 @@ module Killbill
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.get_subscription_bundle_for_account_id_and_external_key(accountId, externalKey, context)
+            res = @real_java_api.get_subscription_bundles_for_account_id_and_external_key(accountId, externalKey, context)
+            # conversion for res [type = java.util.List]
+            tmp = []
+            (res || []).each do |m|
+              # conversion for m [type = com.ning.billing.entitlement.api.SubscriptionBundle]
+              m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
+              tmp << m
+            end
+            res = tmp
+            return res
+          rescue Java::com.ning.billing.entitlement.api.SubscriptionApiException => e
+            raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::com.ning.billing.entitlement.api.SubscriptionBundle getActiveSubscriptionBundleForExternalKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_active_subscription_bundle_for_external_key(externalKey, context)
+
+          # conversion for externalKey [type = java.lang.String]
+          externalKey = externalKey.to_s unless externalKey.nil?
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_active_subscription_bundle_for_external_key(externalKey, context)
             # conversion for res [type = com.ning.billing.entitlement.api.SubscriptionBundle]
             res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
             return res

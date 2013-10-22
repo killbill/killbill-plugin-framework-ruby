@@ -27,36 +27,55 @@ module Killbill
   module Plugin
     module Model
 
-      class SubscriptionUserApiException
+      java_package 'com.ning.billing.util.entity'
+      class Pagination
 
+        include com.ning.billing.util.entity.Pagination
 
-        attr_accessor :message, :cause, :code
+        attr_accessor :iterator, :current_offset, :next_offset, :total_nb_results, :nb_results, :nb_results_from_offset
 
         def initialize()
         end
 
         def to_java()
-          # conversion for message [type = java.lang.String]
-          @message = @message.to_s unless @message.nil?
+          # conversion for iterator [type = java.util.Iterator]
+          @iterator = Killbill::Plugin::Model::EnumeratorIterator.new(@iterator)
 
-          # conversion for cause [type = java.lang.Throwable]
-          @cause = @cause.to_s unless cause.nil?
+          # conversion for current_offset [type = java.lang.Long]
+          @current_offset = @current_offset
 
-          # conversion for code [type = int]
-          @code = @code
-          Java::com.ning.billing.subscription.api.user.SubscriptionUserApiException.new(@message, @cause, @code)
+          # conversion for next_offset [type = java.lang.Long]
+          @next_offset = @next_offset
+
+          # conversion for total_nb_results [type = java.lang.Long]
+          @total_nb_results = @total_nb_results
+
+          # conversion for nb_results [type = java.lang.Long]
+          @nb_results = @nb_results
+
+          # conversion for nb_results_from_offset [type = java.lang.Long]
+          @nb_results_from_offset = @nb_results_from_offset
+          self
         end
 
         def to_ruby(j_obj)
-          # conversion for message [type = java.lang.String]
-          @message = j_obj.message
+          # conversion for iterator [type = java.util.Iterator]
+          @iterator = j_obj.iterator
 
-          # conversion for cause [type = java.lang.Throwable]
-          @cause = j_obj.cause
-          @cause = @cause.to_s unless @cause.nil?
+          # conversion for current_offset [type = java.lang.Long]
+          @current_offset = j_obj.current_offset
 
-          # conversion for code [type = int]
-          @code = j_obj.code
+          # conversion for next_offset [type = java.lang.Long]
+          @next_offset = j_obj.next_offset
+
+          # conversion for total_nb_results [type = java.lang.Long]
+          @total_nb_results = j_obj.total_nb_results
+
+          # conversion for nb_results [type = java.lang.Long]
+          @nb_results = j_obj.nb_results
+
+          # conversion for nb_results_from_offset [type = java.lang.Long]
+          @nb_results_from_offset = j_obj.nb_results_from_offset
           self
         end
 

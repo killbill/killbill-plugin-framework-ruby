@@ -51,13 +51,7 @@ module Killbill
           @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
-          tmp = java.util.ArrayList.new
-          (@initial_phase_iterator || []).each do |m|
-            # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @initial_phase_iterator = tmp
+          @initial_phase_iterator = Killbill::Plugin::Model::EnumeratorIterator.new(@initial_phase_iterator)
 
           # conversion for final_phase [type = com.ning.billing.catalog.api.PlanPhase]
           @final_phase = @final_phase.to_java unless @final_phase.nil?
@@ -103,13 +97,6 @@ module Killbill
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = j_obj.initial_phase_iterator
-          tmp = []
-          (@initial_phase_iterator || []).each do |m|
-            # conversion for m [type = com.ning.billing.catalog.api.PlanPhase]
-            m = Killbill::Plugin::Model::PlanPhase.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @initial_phase_iterator = tmp
 
           # conversion for final_phase [type = com.ning.billing.catalog.api.PlanPhase]
           @final_phase = j_obj.final_phase

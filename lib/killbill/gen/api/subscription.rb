@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.entitlement.api.Subscription
 
-        attr_accessor :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :product, :plan, :price_list, :current_phase, :product_category, :last_active_product, :last_active_plan, :last_active_price_list, :last_active_product_category, :id, :created_date, :updated_date, :billing_start_date, :billing_end_date, :charged_through_date, :bcd, :current_state_for_service
+        attr_accessor :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :last_active_product, :last_active_plan, :last_active_phase, :last_active_price_list, :last_active_product_category, :id, :created_date, :updated_date, :billing_start_date, :billing_end_date, :charged_through_date, :current_state_for_service
 
         def initialize()
         end
@@ -66,26 +66,14 @@ module Killbill
             @effective_end_date = Java::org.joda.time.LocalDate.parse(@effective_end_date.to_s)
           end
 
-          # conversion for product [type = com.ning.billing.catalog.api.Product]
-          @product = @product.to_java unless @product.nil?
-
-          # conversion for plan [type = com.ning.billing.catalog.api.Plan]
-          @plan = @plan.to_java unless @plan.nil?
-
-          # conversion for price_list [type = com.ning.billing.catalog.api.PriceList]
-          @price_list = @price_list.to_java unless @price_list.nil?
-
-          # conversion for current_phase [type = com.ning.billing.catalog.api.PlanPhase]
-          @current_phase = @current_phase.to_java unless @current_phase.nil?
-
-          # conversion for product_category [type = com.ning.billing.catalog.api.ProductCategory]
-          @product_category = Java::com.ning.billing.catalog.api.ProductCategory.value_of("#{@product_category.to_s}") unless @product_category.nil?
-
           # conversion for last_active_product [type = com.ning.billing.catalog.api.Product]
           @last_active_product = @last_active_product.to_java unless @last_active_product.nil?
 
           # conversion for last_active_plan [type = com.ning.billing.catalog.api.Plan]
           @last_active_plan = @last_active_plan.to_java unless @last_active_plan.nil?
+
+          # conversion for last_active_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          @last_active_phase = @last_active_phase.to_java unless @last_active_phase.nil?
 
           # conversion for last_active_price_list [type = com.ning.billing.catalog.api.PriceList]
           @last_active_price_list = @last_active_price_list.to_java unless @last_active_price_list.nil?
@@ -122,9 +110,6 @@ module Killbill
           if !@charged_through_date.nil?
             @charged_through_date = Java::org.joda.time.LocalDate.parse(@charged_through_date.to_s)
           end
-
-          # conversion for bcd [type = int]
-          @bcd = @bcd
 
           # conversion for current_state_for_service [type = java.lang.String]
           @current_state_for_service = @current_state_for_service.to_s unless @current_state_for_service.nil?
@@ -167,26 +152,6 @@ module Killbill
             @effective_end_date = @effective_end_date.to_s
           end
 
-          # conversion for product [type = com.ning.billing.catalog.api.Product]
-          @product = j_obj.product
-          @product = Killbill::Plugin::Model::Product.new.to_ruby(@product) unless @product.nil?
-
-          # conversion for plan [type = com.ning.billing.catalog.api.Plan]
-          @plan = j_obj.plan
-          @plan = Killbill::Plugin::Model::Plan.new.to_ruby(@plan) unless @plan.nil?
-
-          # conversion for price_list [type = com.ning.billing.catalog.api.PriceList]
-          @price_list = j_obj.price_list
-          @price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@price_list) unless @price_list.nil?
-
-          # conversion for current_phase [type = com.ning.billing.catalog.api.PlanPhase]
-          @current_phase = j_obj.current_phase
-          @current_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@current_phase) unless @current_phase.nil?
-
-          # conversion for product_category [type = com.ning.billing.catalog.api.ProductCategory]
-          @product_category = j_obj.product_category
-          @product_category = @product_category.to_s.to_sym unless @product_category.nil?
-
           # conversion for last_active_product [type = com.ning.billing.catalog.api.Product]
           @last_active_product = j_obj.last_active_product
           @last_active_product = Killbill::Plugin::Model::Product.new.to_ruby(@last_active_product) unless @last_active_product.nil?
@@ -194,6 +159,10 @@ module Killbill
           # conversion for last_active_plan [type = com.ning.billing.catalog.api.Plan]
           @last_active_plan = j_obj.last_active_plan
           @last_active_plan = Killbill::Plugin::Model::Plan.new.to_ruby(@last_active_plan) unless @last_active_plan.nil?
+
+          # conversion for last_active_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          @last_active_phase = j_obj.last_active_phase
+          @last_active_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@last_active_phase) unless @last_active_phase.nil?
 
           # conversion for last_active_price_list [type = com.ning.billing.catalog.api.PriceList]
           @last_active_price_list = j_obj.last_active_price_list
@@ -240,9 +209,6 @@ module Killbill
           if !@charged_through_date.nil?
             @charged_through_date = @charged_through_date.to_s
           end
-
-          # conversion for bcd [type = int]
-          @bcd = j_obj.bcd
 
           # conversion for current_state_for_service [type = java.lang.String]
           @current_state_for_service = j_obj.current_state_for_service
