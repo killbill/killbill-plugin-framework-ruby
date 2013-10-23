@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.util.entity.Pagination
 
-        attr_accessor :iterator, :current_offset, :next_offset, :total_nb_results, :nb_results, :nb_results_from_offset
+        attr_accessor :iterator, :current_offset, :next_offset, :max_nb_records, :total_nb_records
 
         def initialize()
         end
@@ -47,14 +47,11 @@ module Killbill
           # conversion for next_offset [type = java.lang.Long]
           @next_offset = @next_offset
 
-          # conversion for total_nb_results [type = java.lang.Long]
-          @total_nb_results = @total_nb_results
+          # conversion for max_nb_records [type = java.lang.Long]
+          @max_nb_records = @max_nb_records
 
-          # conversion for nb_results [type = java.lang.Long]
-          @nb_results = @nb_results
-
-          # conversion for nb_results_from_offset [type = java.lang.Long]
-          @nb_results_from_offset = @nb_results_from_offset
+          # conversion for total_nb_records [type = java.lang.Long]
+          @total_nb_records = @total_nb_records
           self
         end
 
@@ -68,14 +65,11 @@ module Killbill
           # conversion for next_offset [type = java.lang.Long]
           @next_offset = j_obj.next_offset
 
-          # conversion for total_nb_results [type = java.lang.Long]
-          @total_nb_results = j_obj.total_nb_results
+          # conversion for max_nb_records [type = java.lang.Long]
+          @max_nb_records = j_obj.max_nb_records
 
-          # conversion for nb_results [type = java.lang.Long]
-          @nb_results = j_obj.nb_results
-
-          # conversion for nb_results_from_offset [type = java.lang.Long]
-          @nb_results_from_offset = j_obj.nb_results_from_offset
+          # conversion for total_nb_records [type = java.lang.Long]
+          @total_nb_records = j_obj.total_nb_records
           self
         end
 
