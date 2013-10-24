@@ -4,8 +4,13 @@
 module Killbill
   module Plugin
     class KillbillLogger
+
+      attr_accessor :log_level
+
       def initialize(delegate)
         @logger = delegate
+        # Match Logger levels
+        @log_level = 1 # Logger::INFO
       end
 
       def debug(message, &block)
@@ -47,17 +52,19 @@ module Killbill
 
       alias_method :fatal, :error
 
-      # XXX TODO
       def debug?
-        false
+        # Logger::DEBUG
+        0 >= @log_level
       end
 
       def info?
-        true
+        # Logger::INFO
+        1 >= @log_level
       end
 
       def warn?
-        true
+        # Logger::WARN
+        2 >= @log_level
       end
 
       alias_method :error?, :warn?
