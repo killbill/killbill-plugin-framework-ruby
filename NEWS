@@ -1,3 +1,7 @@
+1.7.1
+    Bug fix in enumerator_iterator
+    Make log level adjustable
+
 1.7.0
     Update to killbill-api 0.7.1 and killbill-plugin-api 0.5.0 (pagination)
 
