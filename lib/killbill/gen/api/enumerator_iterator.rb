@@ -46,7 +46,7 @@ module Killbill
         def next
           prev = @next
           _next
-          prev
+          prev.to_java
         end
 
         def remove
