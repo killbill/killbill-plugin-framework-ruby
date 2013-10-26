@@ -1,3 +1,6 @@
+1.8.0
+    Currency plugin support
+
 1.7.1
     Bug fix in enumerator_iterator
     Make log level adjustable
