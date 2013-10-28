@@ -201,7 +201,7 @@ module Killbill
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
 
           # conversion for invoiceItemIds [type = java.util.Set]
-          tmp = java.util.ArrayList.new
+          tmp = java.util.TreeSet.new
           (invoiceItemIds || []).each do |m|
             # conversion for m [type = java.util.UUID]
             m = java.util.UUID.fromString(m.to_s) unless m.nil?

@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.osgi.api.OSGIKillbill
 
-        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :plugin_config_service_api
+        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api
 
         def initialize()
         end
@@ -79,6 +79,9 @@ module Killbill
 
           # conversion for record_id_api [type = com.ning.billing.util.api.RecordIdApi]
           @record_id_api = @record_id_api.to_java unless @record_id_api.nil?
+
+          # conversion for currency_conversion_api [type = com.ning.billing.currency.api.CurrencyConversionApi]
+          @currency_conversion_api = @currency_conversion_api.to_java unless @currency_conversion_api.nil?
 
           # conversion for plugin_config_service_api [type = com.ning.billing.osgi.api.config.PluginConfigServiceApi]
           @plugin_config_service_api = @plugin_config_service_api.to_java unless @plugin_config_service_api.nil?
@@ -141,6 +144,10 @@ module Killbill
           # conversion for record_id_api [type = com.ning.billing.util.api.RecordIdApi]
           @record_id_api = j_obj.record_id_api
           @record_id_api = Killbill::Plugin::Model::RecordIdApi.new.to_ruby(@record_id_api) unless @record_id_api.nil?
+
+          # conversion for currency_conversion_api [type = com.ning.billing.currency.api.CurrencyConversionApi]
+          @currency_conversion_api = j_obj.currency_conversion_api
+          @currency_conversion_api = Killbill::Plugin::Model::CurrencyConversionApi.new.to_ruby(@currency_conversion_api) unless @currency_conversion_api.nil?
 
           # conversion for plugin_config_service_api [type = com.ning.billing.osgi.api.config.PluginConfigServiceApi]
           @plugin_config_service_api = j_obj.plugin_config_service_api

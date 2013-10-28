@@ -32,6 +32,7 @@ begin
     com.ning.billing.payment.api.PaymentApi
     com.ning.billing.util.api.CustomFieldUserApi
     com.ning.billing.util.api.TagUserApi
+    com.ning.billing.currency.api.CurrencyConversionApi
     javax.servlet.http.HttpServlet
   )
 
