@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.payment.plugin.api.RefundInfoPlugin
 
-        attr_accessor :amount, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :reference_id
+        attr_accessor :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :reference_id
 
         def initialize()
         end
@@ -44,6 +44,9 @@ module Killbill
           else
             @amount = java.math.BigDecimal.new(@amount.to_s)
           end
+
+          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
@@ -75,6 +78,10 @@ module Killbill
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
           @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
+
+          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          @currency = j_obj.currency
+          @currency = @currency.to_s.to_sym unless @currency.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date

@@ -36,6 +36,7 @@ module Killbill
           super(real_class_name, services)
         end
 
+
         java_signature 'Java::java.util.Set getBaseCurrencies()'
         def get_base_currencies()
         begin
