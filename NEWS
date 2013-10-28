@@ -1,3 +1,6 @@
+1.8.2
+    Add missing regenerated RefundInfoPlugin and PaymentInfoPlugin for new currency
+
 1.8.1
     Add currency api from Killbill for ruby plugins
 
