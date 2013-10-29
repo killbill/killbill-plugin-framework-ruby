@@ -128,7 +128,7 @@ module Killbill
           # conversion for res [type = java.util.Set]
           tmp = java.util.TreeSet.new
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.currency.plugin.api.Rate]
+            # conversion for m [type = com.ning.billing.currency.api.Rate]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -163,7 +163,7 @@ module Killbill
           # conversion for res [type = java.util.Set]
           tmp = java.util.TreeSet.new
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.currency.plugin.api.Rate]
+            # conversion for m [type = com.ning.billing.currency.api.Rate]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end

@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.currency.plugin.api'
+      java_package 'com.ning.billing.currency.api'
       class Rate
 
-        include com.ning.billing.currency.plugin.api.Rate
+        include com.ning.billing.currency.api.Rate
 
         attr_accessor :base_currency, :currency, :value, :conversion_date
 
