@@ -1,4 +1,4 @@
-jar 'com.ning.billing:killbill-api', '0.7.4'
+jar 'com.ning.billing:killbill-api', '0.7.6'
 jar 'com.ning.billing.plugin:killbill-plugin-api-notification', '0.6.1'
 jar 'com.ning.billing.plugin:killbill-plugin-api-payment', '0.6.1'
 jar 'com.ning.billing.plugin:killbill-plugin-api-currency', '0.6.1'

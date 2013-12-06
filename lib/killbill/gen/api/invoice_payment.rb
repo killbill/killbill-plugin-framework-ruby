@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.invoice.api.InvoicePayment
 
-        attr_accessor :id, :created_date, :updated_date, :payment_id, :type, :invoice_id, :payment_date, :amount, :currency, :linked_invoice_payment_id, :payment_cookie_id
+        attr_accessor :id, :created_date, :updated_date, :payment_id, :type, :invoice_id, :payment_date, :amount, :currency, :linked_invoice_payment_id, :payment_cookie_id, :processed_currency
 
         def initialize()
         end
@@ -83,6 +83,9 @@ module Killbill
 
           # conversion for payment_cookie_id [type = java.util.UUID]
           @payment_cookie_id = java.util.UUID.fromString(@payment_cookie_id.to_s) unless @payment_cookie_id.nil?
+
+          # conversion for processed_currency [type = com.ning.billing.catalog.api.Currency]
+          @processed_currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
           self
         end
 
@@ -142,6 +145,10 @@ module Killbill
           # conversion for payment_cookie_id [type = java.util.UUID]
           @payment_cookie_id = j_obj.payment_cookie_id
           @payment_cookie_id = @payment_cookie_id.nil? ? nil : @payment_cookie_id.to_s
+
+          # conversion for processed_currency [type = com.ning.billing.catalog.api.Currency]
+          @processed_currency = j_obj.processed_currency
+          @processed_currency = @processed_currency.to_s.to_sym unless @processed_currency.nil?
           self
         end
 

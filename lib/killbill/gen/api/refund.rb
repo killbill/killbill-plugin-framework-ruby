@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.payment.api.Refund
 
-        attr_accessor :id, :created_date, :updated_date, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :plugin_detail
+        attr_accessor :id, :created_date, :updated_date, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :refund_status, :plugin_detail
 
         def initialize()
         end
@@ -74,6 +74,9 @@ module Killbill
             @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
             @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
+
+          # conversion for refund_status [type = com.ning.billing.payment.api.RefundStatus]
+          @refund_status = Java::com.ning.billing.payment.api.RefundStatus.value_of("#{@refund_status.to_s}") unless @refund_status.nil?
 
           # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
           @plugin_detail = @plugin_detail.to_java unless @plugin_detail.nil?
@@ -129,6 +132,10 @@ module Killbill
             str = fmt.print(@effective_date)
             @effective_date = DateTime.iso8601(str)
           end
+
+          # conversion for refund_status [type = com.ning.billing.payment.api.RefundStatus]
+          @refund_status = j_obj.refund_status
+          @refund_status = @refund_status.to_s.to_sym unless @refund_status.nil?
 
           # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
           @plugin_detail = j_obj.plugin_detail

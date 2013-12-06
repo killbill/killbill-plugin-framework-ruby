@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.invoice.api.formatters.InvoiceFormatter
 
-        attr_accessor :invoice_items, :number_of_items, :payments, :number_of_payments, :account_id, :invoice_number, :invoice_date, :target_date, :currency, :paid_amount, :original_charged_amount, :charged_amount, :credited_amount, :refunded_amount, :balance, :is_migration_invoice, :id, :created_date, :updated_date, :formatted_invoice_date, :formatted_charged_amount, :formatted_paid_amount, :formatted_balance
+        attr_accessor :invoice_items, :number_of_items, :payments, :number_of_payments, :account_id, :invoice_number, :invoice_date, :target_date, :currency, :paid_amount, :original_charged_amount, :charged_amount, :credited_amount, :refunded_amount, :balance, :is_migration_invoice, :id, :created_date, :updated_date, :formatted_invoice_date, :formatted_charged_amount, :formatted_paid_amount, :formatted_balance, :processed_currency, :processed_payment_rate
 
         def initialize()
         end
@@ -152,6 +152,12 @@ module Killbill
 
           # conversion for formatted_balance [type = java.lang.String]
           @formatted_balance = @formatted_balance.to_s unless @formatted_balance.nil?
+
+          # conversion for processed_currency [type = com.ning.billing.catalog.api.Currency]
+          @processed_currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
+
+          # conversion for processed_payment_rate [type = java.lang.String]
+          @processed_payment_rate = @processed_payment_rate.to_s unless @processed_payment_rate.nil?
           self
         end
 
@@ -269,6 +275,13 @@ module Killbill
 
           # conversion for formatted_balance [type = java.lang.String]
           @formatted_balance = j_obj.formatted_balance
+
+          # conversion for processed_currency [type = com.ning.billing.catalog.api.Currency]
+          @processed_currency = j_obj.processed_currency
+          @processed_currency = @processed_currency.to_s.to_sym unless @processed_currency.nil?
+
+          # conversion for processed_payment_rate [type = java.lang.String]
+          @processed_payment_rate = j_obj.processed_payment_rate
           self
         end
 
