@@ -88,7 +88,7 @@ module Killbill
           @effective_date = j_obj.effective_date
           if !@effective_date.nil?
             @effective_date = Java::org.joda.time.DateTime.new(@effective_date)
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@effective_date)
             @effective_date = DateTime.iso8601(str)
           end

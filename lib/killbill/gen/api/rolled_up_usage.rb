@@ -76,7 +76,7 @@ module Killbill
           # conversion for start_time [type = org.joda.time.DateTime]
           @start_time = j_obj.start_time
           if !@start_time.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@start_time)
             @start_time = DateTime.iso8601(str)
           end
@@ -84,7 +84,7 @@ module Killbill
           # conversion for end_time [type = org.joda.time.DateTime]
           @end_time = j_obj.end_time
           if !@end_time.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@end_time)
             @end_time = DateTime.iso8601(str)
           end

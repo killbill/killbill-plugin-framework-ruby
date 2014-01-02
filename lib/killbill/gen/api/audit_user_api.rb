@@ -37,8 +37,8 @@ module Killbill
         end
 
 
-        java_signature 'Java::com.ning.billing.util.audit.AuditLogsForAccount getAuditLogsForAccount(Java::java.util.UUID, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_audit_logs_for_account(accountId, auditLevel, context)
+        java_signature 'Java::com.ning.billing.util.audit.AccountAuditLogs getAccountAuditLogs(Java::java.util.UUID, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_account_audit_logs(accountId, auditLevel, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -48,124 +48,9 @@ module Killbill
 
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_audit_logs_for_account(accountId, auditLevel, context)
-          # conversion for res [type = com.ning.billing.util.audit.AuditLogsForAccount]
-          res = Killbill::Plugin::Model::AuditLogsForAccount.new.to_ruby(res) unless res.nil?
-          return res
-        end
-
-        java_signature 'Java::com.ning.billing.util.audit.AuditLogsForBundles getAuditLogsForBundles(Java::java.util.List, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_audit_logs_for_bundles(bundles, auditLevel, context)
-
-          # conversion for bundles [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (bundles || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.SubscriptionBundle]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          bundles = tmp
-
-          # conversion for auditLevel [type = com.ning.billing.util.api.AuditLevel]
-          auditLevel = Java::com.ning.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
-
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_audit_logs_for_bundles(bundles, auditLevel, context)
-          # conversion for res [type = com.ning.billing.util.audit.AuditLogsForBundles]
-          res = Killbill::Plugin::Model::AuditLogsForBundles.new.to_ruby(res) unless res.nil?
-          return res
-        end
-
-        java_signature 'Java::com.ning.billing.util.audit.AuditLogsForInvoicePayments getAuditLogsForInvoicePayments(Java::java.util.List, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_audit_logs_for_invoice_payments(invoicePayments, auditLevel, context)
-
-          # conversion for invoicePayments [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (invoicePayments || []).each do |m|
-            # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          invoicePayments = tmp
-
-          # conversion for auditLevel [type = com.ning.billing.util.api.AuditLevel]
-          auditLevel = Java::com.ning.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
-
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_audit_logs_for_invoice_payments(invoicePayments, auditLevel, context)
-          # conversion for res [type = com.ning.billing.util.audit.AuditLogsForInvoicePayments]
-          res = Killbill::Plugin::Model::AuditLogsForInvoicePayments.new.to_ruby(res) unless res.nil?
-          return res
-        end
-
-        java_signature 'Java::com.ning.billing.util.audit.AuditLogsForRefunds getAuditLogsForRefunds(Java::java.util.List, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_audit_logs_for_refunds(refunds, auditLevel, context)
-
-          # conversion for refunds [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (refunds || []).each do |m|
-            # conversion for m [type = com.ning.billing.payment.api.Refund]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          refunds = tmp
-
-          # conversion for auditLevel [type = com.ning.billing.util.api.AuditLevel]
-          auditLevel = Java::com.ning.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
-
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_audit_logs_for_refunds(refunds, auditLevel, context)
-          # conversion for res [type = com.ning.billing.util.audit.AuditLogsForRefunds]
-          res = Killbill::Plugin::Model::AuditLogsForRefunds.new.to_ruby(res) unless res.nil?
-          return res
-        end
-
-        java_signature 'Java::com.ning.billing.util.audit.AuditLogsForPayments getAuditLogsForPayments(Java::java.util.List, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_audit_logs_for_payments(payments, auditLevel, context)
-
-          # conversion for payments [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (payments || []).each do |m|
-            # conversion for m [type = com.ning.billing.payment.api.Payment]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          payments = tmp
-
-          # conversion for auditLevel [type = com.ning.billing.util.api.AuditLevel]
-          auditLevel = Java::com.ning.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
-
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_audit_logs_for_payments(payments, auditLevel, context)
-          # conversion for res [type = com.ning.billing.util.audit.AuditLogsForPayments]
-          res = Killbill::Plugin::Model::AuditLogsForPayments.new.to_ruby(res) unless res.nil?
-          return res
-        end
-
-        java_signature 'Java::com.ning.billing.util.audit.AuditLogsForInvoices getAuditLogsForInvoices(Java::java.util.List, Java::com.ning.billing.util.api.AuditLevel, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_audit_logs_for_invoices(invoices, auditLevel, context)
-
-          # conversion for invoices [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (invoices || []).each do |m|
-            # conversion for m [type = com.ning.billing.invoice.api.Invoice]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          invoices = tmp
-
-          # conversion for auditLevel [type = com.ning.billing.util.api.AuditLevel]
-          auditLevel = Java::com.ning.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
-
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_audit_logs_for_invoices(invoices, auditLevel, context)
-          # conversion for res [type = com.ning.billing.util.audit.AuditLogsForInvoices]
-          res = Killbill::Plugin::Model::AuditLogsForInvoices.new.to_ruby(res) unless res.nil?
+          res = @real_java_api.get_account_audit_logs(accountId, auditLevel, context)
+          # conversion for res [type = com.ning.billing.util.audit.AccountAuditLogs]
+          res = Killbill::Plugin::Model::AccountAuditLogs.new.to_ruby(res) unless res.nil?
           return res
         end
 

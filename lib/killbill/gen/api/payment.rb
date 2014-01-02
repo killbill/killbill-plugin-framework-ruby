@@ -113,7 +113,7 @@ module Killbill
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date
           if !@created_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@created_date)
             @created_date = DateTime.iso8601(str)
           end
@@ -121,7 +121,7 @@ module Killbill
           # conversion for updated_date [type = org.joda.time.DateTime]
           @updated_date = j_obj.updated_date
           if !@updated_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@updated_date)
             @updated_date = DateTime.iso8601(str)
           end
@@ -152,7 +152,7 @@ module Killbill
           # conversion for effective_date [type = org.joda.time.DateTime]
           @effective_date = j_obj.effective_date
           if !@effective_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@effective_date)
             @effective_date = DateTime.iso8601(str)
           end

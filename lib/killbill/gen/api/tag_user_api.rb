@@ -202,8 +202,8 @@ module Killbill
           @real_java_api.remove_tag(objectId, objectType, tagDefinitionId, context)
         end
 
-        java_signature 'Java::java.util.List getTagsForObject(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_tags_for_object(objectId, objectType, context)
+        java_signature 'Java::java.util.List getTagsForObject(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::boolean, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_tags_for_object(objectId, objectType, includedDeleted, context)
 
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
@@ -211,9 +211,12 @@ module Killbill
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
 
+          # conversion for includedDeleted [type = boolean]
+          includedDeleted = includedDeleted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includedDeleted)
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_tags_for_object(objectId, objectType, context)
+          res = @real_java_api.get_tags_for_object(objectId, objectType, includedDeleted, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
@@ -225,8 +228,8 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::java.util.List getTagsForAccountType(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_tags_for_account_type(accountId, objectType, context)
+        java_signature 'Java::java.util.List getTagsForAccountType(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::boolean, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_tags_for_account_type(accountId, objectType, includedDeleted, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -234,9 +237,12 @@ module Killbill
           # conversion for objectType [type = com.ning.billing.ObjectType]
           objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
 
+          # conversion for includedDeleted [type = boolean]
+          includedDeleted = includedDeleted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includedDeleted)
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_tags_for_account_type(accountId, objectType, context)
+          res = @real_java_api.get_tags_for_account_type(accountId, objectType, includedDeleted, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
@@ -248,15 +254,18 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::java.util.List getTagsForAccount(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
-        def get_tags_for_account(accountId, context)
+        java_signature 'Java::java.util.List getTagsForAccount(Java::java.util.UUID, Java::boolean, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_tags_for_account(accountId, includedDeleted, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
+          # conversion for includedDeleted [type = boolean]
+          includedDeleted = includedDeleted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includedDeleted)
+
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_tags_for_account(accountId, context)
+          res = @real_java_api.get_tags_for_account(accountId, includedDeleted, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|

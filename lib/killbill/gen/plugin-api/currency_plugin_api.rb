@@ -154,7 +154,7 @@ module Killbill
 
         # conversion for conversionDate [type = org.joda.time.DateTime]
         if !conversionDate.nil?
-          fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+          fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
           str = fmt.print(conversionDate)
           conversionDate = DateTime.iso8601(str)
         end

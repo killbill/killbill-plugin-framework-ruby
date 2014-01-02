@@ -117,7 +117,7 @@ module Killbill
           @effective_date_for_existing_subscriptons = j_obj.effective_date_for_existing_subscriptons
           if !@effective_date_for_existing_subscriptons.nil?
             @effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptons)
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@effective_date_for_existing_subscriptons)
             @effective_date_for_existing_subscriptons = DateTime.iso8601(str)
           end

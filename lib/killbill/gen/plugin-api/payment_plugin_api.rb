@@ -102,6 +102,34 @@ module Killbill
           end
         end
 
+        java_signature 'Java::com.ning.billing.util.entity.Pagination searchPayments(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def search_payments(searchKey, offset, limit, context)
+
+          # conversion for searchKey [type = java.lang.String]
+
+          # conversion for offset [type = java.lang.Long]
+
+          # conversion for limit [type = java.lang.Long]
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
+          begin
+            res = @delegate_plugin.search_payments(searchKey, offset, limit, context)
+            # conversion for res [type = com.ning.billing.util.entity.Pagination]
+            res = res.to_java unless res.nil?
+            return res
+          rescue Exception => e
+            message = "Failure in search_payments: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("search_payments failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
         java_signature 'Java::com.ning.billing.payment.plugin.api.RefundInfoPlugin processRefund(Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::com.ning.billing.catalog.api.Currency, Java::com.ning.billing.util.callcontext.CallContext)'
         def process_refund(kbAccountId, kbPaymentId, refundAmount, currency, context)
 
