@@ -32,12 +32,15 @@ module Killbill
 
         include com.ning.billing.payment.plugin.api.RefundInfoPlugin
 
-        attr_accessor :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :reference_id
+        attr_accessor :kb_payment_id, :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_refund_reference_id, :second_refund_reference_id
 
         def initialize()
         end
 
         def to_java()
+          # conversion for kb_payment_id [type = java.util.UUID]
+          @kb_payment_id = java.util.UUID.fromString(@kb_payment_id.to_s) unless @kb_payment_id.nil?
+
           # conversion for amount [type = java.math.BigDecimal]
           if @amount.nil?
             @amount = java.math.BigDecimal::ZERO
@@ -69,12 +72,19 @@ module Killbill
           # conversion for gateway_error_code [type = java.lang.String]
           @gateway_error_code = @gateway_error_code.to_s unless @gateway_error_code.nil?
 
-          # conversion for reference_id [type = java.lang.String]
-          @reference_id = @reference_id.to_s unless @reference_id.nil?
+          # conversion for first_refund_reference_id [type = java.lang.String]
+          @first_refund_reference_id = @first_refund_reference_id.to_s unless @first_refund_reference_id.nil?
+
+          # conversion for second_refund_reference_id [type = java.lang.String]
+          @second_refund_reference_id = @second_refund_reference_id.to_s unless @second_refund_reference_id.nil?
           self
         end
 
         def to_ruby(j_obj)
+          # conversion for kb_payment_id [type = java.util.UUID]
+          @kb_payment_id = j_obj.kb_payment_id
+          @kb_payment_id = @kb_payment_id.nil? ? nil : @kb_payment_id.to_s
+
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
           @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
@@ -109,8 +119,11 @@ module Killbill
           # conversion for gateway_error_code [type = java.lang.String]
           @gateway_error_code = j_obj.gateway_error_code
 
-          # conversion for reference_id [type = java.lang.String]
-          @reference_id = j_obj.reference_id
+          # conversion for first_refund_reference_id [type = java.lang.String]
+          @first_refund_reference_id = j_obj.first_refund_reference_id
+
+          # conversion for second_refund_reference_id [type = java.lang.String]
+          @second_refund_reference_id = j_obj.second_refund_reference_id
           self
         end
 

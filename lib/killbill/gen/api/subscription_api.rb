@@ -73,6 +73,20 @@ module Killbill
           end
         end
 
+        java_signature 'Java::void updateExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
+        def update_external_key(bundleId, newExternalKey, context)
+
+          # conversion for bundleId [type = java.util.UUID]
+          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
+
+          # conversion for newExternalKey [type = java.lang.String]
+          newExternalKey = newExternalKey.to_s unless newExternalKey.nil?
+
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.update_external_key(bundleId, newExternalKey, context)
+        end
+
         java_signature 'Java::java.util.List getSubscriptionBundlesForAccountIdAndExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_subscription_bundles_for_account_id_and_external_key(accountId, externalKey, context)
 

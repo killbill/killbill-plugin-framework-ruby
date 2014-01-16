@@ -93,6 +93,23 @@ module Killbill
           end
         end
 
+        java_signature 'Java::void notifyPendingPaymentOfStateChanged(Java::com.ning.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::com.ning.billing.util.callcontext.CallContext)'
+        def notify_pending_payment_of_state_changed(account, paymentId, isSuccess, context)
+
+          # conversion for account [type = com.ning.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for isSuccess [type = boolean]
+          isSuccess = isSuccess.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(isSuccess)
+
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.notify_pending_payment_of_state_changed(account, paymentId, isSuccess, context)
+        end
+
         java_signature 'Java::com.ning.billing.payment.api.Payment retryPayment(Java::com.ning.billing.account.api.Account, Java::java.util.UUID, Java::com.ning.billing.util.callcontext.CallContext)'
         def retry_payment(account, paymentId, context)
 
@@ -140,6 +157,23 @@ module Killbill
           rescue Java::com.ning.billing.payment.api.PaymentApiException => e
             raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
           end
+        end
+
+        java_signature 'Java::void notifyPendingRefundOfStateChanged(Java::com.ning.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::com.ning.billing.util.callcontext.CallContext)'
+        def notify_pending_refund_of_state_changed(account, paymentId, isSuccess, context)
+
+          # conversion for account [type = com.ning.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for isSuccess [type = boolean]
+          isSuccess = isSuccess.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(isSuccess)
+
+          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.notify_pending_refund_of_state_changed(account, paymentId, isSuccess, context)
         end
 
         java_signature 'Java::com.ning.billing.payment.api.Refund getRefund(Java::java.util.UUID, Java::boolean, Java::com.ning.billing.util.callcontext.TenantContext)'
@@ -338,6 +372,23 @@ module Killbill
           end
         end
 
+        java_signature 'Java::com.ning.billing.util.entity.Pagination getPayments(Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_payments(offset, limit, context)
+
+          # conversion for offset [type = java.lang.Long]
+          offset = offset
+
+          # conversion for limit [type = java.lang.Long]
+          limit = limit
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_payments(offset, limit, context)
+          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
+          return res
+        end
+
         java_signature 'Java::com.ning.billing.util.entity.Pagination searchPayments(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
         def search_payments(searchKey, offset, limit, context)
 
@@ -353,6 +404,43 @@ module Killbill
           # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.search_payments(searchKey, offset, limit, context)
+          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
+          return res
+        end
+
+        java_signature 'Java::com.ning.billing.util.entity.Pagination getRefunds(Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def get_refunds(offset, limit, context)
+
+          # conversion for offset [type = java.lang.Long]
+          offset = offset
+
+          # conversion for limit [type = java.lang.Long]
+          limit = limit
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_refunds(offset, limit, context)
+          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
+          return res
+        end
+
+        java_signature 'Java::com.ning.billing.util.entity.Pagination searchRefunds(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def search_refunds(searchKey, offset, limit, context)
+
+          # conversion for searchKey [type = java.lang.String]
+          searchKey = searchKey.to_s unless searchKey.nil?
+
+          # conversion for offset [type = java.lang.Long]
+          offset = offset
+
+          # conversion for limit [type = java.lang.Long]
+          limit = limit
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.search_refunds(searchKey, offset, limit, context)
           # conversion for res [type = com.ning.billing.util.entity.Pagination]
           res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
           return res

@@ -32,7 +32,7 @@ module Killbill
 
         include com.ning.billing.payment.api.Refund
 
-        attr_accessor :id, :created_date, :updated_date, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :refund_status, :plugin_detail
+        attr_accessor :id, :created_date, :updated_date, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :refund_status, :refund_info_plugin
 
         def initialize()
         end
@@ -78,8 +78,8 @@ module Killbill
           # conversion for refund_status [type = com.ning.billing.payment.api.RefundStatus]
           @refund_status = Java::com.ning.billing.payment.api.RefundStatus.value_of("#{@refund_status.to_s}") unless @refund_status.nil?
 
-          # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
-          @plugin_detail = @plugin_detail.to_java unless @plugin_detail.nil?
+          # conversion for refund_info_plugin [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
+          @refund_info_plugin = @refund_info_plugin.to_java unless @refund_info_plugin.nil?
           self
         end
 
@@ -137,9 +137,9 @@ module Killbill
           @refund_status = j_obj.refund_status
           @refund_status = @refund_status.to_s.to_sym unless @refund_status.nil?
 
-          # conversion for plugin_detail [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
-          @plugin_detail = j_obj.plugin_detail
-          @plugin_detail = Killbill::Plugin::Model::RefundInfoPlugin.new.to_ruby(@plugin_detail) unless @plugin_detail.nil?
+          # conversion for refund_info_plugin [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
+          @refund_info_plugin = j_obj.refund_info_plugin
+          @refund_info_plugin = Killbill::Plugin::Model::RefundInfoPlugin.new.to_ruby(@refund_info_plugin) unless @refund_info_plugin.nil?
           self
         end
 
