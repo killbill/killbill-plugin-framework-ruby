@@ -74,6 +74,26 @@ module Killbill
           return res
         end
 
+        java_signature 'Java::com.ning.billing.util.entity.Pagination searchInvoices(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        def search_invoices(searchKey, offset, limit, context)
+
+          # conversion for searchKey [type = java.lang.String]
+          searchKey = searchKey.to_s unless searchKey.nil?
+
+          # conversion for offset [type = java.lang.Long]
+          offset = offset
+
+          # conversion for limit [type = java.lang.Long]
+          limit = limit
+
+          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.search_invoices(searchKey, offset, limit, context)
+          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
+          return res
+        end
+
         java_signature 'Java::java.math.BigDecimal getAccountBalance(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
         def get_account_balance(accountId, context)
 
