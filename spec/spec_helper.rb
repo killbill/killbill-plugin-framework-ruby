@@ -18,7 +18,7 @@ require 'killbill/notification_test'
   MockAccountUserApi
 ).each do |api|
   begin
-    java_import "com.ning.billing.mock.api.#{api}"
+    java_import "org.killbill.billing.mock.api.#{api}"
   rescue LoadError
   end
 end

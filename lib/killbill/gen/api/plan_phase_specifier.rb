@@ -39,36 +39,36 @@ module Killbill
           # conversion for product_name [type = java.lang.String]
           @product_name = @product_name.to_s unless @product_name.nil?
 
-          # conversion for product_category [type = com.ning.billing.catalog.api.ProductCategory]
-          @product_category = Java::com.ning.billing.catalog.api.ProductCategory.value_of("#{@product_category.to_s}") unless @product_category.nil?
+          # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
+          @product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@product_category.to_s}") unless @product_category.nil?
 
-          # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::com.ning.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
 
-          # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
-          @phase_type = Java::com.ning.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
-          Java::com.ning.billing.catalog.api.PlanPhaseSpecifier.new(@product_name, @product_category, @billing_period, @price_list_name, @phase_type)
+          # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
+          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
+          Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier.new(@product_name, @product_category, @billing_period, @price_list_name, @phase_type)
         end
 
         def to_ruby(j_obj)
           # conversion for product_name [type = java.lang.String]
           @product_name = j_obj.product_name
 
-          # conversion for product_category [type = com.ning.billing.catalog.api.ProductCategory]
+          # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
           @product_category = j_obj.product_category
           @product_category = @product_category.to_s.to_sym unless @product_category.nil?
 
-          # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period
           @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = j_obj.price_list_name
 
-          # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
+          # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
           @phase_type = j_obj.phase_type
           @phase_type = @phase_type.to_s.to_sym unless @phase_type.nil?
           self

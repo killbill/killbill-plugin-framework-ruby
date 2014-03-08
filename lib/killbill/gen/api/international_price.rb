@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class InternationalPrice
 
-        include com.ning.billing.catalog.api.InternationalPrice
+        include org.killbill.billing.catalog.api.InternationalPrice
 
         attr_accessor :prices, :price, :is_zero
 
@@ -38,7 +38,7 @@ module Killbill
         end
 
         def to_java()
-          # conversion for prices [type = com.ning.billing.catalog.api.Price]
+          # conversion for prices [type = org.killbill.billing.catalog.api.Price]
           @prices = @prices.to_java unless @prices.nil?
 
           # conversion for price [type = java.math.BigDecimal]
@@ -54,7 +54,7 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for prices [type = com.ning.billing.catalog.api.Price]
+          # conversion for prices [type = org.killbill.billing.catalog.api.Price]
           @prices = j_obj.prices
           @prices = Killbill::Plugin::Model::Price.new.to_ruby(@prices) unless @prices.nil?
 

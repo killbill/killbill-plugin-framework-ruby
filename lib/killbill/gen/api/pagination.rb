@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.entity'
+      java_package 'org.killbill.billing.util.entity'
       class Pagination
 
-        include com.ning.billing.util.entity.Pagination
+        include org.killbill.billing.util.entity.Pagination
 
         attr_accessor :iterator, :current_offset, :next_offset, :max_nb_records, :total_nb_records
 

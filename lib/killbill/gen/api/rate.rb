@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.currency.api'
+      java_package 'org.killbill.billing.currency.api'
       class Rate
 
-        include com.ning.billing.currency.api.Rate
+        include org.killbill.billing.currency.api.Rate
 
         attr_accessor :base_currency, :currency, :value, :conversion_date
 
@@ -38,11 +38,11 @@ module Killbill
         end
 
         def to_java()
-          # conversion for base_currency [type = com.ning.billing.catalog.api.Currency]
-          @base_currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@base_currency.to_s}") unless @base_currency.nil?
+          # conversion for base_currency [type = org.killbill.billing.catalog.api.Currency]
+          @base_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@base_currency.to_s}") unless @base_currency.nil?
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for value [type = java.math.BigDecimal]
           if @value.nil?
@@ -60,11 +60,11 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for base_currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for base_currency [type = org.killbill.billing.catalog.api.Currency]
           @base_currency = j_obj.base_currency
           @base_currency = @base_currency.to_s.to_sym unless @base_currency.nil?
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 

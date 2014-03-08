@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class Product
 
-        include com.ning.billing.catalog.api.Product
+        include org.killbill.billing.catalog.api.Product
 
         attr_accessor :name, :is_retired, :available, :included, :category, :catalog_name, :limits
 
@@ -44,19 +44,19 @@ module Killbill
           # conversion for is_retired [type = boolean]
           @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
-          # conversion for available [type = com.ning.billing.catalog.api.Product]
+          # conversion for available [type = org.killbill.billing.catalog.api.Product]
           @available = @available.to_java unless @available.nil?
 
-          # conversion for included [type = com.ning.billing.catalog.api.Product]
+          # conversion for included [type = org.killbill.billing.catalog.api.Product]
           @included = @included.to_java unless @included.nil?
 
-          # conversion for category [type = com.ning.billing.catalog.api.ProductCategory]
-          @category = Java::com.ning.billing.catalog.api.ProductCategory.value_of("#{@category.to_s}") unless @category.nil?
+          # conversion for category [type = org.killbill.billing.catalog.api.ProductCategory]
+          @category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@category.to_s}") unless @category.nil?
 
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
 
-          # conversion for limits [type = com.ning.billing.catalog.api.Limit]
+          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
           @limits = @limits.to_java unless @limits.nil?
           self
         end
@@ -74,22 +74,22 @@ module Killbill
             @is_retired = tmp_bool ? true : false
           end
 
-          # conversion for available [type = com.ning.billing.catalog.api.Product]
+          # conversion for available [type = org.killbill.billing.catalog.api.Product]
           @available = j_obj.available
           @available = Killbill::Plugin::Model::Product.new.to_ruby(@available) unless @available.nil?
 
-          # conversion for included [type = com.ning.billing.catalog.api.Product]
+          # conversion for included [type = org.killbill.billing.catalog.api.Product]
           @included = j_obj.included
           @included = Killbill::Plugin::Model::Product.new.to_ruby(@included) unless @included.nil?
 
-          # conversion for category [type = com.ning.billing.catalog.api.ProductCategory]
+          # conversion for category [type = org.killbill.billing.catalog.api.ProductCategory]
           @category = j_obj.category
           @category = @category.to_s.to_sym unless @category.nil?
 
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = j_obj.catalog_name
 
-          # conversion for limits [type = com.ning.billing.catalog.api.Limit]
+          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
           @limits = j_obj.limits
           @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
           self

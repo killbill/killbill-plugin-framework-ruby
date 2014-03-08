@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.plugin.api'
+      java_package 'org.killbill.billing.payment.plugin.api'
       class PaymentMethodInfoPlugin
 
-        include com.ning.billing.payment.plugin.api.PaymentMethodInfoPlugin
+        include org.killbill.billing.payment.plugin.api.PaymentMethodInfoPlugin
 
         attr_accessor :account_id, :payment_method_id, :is_default, :external_payment_method_id
 

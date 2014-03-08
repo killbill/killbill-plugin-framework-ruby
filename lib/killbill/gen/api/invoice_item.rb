@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.invoice.api'
+      java_package 'org.killbill.billing.invoice.api'
       class InvoiceItem
 
-        include com.ning.billing.invoice.api.InvoiceItem
+        include org.killbill.billing.invoice.api.InvoiceItem
 
         attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :rate, :linked_item_id
 
@@ -53,8 +53,8 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
-          @invoice_item_type = Java::com.ning.billing.invoice.api.InvoiceItemType.value_of("#{@invoice_item_type.to_s}") unless @invoice_item_type.nil?
+          # conversion for invoice_item_type [type = org.killbill.billing.invoice.api.InvoiceItemType]
+          @invoice_item_type = Java::org.killbill.billing.invoice.api.InvoiceItemType.value_of("#{@invoice_item_type.to_s}") unless @invoice_item_type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
           @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
@@ -79,8 +79,8 @@ module Killbill
             @amount = java.math.BigDecimal.new(@amount.to_s)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for description [type = java.lang.String]
           @description = @description.to_s unless @description.nil?
@@ -130,7 +130,7 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
-          # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
+          # conversion for invoice_item_type [type = org.killbill.billing.invoice.api.InvoiceItemType]
           @invoice_item_type = j_obj.invoice_item_type
           @invoice_item_type = @invoice_item_type.to_s.to_sym unless @invoice_item_type.nil?
 
@@ -158,7 +158,7 @@ module Killbill
           @amount = j_obj.amount
           @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 

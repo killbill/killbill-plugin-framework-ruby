@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.account.api'
+      java_package 'org.killbill.billing.account.api'
       class AccountEmail
 
-        include com.ning.billing.account.api.AccountEmail
+        include org.killbill.billing.account.api.AccountEmail
 
         attr_accessor :id, :created_date, :updated_date, :account_id, :email
 

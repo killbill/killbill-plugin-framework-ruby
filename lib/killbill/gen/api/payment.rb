@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.api'
+      java_package 'org.killbill.billing.payment.api'
       class Payment
 
-        include com.ning.billing.payment.api.Payment
+        include org.killbill.billing.payment.api.Payment
 
         attr_accessor :id, :created_date, :updated_date, :account_id, :invoice_id, :payment_method_id, :payment_number, :amount, :paid_amount, :effective_date, :currency, :payment_status, :attempts, :payment_info_plugin
 
@@ -85,22 +85,22 @@ module Killbill
             @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
-          # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
-          @payment_status = Java::com.ning.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
+          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
+          @payment_status = Java::org.killbill.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
 
           # conversion for attempts [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@attempts || []).each do |m|
-            # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentAttempt]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @attempts = tmp
 
-          # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
+          # conversion for payment_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
           @payment_info_plugin = @payment_info_plugin.to_java unless @payment_info_plugin.nil?
           self
         end
@@ -157,11 +157,11 @@ module Killbill
             @effective_date = DateTime.iso8601(str)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 
-          # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
+          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
           @payment_status = j_obj.payment_status
           @payment_status = @payment_status.to_s.to_sym unless @payment_status.nil?
 
@@ -169,13 +169,13 @@ module Killbill
           @attempts = j_obj.attempts
           tmp = []
           (@attempts || []).each do |m|
-            # conversion for m [type = com.ning.billing.payment.api.PaymentAttempt]
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentAttempt]
             m = Killbill::Plugin::Model::PaymentAttempt.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @attempts = tmp
 
-          # conversion for payment_info_plugin [type = com.ning.billing.payment.plugin.api.PaymentInfoPlugin]
+          # conversion for payment_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
           @payment_info_plugin = j_obj.payment_info_plugin
           @payment_info_plugin = Killbill::Plugin::Model::PaymentInfoPlugin.new.to_ruby(@payment_info_plugin) unless @payment_info_plugin.nil?
           self

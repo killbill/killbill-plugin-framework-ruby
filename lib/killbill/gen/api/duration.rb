@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class Duration
 
-        include com.ning.billing.catalog.api.Duration
+        include org.killbill.billing.catalog.api.Duration
 
         attr_accessor :unit, :number
 
@@ -38,8 +38,8 @@ module Killbill
         end
 
         def to_java()
-          # conversion for unit [type = com.ning.billing.catalog.api.TimeUnit]
-          @unit = Java::com.ning.billing.catalog.api.TimeUnit.value_of("#{@unit.to_s}") unless @unit.nil?
+          # conversion for unit [type = org.killbill.billing.catalog.api.TimeUnit]
+          @unit = Java::org.killbill.billing.catalog.api.TimeUnit.value_of("#{@unit.to_s}") unless @unit.nil?
 
           # conversion for number [type = int]
           @number = @number
@@ -47,7 +47,7 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for unit [type = com.ning.billing.catalog.api.TimeUnit]
+          # conversion for unit [type = org.killbill.billing.catalog.api.TimeUnit]
           @unit = j_obj.unit
           @unit = @unit.to_s.to_sym unless @unit.nil?
 

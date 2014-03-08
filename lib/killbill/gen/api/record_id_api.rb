@@ -27,26 +27,26 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.util.api'
+      java_package 'org.killbill.billing.util.api'
       class RecordIdApi
 
-        include com.ning.billing.util.api.RecordIdApi
+        include org.killbill.billing.util.api.RecordIdApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::java.lang.Long getRecordId(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.lang.Long getRecordId(Java::java.util.UUID, Java::org.killbill.billing.ObjectType, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_record_id(objectId, objectType, tenantContext)
 
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
-          # conversion for objectType [type = com.ning.billing.ObjectType]
-          objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          # conversion for objectType [type = org.killbill.billing.ObjectType]
+          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
 
-          # conversion for tenantContext [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for tenantContext [type = org.killbill.billing.util.callcontext.TenantContext]
           tenantContext = tenantContext.to_java unless tenantContext.nil?
           res = @real_java_api.get_record_id(objectId, objectType, tenantContext)
           # conversion for res [type = java.lang.Long]

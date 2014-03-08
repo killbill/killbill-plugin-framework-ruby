@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.api'
+      java_package 'org.killbill.billing.payment.api'
       class PaymentMethod
 
-        include com.ning.billing.payment.api.PaymentMethod
+        include org.killbill.billing.payment.api.PaymentMethod
 
         attr_accessor :id, :created_date, :updated_date, :account_id, :is_active, :plugin_name, :plugin_detail
 
@@ -62,7 +62,7 @@ module Killbill
           # conversion for plugin_name [type = java.lang.String]
           @plugin_name = @plugin_name.to_s unless @plugin_name.nil?
 
-          # conversion for plugin_detail [type = com.ning.billing.payment.api.PaymentMethodPlugin]
+          # conversion for plugin_detail [type = org.killbill.billing.payment.api.PaymentMethodPlugin]
           @plugin_detail = @plugin_detail.to_java unless @plugin_detail.nil?
           self
         end
@@ -104,7 +104,7 @@ module Killbill
           # conversion for plugin_name [type = java.lang.String]
           @plugin_name = j_obj.plugin_name
 
-          # conversion for plugin_detail [type = com.ning.billing.payment.api.PaymentMethodPlugin]
+          # conversion for plugin_detail [type = org.killbill.billing.payment.api.PaymentMethodPlugin]
           @plugin_detail = j_obj.plugin_detail
           @plugin_detail = Killbill::Plugin::Model::PaymentMethodPlugin.new.to_ruby(@plugin_detail) unless @plugin_detail.nil?
           self

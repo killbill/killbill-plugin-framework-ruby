@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.invoice.api'
+      java_package 'org.killbill.billing.invoice.api'
       class InvoiceCreationEvent
 
-        include com.ning.billing.invoice.api.InvoiceCreationEvent
+        include org.killbill.billing.invoice.api.InvoiceCreationEvent
 
         attr_accessor 
 

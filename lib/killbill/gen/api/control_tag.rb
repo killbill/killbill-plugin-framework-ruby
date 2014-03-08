@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.tag'
+      java_package 'org.killbill.billing.util.tag'
       class ControlTag
 
-        include com.ning.billing.util.tag.ControlTag
+        include org.killbill.billing.util.tag.ControlTag
 
         attr_accessor :tag_definition_id, :object_type, :object_id, :id, :created_date, :updated_date, :control_tag_type
 
@@ -41,8 +41,8 @@ module Killbill
           # conversion for tag_definition_id [type = java.util.UUID]
           @tag_definition_id = java.util.UUID.fromString(@tag_definition_id.to_s) unless @tag_definition_id.nil?
 
-          # conversion for object_type [type = com.ning.billing.ObjectType]
-          @object_type = Java::com.ning.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
+          # conversion for object_type [type = org.killbill.billing.ObjectType]
+          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
@@ -62,8 +62,8 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for control_tag_type [type = com.ning.billing.util.tag.ControlTagType]
-          @control_tag_type = Java::com.ning.billing.util.tag.ControlTagType.value_of("#{@control_tag_type.to_s}") unless @control_tag_type.nil?
+          # conversion for control_tag_type [type = org.killbill.billing.util.tag.ControlTagType]
+          @control_tag_type = Java::org.killbill.billing.util.tag.ControlTagType.value_of("#{@control_tag_type.to_s}") unless @control_tag_type.nil?
           self
         end
 
@@ -72,7 +72,7 @@ module Killbill
           @tag_definition_id = j_obj.tag_definition_id
           @tag_definition_id = @tag_definition_id.nil? ? nil : @tag_definition_id.to_s
 
-          # conversion for object_type [type = com.ning.billing.ObjectType]
+          # conversion for object_type [type = org.killbill.billing.ObjectType]
           @object_type = j_obj.object_type
           @object_type = @object_type.to_s.to_sym unless @object_type.nil?
 
@@ -100,7 +100,7 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
-          # conversion for control_tag_type [type = com.ning.billing.util.tag.ControlTagType]
+          # conversion for control_tag_type [type = org.killbill.billing.util.tag.ControlTagType]
           @control_tag_type = j_obj.control_tag_type
           @control_tag_type = @control_tag_type.to_s.to_sym unless @control_tag_type.nil?
           self

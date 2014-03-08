@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api'
+      java_package 'org.killbill.billing.entitlement.api'
       class SubscriptionBundleTimeline
 
-        include com.ning.billing.entitlement.api.SubscriptionBundleTimeline
+        include org.killbill.billing.entitlement.api.SubscriptionBundleTimeline
 
         attr_accessor :account_id, :bundle_id, :external_key, :subscription_events
 
@@ -50,7 +50,7 @@ module Killbill
           # conversion for subscription_events [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@subscription_events || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.SubscriptionEvent]
+            # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionEvent]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -74,7 +74,7 @@ module Killbill
           @subscription_events = j_obj.subscription_events
           tmp = []
           (@subscription_events || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.SubscriptionEvent]
+            # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionEvent]
             m = Killbill::Plugin::Model::SubscriptionEvent.new.to_ruby(m) unless m.nil?
             tmp << m
           end

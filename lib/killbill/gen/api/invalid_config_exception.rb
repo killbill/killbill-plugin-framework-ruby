@@ -36,7 +36,7 @@ module Killbill
         end
 
         def to_java()
-        Java::com.ning.billing.catalog.api.InvalidConfigException.new()
+        Java::org.killbill.billing.catalog.api.InvalidConfigException.new()
       end
 
       def to_ruby(j_obj)

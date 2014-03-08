@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.entity'
+      java_package 'org.killbill.billing.util.entity'
       class Entity
 
-        include com.ning.billing.util.entity.Entity
+        include org.killbill.billing.util.entity.Entity
 
         attr_accessor :id, :created_date, :updated_date
 

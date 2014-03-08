@@ -27,17 +27,17 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.util.api'
+      java_package 'org.killbill.billing.util.api'
       class CustomFieldUserApi
 
-        include com.ning.billing.util.api.CustomFieldUserApi
+        include org.killbill.billing.util.api.CustomFieldUserApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::com.ning.billing.util.entity.Pagination searchCustomFields(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.util.entity.Pagination searchCustomFields(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def search_custom_fields(searchKey, offset, limit, context)
 
           # conversion for searchKey [type = java.lang.String]
@@ -49,15 +49,15 @@ module Killbill
           # conversion for limit [type = java.lang.Long]
           limit = limit
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.search_custom_fields(searchKey, offset, limit, context)
-          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          # conversion for res [type = org.killbill.billing.util.entity.Pagination]
           res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
           return res
         end
 
-        java_signature 'Java::com.ning.billing.util.entity.Pagination getCustomFields(Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.util.entity.Pagination getCustomFields(Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_custom_fields(offset, limit, context)
 
           # conversion for offset [type = java.lang.Long]
@@ -66,64 +66,64 @@ module Killbill
           # conversion for limit [type = java.lang.Long]
           limit = limit
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_custom_fields(offset, limit, context)
-          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          # conversion for res [type = org.killbill.billing.util.entity.Pagination]
           res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
           return res
         end
 
-        java_signature 'Java::void addCustomFields(Java::java.util.List, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void addCustomFields(Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'
         def add_custom_fields(fields, context)
 
           # conversion for fields [type = java.util.List]
           tmp = java.util.ArrayList.new
           (fields || []).each do |m|
-            # conversion for m [type = com.ning.billing.util.customfield.CustomField]
+            # conversion for m [type = org.killbill.billing.util.customfield.CustomField]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
           fields = tmp
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.add_custom_fields(fields, context)
         end
 
-        java_signature 'Java::void removeCustomFields(Java::java.util.List, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void removeCustomFields(Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'
         def remove_custom_fields(fields, context)
 
           # conversion for fields [type = java.util.List]
           tmp = java.util.ArrayList.new
           (fields || []).each do |m|
-            # conversion for m [type = com.ning.billing.util.customfield.CustomField]
+            # conversion for m [type = org.killbill.billing.util.customfield.CustomField]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
           fields = tmp
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.remove_custom_fields(fields, context)
         end
 
-        java_signature 'Java::java.util.List getCustomFieldsForObject(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getCustomFieldsForObject(Java::java.util.UUID, Java::org.killbill.billing.ObjectType, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_custom_fields_for_object(objectId, objectType, context)
 
           # conversion for objectId [type = java.util.UUID]
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
-          # conversion for objectType [type = com.ning.billing.ObjectType]
-          objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          # conversion for objectType [type = org.killbill.billing.ObjectType]
+          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_custom_fields_for_object(objectId, objectType, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.util.customfield.CustomField]
+            # conversion for m [type = org.killbill.billing.util.customfield.CustomField]
             m = Killbill::Plugin::Model::CustomField.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -131,22 +131,22 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::java.util.List getCustomFieldsForAccountType(Java::java.util.UUID, Java::com.ning.billing.ObjectType, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getCustomFieldsForAccountType(Java::java.util.UUID, Java::org.killbill.billing.ObjectType, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_custom_fields_for_account_type(accountId, objectType, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for objectType [type = com.ning.billing.ObjectType]
-          objectType = Java::com.ning.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          # conversion for objectType [type = org.killbill.billing.ObjectType]
+          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_custom_fields_for_account_type(accountId, objectType, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.util.customfield.CustomField]
+            # conversion for m [type = org.killbill.billing.util.customfield.CustomField]
             m = Killbill::Plugin::Model::CustomField.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -154,19 +154,19 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::java.util.List getCustomFieldsForAccount(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getCustomFieldsForAccount(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_custom_fields_for_account(accountId, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_custom_fields_for_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.util.customfield.CustomField]
+            # conversion for m [type = org.killbill.billing.util.customfield.CustomField]
             m = Killbill::Plugin::Model::CustomField.new.to_ruby(m) unless m.nil?
             tmp << m
           end

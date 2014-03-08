@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.currency.api'
+      java_package 'org.killbill.billing.currency.api'
       class CurrencyConversion
 
-        include com.ning.billing.currency.api.CurrencyConversion
+        include org.killbill.billing.currency.api.CurrencyConversion
 
         attr_accessor :base_currency, :rates
 
@@ -38,13 +38,13 @@ module Killbill
         end
 
         def to_java()
-          # conversion for base_currency [type = com.ning.billing.catalog.api.Currency]
-          @base_currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@base_currency.to_s}") unless @base_currency.nil?
+          # conversion for base_currency [type = org.killbill.billing.catalog.api.Currency]
+          @base_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@base_currency.to_s}") unless @base_currency.nil?
 
           # conversion for rates [type = java.util.Set]
           tmp = java.util.TreeSet.new
           (@rates || []).each do |m|
-            # conversion for m [type = com.ning.billing.currency.api.Rate]
+            # conversion for m [type = org.killbill.billing.currency.api.Rate]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -53,7 +53,7 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for base_currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for base_currency [type = org.killbill.billing.catalog.api.Currency]
           @base_currency = j_obj.base_currency
           @base_currency = @base_currency.to_s.to_sym unless @base_currency.nil?
 
@@ -61,7 +61,7 @@ module Killbill
           @rates = j_obj.rates
           tmp = []
           (@rates || []).each do |m|
-            # conversion for m [type = com.ning.billing.currency.api.Rate]
+            # conversion for m [type = org.killbill.billing.currency.api.Rate]
             m = Killbill::Plugin::Model::Rate.new.to_ruby(m) unless m.nil?
             tmp << m
           end

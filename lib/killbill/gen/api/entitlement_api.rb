@@ -27,23 +27,23 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.entitlement.api'
+      java_package 'org.killbill.billing.entitlement.api'
       class EntitlementApi
 
-        include com.ning.billing.entitlement.api.EntitlementApi
+        include org.killbill.billing.entitlement.api.EntitlementApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::com.ning.billing.entitlement.api.Entitlement createBaseEntitlement(Java::java.util.UUID, Java::com.ning.billing.catalog.api.PlanPhaseSpecifier, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement createBaseEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
         def create_base_entitlement(accountId, spec, externalKey, effectiveDate, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for spec [type = com.ning.billing.catalog.api.PlanPhaseSpecifier]
+          # conversion for spec [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
           spec = spec.to_java unless spec.nil?
 
           # conversion for externalKey [type = java.lang.String]
@@ -54,25 +54,25 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_base_entitlement(accountId, spec, externalKey, effectiveDate, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.Entitlement]
+            # conversion for res [type = org.killbill.billing.entitlement.api.Entitlement]
             res = Killbill::Plugin::Model::Entitlement.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.Entitlement addEntitlement(Java::java.util.UUID, Java::com.ning.billing.catalog.api.PlanPhaseSpecifier, Java::org.joda.time.LocalDate, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement addEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
         def add_entitlement(bundleId, spec, effectiveDate, context)
 
           # conversion for bundleId [type = java.util.UUID]
           bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
 
-          # conversion for spec [type = com.ning.billing.catalog.api.PlanPhaseSpecifier]
+          # conversion for spec [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
           spec = spec.to_java unless spec.nil?
 
           # conversion for effectiveDate [type = org.joda.time.LocalDate]
@@ -80,19 +80,19 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.add_entitlement(bundleId, spec, effectiveDate, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.Entitlement]
+            # conversion for res [type = org.killbill.billing.entitlement.api.Entitlement]
             res = Killbill::Plugin::Model::Entitlement.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.List getDryRunStatusForChange(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getDryRunStatusForChange(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_dry_run_status_for_change(bundleId, targetProductName, effectiveDate, context)
 
           # conversion for bundleId [type = java.util.UUID]
@@ -106,25 +106,25 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_dry_run_status_for_change(bundleId, targetProductName, effectiveDate, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|
-              # conversion for m [type = com.ning.billing.entitlement.api.EntitlementAOStatusDryRun]
+              # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementAOStatusDryRun]
               m = Killbill::Plugin::Model::EntitlementAOStatusDryRun.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::void pause(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void pause(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
         def pause(bundleId, effectiveDate, context)
 
           # conversion for bundleId [type = java.util.UUID]
@@ -135,12 +135,12 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.pause(bundleId, effectiveDate, context)
         end
 
-        java_signature 'Java::void resume(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void resume(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
         def resume(bundleId, effectiveDate, context)
 
           # conversion for bundleId [type = java.util.UUID]
@@ -151,54 +151,54 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.resume(bundleId, effectiveDate, context)
         end
 
-        java_signature 'Java::com.ning.billing.entitlement.api.Entitlement getEntitlementForId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement getEntitlementForId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_entitlement_for_id(id, context)
 
           # conversion for id [type = java.util.UUID]
           id = java.util.UUID.fromString(id.to_s) unless id.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_entitlement_for_id(id, context)
-            # conversion for res [type = com.ning.billing.entitlement.api.Entitlement]
+            # conversion for res [type = org.killbill.billing.entitlement.api.Entitlement]
             res = Killbill::Plugin::Model::Entitlement.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.List getAllEntitlementsForBundle(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getAllEntitlementsForBundle(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_all_entitlements_for_bundle(bundleId, context)
 
           # conversion for bundleId [type = java.util.UUID]
           bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_all_entitlements_for_bundle(bundleId, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|
-              # conversion for m [type = com.ning.billing.entitlement.api.Entitlement]
+              # conversion for m [type = org.killbill.billing.entitlement.api.Entitlement]
               m = Killbill::Plugin::Model::Entitlement.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.List getAllEntitlementsForAccountIdAndExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getAllEntitlementsForAccountIdAndExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_all_entitlements_for_account_id_and_external_key(accountId, externalKey, context)
 
           # conversion for accountId [type = java.util.UUID]
@@ -207,49 +207,49 @@ module Killbill
           # conversion for externalKey [type = java.lang.String]
           externalKey = externalKey.to_s unless externalKey.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_all_entitlements_for_account_id_and_external_key(accountId, externalKey, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|
-              # conversion for m [type = com.ning.billing.entitlement.api.Entitlement]
+              # conversion for m [type = org.killbill.billing.entitlement.api.Entitlement]
               m = Killbill::Plugin::Model::Entitlement.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.List getAllEntitlementsForAccountId(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getAllEntitlementsForAccountId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_all_entitlements_for_account_id(accountId, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_all_entitlements_for_account_id(accountId, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|
-              # conversion for m [type = com.ning.billing.entitlement.api.Entitlement]
+              # conversion for m [type = org.killbill.billing.entitlement.api.Entitlement]
               m = Killbill::Plugin::Model::Entitlement.new.to_ruby(m) unless m.nil?
               tmp << m
             end
             res = tmp
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.UUID transferEntitlements(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::java.util.UUID transferEntitlements(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
         def transfer_entitlements(sourceAccountId, destAccountId, externalKey, effectiveDate, context)
 
           # conversion for sourceAccountId [type = java.util.UUID]
@@ -266,19 +266,19 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.transfer_entitlements(sourceAccountId, destAccountId, externalKey, effectiveDate, context)
             # conversion for res [type = java.util.UUID]
             res = res.nil? ? nil : res.to_s
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.UUID transferEntitlementsOverrideBillingPolicy(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::com.ning.billing.catalog.api.BillingActionPolicy, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::java.util.UUID transferEntitlementsOverrideBillingPolicy(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.BillingActionPolicy, Java::org.killbill.billing.util.callcontext.CallContext)'
         def transfer_entitlements_override_billing_policy(sourceAccountId, destAccountId, externalKey, effectiveDate, billingPolicy, context)
 
           # conversion for sourceAccountId [type = java.util.UUID]
@@ -295,17 +295,17 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for billingPolicy [type = com.ning.billing.catalog.api.BillingActionPolicy]
-          billingPolicy = Java::com.ning.billing.catalog.api.BillingActionPolicy.value_of("#{billingPolicy.to_s}") unless billingPolicy.nil?
+          # conversion for billingPolicy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
+          billingPolicy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of("#{billingPolicy.to_s}") unless billingPolicy.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.transfer_entitlements_override_billing_policy(sourceAccountId, destAccountId, externalKey, effectiveDate, billingPolicy, context)
             # conversion for res [type = java.util.UUID]
             res = res.nil? ? nil : res.to_s
             return res
-          rescue Java::com.ning.billing.entitlement.api.EntitlementApiException => e
+          rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
           end
         end

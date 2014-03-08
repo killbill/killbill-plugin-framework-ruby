@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.callcontext'
+      java_package 'org.killbill.billing.util.callcontext'
       class CallContext
 
-        include com.ning.billing.util.callcontext.CallContext
+        include org.killbill.billing.util.callcontext.CallContext
 
         attr_accessor :tenant_id, :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date
 
@@ -47,11 +47,11 @@ module Killbill
           # conversion for user_name [type = java.lang.String]
           @user_name = @user_name.to_s unless @user_name.nil?
 
-          # conversion for call_origin [type = com.ning.billing.util.callcontext.CallOrigin]
-          @call_origin = Java::com.ning.billing.util.callcontext.CallOrigin.value_of("#{@call_origin.to_s}") unless @call_origin.nil?
+          # conversion for call_origin [type = org.killbill.billing.util.callcontext.CallOrigin]
+          @call_origin = Java::org.killbill.billing.util.callcontext.CallOrigin.value_of("#{@call_origin.to_s}") unless @call_origin.nil?
 
-          # conversion for user_type [type = com.ning.billing.util.callcontext.UserType]
-          @user_type = Java::com.ning.billing.util.callcontext.UserType.value_of("#{@user_type.to_s}") unless @user_type.nil?
+          # conversion for user_type [type = org.killbill.billing.util.callcontext.UserType]
+          @user_type = Java::org.killbill.billing.util.callcontext.UserType.value_of("#{@user_type.to_s}") unless @user_type.nil?
 
           # conversion for reason_code [type = java.lang.String]
           @reason_code = @reason_code.to_s unless @reason_code.nil?
@@ -85,11 +85,11 @@ module Killbill
           # conversion for user_name [type = java.lang.String]
           @user_name = j_obj.user_name
 
-          # conversion for call_origin [type = com.ning.billing.util.callcontext.CallOrigin]
+          # conversion for call_origin [type = org.killbill.billing.util.callcontext.CallOrigin]
           @call_origin = j_obj.call_origin
           @call_origin = @call_origin.to_s.to_sym unless @call_origin.nil?
 
-          # conversion for user_type [type = com.ning.billing.util.callcontext.UserType]
+          # conversion for user_type [type = org.killbill.billing.util.callcontext.UserType]
           @user_type = j_obj.user_type
           @user_type = @user_type.to_s.to_sym unless @user_type.nil?
 

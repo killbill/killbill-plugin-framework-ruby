@@ -44,7 +44,7 @@ module Killbill
 
           # conversion for is_updatable [type = java.lang.Boolean]
           @is_updatable = @is_updatable.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_updatable)
-          Java::com.ning.billing.payment.api.PaymentMethodKVInfo.new(@key, @value, @is_updatable)
+          Java::org.killbill.billing.payment.api.PaymentMethodKVInfo.new(@key, @value, @is_updatable)
         end
 
         def to_ruby(j_obj)

@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.tag'
+      java_package 'org.killbill.billing.util.tag'
       class Tag
 
-        include com.ning.billing.util.tag.Tag
+        include org.killbill.billing.util.tag.Tag
 
         attr_accessor :id, :created_date, :updated_date, :tag_definition_id, :object_type, :object_id
 
@@ -56,8 +56,8 @@ module Killbill
           # conversion for tag_definition_id [type = java.util.UUID]
           @tag_definition_id = java.util.UUID.fromString(@tag_definition_id.to_s) unless @tag_definition_id.nil?
 
-          # conversion for object_type [type = com.ning.billing.ObjectType]
-          @object_type = Java::com.ning.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
+          # conversion for object_type [type = org.killbill.billing.ObjectType]
+          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
@@ -89,7 +89,7 @@ module Killbill
           @tag_definition_id = j_obj.tag_definition_id
           @tag_definition_id = @tag_definition_id.nil? ? nil : @tag_definition_id.to_s
 
-          # conversion for object_type [type = com.ning.billing.ObjectType]
+          # conversion for object_type [type = org.killbill.billing.ObjectType]
           @object_type = j_obj.object_type
           @object_type = @object_type.to_s.to_sym unless @object_type.nil?
 

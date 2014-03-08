@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.currency.plugin.api'
+      java_package 'org.killbill.billing.currency.plugin.api'
       class CurrencyPluginApi < JPlugin
 
-        include com.ning.billing.currency.plugin.api.CurrencyPluginApi
+        include org.killbill.billing.currency.plugin.api.CurrencyPluginApi
 
         def initialize(real_class_name, services = {})
           super(real_class_name, services)
@@ -44,8 +44,8 @@ module Killbill
           # conversion for res [type = java.util.Set]
           tmp = java.util.TreeSet.new
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.catalog.api.Currency]
-            m = Java::com.ning.billing.catalog.api.Currency.value_of("#{m.to_s}") unless m.nil?
+            # conversion for m [type = org.killbill.billing.catalog.api.Currency]
+            m = Java::org.killbill.billing.catalog.api.Currency.value_of("#{m.to_s}") unless m.nil?
             tmp.add(m)
           end
           res = tmp
@@ -56,16 +56,16 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("get_base_currencies failure", e.message)
+          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_base_currencies failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
       end
 
-      java_signature 'Java::org.joda.time.DateTime getLatestConversionDate(Java::com.ning.billing.catalog.api.Currency)'
+      java_signature 'Java::org.joda.time.DateTime getLatestConversionDate(Java::org.killbill.billing.catalog.api.Currency)'
       def get_latest_conversion_date(baseCurrency)
 
-        # conversion for baseCurrency [type = com.ning.billing.catalog.api.Currency]
+        # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
         baseCurrency = baseCurrency.to_s.to_sym unless baseCurrency.nil?
         begin
           res = @delegate_plugin.get_latest_conversion_date(baseCurrency)
@@ -81,16 +81,16 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("get_latest_conversion_date failure", e.message)
+          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_latest_conversion_date failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
       end
 
-      java_signature 'Java::java.util.SortedSet getConversionDates(Java::com.ning.billing.catalog.api.Currency)'
+      java_signature 'Java::java.util.SortedSet getConversionDates(Java::org.killbill.billing.catalog.api.Currency)'
       def get_conversion_dates(baseCurrency)
 
-        # conversion for baseCurrency [type = com.ning.billing.catalog.api.Currency]
+        # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
         baseCurrency = baseCurrency.to_s.to_sym unless baseCurrency.nil?
         begin
           res = @delegate_plugin.get_conversion_dates(baseCurrency)
@@ -112,23 +112,23 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("get_conversion_dates failure", e.message)
+          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_conversion_dates failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
       end
 
-      java_signature 'Java::java.util.Set getCurrentRates(Java::com.ning.billing.catalog.api.Currency)'
+      java_signature 'Java::java.util.Set getCurrentRates(Java::org.killbill.billing.catalog.api.Currency)'
       def get_current_rates(baseCurrency)
 
-        # conversion for baseCurrency [type = com.ning.billing.catalog.api.Currency]
+        # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
         baseCurrency = baseCurrency.to_s.to_sym unless baseCurrency.nil?
         begin
           res = @delegate_plugin.get_current_rates(baseCurrency)
           # conversion for res [type = java.util.Set]
           tmp = java.util.TreeSet.new
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.currency.api.Rate]
+            # conversion for m [type = org.killbill.billing.currency.api.Rate]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -140,16 +140,16 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("get_current_rates failure", e.message)
+          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_current_rates failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
       end
 
-      java_signature 'Java::java.util.Set getRates(Java::com.ning.billing.catalog.api.Currency, Java::org.joda.time.DateTime)'
+      java_signature 'Java::java.util.Set getRates(Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime)'
       def get_rates(baseCurrency, conversionDate)
 
-        # conversion for baseCurrency [type = com.ning.billing.catalog.api.Currency]
+        # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
         baseCurrency = baseCurrency.to_s.to_sym unless baseCurrency.nil?
 
         # conversion for conversionDate [type = org.joda.time.DateTime]
@@ -163,7 +163,7 @@ module Killbill
           # conversion for res [type = java.util.Set]
           tmp = java.util.TreeSet.new
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.currency.api.Rate]
+            # conversion for m [type = org.killbill.billing.currency.api.Rate]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -175,7 +175,7 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::com.ning.billing.payment.plugin.api.PaymentPluginApiException.new("get_rates failure", e.message)
+          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_rates failure", e.message)
         ensure
           @delegate_plugin.after_request
         end

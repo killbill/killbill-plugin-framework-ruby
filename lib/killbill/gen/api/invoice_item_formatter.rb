@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.invoice.api.formatters'
+      java_package 'org.killbill.billing.invoice.api.formatters'
       class InvoiceItemFormatter
 
-        include com.ning.billing.invoice.api.formatters.InvoiceItemFormatter
+        include org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter
 
         attr_accessor :invoice_item_type, :invoice_id, :account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :rate, :linked_item_id, :id, :created_date, :updated_date, :formatted_start_date, :formatted_end_date, :formatted_amount
 
@@ -38,8 +38,8 @@ module Killbill
         end
 
         def to_java()
-          # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
-          @invoice_item_type = Java::com.ning.billing.invoice.api.InvoiceItemType.value_of("#{@invoice_item_type.to_s}") unless @invoice_item_type.nil?
+          # conversion for invoice_item_type [type = org.killbill.billing.invoice.api.InvoiceItemType]
+          @invoice_item_type = Java::org.killbill.billing.invoice.api.InvoiceItemType.value_of("#{@invoice_item_type.to_s}") unless @invoice_item_type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
           @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
@@ -64,8 +64,8 @@ module Killbill
             @amount = java.math.BigDecimal.new(@amount.to_s)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for description [type = java.lang.String]
           @description = @description.to_s unless @description.nil?
@@ -119,7 +119,7 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for invoice_item_type [type = com.ning.billing.invoice.api.InvoiceItemType]
+          # conversion for invoice_item_type [type = org.killbill.billing.invoice.api.InvoiceItemType]
           @invoice_item_type = j_obj.invoice_item_type
           @invoice_item_type = @invoice_item_type.to_s.to_sym unless @invoice_item_type.nil?
 
@@ -147,7 +147,7 @@ module Killbill
           @amount = j_obj.amount
           @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 

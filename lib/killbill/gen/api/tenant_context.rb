@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.callcontext'
+      java_package 'org.killbill.billing.util.callcontext'
       class TenantContext
 
-        include com.ning.billing.util.callcontext.TenantContext
+        include org.killbill.billing.util.callcontext.TenantContext
 
         attr_accessor :tenant_id
 

@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api'
+      java_package 'org.killbill.billing.entitlement.api'
       class EntitlementAOStatusDryRun
 
-        include com.ning.billing.entitlement.api.EntitlementAOStatusDryRun
+        include org.killbill.billing.entitlement.api.EntitlementAOStatusDryRun
 
         attr_accessor :id, :product_name, :billing_period, :price_list, :phase_type, :reason
 
@@ -44,17 +44,17 @@ module Killbill
           # conversion for product_name [type = java.lang.String]
           @product_name = @product_name.to_s unless @product_name.nil?
 
-          # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::com.ning.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for price_list [type = java.lang.String]
           @price_list = @price_list.to_s unless @price_list.nil?
 
-          # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
-          @phase_type = Java::com.ning.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
+          # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
+          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
 
-          # conversion for reason [type = com.ning.billing.entitlement.api.DryRunChangeReason]
-          @reason = Java::com.ning.billing.entitlement.api.DryRunChangeReason.value_of("#{@reason.to_s}") unless @reason.nil?
+          # conversion for reason [type = org.killbill.billing.entitlement.api.DryRunChangeReason]
+          @reason = Java::org.killbill.billing.entitlement.api.DryRunChangeReason.value_of("#{@reason.to_s}") unless @reason.nil?
           self
         end
 
@@ -66,18 +66,18 @@ module Killbill
           # conversion for product_name [type = java.lang.String]
           @product_name = j_obj.product_name
 
-          # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period
           @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
           # conversion for price_list [type = java.lang.String]
           @price_list = j_obj.price_list
 
-          # conversion for phase_type [type = com.ning.billing.catalog.api.PhaseType]
+          # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
           @phase_type = j_obj.phase_type
           @phase_type = @phase_type.to_s.to_sym unless @phase_type.nil?
 
-          # conversion for reason [type = com.ning.billing.entitlement.api.DryRunChangeReason]
+          # conversion for reason [type = org.killbill.billing.entitlement.api.DryRunChangeReason]
           @reason = j_obj.reason
           @reason = @reason.to_s.to_sym unless @reason.nil?
           self

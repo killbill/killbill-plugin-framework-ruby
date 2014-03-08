@@ -27,82 +27,82 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.account.api'
+      java_package 'org.killbill.billing.account.api'
       class AccountUserApi
 
-        include com.ning.billing.account.api.AccountUserApi
+        include org.killbill.billing.account.api.AccountUserApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::com.ning.billing.account.api.Account createAccount(Java::com.ning.billing.account.api.AccountData, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::org.killbill.billing.account.api.Account createAccount(Java::org.killbill.billing.account.api.AccountData, Java::org.killbill.billing.util.callcontext.CallContext)'
         def create_account(data, context)
 
-          # conversion for data [type = com.ning.billing.account.api.AccountData]
+          # conversion for data [type = org.killbill.billing.account.api.AccountData]
           data = data.to_java unless data.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_account(data, context)
-            # conversion for res [type = com.ning.billing.account.api.Account]
+            # conversion for res [type = org.killbill.billing.account.api.Account]
             res = Killbill::Plugin::Model::Account.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.account.api.AccountApiException => e
+          rescue Java::org.killbill.billing.account.api.AccountApiException => e
             raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::void updateAccount(Java::com.ning.billing.account.api.Account, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void updateAccount(Java::org.killbill.billing.account.api.Account, Java::org.killbill.billing.util.callcontext.CallContext)'
         def update_account(account, context)
 
-          # conversion for account [type = com.ning.billing.account.api.Account]
+          # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.update_account(account, context)
         end
 
-        java_signature 'Java::com.ning.billing.account.api.Account getAccountByKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.account.api.Account getAccountByKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_account_by_key(key, context)
 
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_account_by_key(key, context)
-            # conversion for res [type = com.ning.billing.account.api.Account]
+            # conversion for res [type = org.killbill.billing.account.api.Account]
             res = Killbill::Plugin::Model::Account.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.account.api.AccountApiException => e
+          rescue Java::org.killbill.billing.account.api.AccountApiException => e
             raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.account.api.Account getAccountById(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.account.api.Account getAccountById(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_account_by_id(accountId, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_account_by_id(accountId, context)
-            # conversion for res [type = com.ning.billing.account.api.Account]
+            # conversion for res [type = org.killbill.billing.account.api.Account]
             res = Killbill::Plugin::Model::Account.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.account.api.AccountApiException => e
+          rescue Java::org.killbill.billing.account.api.AccountApiException => e
             raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.util.entity.Pagination searchAccounts(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.util.entity.Pagination searchAccounts(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def search_accounts(searchKey, offset, limit, context)
 
           # conversion for searchKey [type = java.lang.String]
@@ -114,15 +114,15 @@ module Killbill
           # conversion for limit [type = java.lang.Long]
           limit = limit
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.search_accounts(searchKey, offset, limit, context)
-          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          # conversion for res [type = org.killbill.billing.util.entity.Pagination]
           res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
           return res
         end
 
-        java_signature 'Java::com.ning.billing.util.entity.Pagination getAccounts(Java::java.lang.Long, Java::java.lang.Long, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.util.entity.Pagination getAccounts(Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_accounts(offset, limit, context)
 
           # conversion for offset [type = java.lang.Long]
@@ -131,45 +131,45 @@ module Killbill
           # conversion for limit [type = java.lang.Long]
           limit = limit
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_accounts(offset, limit, context)
-          # conversion for res [type = com.ning.billing.util.entity.Pagination]
+          # conversion for res [type = org.killbill.billing.util.entity.Pagination]
           res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
           return res
         end
 
-        java_signature 'Java::java.util.UUID getIdFromKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.UUID getIdFromKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_id_from_key(externalKey, context)
 
           # conversion for externalKey [type = java.lang.String]
           externalKey = externalKey.to_s unless externalKey.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_id_from_key(externalKey, context)
             # conversion for res [type = java.util.UUID]
             res = res.nil? ? nil : res.to_s
             return res
-          rescue Java::com.ning.billing.account.api.AccountApiException => e
+          rescue Java::org.killbill.billing.account.api.AccountApiException => e
             raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.List getEmails(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getEmails(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_emails(accountId, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_emails(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.account.api.AccountEmail]
+            # conversion for m [type = org.killbill.billing.account.api.AccountEmail]
             m = Killbill::Plugin::Model::AccountEmail.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -177,30 +177,30 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::void addEmail(Java::java.util.UUID, Java::com.ning.billing.account.api.AccountEmail, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void addEmail(Java::java.util.UUID, Java::org.killbill.billing.account.api.AccountEmail, Java::org.killbill.billing.util.callcontext.CallContext)'
         def add_email(accountId, email, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for email [type = com.ning.billing.account.api.AccountEmail]
+          # conversion for email [type = org.killbill.billing.account.api.AccountEmail]
           email = email.to_java unless email.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.add_email(accountId, email, context)
         end
 
-        java_signature 'Java::void removeEmail(Java::java.util.UUID, Java::com.ning.billing.account.api.AccountEmail, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void removeEmail(Java::java.util.UUID, Java::org.killbill.billing.account.api.AccountEmail, Java::org.killbill.billing.util.callcontext.CallContext)'
         def remove_email(accountId, email, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for email [type = com.ning.billing.account.api.AccountEmail]
+          # conversion for email [type = org.killbill.billing.account.api.AccountEmail]
           email = email.to_java unless email.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.remove_email(accountId, email, context)
         end

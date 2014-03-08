@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.usage.api'
+      java_package 'org.killbill.billing.usage.api'
       class RolledUpUsage
 
-        include com.ning.billing.usage.api.RolledUpUsage
+        include org.killbill.billing.usage.api.RolledUpUsage
 
         attr_accessor :subscription_id, :unit_type, :start_time, :end_time, :amount
 

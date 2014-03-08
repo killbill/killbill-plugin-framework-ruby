@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.account.api'
+      java_package 'org.killbill.billing.account.api'
       class Account
 
-        include com.ning.billing.account.api.Account
+        include org.killbill.billing.account.api.Account
 
         attr_accessor :id, :created_date, :updated_date, :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
 
@@ -68,8 +68,8 @@ module Killbill
           # conversion for bill_cycle_day_local [type = java.lang.Integer]
           @bill_cycle_day_local = @bill_cycle_day_local
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
@@ -150,7 +150,7 @@ module Killbill
           # conversion for bill_cycle_day_local [type = java.lang.Integer]
           @bill_cycle_day_local = j_obj.bill_cycle_day_local
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 

@@ -22,17 +22,17 @@ begin
   # The Killbill Java APIs imported into that jruby bridge
   #
   IMPORT_KILLBILL_APIS = %w(
-    com.ning.billing.account.api.AccountUserApi
-    com.ning.billing.catalog.api.CatalogUserApi
-    com.ning.billing.invoice.api.InvoicePaymentApi
-    com.ning.billing.entitlement.api.EntitlementApi
-    com.ning.billing.entitlement.api.SubscriptionApi
-    com.ning.billing.invoice.api.InvoiceUserApi
-    com.ning.billing.overdue.OverdueUserApi
-    com.ning.billing.payment.api.PaymentApi
-    com.ning.billing.util.api.CustomFieldUserApi
-    com.ning.billing.util.api.TagUserApi
-    com.ning.billing.currency.api.CurrencyConversionApi
+    org.killbill.billing.account.api.AccountUserApi
+    org.killbill.billing.catalog.api.CatalogUserApi
+    org.killbill.billing.invoice.api.InvoicePaymentApi
+    org.killbill.billing.entitlement.api.EntitlementApi
+    org.killbill.billing.entitlement.api.SubscriptionApi
+    org.killbill.billing.invoice.api.InvoiceUserApi
+    org.killbill.billing.overdue.OverdueUserApi
+    org.killbill.billing.payment.api.PaymentApi
+    org.killbill.billing.util.api.CustomFieldUserApi
+    org.killbill.billing.util.api.TagUserApi
+    org.killbill.billing.currency.api.CurrencyConversionApi
     javax.servlet.http.HttpServlet
   )
 

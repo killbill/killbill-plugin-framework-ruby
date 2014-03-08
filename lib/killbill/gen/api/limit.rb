@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class Limit
 
-        include com.ning.billing.catalog.api.Limit
+        include org.killbill.billing.catalog.api.Limit
 
         attr_accessor :unit, :max, :min
 
@@ -38,7 +38,7 @@ module Killbill
         end
 
         def to_java()
-          # conversion for unit [type = com.ning.billing.catalog.api.Unit]
+          # conversion for unit [type = org.killbill.billing.catalog.api.Unit]
           @unit = @unit.to_java unless @unit.nil?
 
           # conversion for max [type = java.lang.Double]
@@ -50,7 +50,7 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for unit [type = com.ning.billing.catalog.api.Unit]
+          # conversion for unit [type = org.killbill.billing.catalog.api.Unit]
           @unit = j_obj.unit
           @unit = Killbill::Plugin::Model::Unit.new.to_ruby(@unit) unless @unit.nil?
 

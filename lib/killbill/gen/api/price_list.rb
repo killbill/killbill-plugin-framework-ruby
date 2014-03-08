@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class PriceList
 
-        include com.ning.billing.catalog.api.PriceList
+        include org.killbill.billing.catalog.api.PriceList
 
         attr_accessor :name, :is_retired, :plans
 
@@ -44,7 +44,7 @@ module Killbill
           # conversion for is_retired [type = boolean]
           @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
-          # conversion for plans [type = com.ning.billing.catalog.api.Plan]
+          # conversion for plans [type = org.killbill.billing.catalog.api.Plan]
           @plans = @plans.to_java unless @plans.nil?
           self
         end
@@ -62,7 +62,7 @@ module Killbill
             @is_retired = tmp_bool ? true : false
           end
 
-          # conversion for plans [type = com.ning.billing.catalog.api.Plan]
+          # conversion for plans [type = org.killbill.billing.catalog.api.Plan]
           @plans = j_obj.plans
           @plans = Killbill::Plugin::Model::Plan.new.to_ruby(@plans) unless @plans.nil?
           self

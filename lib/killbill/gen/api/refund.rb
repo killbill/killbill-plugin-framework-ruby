@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.api'
+      java_package 'org.killbill.billing.payment.api'
       class Refund
 
-        include com.ning.billing.payment.api.Refund
+        include org.killbill.billing.payment.api.Refund
 
         attr_accessor :id, :created_date, :updated_date, :payment_id, :is_adjusted, :refund_amount, :currency, :effective_date, :refund_status, :refund_info_plugin
 
@@ -66,8 +66,8 @@ module Killbill
             @refund_amount = java.math.BigDecimal.new(@refund_amount.to_s)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for effective_date [type = org.joda.time.DateTime]
           if !@effective_date.nil?
@@ -75,10 +75,10 @@ module Killbill
             @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for refund_status [type = com.ning.billing.payment.api.RefundStatus]
-          @refund_status = Java::com.ning.billing.payment.api.RefundStatus.value_of("#{@refund_status.to_s}") unless @refund_status.nil?
+          # conversion for refund_status [type = org.killbill.billing.payment.api.RefundStatus]
+          @refund_status = Java::org.killbill.billing.payment.api.RefundStatus.value_of("#{@refund_status.to_s}") unless @refund_status.nil?
 
-          # conversion for refund_info_plugin [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
+          # conversion for refund_info_plugin [type = org.killbill.billing.payment.plugin.api.RefundInfoPlugin]
           @refund_info_plugin = @refund_info_plugin.to_java unless @refund_info_plugin.nil?
           self
         end
@@ -121,7 +121,7 @@ module Killbill
           @refund_amount = j_obj.refund_amount
           @refund_amount = @refund_amount.nil? ? 0 : BigDecimal.new(@refund_amount.to_s)
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 
@@ -133,11 +133,11 @@ module Killbill
             @effective_date = DateTime.iso8601(str)
           end
 
-          # conversion for refund_status [type = com.ning.billing.payment.api.RefundStatus]
+          # conversion for refund_status [type = org.killbill.billing.payment.api.RefundStatus]
           @refund_status = j_obj.refund_status
           @refund_status = @refund_status.to_s.to_sym unless @refund_status.nil?
 
-          # conversion for refund_info_plugin [type = com.ning.billing.payment.plugin.api.RefundInfoPlugin]
+          # conversion for refund_info_plugin [type = org.killbill.billing.payment.plugin.api.RefundInfoPlugin]
           @refund_info_plugin = j_obj.refund_info_plugin
           @refund_info_plugin = Killbill::Plugin::Model::RefundInfoPlugin.new.to_ruby(@refund_info_plugin) unless @refund_info_plugin.nil?
           self

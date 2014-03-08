@@ -27,26 +27,26 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class CatalogUserApi
 
-        include com.ning.billing.catalog.api.CatalogUserApi
+        include org.killbill.billing.catalog.api.CatalogUserApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::com.ning.billing.catalog.api.Catalog getCatalog(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.catalog.api.Catalog getCatalog(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_catalog(catalogName, context)
 
           # conversion for catalogName [type = java.lang.String]
           catalogName = catalogName.to_s unless catalogName.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_catalog(catalogName, context)
-          # conversion for res [type = com.ning.billing.catalog.api.Catalog]
+          # conversion for res [type = org.killbill.billing.catalog.api.Catalog]
           res = Killbill::Plugin::Model::Catalog.new.to_ruby(res) unless res.nil?
           return res
         end

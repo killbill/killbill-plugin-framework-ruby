@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class Plan
 
-        include com.ning.billing.catalog.api.Plan
+        include org.killbill.billing.catalog.api.Plan
 
         attr_accessor :initial_phases, :product, :name, :is_retired, :initial_phase_iterator, :final_phase, :billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptons
 
@@ -38,10 +38,10 @@ module Killbill
         end
 
         def to_java()
-          # conversion for initial_phases [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase]
           @initial_phases = @initial_phases.to_java unless @initial_phases.nil?
 
-          # conversion for product [type = com.ning.billing.catalog.api.Product]
+          # conversion for product [type = org.killbill.billing.catalog.api.Product]
           @product = @product.to_java unless @product.nil?
 
           # conversion for name [type = java.lang.String]
@@ -53,16 +53,16 @@ module Killbill
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = Killbill::Plugin::Model::EnumeratorIterator.new(@initial_phase_iterator)
 
-          # conversion for final_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for final_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @final_phase = @final_phase.to_java unless @final_phase.nil?
 
-          # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::com.ning.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = @plans_allowed_in_bundle
 
-          # conversion for all_phases [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for all_phases [type = org.killbill.billing.catalog.api.PlanPhase]
           @all_phases = @all_phases.to_java unless @all_phases.nil?
 
           # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
@@ -75,11 +75,11 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for initial_phases [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase]
           @initial_phases = j_obj.initial_phases
           @initial_phases = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@initial_phases) unless @initial_phases.nil?
 
-          # conversion for product [type = com.ning.billing.catalog.api.Product]
+          # conversion for product [type = org.killbill.billing.catalog.api.Product]
           @product = j_obj.product
           @product = Killbill::Plugin::Model::Product.new.to_ruby(@product) unless @product.nil?
 
@@ -98,18 +98,18 @@ module Killbill
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = j_obj.initial_phase_iterator
 
-          # conversion for final_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for final_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @final_phase = j_obj.final_phase
           @final_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@final_phase) unless @final_phase.nil?
 
-          # conversion for billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period
           @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = j_obj.plans_allowed_in_bundle
 
-          # conversion for all_phases [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for all_phases [type = org.killbill.billing.catalog.api.PlanPhase]
           @all_phases = j_obj.all_phases
           @all_phases = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@all_phases) unless @all_phases.nil?
 

@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.plugin.api'
+      java_package 'org.killbill.billing.payment.plugin.api'
       class RefundInfoPlugin
 
-        include com.ning.billing.payment.plugin.api.RefundInfoPlugin
+        include org.killbill.billing.payment.plugin.api.RefundInfoPlugin
 
         attr_accessor :kb_payment_id, :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_refund_reference_id, :second_refund_reference_id
 
@@ -48,8 +48,8 @@ module Killbill
             @amount = java.math.BigDecimal.new(@amount.to_s)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
@@ -63,8 +63,8 @@ module Killbill
             @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for status [type = com.ning.billing.payment.plugin.api.RefundPluginStatus]
-          @status = Java::com.ning.billing.payment.plugin.api.RefundPluginStatus.value_of("#{@status.to_s}") unless @status.nil?
+          # conversion for status [type = org.killbill.billing.payment.plugin.api.RefundPluginStatus]
+          @status = Java::org.killbill.billing.payment.plugin.api.RefundPluginStatus.value_of("#{@status.to_s}") unless @status.nil?
 
           # conversion for gateway_error [type = java.lang.String]
           @gateway_error = @gateway_error.to_s unless @gateway_error.nil?
@@ -89,7 +89,7 @@ module Killbill
           @amount = j_obj.amount
           @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 
@@ -109,7 +109,7 @@ module Killbill
             @effective_date = DateTime.iso8601(str)
           end
 
-          # conversion for status [type = com.ning.billing.payment.plugin.api.RefundPluginStatus]
+          # conversion for status [type = org.killbill.billing.payment.plugin.api.RefundPluginStatus]
           @status = j_obj.status
           @status = @status.to_s.to_sym unless @status.nil?
 

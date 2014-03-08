@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class PriceListSet
 
-        include com.ning.billing.catalog.api.PriceListSet
+        include org.killbill.billing.catalog.api.PriceListSet
 
         attr_accessor :plan_list_from
 
@@ -38,13 +38,13 @@ module Killbill
         end
 
         def to_java()
-          # conversion for plan_list_from [type = com.ning.billing.catalog.api.Plan]
+          # conversion for plan_list_from [type = org.killbill.billing.catalog.api.Plan]
           @plan_list_from = @plan_list_from.to_java unless @plan_list_from.nil?
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for plan_list_from [type = com.ning.billing.catalog.api.Plan]
+          # conversion for plan_list_from [type = org.killbill.billing.catalog.api.Plan]
           @plan_list_from = j_obj.plan_list_from
           @plan_list_from = Killbill::Plugin::Model::Plan.new.to_ruby(@plan_list_from) unless @plan_list_from.nil?
           self

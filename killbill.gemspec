@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake', '>= 0.8.7'
   s.add_development_dependency 'rspec', '~> 2.12.0'
 
-  s.requirements << "jar 'com.ning.billing:killbill-api'"
+  s.requirements << "jar 'org.kill-bill.billing:killbill-api'"
   # For testing only
-  s.requirements << "jar 'com.ning.billing:killbill-util:tests'"
+  s.requirements << "jar 'org.kill-bill.billing:killbill-util:tests'"
 end

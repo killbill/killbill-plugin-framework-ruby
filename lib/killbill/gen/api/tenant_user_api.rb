@@ -27,71 +27,71 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.tenant.api'
+      java_package 'org.killbill.billing.tenant.api'
       class TenantUserApi
 
-        include com.ning.billing.tenant.api.TenantUserApi
+        include org.killbill.billing.tenant.api.TenantUserApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::com.ning.billing.tenant.api.Tenant createTenant(Java::com.ning.billing.tenant.api.TenantData, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::org.killbill.billing.tenant.api.Tenant createTenant(Java::org.killbill.billing.tenant.api.TenantData, Java::org.killbill.billing.util.callcontext.CallContext)'
         def create_tenant(data, context)
 
-          # conversion for data [type = com.ning.billing.tenant.api.TenantData]
+          # conversion for data [type = org.killbill.billing.tenant.api.TenantData]
           data = data.to_java unless data.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.create_tenant(data, context)
-            # conversion for res [type = com.ning.billing.tenant.api.Tenant]
+            # conversion for res [type = org.killbill.billing.tenant.api.Tenant]
             res = Killbill::Plugin::Model::Tenant.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.tenant.api.TenantApiException => e
+          rescue Java::org.killbill.billing.tenant.api.TenantApiException => e
             raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.tenant.api.Tenant getTenantByApiKey(Java::java.lang.String)'
+        java_signature 'Java::org.killbill.billing.tenant.api.Tenant getTenantByApiKey(Java::java.lang.String)'
         def get_tenant_by_api_key(key)
 
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
           begin
             res = @real_java_api.get_tenant_by_api_key(key)
-            # conversion for res [type = com.ning.billing.tenant.api.Tenant]
+            # conversion for res [type = org.killbill.billing.tenant.api.Tenant]
             res = Killbill::Plugin::Model::Tenant.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.tenant.api.TenantApiException => e
+          rescue Java::org.killbill.billing.tenant.api.TenantApiException => e
             raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::com.ning.billing.tenant.api.Tenant getTenantById(Java::java.util.UUID)'
+        java_signature 'Java::org.killbill.billing.tenant.api.Tenant getTenantById(Java::java.util.UUID)'
         def get_tenant_by_id(tenantId)
 
           # conversion for tenantId [type = java.util.UUID]
           tenantId = java.util.UUID.fromString(tenantId.to_s) unless tenantId.nil?
           begin
             res = @real_java_api.get_tenant_by_id(tenantId)
-            # conversion for res [type = com.ning.billing.tenant.api.Tenant]
+            # conversion for res [type = org.killbill.billing.tenant.api.Tenant]
             res = Killbill::Plugin::Model::Tenant.new.to_ruby(res) unless res.nil?
             return res
-          rescue Java::com.ning.billing.tenant.api.TenantApiException => e
+          rescue Java::org.killbill.billing.tenant.api.TenantApiException => e
             raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::java.util.List getTenantValueForKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::java.util.List getTenantValueForKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_tenant_value_for_key(key, context)
 
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_tenant_value_for_key(key, context)
@@ -103,12 +103,12 @@ module Killbill
             end
             res = tmp
             return res
-          rescue Java::com.ning.billing.tenant.api.TenantApiException => e
+          rescue Java::org.killbill.billing.tenant.api.TenantApiException => e
             raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
           end
         end
 
-        java_signature 'Java::void addTenantKeyValue(Java::java.lang.String, Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void addTenantKeyValue(Java::java.lang.String, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
         def add_tenant_key_value(key, value, context)
 
           # conversion for key [type = java.lang.String]
@@ -117,18 +117,18 @@ module Killbill
           # conversion for value [type = java.lang.String]
           value = value.to_s unless value.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.add_tenant_key_value(key, value, context)
         end
 
-        java_signature 'Java::void deleteTenantKey(Java::java.lang.String, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void deleteTenantKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
         def delete_tenant_key(key, context)
 
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.delete_tenant_key(key, context)
         end

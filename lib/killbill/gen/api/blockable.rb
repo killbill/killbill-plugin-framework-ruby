@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api'
+      java_package 'org.killbill.billing.entitlement.api'
       class Blockable
 
-        include com.ning.billing.entitlement.api.Blockable
+        include org.killbill.billing.entitlement.api.Blockable
 
         attr_accessor :id, :created_date, :updated_date
 

@@ -6,7 +6,7 @@ require 'singleton'
 
 module Killbill
   module Plugin
-    java_package 'com.ning.billing.osgi.api.http'
+    java_package 'org.killbill.billing.osgi.api.http'
     class RackHandler < Java::javax.servlet.http.HttpServlet
       include Singleton
 

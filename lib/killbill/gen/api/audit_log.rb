@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.audit'
+      java_package 'org.killbill.billing.util.audit'
       class AuditLog
 
-        include com.ning.billing.util.audit.AuditLog
+        include org.killbill.billing.util.audit.AuditLog
 
         attr_accessor :id, :created_date, :updated_date, :audited_entity_id, :audited_object_type, :change_type, :user_name, :reason_code, :user_token, :comment
 
@@ -56,11 +56,11 @@ module Killbill
           # conversion for audited_entity_id [type = java.util.UUID]
           @audited_entity_id = java.util.UUID.fromString(@audited_entity_id.to_s) unless @audited_entity_id.nil?
 
-          # conversion for audited_object_type [type = com.ning.billing.ObjectType]
-          @audited_object_type = Java::com.ning.billing.ObjectType.value_of("#{@audited_object_type.to_s}") unless @audited_object_type.nil?
+          # conversion for audited_object_type [type = org.killbill.billing.ObjectType]
+          @audited_object_type = Java::org.killbill.billing.ObjectType.value_of("#{@audited_object_type.to_s}") unless @audited_object_type.nil?
 
-          # conversion for change_type [type = com.ning.billing.util.audit.ChangeType]
-          @change_type = Java::com.ning.billing.util.audit.ChangeType.value_of("#{@change_type.to_s}") unless @change_type.nil?
+          # conversion for change_type [type = org.killbill.billing.util.audit.ChangeType]
+          @change_type = Java::org.killbill.billing.util.audit.ChangeType.value_of("#{@change_type.to_s}") unless @change_type.nil?
 
           # conversion for user_name [type = java.lang.String]
           @user_name = @user_name.to_s unless @user_name.nil?
@@ -101,11 +101,11 @@ module Killbill
           @audited_entity_id = j_obj.audited_entity_id
           @audited_entity_id = @audited_entity_id.nil? ? nil : @audited_entity_id.to_s
 
-          # conversion for audited_object_type [type = com.ning.billing.ObjectType]
+          # conversion for audited_object_type [type = org.killbill.billing.ObjectType]
           @audited_object_type = j_obj.audited_object_type
           @audited_object_type = @audited_object_type.to_s.to_sym unless @audited_object_type.nil?
 
-          # conversion for change_type [type = com.ning.billing.util.audit.ChangeType]
+          # conversion for change_type [type = org.killbill.billing.util.audit.ChangeType]
           @change_type = j_obj.change_type
           @change_type = @change_type.to_s.to_sym unless @change_type.nil?
 

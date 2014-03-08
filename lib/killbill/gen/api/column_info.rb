@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.api'
+      java_package 'org.killbill.billing.util.api'
       class ColumnInfo
 
-        include com.ning.billing.util.api.ColumnInfo
+        include org.killbill.billing.util.api.ColumnInfo
 
         attr_accessor :table_name, :column_name, :data_type
 

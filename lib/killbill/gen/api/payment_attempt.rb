@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.api'
+      java_package 'org.killbill.billing.payment.api'
       class PaymentAttempt
 
-        include com.ning.billing.payment.api.PaymentAttempt
+        include org.killbill.billing.payment.api.PaymentAttempt
 
         attr_accessor :id, :created_date, :updated_date, :effective_date, :gateway_error_code, :gateway_error_msg, :payment_status
 
@@ -65,8 +65,8 @@ module Killbill
           # conversion for gateway_error_msg [type = java.lang.String]
           @gateway_error_msg = @gateway_error_msg.to_s unless @gateway_error_msg.nil?
 
-          # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
-          @payment_status = Java::com.ning.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
+          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
+          @payment_status = Java::org.killbill.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
           self
         end
 
@@ -105,7 +105,7 @@ module Killbill
           # conversion for gateway_error_msg [type = java.lang.String]
           @gateway_error_msg = j_obj.gateway_error_msg
 
-          # conversion for payment_status [type = com.ning.billing.payment.api.PaymentStatus]
+          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
           @payment_status = j_obj.payment_status
           @payment_status = @payment_status.to_s.to_sym unless @payment_status.nil?
           self

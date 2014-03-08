@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class Price
 
-        include com.ning.billing.catalog.api.Price
+        include org.killbill.billing.catalog.api.Price
 
         attr_accessor :currency, :value
 
@@ -38,8 +38,8 @@ module Killbill
         end
 
         def to_java()
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for value [type = java.math.BigDecimal]
           if @value.nil?
@@ -51,7 +51,7 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 

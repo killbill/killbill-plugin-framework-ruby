@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class Unit
 
-        include com.ning.billing.catalog.api.Unit
+        include org.killbill.billing.catalog.api.Unit
 
         attr_accessor :name
 

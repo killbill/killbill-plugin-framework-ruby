@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.catalog.api'
+      java_package 'org.killbill.billing.catalog.api'
       class Catalog
 
-        include com.ning.billing.catalog.api.Catalog
+        include org.killbill.billing.catalog.api.Catalog
 
         attr_accessor :catalog_name, :supported_currencies, :products, :plans
 
@@ -41,13 +41,13 @@ module Killbill
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
 
-          # conversion for supported_currencies [type = com.ning.billing.catalog.api.Currency]
-          @supported_currencies = Java::com.ning.billing.catalog.api.Currency.value_of("#{@supported_currencies.to_s}") unless @supported_currencies.nil?
+          # conversion for supported_currencies [type = org.killbill.billing.catalog.api.Currency]
+          @supported_currencies = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@supported_currencies.to_s}") unless @supported_currencies.nil?
 
-          # conversion for products [type = com.ning.billing.catalog.api.Product]
+          # conversion for products [type = org.killbill.billing.catalog.api.Product]
           @products = @products.to_java unless @products.nil?
 
-          # conversion for plans [type = com.ning.billing.catalog.api.Plan]
+          # conversion for plans [type = org.killbill.billing.catalog.api.Plan]
           @plans = @plans.to_java unless @plans.nil?
           self
         end
@@ -56,15 +56,15 @@ module Killbill
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = j_obj.catalog_name
 
-          # conversion for supported_currencies [type = com.ning.billing.catalog.api.Currency]
+          # conversion for supported_currencies [type = org.killbill.billing.catalog.api.Currency]
           @supported_currencies = j_obj.supported_currencies
           @supported_currencies = @supported_currencies.to_s.to_sym unless @supported_currencies.nil?
 
-          # conversion for products [type = com.ning.billing.catalog.api.Product]
+          # conversion for products [type = org.killbill.billing.catalog.api.Product]
           @products = j_obj.products
           @products = Killbill::Plugin::Model::Product.new.to_ruby(@products) unless @products.nil?
 
-          # conversion for plans [type = com.ning.billing.catalog.api.Plan]
+          # conversion for plans [type = org.killbill.billing.catalog.api.Plan]
           @plans = j_obj.plans
           @plans = Killbill::Plugin::Model::Plan.new.to_ruby(@plans) unless @plans.nil?
           self

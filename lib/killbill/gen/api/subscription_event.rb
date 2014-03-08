@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api'
+      java_package 'org.killbill.billing.entitlement.api'
       class SubscriptionEvent
 
-        include com.ning.billing.entitlement.api.SubscriptionEvent
+        include org.killbill.billing.entitlement.api.SubscriptionEvent
 
         attr_accessor :id, :entitlement_id, :effective_date, :requested_date, :subscription_event_type, :is_blocked_billing, :is_blocked_entitlement, :service_name, :service_state_name, :prev_product, :prev_plan, :prev_phase, :prev_price_list, :prev_billing_period, :next_product, :next_plan, :next_phase, :next_price_list, :next_billing_period
 
@@ -54,8 +54,8 @@ module Killbill
             @requested_date = Java::org.joda.time.LocalDate.parse(@requested_date.to_s)
           end
 
-          # conversion for subscription_event_type [type = com.ning.billing.entitlement.api.SubscriptionEventType]
-          @subscription_event_type = Java::com.ning.billing.entitlement.api.SubscriptionEventType.value_of("#{@subscription_event_type.to_s}") unless @subscription_event_type.nil?
+          # conversion for subscription_event_type [type = org.killbill.billing.entitlement.api.SubscriptionEventType]
+          @subscription_event_type = Java::org.killbill.billing.entitlement.api.SubscriptionEventType.value_of("#{@subscription_event_type.to_s}") unless @subscription_event_type.nil?
 
           # conversion for is_blocked_billing [type = boolean]
           @is_blocked_billing = @is_blocked_billing.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_blocked_billing)
@@ -69,35 +69,35 @@ module Killbill
           # conversion for service_state_name [type = java.lang.String]
           @service_state_name = @service_state_name.to_s unless @service_state_name.nil?
 
-          # conversion for prev_product [type = com.ning.billing.catalog.api.Product]
+          # conversion for prev_product [type = org.killbill.billing.catalog.api.Product]
           @prev_product = @prev_product.to_java unless @prev_product.nil?
 
-          # conversion for prev_plan [type = com.ning.billing.catalog.api.Plan]
+          # conversion for prev_plan [type = org.killbill.billing.catalog.api.Plan]
           @prev_plan = @prev_plan.to_java unless @prev_plan.nil?
 
-          # conversion for prev_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for prev_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @prev_phase = @prev_phase.to_java unless @prev_phase.nil?
 
-          # conversion for prev_price_list [type = com.ning.billing.catalog.api.PriceList]
+          # conversion for prev_price_list [type = org.killbill.billing.catalog.api.PriceList]
           @prev_price_list = @prev_price_list.to_java unless @prev_price_list.nil?
 
-          # conversion for prev_billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          @prev_billing_period = Java::com.ning.billing.catalog.api.BillingPeriod.value_of("#{@prev_billing_period.to_s}") unless @prev_billing_period.nil?
+          # conversion for prev_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @prev_billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@prev_billing_period.to_s}") unless @prev_billing_period.nil?
 
-          # conversion for next_product [type = com.ning.billing.catalog.api.Product]
+          # conversion for next_product [type = org.killbill.billing.catalog.api.Product]
           @next_product = @next_product.to_java unless @next_product.nil?
 
-          # conversion for next_plan [type = com.ning.billing.catalog.api.Plan]
+          # conversion for next_plan [type = org.killbill.billing.catalog.api.Plan]
           @next_plan = @next_plan.to_java unless @next_plan.nil?
 
-          # conversion for next_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for next_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @next_phase = @next_phase.to_java unless @next_phase.nil?
 
-          # conversion for next_price_list [type = com.ning.billing.catalog.api.PriceList]
+          # conversion for next_price_list [type = org.killbill.billing.catalog.api.PriceList]
           @next_price_list = @next_price_list.to_java unless @next_price_list.nil?
 
-          # conversion for next_billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
-          @next_billing_period = Java::com.ning.billing.catalog.api.BillingPeriod.value_of("#{@next_billing_period.to_s}") unless @next_billing_period.nil?
+          # conversion for next_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @next_billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@next_billing_period.to_s}") unless @next_billing_period.nil?
           self
         end
 
@@ -122,7 +122,7 @@ module Killbill
             @requested_date = @requested_date.to_s
           end
 
-          # conversion for subscription_event_type [type = com.ning.billing.entitlement.api.SubscriptionEventType]
+          # conversion for subscription_event_type [type = org.killbill.billing.entitlement.api.SubscriptionEventType]
           @subscription_event_type = j_obj.subscription_event_type
           @subscription_event_type = @subscription_event_type.to_s.to_sym unless @subscription_event_type.nil?
 
@@ -150,43 +150,43 @@ module Killbill
           # conversion for service_state_name [type = java.lang.String]
           @service_state_name = j_obj.service_state_name
 
-          # conversion for prev_product [type = com.ning.billing.catalog.api.Product]
+          # conversion for prev_product [type = org.killbill.billing.catalog.api.Product]
           @prev_product = j_obj.prev_product
           @prev_product = Killbill::Plugin::Model::Product.new.to_ruby(@prev_product) unless @prev_product.nil?
 
-          # conversion for prev_plan [type = com.ning.billing.catalog.api.Plan]
+          # conversion for prev_plan [type = org.killbill.billing.catalog.api.Plan]
           @prev_plan = j_obj.prev_plan
           @prev_plan = Killbill::Plugin::Model::Plan.new.to_ruby(@prev_plan) unless @prev_plan.nil?
 
-          # conversion for prev_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for prev_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @prev_phase = j_obj.prev_phase
           @prev_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@prev_phase) unless @prev_phase.nil?
 
-          # conversion for prev_price_list [type = com.ning.billing.catalog.api.PriceList]
+          # conversion for prev_price_list [type = org.killbill.billing.catalog.api.PriceList]
           @prev_price_list = j_obj.prev_price_list
           @prev_price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@prev_price_list) unless @prev_price_list.nil?
 
-          # conversion for prev_billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
+          # conversion for prev_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @prev_billing_period = j_obj.prev_billing_period
           @prev_billing_period = @prev_billing_period.to_s.to_sym unless @prev_billing_period.nil?
 
-          # conversion for next_product [type = com.ning.billing.catalog.api.Product]
+          # conversion for next_product [type = org.killbill.billing.catalog.api.Product]
           @next_product = j_obj.next_product
           @next_product = Killbill::Plugin::Model::Product.new.to_ruby(@next_product) unless @next_product.nil?
 
-          # conversion for next_plan [type = com.ning.billing.catalog.api.Plan]
+          # conversion for next_plan [type = org.killbill.billing.catalog.api.Plan]
           @next_plan = j_obj.next_plan
           @next_plan = Killbill::Plugin::Model::Plan.new.to_ruby(@next_plan) unless @next_plan.nil?
 
-          # conversion for next_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for next_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @next_phase = j_obj.next_phase
           @next_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@next_phase) unless @next_phase.nil?
 
-          # conversion for next_price_list [type = com.ning.billing.catalog.api.PriceList]
+          # conversion for next_price_list [type = org.killbill.billing.catalog.api.PriceList]
           @next_price_list = j_obj.next_price_list
           @next_price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@next_price_list) unless @next_price_list.nil?
 
-          # conversion for next_billing_period [type = com.ning.billing.catalog.api.BillingPeriod]
+          # conversion for next_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @next_billing_period = j_obj.next_billing_period
           @next_billing_period = @next_billing_period.to_s.to_sym unless @next_billing_period.nil?
           self

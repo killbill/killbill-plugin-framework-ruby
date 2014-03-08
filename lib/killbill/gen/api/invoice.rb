@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.invoice.api'
+      java_package 'org.killbill.billing.invoice.api'
       class Invoice
 
-        include com.ning.billing.invoice.api.Invoice
+        include org.killbill.billing.invoice.api.Invoice
 
         attr_accessor :id, :created_date, :updated_date, :invoice_items, :number_of_items, :payments, :number_of_payments, :account_id, :invoice_number, :invoice_date, :target_date, :currency, :paid_amount, :original_charged_amount, :charged_amount, :credited_amount, :refunded_amount, :balance, :is_migration_invoice
 
@@ -56,7 +56,7 @@ module Killbill
           # conversion for invoice_items [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@invoice_items || []).each do |m|
-            # conversion for m [type = com.ning.billing.invoice.api.InvoiceItem]
+            # conversion for m [type = org.killbill.billing.invoice.api.InvoiceItem]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -68,7 +68,7 @@ module Killbill
           # conversion for payments [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@payments || []).each do |m|
-            # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
+            # conversion for m [type = org.killbill.billing.invoice.api.InvoicePayment]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -93,8 +93,8 @@ module Killbill
             @target_date = Java::org.joda.time.LocalDate.parse(@target_date.to_s)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for paid_amount [type = java.math.BigDecimal]
           if @paid_amount.nil?
@@ -168,7 +168,7 @@ module Killbill
           @invoice_items = j_obj.invoice_items
           tmp = []
           (@invoice_items || []).each do |m|
-            # conversion for m [type = com.ning.billing.invoice.api.InvoiceItem]
+            # conversion for m [type = org.killbill.billing.invoice.api.InvoiceItem]
             m = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -181,7 +181,7 @@ module Killbill
           @payments = j_obj.payments
           tmp = []
           (@payments || []).each do |m|
-            # conversion for m [type = com.ning.billing.invoice.api.InvoicePayment]
+            # conversion for m [type = org.killbill.billing.invoice.api.InvoicePayment]
             m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(m) unless m.nil?
             tmp << m
           end
@@ -209,7 +209,7 @@ module Killbill
             @target_date = @target_date.to_s
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 

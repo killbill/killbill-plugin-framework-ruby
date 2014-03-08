@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.api'
+      java_package 'org.killbill.billing.util.api'
       class DatabaseExportOutputStream
 
-        include com.ning.billing.util.api.DatabaseExportOutputStream
+        include org.killbill.billing.util.api.DatabaseExportOutputStream
 
         attr_accessor 
 

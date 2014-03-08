@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.customfield'
+      java_package 'org.killbill.billing.util.customfield'
       class CustomField
 
-        include com.ning.billing.util.customfield.CustomField
+        include org.killbill.billing.util.customfield.CustomField
 
         attr_accessor :id, :created_date, :updated_date, :object_id, :object_type, :field_name, :field_value
 
@@ -56,8 +56,8 @@ module Killbill
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
 
-          # conversion for object_type [type = com.ning.billing.ObjectType]
-          @object_type = Java::com.ning.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
+          # conversion for object_type [type = org.killbill.billing.ObjectType]
+          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
 
           # conversion for field_name [type = java.lang.String]
           @field_name = @field_name.to_s unless @field_name.nil?
@@ -92,7 +92,7 @@ module Killbill
           @object_id = j_obj.object_id
           @object_id = @object_id.nil? ? nil : @object_id.to_s
 
-          # conversion for object_type [type = com.ning.billing.ObjectType]
+          # conversion for object_type [type = org.killbill.billing.ObjectType]
           @object_type = j_obj.object_type
           @object_type = @object_type.to_s.to_sym unless @object_type.nil?
 

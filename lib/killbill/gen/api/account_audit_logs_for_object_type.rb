@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.audit'
+      java_package 'org.killbill.billing.util.audit'
       class AccountAuditLogsForObjectType
 
-        include com.ning.billing.util.audit.AccountAuditLogsForObjectType
+        include org.killbill.billing.util.audit.AccountAuditLogsForObjectType
 
         attr_accessor :audit_logs
 
@@ -41,7 +41,7 @@ module Killbill
           # conversion for audit_logs [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@audit_logs || []).each do |m|
-            # conversion for m [type = com.ning.billing.util.audit.AuditLog]
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -54,7 +54,7 @@ module Killbill
           @audit_logs = j_obj.audit_logs
           tmp = []
           (@audit_logs || []).each do |m|
-            # conversion for m [type = com.ning.billing.util.audit.AuditLog]
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
             m = Killbill::Plugin::Model::AuditLog.new.to_ruby(m) unless m.nil?
             tmp << m
           end

@@ -27,17 +27,17 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.usage.api'
+      java_package 'org.killbill.billing.usage.api'
       class UsageUserApi
 
-        include com.ning.billing.usage.api.UsageUserApi
+        include org.killbill.billing.usage.api.UsageUserApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::void recordRolledUpUsage(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.DateTime, Java::org.joda.time.DateTime, Java::java.math.BigDecimal, Java::com.ning.billing.util.callcontext.CallContext)'
+        java_signature 'Java::void recordRolledUpUsage(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.DateTime, Java::org.joda.time.DateTime, Java::java.math.BigDecimal, Java::org.killbill.billing.util.callcontext.CallContext)'
         def record_rolled_up_usage(subscriptionId, unitType, startTime, endTime, amount, context)
 
           # conversion for subscriptionId [type = java.util.UUID]
@@ -65,21 +65,21 @@ module Killbill
             amount = java.math.BigDecimal.new(amount.to_s)
           end
 
-          # conversion for context [type = com.ning.billing.util.callcontext.CallContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.record_rolled_up_usage(subscriptionId, unitType, startTime, endTime, amount, context)
         end
 
-        java_signature 'Java::com.ning.billing.usage.api.RolledUpUsage getUsageForSubscription(Java::java.util.UUID, Java::com.ning.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.usage.api.RolledUpUsage getUsageForSubscription(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_usage_for_subscription(subscriptionId, context)
 
           # conversion for subscriptionId [type = java.util.UUID]
           subscriptionId = java.util.UUID.fromString(subscriptionId.to_s) unless subscriptionId.nil?
 
-          # conversion for context [type = com.ning.billing.util.callcontext.TenantContext]
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           res = @real_java_api.get_usage_for_subscription(subscriptionId, context)
-          # conversion for res [type = com.ning.billing.usage.api.RolledUpUsage]
+          # conversion for res [type = org.killbill.billing.usage.api.RolledUpUsage]
           res = Killbill::Plugin::Model::RolledUpUsage.new.to_ruby(res) unless res.nil?
           return res
         end

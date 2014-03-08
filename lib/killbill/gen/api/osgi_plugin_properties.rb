@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.osgi.api'
+      java_package 'org.killbill.billing.osgi.api'
       class OSGIPluginProperties
 
-        include com.ning.billing.osgi.api.OSGIPluginProperties
+        include org.killbill.billing.osgi.api.OSGIPluginProperties
 
         attr_accessor 
 

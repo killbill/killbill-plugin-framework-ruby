@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api'
+      java_package 'org.killbill.billing.entitlement.api'
       class Entitlement
 
-        include com.ning.billing.entitlement.api.Entitlement
+        include org.killbill.billing.entitlement.api.Entitlement
 
         attr_accessor :id, :created_date, :updated_date, :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :last_active_product, :last_active_plan, :last_active_phase, :last_active_price_list, :last_active_product_category
 
@@ -65,11 +65,11 @@ module Killbill
           # conversion for external_key [type = java.lang.String]
           @external_key = @external_key.to_s unless @external_key.nil?
 
-          # conversion for state [type = com.ning.billing.entitlement.api.EntitlementState]
-          @state = Java::com.ning.billing.entitlement.api.EntitlementState.value_of("#{@state.to_s}") unless @state.nil?
+          # conversion for state [type = org.killbill.billing.entitlement.api.EntitlementState]
+          @state = Java::org.killbill.billing.entitlement.api.EntitlementState.value_of("#{@state.to_s}") unless @state.nil?
 
-          # conversion for source_type [type = com.ning.billing.entitlement.api.EntitlementSourceType]
-          @source_type = Java::com.ning.billing.entitlement.api.EntitlementSourceType.value_of("#{@source_type.to_s}") unless @source_type.nil?
+          # conversion for source_type [type = org.killbill.billing.entitlement.api.EntitlementSourceType]
+          @source_type = Java::org.killbill.billing.entitlement.api.EntitlementSourceType.value_of("#{@source_type.to_s}") unless @source_type.nil?
 
           # conversion for effective_start_date [type = org.joda.time.LocalDate]
           if !@effective_start_date.nil?
@@ -81,20 +81,20 @@ module Killbill
             @effective_end_date = Java::org.joda.time.LocalDate.parse(@effective_end_date.to_s)
           end
 
-          # conversion for last_active_product [type = com.ning.billing.catalog.api.Product]
+          # conversion for last_active_product [type = org.killbill.billing.catalog.api.Product]
           @last_active_product = @last_active_product.to_java unless @last_active_product.nil?
 
-          # conversion for last_active_plan [type = com.ning.billing.catalog.api.Plan]
+          # conversion for last_active_plan [type = org.killbill.billing.catalog.api.Plan]
           @last_active_plan = @last_active_plan.to_java unless @last_active_plan.nil?
 
-          # conversion for last_active_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for last_active_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @last_active_phase = @last_active_phase.to_java unless @last_active_phase.nil?
 
-          # conversion for last_active_price_list [type = com.ning.billing.catalog.api.PriceList]
+          # conversion for last_active_price_list [type = org.killbill.billing.catalog.api.PriceList]
           @last_active_price_list = @last_active_price_list.to_java unless @last_active_price_list.nil?
 
-          # conversion for last_active_product_category [type = com.ning.billing.catalog.api.ProductCategory]
-          @last_active_product_category = Java::com.ning.billing.catalog.api.ProductCategory.value_of("#{@last_active_product_category.to_s}") unless @last_active_product_category.nil?
+          # conversion for last_active_product_category [type = org.killbill.billing.catalog.api.ProductCategory]
+          @last_active_product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@last_active_product_category.to_s}") unless @last_active_product_category.nil?
           self
         end
 
@@ -134,11 +134,11 @@ module Killbill
           # conversion for external_key [type = java.lang.String]
           @external_key = j_obj.external_key
 
-          # conversion for state [type = com.ning.billing.entitlement.api.EntitlementState]
+          # conversion for state [type = org.killbill.billing.entitlement.api.EntitlementState]
           @state = j_obj.state
           @state = @state.to_s.to_sym unless @state.nil?
 
-          # conversion for source_type [type = com.ning.billing.entitlement.api.EntitlementSourceType]
+          # conversion for source_type [type = org.killbill.billing.entitlement.api.EntitlementSourceType]
           @source_type = j_obj.source_type
           @source_type = @source_type.to_s.to_sym unless @source_type.nil?
 
@@ -154,23 +154,23 @@ module Killbill
             @effective_end_date = @effective_end_date.to_s
           end
 
-          # conversion for last_active_product [type = com.ning.billing.catalog.api.Product]
+          # conversion for last_active_product [type = org.killbill.billing.catalog.api.Product]
           @last_active_product = j_obj.last_active_product
           @last_active_product = Killbill::Plugin::Model::Product.new.to_ruby(@last_active_product) unless @last_active_product.nil?
 
-          # conversion for last_active_plan [type = com.ning.billing.catalog.api.Plan]
+          # conversion for last_active_plan [type = org.killbill.billing.catalog.api.Plan]
           @last_active_plan = j_obj.last_active_plan
           @last_active_plan = Killbill::Plugin::Model::Plan.new.to_ruby(@last_active_plan) unless @last_active_plan.nil?
 
-          # conversion for last_active_phase [type = com.ning.billing.catalog.api.PlanPhase]
+          # conversion for last_active_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @last_active_phase = j_obj.last_active_phase
           @last_active_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@last_active_phase) unless @last_active_phase.nil?
 
-          # conversion for last_active_price_list [type = com.ning.billing.catalog.api.PriceList]
+          # conversion for last_active_price_list [type = org.killbill.billing.catalog.api.PriceList]
           @last_active_price_list = j_obj.last_active_price_list
           @last_active_price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@last_active_price_list) unless @last_active_price_list.nil?
 
-          # conversion for last_active_product_category [type = com.ning.billing.catalog.api.ProductCategory]
+          # conversion for last_active_product_category [type = org.killbill.billing.catalog.api.ProductCategory]
           @last_active_product_category = j_obj.last_active_product_category
           @last_active_product_category = @last_active_product_category.to_s.to_sym unless @last_active_product_category.nil?
           self

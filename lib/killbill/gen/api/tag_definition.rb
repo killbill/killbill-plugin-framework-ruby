@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.util.tag'
+      java_package 'org.killbill.billing.util.tag'
       class TagDefinition
 
-        include com.ning.billing.util.tag.TagDefinition
+        include org.killbill.billing.util.tag.TagDefinition
 
         attr_accessor :id, :created_date, :updated_date, :name, :description, :is_control_tag, :applicable_object_types
 
@@ -65,8 +65,8 @@ module Killbill
           # conversion for applicable_object_types [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@applicable_object_types || []).each do |m|
-            # conversion for m [type = com.ning.billing.ObjectType]
-            m = Java::com.ning.billing.ObjectType.value_of("#{m.to_s}") unless m.nil?
+            # conversion for m [type = org.killbill.billing.ObjectType]
+            m = Java::org.killbill.billing.ObjectType.value_of("#{m.to_s}") unless m.nil?
             tmp.add(m)
           end
           @applicable_object_types = tmp
@@ -113,7 +113,7 @@ module Killbill
           @applicable_object_types = j_obj.applicable_object_types
           tmp = []
           (@applicable_object_types || []).each do |m|
-            # conversion for m [type = com.ning.billing.ObjectType]
+            # conversion for m [type = org.killbill.billing.ObjectType]
             m = m.to_s.to_sym unless m.nil?
             tmp << m
           end

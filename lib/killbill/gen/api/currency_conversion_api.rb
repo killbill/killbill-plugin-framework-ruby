@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.currency.api'
+      java_package 'org.killbill.billing.currency.api'
       class CurrencyConversionApi
 
-        include com.ning.billing.currency.api.CurrencyConversionApi
+        include org.killbill.billing.currency.api.CurrencyConversionApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
@@ -44,37 +44,37 @@ module Killbill
           # conversion for res [type = java.util.Set]
           tmp = []
           (res || []).each do |m|
-            # conversion for m [type = com.ning.billing.catalog.api.Currency]
+            # conversion for m [type = org.killbill.billing.catalog.api.Currency]
             m = m.to_s.to_sym unless m.nil?
             tmp << m
           end
           res = tmp
           return res
-        rescue Java::com.ning.billing.currency.api.CurrencyConversionException => e
+        rescue Java::org.killbill.billing.currency.api.CurrencyConversionException => e
           raise Killbill::Plugin::Model::CurrencyConversionException.new.to_ruby(e)
         end
       end
 
-      java_signature 'Java::com.ning.billing.currency.api.CurrencyConversion getCurrentCurrencyConversion(Java::com.ning.billing.catalog.api.Currency)'
+      java_signature 'Java::org.killbill.billing.currency.api.CurrencyConversion getCurrentCurrencyConversion(Java::org.killbill.billing.catalog.api.Currency)'
       def get_current_currency_conversion(baseCurrency)
 
-        # conversion for baseCurrency [type = com.ning.billing.catalog.api.Currency]
-        baseCurrency = Java::com.ning.billing.catalog.api.Currency.value_of("#{baseCurrency.to_s}") unless baseCurrency.nil?
+        # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
+        baseCurrency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{baseCurrency.to_s}") unless baseCurrency.nil?
         begin
           res = @real_java_api.get_current_currency_conversion(baseCurrency)
-          # conversion for res [type = com.ning.billing.currency.api.CurrencyConversion]
+          # conversion for res [type = org.killbill.billing.currency.api.CurrencyConversion]
           res = Killbill::Plugin::Model::CurrencyConversion.new.to_ruby(res) unless res.nil?
           return res
-        rescue Java::com.ning.billing.currency.api.CurrencyConversionException => e
+        rescue Java::org.killbill.billing.currency.api.CurrencyConversionException => e
           raise Killbill::Plugin::Model::CurrencyConversionException.new.to_ruby(e)
         end
       end
 
-      java_signature 'Java::com.ning.billing.currency.api.CurrencyConversion getCurrencyConversion(Java::com.ning.billing.catalog.api.Currency, Java::org.joda.time.DateTime)'
+      java_signature 'Java::org.killbill.billing.currency.api.CurrencyConversion getCurrencyConversion(Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime)'
       def get_currency_conversion(baseCurrency, dateConversion)
 
-        # conversion for baseCurrency [type = com.ning.billing.catalog.api.Currency]
-        baseCurrency = Java::com.ning.billing.catalog.api.Currency.value_of("#{baseCurrency.to_s}") unless baseCurrency.nil?
+        # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
+        baseCurrency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{baseCurrency.to_s}") unless baseCurrency.nil?
 
         # conversion for dateConversion [type = org.joda.time.DateTime]
         if !dateConversion.nil?
@@ -83,10 +83,10 @@ module Killbill
         end
         begin
           res = @real_java_api.get_currency_conversion(baseCurrency, dateConversion)
-          # conversion for res [type = com.ning.billing.currency.api.CurrencyConversion]
+          # conversion for res [type = org.killbill.billing.currency.api.CurrencyConversion]
           res = Killbill::Plugin::Model::CurrencyConversion.new.to_ruby(res) unless res.nil?
           return res
-        rescue Java::com.ning.billing.currency.api.CurrencyConversionException => e
+        rescue Java::org.killbill.billing.currency.api.CurrencyConversionException => e
           raise Killbill::Plugin::Model::CurrencyConversionException.new.to_ruby(e)
         end
       end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 java_import java.util.UUID
 java_import org.joda.time.DateTimeZone
-java_import com.ning.billing.catalog.api.Currency
+java_import org.killbill.billing.catalog.api.Currency
 
 describe Killbill::Plugin do
   before(:each) do

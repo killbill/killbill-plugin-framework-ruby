@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.invoice.api'
+      java_package 'org.killbill.billing.invoice.api'
       class InvoicePayment
 
-        include com.ning.billing.invoice.api.InvoicePayment
+        include org.killbill.billing.invoice.api.InvoicePayment
 
         attr_accessor :id, :created_date, :updated_date, :payment_id, :type, :invoice_id, :payment_date, :amount, :currency, :linked_invoice_payment_id, :payment_cookie_id, :processed_currency
 
@@ -56,8 +56,8 @@ module Killbill
           # conversion for payment_id [type = java.util.UUID]
           @payment_id = java.util.UUID.fromString(@payment_id.to_s) unless @payment_id.nil?
 
-          # conversion for type [type = com.ning.billing.invoice.api.InvoicePaymentType]
-          @type = Java::com.ning.billing.invoice.api.InvoicePaymentType.value_of("#{@type.to_s}") unless @type.nil?
+          # conversion for type [type = org.killbill.billing.invoice.api.InvoicePaymentType]
+          @type = Java::org.killbill.billing.invoice.api.InvoicePaymentType.value_of("#{@type.to_s}") unless @type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
           @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
@@ -75,8 +75,8 @@ module Killbill
             @amount = java.math.BigDecimal.new(@amount.to_s)
           end
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
-          @currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for linked_invoice_payment_id [type = java.util.UUID]
           @linked_invoice_payment_id = java.util.UUID.fromString(@linked_invoice_payment_id.to_s) unless @linked_invoice_payment_id.nil?
@@ -84,8 +84,8 @@ module Killbill
           # conversion for payment_cookie_id [type = java.util.UUID]
           @payment_cookie_id = java.util.UUID.fromString(@payment_cookie_id.to_s) unless @payment_cookie_id.nil?
 
-          # conversion for processed_currency [type = com.ning.billing.catalog.api.Currency]
-          @processed_currency = Java::com.ning.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
+          # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
+          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
           self
         end
 
@@ -114,7 +114,7 @@ module Killbill
           @payment_id = j_obj.payment_id
           @payment_id = @payment_id.nil? ? nil : @payment_id.to_s
 
-          # conversion for type [type = com.ning.billing.invoice.api.InvoicePaymentType]
+          # conversion for type [type = org.killbill.billing.invoice.api.InvoicePaymentType]
           @type = j_obj.type
           @type = @type.to_s.to_sym unless @type.nil?
 
@@ -134,7 +134,7 @@ module Killbill
           @amount = j_obj.amount
           @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
-          # conversion for currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 
@@ -146,7 +146,7 @@ module Killbill
           @payment_cookie_id = j_obj.payment_cookie_id
           @payment_cookie_id = @payment_cookie_id.nil? ? nil : @payment_cookie_id.to_s
 
-          # conversion for processed_currency [type = com.ning.billing.catalog.api.Currency]
+          # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
           @processed_currency = j_obj.processed_currency
           @processed_currency = @processed_currency.to_s.to_sym unless @processed_currency.nil?
           self

@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.tenant.api'
+      java_package 'org.killbill.billing.tenant.api'
       class TenantData
 
-        include com.ning.billing.tenant.api.TenantData
+        include org.killbill.billing.tenant.api.TenantData
 
         attr_accessor :external_key, :api_key, :api_secret
 

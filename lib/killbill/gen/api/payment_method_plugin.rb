@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.payment.api'
+      java_package 'org.killbill.billing.payment.api'
       class PaymentMethodPlugin
 
-        include com.ning.billing.payment.api.PaymentMethodPlugin
+        include org.killbill.billing.payment.api.PaymentMethodPlugin
 
         attr_accessor :kb_payment_method_id, :external_payment_method_id, :is_default_payment_method, :properties, :type, :cc_name, :cc_type, :cc_expiration_month, :cc_expiration_year, :cc_last4, :address1, :address2, :city, :state, :zip, :country
 
@@ -50,7 +50,7 @@ module Killbill
           # conversion for properties [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@properties || []).each do |m|
-            # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentMethodKVInfo]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -115,7 +115,7 @@ module Killbill
           @properties = j_obj.properties
           tmp = []
           (@properties || []).each do |m|
-            # conversion for m [type = com.ning.billing.payment.api.PaymentMethodKVInfo]
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentMethodKVInfo]
             m = Killbill::Plugin::Model::PaymentMethodKVInfo.new.to_ruby(m) unless m.nil?
             tmp << m
           end

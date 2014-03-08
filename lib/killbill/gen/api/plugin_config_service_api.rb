@@ -27,34 +27,34 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'com.ning.billing.osgi.api.config'
+      java_package 'org.killbill.billing.osgi.api.config'
       class PluginConfigServiceApi
 
-        include com.ning.billing.osgi.api.config.PluginConfigServiceApi
+        include org.killbill.billing.osgi.api.config.PluginConfigServiceApi
 
         def initialize(real_java_api)
           @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::com.ning.billing.osgi.api.config.PluginJavaConfig getPluginJavaConfig(Java::long)'
+        java_signature 'Java::org.killbill.billing.osgi.api.config.PluginJavaConfig getPluginJavaConfig(Java::long)'
         def get_plugin_java_config(bundleId)
 
           # conversion for bundleId [type = long]
           bundleId = bundleId
           res = @real_java_api.get_plugin_java_config(bundleId)
-          # conversion for res [type = com.ning.billing.osgi.api.config.PluginJavaConfig]
+          # conversion for res [type = org.killbill.billing.osgi.api.config.PluginJavaConfig]
           res = Killbill::Plugin::Model::PluginJavaConfig.new.to_ruby(res) unless res.nil?
           return res
         end
 
-        java_signature 'Java::com.ning.billing.osgi.api.config.PluginRubyConfig getPluginRubyConfig(Java::long)'
+        java_signature 'Java::org.killbill.billing.osgi.api.config.PluginRubyConfig getPluginRubyConfig(Java::long)'
         def get_plugin_ruby_config(bundleId)
 
           # conversion for bundleId [type = long]
           bundleId = bundleId
           res = @real_java_api.get_plugin_ruby_config(bundleId)
-          # conversion for res [type = com.ning.billing.osgi.api.config.PluginRubyConfig]
+          # conversion for res [type = org.killbill.billing.osgi.api.config.PluginRubyConfig]
           res = Killbill::Plugin::Model::PluginRubyConfig.new.to_ruby(res) unless res.nil?
           return res
         end

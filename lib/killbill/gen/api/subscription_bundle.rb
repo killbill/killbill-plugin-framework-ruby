@@ -27,10 +27,10 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'com.ning.billing.entitlement.api'
+      java_package 'org.killbill.billing.entitlement.api'
       class SubscriptionBundle
 
-        include com.ning.billing.entitlement.api.SubscriptionBundle
+        include org.killbill.billing.entitlement.api.SubscriptionBundle
 
         attr_accessor :id, :created_date, :updated_date, :account_id, :external_key, :original_created_date, :subscriptions, :timeline
 
@@ -68,13 +68,13 @@ module Killbill
           # conversion for subscriptions [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@subscriptions || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.Subscription]
+            # conversion for m [type = org.killbill.billing.entitlement.api.Subscription]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
           @subscriptions = tmp
 
-          # conversion for timeline [type = com.ning.billing.entitlement.api.SubscriptionBundleTimeline]
+          # conversion for timeline [type = org.killbill.billing.entitlement.api.SubscriptionBundleTimeline]
           @timeline = @timeline.to_java unless @timeline.nil?
           self
         end
@@ -119,13 +119,13 @@ module Killbill
           @subscriptions = j_obj.subscriptions
           tmp = []
           (@subscriptions || []).each do |m|
-            # conversion for m [type = com.ning.billing.entitlement.api.Subscription]
+            # conversion for m [type = org.killbill.billing.entitlement.api.Subscription]
             m = Killbill::Plugin::Model::Subscription.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @subscriptions = tmp
 
-          # conversion for timeline [type = com.ning.billing.entitlement.api.SubscriptionBundleTimeline]
+          # conversion for timeline [type = org.killbill.billing.entitlement.api.SubscriptionBundleTimeline]
           @timeline = j_obj.timeline
           @timeline = Killbill::Plugin::Model::SubscriptionBundleTimeline.new.to_ruby(@timeline) unless @timeline.nil?
           self

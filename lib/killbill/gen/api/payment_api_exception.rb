@@ -44,7 +44,7 @@ module Killbill
 
           # conversion for code [type = int]
           @code = @code
-          Java::com.ning.billing.payment.api.PaymentApiException.new(@message, @cause, @code)
+          Java::org.killbill.billing.payment.api.PaymentApiException.new(@message, @cause, @code)
         end
 
         def to_ruby(j_obj)
