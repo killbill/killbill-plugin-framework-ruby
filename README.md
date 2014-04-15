@@ -135,3 +135,15 @@ To build the artifacts into pkg/:
     # Build the Killbill plugin in the pkg/ directory
     # The <plugin_name>-<plugin-version>/ directory is used as a staging directory
     rake killbill:package
+
+Generators
+----------
+
+We provide easy integration with ActiveMerchant. To create a payment plugin skeleton which will use ActiveMerchant
+as a back-end, run:
+
+    ./script/generate active_merchant GATEWAY /PATH/TO/PLUGIN/DIR
+
+In case the templates behind the generator change and you want to upgrade your plugin, you can re-run the above
+command on top of your existing code. For each file, you'll be prompted whether you want to overwrite it, show a
+diff, etc.

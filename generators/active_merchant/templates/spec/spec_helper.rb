@@ -1,25 +1,7 @@
-require 'java'
-
 require 'bundler'
+require '<%= identifier %>'
+
 require 'logger'
-
-require 'killbill'
-require 'killbill/killbill_logger'
-# JRuby specific, not required by default
-require 'killbill/http_servlet'
-
-require 'killbill/payment_test'
-require 'killbill/notification_test'
-require 'killbill/helpers/active_merchant'
-
-%w(
-  MockAccountUserApi
-).each do |api|
-  begin
-    java_import "org.killbill.billing.mock.api.#{api}"
-  rescue LoadError
-  end
-end
 
 require 'rspec'
 
@@ -31,10 +13,13 @@ end
 
 require 'active_record'
 ActiveRecord::Base.establish_connection(
-  :adapter => 'sqlite3',
-  :database => 'test.db'
+    :adapter => 'sqlite3',
+    :database => 'test.db'
 )
-require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
+# For debugging
+#ActiveRecord::Base.logger = Logger.new(STDOUT)
+# Create the schema
+require File.expand_path(File.dirname(__FILE__) + '../../db/schema.rb')
 
 begin
   require 'securerandom'
