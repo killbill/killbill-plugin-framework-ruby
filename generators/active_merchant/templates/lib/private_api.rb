@@ -1,13 +1,16 @@
 module Killbill #:nodoc:
   module <%= class_name %> #:nodoc:
-    class PrivatePaymentPlugin < ActiveRecord::Base
+    class PrivatePaymentPlugin
       include Singleton
 
       private
 
       def kb_apis
-        # The logger should have been configured when the plugin started
-        Killbill::<%= class_name %>.kb_apis
+        ::Killbill::Plugin::ActiveMerchant.kb_apis
+      end
+
+      def gateway
+       ::Killbill::Plugin::ActiveMerchant.gateway
       end
     end
   end

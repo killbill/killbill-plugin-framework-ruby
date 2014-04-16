@@ -6,10 +6,26 @@ module Killbill
 
       class PaymentPlugin < ::Killbill::Plugin::Payment
 
-        def initialize(payment_method_model, transaction_model, response_model)
+        def initialize(gateway_builder, identifier, payment_method_model, transaction_model, response_model)
+          super()
+
+          @gateway_builder = gateway_builder
+          @identifier = identifier
           @payment_method_model = payment_method_model
           @transaction_model = transaction_model
           @response_model = response_model
+        end
+
+        def start_plugin
+          ::Killbill::Plugin::ActiveMerchant.initialize! @gateway_builder,
+                                                         @identifier.to_sym,
+                                                         @logger,
+                                                         "#{@conf_dir}/#{@identifier.to_s}.yml",
+                                                         @kb_apis
+
+          super
+
+          @logger.info "#{@identifier} payment plugin started"
         end
 
         # return DB connections to the Pool if required

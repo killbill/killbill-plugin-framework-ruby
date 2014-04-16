@@ -15,6 +15,8 @@ CREATE TABLE `<%= identifier %>_payment_methods` (
   `cc_issue_number` varchar(255) DEFAULT NULL,
   `cc_verification_value` varchar(255) DEFAULT NULL,
   `cc_track_data` varchar(255) DEFAULT NULL,
+  `address1` varchar(255) DEFAULT NULL,
+  `address2` varchar(255) DEFAULT NULL,
   `city` varchar(255) DEFAULT NULL,
   `state` varchar(255) DEFAULT NULL,
   `zip` varchar(255) DEFAULT NULL,

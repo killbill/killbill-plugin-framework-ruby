@@ -11,7 +11,6 @@ require 'killbill'
 require 'killbill/helpers/active_merchant'
 
 require '<%= identifier %>/api'
-require '<%= identifier %>/gateway'
 require '<%= identifier %>/private_api'
 
 require '<%= identifier %>/models/payment_method'
