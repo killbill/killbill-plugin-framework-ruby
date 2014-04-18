@@ -34,7 +34,7 @@ CREATE TABLE `<%= identifier %>_transactions` (
   `<%= identifier %>_response_id` int(11) NOT NULL,
   `api_call` varchar(255) NOT NULL,
   `kb_payment_id` varchar(255) NOT NULL,
-  `<%= identifier %>_txn_id` varchar(255) NOT NULL,
+  `txn_id` varchar(255) NOT NULL,
   `amount_in_cents` int(11) NOT NULL,
   `currency` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL,

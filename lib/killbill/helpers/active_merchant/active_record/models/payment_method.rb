@@ -5,34 +5,15 @@ module Killbill
         require 'active_record'
 
         class PaymentMethod < ::ActiveRecord::Base
-          attr_accessible :kb_account_id,
-                          :kb_payment_method_id,
-                          :cc_first_name,
-                          :cc_last_name,
-                          :cc_type,
-                          :cc_exp_month,
-                          :cc_exp_year,
-                          :cc_number,
-                          :cc_last_4,
-                          # Required for Switch / Solo cards
-                          :cc_start_month,
-                          :cc_start_year,
-                          :cc_issue_number,
-                          :cc_verification_value,
-                          :cc_track_data,
-                          :address1,
-                          :address2,
-                          :city,
-                          :state,
-                          :zip,
-                          :country
+
+          self.abstract_class = true
 
           def self.from_kb_account_id(kb_account_id)
-            find_all_by_kb_account_id_and_is_deleted(kb_account_id, false)
+            where('kb_account_id = ? AND is_deleted = ?', kb_account_id, false)
           end
 
           def self.from_kb_payment_method_id(kb_payment_method_id)
-            payment_methods = find_all_by_kb_payment_method_id_and_is_deleted(kb_payment_method_id, false)
+            payment_methods = where('kb_payment_method_id = ? AND is_deleted = ?', kb_payment_method_id, false)
             raise "No payment method found for payment method #{kb_payment_method_id}" if payment_methods.empty?
             raise "Kill Bill payment method #{kb_payment_method_id} mapping to multiple active plugin payment methods" if payment_methods.size > 1
             payment_methods[0]

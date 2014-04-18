@@ -1,7 +1,7 @@
 require 'active_record'
 
 ActiveRecord::Schema.define(:version => 20140410153635) do
-  create_table "payment_methods", :force => true do |t|
+  create_table "test_payment_methods", :force => true do |t|
     t.string   "kb_account_id",            :null => false
     t.string   "kb_payment_method_id"      # NULL before Kill Bill knows about it
     t.string   "cc_first_name"
@@ -21,10 +21,10 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
     t.datetime "updated_at",             :null => false
   end
 
-  add_index(:payment_methods, :kb_account_id)
-  add_index(:payment_methods, :kb_payment_method_id)
+  add_index(:test_payment_methods, :kb_account_id)
+  add_index(:test_payment_methods, :kb_payment_method_id)
 
-  create_table "transactions", :force => true do |t|
+  create_table "test_transactions", :force => true do |t|
     t.integer  "response_id",  :null => false
     t.string   "api_call",              :null => false
     t.string   "kb_payment_id",         :null => false
@@ -34,9 +34,9 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
     t.datetime "updated_at",            :null => false
   end
 
-  add_index(:transactions, :kb_payment_id)
+  add_index(:test_transactions, :kb_payment_id)
 
-  create_table "responses", :force => true do |t|
+  create_table "test_responses", :force => true do |t|
     t.string   "api_call",        :null => false
     t.string   "kb_payment_id"
     t.string   "message"

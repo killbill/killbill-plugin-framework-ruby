@@ -14,6 +14,8 @@ class ActiveMerchantGenerator < KillbillGenerator
 
     render_templates '/templates/lib/models/{*,.*}.rb', [], "lib/#{identifier}/models"
 
+    copy_file 'templates/lib/views/form.erb', "#{output_path}/lib/#{identifier}/views/form.erb"
+
     template 'templates/db/ddl.sql.rb', "#{output_path}/db/ddl.sql"
     template 'templates/db/schema.rb', "#{output_path}/db/schema.rb"
 

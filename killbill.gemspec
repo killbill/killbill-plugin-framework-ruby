@@ -23,11 +23,11 @@ Gem::Specification.new do |s|
   s.rdoc_options << '--exclude' << '.'
 
   s.add_dependency 'sinatra', '~> 1.3.4'
-  s.add_dependency 'tzinfo', '~> 0.3.37'
+  s.add_dependency 'tzinfo', '~> 1.1.0'
 
-  s.add_development_dependency 'activerecord', '~> 3.2.1'
+  s.add_development_dependency 'activerecord', '~> 4.1.0'
   if defined?(JRUBY_VERSION)
-    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.2.6'
+    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3.7'
   else
     s.add_development_dependency 'sqlite3', '~> 1.3.7'
   end
