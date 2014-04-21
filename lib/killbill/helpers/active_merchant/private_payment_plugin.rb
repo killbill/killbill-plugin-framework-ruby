@@ -95,7 +95,7 @@ module Killbill
                                         :currency        => currency,
                                         :api_call        => api_call,
                                         :kb_payment_id   => kb_payment_id,
-                                        :stripe_txn_id   => txn_id)
+                                        :txn_id          => txn_id)
 
             logger.debug "Recorded transaction: #{transaction.inspect}"
           end

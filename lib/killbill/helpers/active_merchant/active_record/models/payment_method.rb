@@ -3,10 +3,33 @@ module Killbill
     module ActiveMerchant
       module ActiveRecord
         require 'active_record'
+        require 'killbill/helpers/active_merchant/active_record/models/helpers'
 
         class PaymentMethod < ::ActiveRecord::Base
 
+          extend ::Killbill::Plugin::ActiveMerchant::Helpers
+
           self.abstract_class = true
+
+          def self.from_response(kb_account_id, kb_payment_method_id, cc_or_token, response, options, extra_params = {}, model = PaymentMethod)
+            model.new({
+                          :kb_account_id        => kb_account_id,
+                          :kb_payment_method_id => kb_payment_method_id,
+                          :token                => response.authorization,
+                          :cc_first_name        => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.first_name : nil,
+                          :cc_last_name         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_name : nil,
+                          :cc_type              => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.brand : nil,
+                          :cc_exp_month         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.month : nil,
+                          :cc_exp_year          => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.year : nil,
+                          :cc_last_4            => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_digits : nil,
+                          :address1             => (options[:billing_address] || {})[:address1],
+                          :address2             => (options[:billing_address] || {})[:address2],
+                          :city                 => (options[:billing_address] || {})[:city],
+                          :state                => (options[:billing_address] || {})[:state],
+                          :zip                  => (options[:billing_address] || {})[:zip],
+                          :country              => (options[:billing_address] || {})[:country]
+                      }.merge!(extra_params))
+          end
 
           def self.from_kb_account_id(kb_account_id)
             where('kb_account_id = ? AND is_deleted = ?', kb_account_id, false)

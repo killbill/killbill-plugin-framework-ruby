@@ -1,5 +1,6 @@
 require 'bundler'
 require '<%= identifier %>'
+require 'killbill/helpers/active_merchant/killbill_spec_helper'
 
 require 'logger'
 

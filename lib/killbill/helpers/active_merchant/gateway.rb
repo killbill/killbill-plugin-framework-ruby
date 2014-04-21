@@ -21,6 +21,11 @@ module Killbill
           @gateway = am_gateway
         end
 
+        # Unfortunate name...
+        def capture(money, authorization, options = {})
+          @gateway.capture(money, authorization, options)
+        end
+
         def method_missing(m, *args, &block)
           @gateway.send(m, *args, &block)
         end

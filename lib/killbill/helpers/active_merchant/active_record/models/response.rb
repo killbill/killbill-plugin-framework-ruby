@@ -5,8 +5,11 @@ module Killbill
         require 'active_record'
         require 'active_merchant'
         require 'money'
+        require 'killbill/helpers/active_merchant/active_record/models/helpers'
 
         class Response < ::ActiveRecord::Base
+
+          extend ::Killbill::Plugin::ActiveMerchant::Helpers
 
           self.abstract_class = true
 
@@ -125,23 +128,6 @@ module Killbill
           # Override in your plugin if needed
           def gateway_error_code
             nil
-          end
-
-          # Useful helper to extract params from AM response objects, e.g. extract(response, 'card', 'address_country')
-          def self.extract(response, key1, key2=nil, key3=nil)
-            return nil if response.nil? || response.params.nil?
-            level1 = response.params[key1]
-
-            if level1.nil? or (key2.nil? and key3.nil?)
-              return level1
-            end
-            level2 = level1[key2]
-
-            if level2.nil? or key3.nil?
-              return level2
-            else
-              return level2[key3]
-            end
           end
 
           private

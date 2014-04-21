@@ -15,6 +15,24 @@ module Killbill #:nodoc:
               ::Killbill::<%= class_name %>::<%= class_name %>Response)
       end
 
+      def authorize_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context)
+        # Pass extra parameters for the gateway here
+        options = {}
+        super(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context, options)
+      end
+
+      def capture_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context)
+        # Pass extra parameters for the gateway here
+        options = {}
+        super(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context, options)
+      end
+
+      def void_payment(kb_account_id, kb_payment_id, kb_payment_method_id, context)
+        # Pass extra parameters for the gateway here
+        options = {}
+        super(kb_account_id, kb_payment_id, kb_payment_method_id, context, options)
+      end
+
       def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context)
         # Pass extra parameters for the gateway here
         options = {}
@@ -44,7 +62,9 @@ module Killbill #:nodoc:
       end
 
       def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, context)
-        # TODO
+        # Pass extra parameters for the gateway here
+        options = {}
+        super(kb_account_id, kb_payment_method_id, payment_method_props, set_default, context, options)
       end
 
       def delete_payment_method(kb_account_id, kb_payment_method_id, context)
@@ -68,6 +88,14 @@ module Killbill #:nodoc:
       end
 
       def reset_payment_methods(kb_account_id, payment_methods)
+        super
+      end
+
+      def build_form_descriptor(kb_account_id, descriptor_fields, context)
+        super
+      end
+
+      def process_notification(notification, context)
         super
       end
     end
