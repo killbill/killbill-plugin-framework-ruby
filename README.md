@@ -56,28 +56,43 @@ How to write a Payment plugin
         puts "MyPaymentPlugin plugin started"
       end
 
-      def charge(killbill_account_id, killbill_payment_id, amount_in_cents, options = {})
+      def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context)
       end
 
-      def refund(killbill_account_id, killbill_payment_id, amount_in_cents, options = {})
+      def get_payment_info(kb_account_id, kb_payment_id, context)
       end
 
-      def get_payment_info(killbill_payment_id, options = {})
+      def search_payments(search_key, offset, limit, context)
       end
 
-      def add_payment_method(payment_method, options = {})
+      def process_refund(kb_account_id, kb_payment_id, refund_amount, currency, context)
       end
 
-      def delete_payment_method(external_payment_method_id, options = {})
+      def get_refund_info(kb_account_id, kb_payment_id, context)
       end
 
-      def update_payment_method(payment_method, options = {})
+      def search_refunds(search_key, offset, limit, context)
       end
 
-      def set_default_payment_method(payment_method, options = {})
+      def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, context)
       end
 
-      def create_account(killbill_account, options = {})
+      def delete_payment_method(kb_account_id, kb_payment_method_id, context)
+      end
+
+      def get_payment_method_detail(kb_account_id, kb_payment_method_id, context)
+      end
+
+      def set_default_payment_method(kb_account_id, kb_payment_method_id, context)
+      end
+
+      def get_payment_methods(kb_account_id, refresh_from_gateway, context)
+      end
+
+      def search_payment_methods(search_key, offset, limit, context)
+      end
+
+      def reset_payment_methods(kb_account_id, payment_methods)
       end
 
       # Overriding this method is optional, only if you need to do some tear down work
@@ -92,6 +107,23 @@ Make sure to create the corresponding killbill.properties file:
 
     mainClass=MyPaymentPlugin
     pluginType=PAYMENT
+
+
+How to write a Payment plugin integrated with ActiveMerchant
+------------------------------------------------------------
+
+Use the plugin generator:
+
+    ./script/generate active_merchant gateway_name /path/to/dir
+
+Replace `gateway_name` with the snake case of your ActiveMerchant gateway (e.g. `yandex`, `stripe`, `paypal`, etc.).
+
+This will generate a tree of files ready to be plugged into Kill Bill. To package the plugin, run:
+
+    rake killbill:clean ; rake build ; rake killbill:package
+
+Most of the work consists of filling in the blank in `api.rb` (payment plugin API for ActiveMerchant gateways) and `application.rb` (sinatra application for ActiveMerchant integrations). Check the [Stripe plugin](https://github.com/killbill/killbill-stripe-plugin) for an example.
+
 
 How to expose HTTP endpoints
 ----------------------------
@@ -136,13 +168,6 @@ To build the artifacts into pkg/:
     # The <plugin_name>-<plugin-version>/ directory is used as a staging directory
     rake killbill:package
 
-Generators
-----------
-
-We provide easy integration with ActiveMerchant. To create a payment plugin skeleton which will use ActiveMerchant
-as a back-end, run:
-
-    ./script/generate active_merchant GATEWAY /PATH/TO/PLUGIN/DIR
 
 In case the templates behind the generator change and you want to upgrade your plugin, you can re-run the above
 command on top of your existing code. For each file, you'll be prompted whether you want to overwrite it, show a
