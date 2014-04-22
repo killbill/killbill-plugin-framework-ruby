@@ -52,6 +52,7 @@ module Killbill
           def self.search_where_clause(t, search_key)
             where_clause =     t[:kb_account_id].eq(search_key)
                            .or(t[:kb_payment_method_id].eq(search_key))
+                           .or(t[:token].eq(search_key))
                            .or(t[:cc_type].eq(search_key))
                            .or(t[:state].eq(search_key))
                            .or(t[:zip].eq(search_key))
@@ -109,7 +110,7 @@ module Killbill
 
           # Override in your plugin if needed
           def external_payment_method_id
-            nil
+            token
           end
 
           # Override in your plugin if needed

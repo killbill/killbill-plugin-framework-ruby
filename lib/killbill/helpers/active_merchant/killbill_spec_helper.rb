@@ -53,11 +53,12 @@ module Killbill
           payment_method  = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, nil)
 
           pm = payment_method_model.from_kb_payment_method_id kb_payment_method_id
-          #pm.should == payment_method
+          pm.should == payment_method
           pm.kb_account_id.should == kb_account_id
           pm.kb_payment_method_id.should == kb_payment_method_id
+          # Depends on the gateway
           #pm.cc_first_name.should == cc_first_name + ' ' + cc_last_name
-          pm.cc_last_name.should == cc_last_name
+          #pm.cc_last_name.should == cc_last_name
           pm.cc_type.should == cc_type
           pm.cc_exp_month.should == cc_exp_month
           pm.cc_exp_year.should == cc_exp_year

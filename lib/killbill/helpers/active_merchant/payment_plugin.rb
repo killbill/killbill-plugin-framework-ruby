@@ -124,7 +124,7 @@ module Killbill
 
         def get_payment_info(kb_account_id, kb_payment_id, tenant_context = nil, options = {})
           # We assume the payment is immutable in the Gateway and only look at our tables
-          transaction = @transaction_model.from_kb_payment_id(kb_payment_id)
+          transaction = @transaction_model.charge_from_kb_payment_id(kb_payment_id)
 
           transaction.send("#{@identifier}_response").to_payment_response(transaction)
         end
@@ -137,6 +137,8 @@ module Killbill
         end
 
         def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, context, options = {})
+          options[:set_default] ||= set_default
+
           # Registering a card or a token
           cc_or_token = find_value_from_payment_method_props(payment_method_props, 'token') || find_value_from_payment_method_props(payment_method_props, 'cardId')
           if cc_or_token.blank?
@@ -174,13 +176,28 @@ module Killbill
           if response.success
             payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, cc_or_token, gw_response, options)
             payment_method.save!
+            payment_method
           else
             raise response.message
           end
         end
 
         def delete_payment_method(kb_account_id, kb_payment_method_id, call_context = nil, options = {})
-          @payment_method_model.mark_as_deleted! kb_payment_method_id
+          pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id)
+
+          # Delete the card
+          if options[:customer_id]
+            gw_response = gateway.unstore(options[:customer_id], pm.token, options)
+          else
+            gw_response = gateway.unstore(pm.token, options)
+          end
+          response, transaction = save_response_and_transaction gw_response, :delete_payment_method
+
+          if response.success
+            @payment_method_model.mark_as_deleted! kb_payment_method_id
+          else
+            raise response.message
+          end
         end
 
         def get_payment_method_detail(kb_account_id, kb_payment_method_id, tenant_context = nil, options = {})

@@ -4,6 +4,7 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
   create_table "test_payment_methods", :force => true do |t|
     t.string   "kb_account_id",            :null => false
     t.string   "kb_payment_method_id"      # NULL before Kill Bill knows about it
+    t.string   "token"
     t.string   "cc_first_name"
     t.string   "cc_last_name"
     t.string   "cc_type"

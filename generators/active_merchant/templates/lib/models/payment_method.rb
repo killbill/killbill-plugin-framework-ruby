@@ -17,10 +17,6 @@ module Killbill #:nodoc:
               }.merge!(extra_params),
               ::Killbill::<%= class_name %>::<%= class_name %>PaymentMethod)
       end
-
-      def external_payment_method_id
-        token
-      end
     end
   end
 end

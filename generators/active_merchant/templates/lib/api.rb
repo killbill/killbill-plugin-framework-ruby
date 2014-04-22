@@ -68,7 +68,9 @@ module Killbill #:nodoc:
       end
 
       def delete_payment_method(kb_account_id, kb_payment_method_id, context)
-        super
+        # Pass extra parameters for the gateway here
+        options = {}
+        super(kb_account_id, kb_payment_method_id, context, options)
       end
 
       def get_payment_method_detail(kb_account_id, kb_payment_method_id, context)
