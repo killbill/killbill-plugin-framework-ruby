@@ -5,6 +5,7 @@ require 'active_merchant'
 require 'active_support'
 require 'bigdecimal'
 require 'money'
+require 'monetize'
 require 'pathname'
 require 'sinatra'
 require 'singleton'
@@ -20,8 +21,3 @@ require '<%= identifier %>/models/payment_method'
 require '<%= identifier %>/models/response'
 require '<%= identifier %>/models/transaction'
 
-class Object
-  def blank?
-    respond_to?(:empty?) ? empty? : !self
-  end
-end
