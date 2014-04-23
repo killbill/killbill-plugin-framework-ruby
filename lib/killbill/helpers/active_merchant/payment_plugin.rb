@@ -30,7 +30,7 @@ module Killbill
 
         # return DB connections to the Pool if required
         def after_request
-          ActiveRecord::Base.connection.close
+          ::ActiveRecord::Base.connection.close
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context, options = {})
@@ -46,10 +46,15 @@ module Killbill
           options[:description] ||= "Kill Bill authorization for #{kb_payment_id}"
 
           # Retrieve the payment method
-          pm                    = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id)
+          if options[:credit_card].blank?
+            pm             = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id)
+            payment_source = pm.token
+          else
+            payment_source = ::ActiveMerchant::Billing::CreditCard.new(options[:credit_card])
+          end
 
           # Go to the gateway
-          gw_response           = gateway.authorize amount_in_cents, pm.token, options
+          gw_response           = gateway.authorize amount_in_cents, payment_source, options
           response, transaction = save_response_and_transaction gw_response, :authorize, kb_payment_id, amount_in_cents, currency
 
           response.to_payment_response(transaction)
@@ -80,7 +85,6 @@ module Killbill
           authorization = @transaction_model.authorization_from_kb_payment_id(kb_payment_id).txn_id
 
           # Go to the gateway
-          raise authorization.inspect
           gw_response           = gateway.void authorization, options
           response, transaction = save_response_and_transaction gw_response, :void, kb_payment_id
 
@@ -100,10 +104,15 @@ module Killbill
           options[:description] ||= "Kill Bill payment for #{kb_payment_id}"
 
           # Retrieve the payment method
-          pm                    = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id)
+          if options[:credit_card].blank?
+            pm             = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id)
+            payment_source = pm.token
+          else
+            payment_source = ::ActiveMerchant::Billing::CreditCard.new(options[:credit_card])
+          end
 
           # Go to the gateway
-          gw_response           = gateway.purchase amount_in_cents, pm.token, options
+          gw_response           = gateway.purchase amount_in_cents, payment_source, options
           response, transaction = save_response_and_transaction gw_response, :charge, kb_payment_id, amount_in_cents, currency
 
           response.to_payment_response(transaction)
