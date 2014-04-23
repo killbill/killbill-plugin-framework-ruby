@@ -23,14 +23,41 @@
 #
 
 
-require 'killbill/gen/plugin-api/hosted_payment_page_descriptor_fields'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/hosted_payment_page_notification'
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/payment_info_plugin'
-require 'killbill/gen/plugin-api/refund_info_plugin'
+module Killbill
+  module Plugin
+    module Model
+
+      java_package 'org.killbill.billing.catalog.api'
+      class Fixed
+
+        include org.killbill.billing.catalog.api.Fixed
+
+        attr_accessor :type, :price
+
+        def initialize()
+        end
+
+        def to_java()
+          # conversion for type [type = org.killbill.billing.catalog.api.FixedType]
+          @type = Java::org.killbill.billing.catalog.api.FixedType.value_of("#{@type.to_s}") unless @type.nil?
+
+          # conversion for price [type = org.killbill.billing.catalog.api.InternationalPrice]
+          @price = @price.to_java unless @price.nil?
+          self
+        end
+
+        def to_ruby(j_obj)
+          # conversion for type [type = org.killbill.billing.catalog.api.FixedType]
+          @type = j_obj.type
+          @type = @type.to_s.to_sym unless @type.nil?
+
+          # conversion for price [type = org.killbill.billing.catalog.api.InternationalPrice]
+          @price = j_obj.price
+          @price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@price) unless @price.nil?
+          self
+        end
+
+      end
+    end
+  end
+end

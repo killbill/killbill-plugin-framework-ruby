@@ -33,7 +33,9 @@ module Killbill
           ::ActiveRecord::Base.connection.close
         end
 
-        def authorize_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context, options = {})
+        def authorize_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
+          options = properties_to_hash(properties)
+
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
           amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
 
@@ -60,7 +62,9 @@ module Killbill
           response.to_payment_response(transaction)
         end
 
-        def capture_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context, options = {})
+        def capture_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
+          options = properties_to_hash(properties)
+
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
           amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
 
@@ -78,7 +82,8 @@ module Killbill
           response.to_payment_response(transaction)
         end
 
-        def void_payment(kb_account_id, kb_payment_id, kb_payment_method_id, context, options = {})
+        def void_payment(kb_account_id, kb_payment_id, kb_payment_method_id, properties, context)
+          options = properties_to_hash(properties)
           options[:description] ||= "Kill Bill void for #{kb_payment_id}"
 
           # Retrieve the authorization
@@ -91,7 +96,9 @@ module Killbill
           response.to_payment_response(transaction)
         end
 
-        def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, call_context = nil, options = {})
+        def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
+          options = properties_to_hash(properties)
+
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
           amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
 
@@ -118,7 +125,9 @@ module Killbill
           response.to_payment_response(transaction)
         end
 
-        def process_refund(kb_account_id, kb_payment_id, amount, currency, call_context = nil, options = {})
+        def process_refund(kb_account_id, kb_payment_id, amount, currency, properties, context)
+          options = properties_to_hash(properties)
+
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
           amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
 
@@ -131,21 +140,26 @@ module Killbill
           response.to_refund_response(transaction)
         end
 
-        def get_payment_info(kb_account_id, kb_payment_id, tenant_context = nil, options = {})
+        def get_payment_info(kb_account_id, kb_payment_id, properties, context)
+          options = properties_to_hash(properties)
+
           # We assume the payment is immutable in the Gateway and only look at our tables
           transaction = @transaction_model.charge_from_kb_payment_id(kb_payment_id)
 
           transaction.send("#{@identifier}_response").to_payment_response(transaction)
         end
 
-        def get_refund_info(kb_account_id, kb_payment_id, tenant_context = nil, options = {})
+        def get_refund_info(kb_account_id, kb_payment_id, properties, context)
+          options = properties_to_hash(properties)
+
           # We assume the refund is immutable in the Gateway and only look at our tables
           transactions = @transaction_model.refunds_from_kb_payment_id(kb_payment_id)
 
           transactions.map { |t| t.send("#{@identifier}_response").to_refund_response(t) }
         end
 
-        def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, context, options = {})
+        def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, properties, context)
+          options = properties_to_hash(properties)
           options[:set_default] ||= set_default
 
           # Registering a card or a token
@@ -191,7 +205,9 @@ module Killbill
           end
         end
 
-        def delete_payment_method(kb_account_id, kb_payment_method_id, call_context = nil, options = {})
+        def delete_payment_method(kb_account_id, kb_payment_method_id, properties, context)
+          options = properties_to_hash(properties)
+
           pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id)
 
           # Delete the card
@@ -209,16 +225,20 @@ module Killbill
           end
         end
 
-        def get_payment_method_detail(kb_account_id, kb_payment_method_id, tenant_context = nil, options = {})
+        def get_payment_method_detail(kb_account_id, kb_payment_method_id, properties, context)
+          options = properties_to_hash(properties)
           @payment_method_model.from_kb_payment_method_id(kb_payment_method_id).to_payment_method_response
         end
 
-        def get_payment_methods(kb_account_id, refresh_from_gateway = false, call_context = nil, options = {})
+        def get_payment_methods(kb_account_id, refresh_from_gateway = false, properties, context)
+          options = properties_to_hash(properties)
           @payment_method_model.from_kb_account_id(kb_account_id).collect { |pm| pm.to_payment_method_info_response }
         end
 
-        def reset_payment_methods(kb_account_id, payment_methods)
+        def reset_payment_methods(kb_account_id, payment_methods, properties)
           return if payment_methods.nil?
+
+          options = properties_to_hash(properties)
 
           pms = @payment_method_model.from_kb_account_id(kb_account_id)
 
@@ -252,27 +272,37 @@ module Killbill
           end
         end
 
-        def search_payments(search_key, offset = 0, limit = 100, call_context = nil, options = {})
+        def search_payments(search_key, offset = 0, limit = 100, properties, context)
+          options = properties_to_hash(properties)
           @response_model.search(search_key, offset, limit, :payment)
         end
 
-        def search_refunds(search_key, offset = 0, limit = 100, call_context = nil, options = {})
+        def search_refunds(search_key, offset = 0, limit = 100, properties, context)
+          options = properties_to_hash(properties)
           @response_model.search(search_key, offset, limit, :refund)
         end
 
-        def search_payment_methods(search_key, offset = 0, limit = 100, call_context = nil, options = {})
+        def search_payment_methods(search_key, offset = 0, limit = 100, properties, context)
+          options = properties_to_hash(properties)
           @payment_method_model.search(search_key, offset, limit)
         end
 
-        def build_form_descriptor(kb_account_id, descriptor_fields, context)
+        def build_form_descriptor(kb_account_id, descriptor_fields, properties, context)
+          options = properties_to_hash(properties)
         end
 
-        def process_notification(notification, context)
+        def process_notification(notification, properties, context)
+          options = properties_to_hash(properties)
         end
 
         # Utilities
 
+        # Deprecated
         def find_value_from_payment_method_props(payment_method_props, key)
+          find_value_from_properties(payment_method_props, key)
+        end
+
+        def find_value_from_properties(properties, key)
           prop = (payment_method_props.properties.find { |kv| kv.key == key })
           prop.nil? ? nil : prop.value
         end
@@ -307,6 +337,27 @@ module Killbill
 
         def gateway
           ::Killbill::Plugin::ActiveMerchant.gateway
+        end
+
+        def properties_to_hash(properties, options = {})
+          merged = {}
+          properties.each do |p|
+            merged[p.key.to_sym] = p.value
+          end
+          merged.merge(options)
+        end
+
+        def merge_properties(properties, options)
+          merged = properties_to_hash(properties, options)
+
+          properties = []
+          merged.each do |k, v|
+            p       = ::Killbill::Plugin::Model::PluginProperty.new
+            p.key   = k
+            p.value = v
+            properties << p
+          end
+          properties
         end
       end
     end

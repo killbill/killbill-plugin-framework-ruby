@@ -249,156 +249,38 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertExternalCharge(Java::java.util.UUID, Java::java.math.BigDecimal, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def insert_external_charge(accountId, amount, description, effectiveDate, currency, context)
+        java_signature 'Java::java.util.List insertExternalCharges(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def insert_external_charges(accountId, effectiveDate, charges, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for description [type = java.lang.String]
-          description = description.to_s unless description.nil?
 
           # conversion for effectiveDate [type = org.joda.time.LocalDate]
           if !effectiveDate.nil?
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          # conversion for charges [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (charges || []).each do |m|
+            # conversion for m [type = org.killbill.billing.invoice.api.InvoiceItem]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          charges = tmp
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.insert_external_charge(accountId, amount, description, effectiveDate, currency, context)
-            # conversion for res [type = org.killbill.billing.invoice.api.InvoiceItem]
-            res = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertExternalChargeForBundle(Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def insert_external_charge_for_bundle(accountId, bundleId, amount, description, effectiveDate, currency, context)
-
-          # conversion for accountId [type = java.util.UUID]
-          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
-
-          # conversion for bundleId [type = java.util.UUID]
-          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for description [type = java.lang.String]
-          description = description.to_s unless description.nil?
-
-          # conversion for effectiveDate [type = org.joda.time.LocalDate]
-          if !effectiveDate.nil?
-            effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.insert_external_charge_for_bundle(accountId, bundleId, amount, description, effectiveDate, currency, context)
-            # conversion for res [type = org.killbill.billing.invoice.api.InvoiceItem]
-            res = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertExternalChargeForInvoice(Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def insert_external_charge_for_invoice(accountId, invoiceId, amount, description, effectiveDate, currency, context)
-
-          # conversion for accountId [type = java.util.UUID]
-          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
-
-          # conversion for invoiceId [type = java.util.UUID]
-          invoiceId = java.util.UUID.fromString(invoiceId.to_s) unless invoiceId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for description [type = java.lang.String]
-          description = description.to_s unless description.nil?
-
-          # conversion for effectiveDate [type = org.joda.time.LocalDate]
-          if !effectiveDate.nil?
-            effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.insert_external_charge_for_invoice(accountId, invoiceId, amount, description, effectiveDate, currency, context)
-            # conversion for res [type = org.killbill.billing.invoice.api.InvoiceItem]
-            res = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertExternalChargeForInvoiceAndBundle(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def insert_external_charge_for_invoice_and_bundle(accountId, invoiceId, bundleId, amount, description, effectiveDate, currency, context)
-
-          # conversion for accountId [type = java.util.UUID]
-          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
-
-          # conversion for invoiceId [type = java.util.UUID]
-          invoiceId = java.util.UUID.fromString(invoiceId.to_s) unless invoiceId.nil?
-
-          # conversion for bundleId [type = java.util.UUID]
-          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for description [type = java.lang.String]
-          description = description.to_s unless description.nil?
-
-          # conversion for effectiveDate [type = org.joda.time.LocalDate]
-          if !effectiveDate.nil?
-            effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.insert_external_charge_for_invoice_and_bundle(accountId, invoiceId, bundleId, amount, description, effectiveDate, currency, context)
-            # conversion for res [type = org.killbill.billing.invoice.api.InvoiceItem]
-            res = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(res) unless res.nil?
+            res = @real_java_api.insert_external_charges(accountId, effectiveDate, charges, context)
+            # conversion for res [type = java.util.List]
+            tmp = []
+            (res || []).each do |m|
+              # conversion for m [type = org.killbill.billing.invoice.api.InvoiceItem]
+              m = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(m) unless m.nil?
+              tmp << m
+            end
+            res = tmp
             return res
           rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
             raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)

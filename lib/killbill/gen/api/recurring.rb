@@ -23,14 +23,41 @@
 #
 
 
-require 'killbill/gen/plugin-api/hosted_payment_page_descriptor_fields'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/hosted_payment_page_notification'
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/payment_info_plugin'
-require 'killbill/gen/plugin-api/refund_info_plugin'
+module Killbill
+  module Plugin
+    module Model
+
+      java_package 'org.killbill.billing.catalog.api'
+      class Recurring
+
+        include org.killbill.billing.catalog.api.Recurring
+
+        attr_accessor :billing_period, :recurring_price
+
+        def initialize()
+        end
+
+        def to_java()
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
+
+          # conversion for recurring_price [type = org.killbill.billing.catalog.api.InternationalPrice]
+          @recurring_price = @recurring_price.to_java unless @recurring_price.nil?
+          self
+        end
+
+        def to_ruby(j_obj)
+          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @billing_period = j_obj.billing_period
+          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
+
+          # conversion for recurring_price [type = org.killbill.billing.catalog.api.InternationalPrice]
+          @recurring_price = j_obj.recurring_price
+          @recurring_price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@recurring_price) unless @recurring_price.nil?
+          self
+        end
+
+      end
+    end
+  end
+end

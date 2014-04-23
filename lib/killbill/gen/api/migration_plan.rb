@@ -32,7 +32,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.MigrationPlan
 
-        attr_accessor :initial_phases, :product, :name, :is_retired, :initial_phase_iterator, :final_phase, :billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptons
+        attr_accessor :initial_phases, :product, :name, :is_retired, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptons
 
         def initialize()
         end
@@ -56,8 +56,8 @@ module Killbill
           # conversion for final_phase [type = org.killbill.billing.catalog.api.PlanPhase]
           @final_phase = @final_phase.to_java unless @final_phase.nil?
 
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
+          # conversion for recurring_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @recurring_billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@recurring_billing_period.to_s}") unless @recurring_billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = @plans_allowed_in_bundle
@@ -102,9 +102,9 @@ module Killbill
           @final_phase = j_obj.final_phase
           @final_phase = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@final_phase) unless @final_phase.nil?
 
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = j_obj.billing_period
-          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
+          # conversion for recurring_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
+          @recurring_billing_period = j_obj.recurring_billing_period
+          @recurring_billing_period = @recurring_billing_period.to_s.to_sym unless @recurring_billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = j_obj.plans_allowed_in_bundle

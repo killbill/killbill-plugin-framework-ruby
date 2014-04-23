@@ -32,7 +32,7 @@ module Killbill
 
         include org.killbill.billing.payment.plugin.api.PaymentInfoPlugin
 
-        attr_accessor :kb_payment_id, :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_payment_reference_id, :second_payment_reference_id
+        attr_accessor :kb_payment_id, :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_payment_reference_id, :second_payment_reference_id, :properties
 
         def initialize()
         end
@@ -77,6 +77,15 @@ module Killbill
 
           # conversion for second_payment_reference_id [type = java.lang.String]
           @second_payment_reference_id = @second_payment_reference_id.to_s unless @second_payment_reference_id.nil?
+
+          # conversion for properties [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @properties = tmp
           self
         end
 
@@ -124,6 +133,16 @@ module Killbill
 
           # conversion for second_payment_reference_id [type = java.lang.String]
           @second_payment_reference_id = j_obj.second_payment_reference_id
+
+          # conversion for properties [type = java.util.List]
+          @properties = j_obj.properties
+          tmp = []
+          (@properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @properties = tmp
           self
         end
 

@@ -70,17 +70,73 @@ module Killbill
           @real_java_api.record_rolled_up_usage(subscriptionId, unitType, startTime, endTime, amount, context)
         end
 
-        java_signature 'Java::org.killbill.billing.usage.api.RolledUpUsage getUsageForSubscription(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_usage_for_subscription(subscriptionId, context)
+        java_signature 'Java::org.killbill.billing.usage.api.RolledUpUsage getUsageForSubscription(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.DateTime, Java::org.joda.time.DateTime, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_usage_for_subscription(subscriptionId, unitType, startTime, endTime, context)
 
           # conversion for subscriptionId [type = java.util.UUID]
           subscriptionId = java.util.UUID.fromString(subscriptionId.to_s) unless subscriptionId.nil?
 
+          # conversion for unitType [type = java.lang.String]
+          unitType = unitType.to_s unless unitType.nil?
+
+          # conversion for startTime [type = org.joda.time.DateTime]
+          if !startTime.nil?
+            startTime =  (startTime.kind_of? Time) ? DateTime.parse(startTime.to_s) : startTime
+            startTime = Java::org.joda.time.DateTime.new(startTime.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for endTime [type = org.joda.time.DateTime]
+          if !endTime.nil?
+            endTime =  (endTime.kind_of? Time) ? DateTime.parse(endTime.to_s) : endTime
+            endTime = Java::org.joda.time.DateTime.new(endTime.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_usage_for_subscription(subscriptionId, context)
+          res = @real_java_api.get_usage_for_subscription(subscriptionId, unitType, startTime, endTime, context)
           # conversion for res [type = org.killbill.billing.usage.api.RolledUpUsage]
           res = Killbill::Plugin::Model::RolledUpUsage.new.to_ruby(res) unless res.nil?
+          return res
+        end
+
+        java_signature 'Java::java.util.List getAllUsageForSubscription(Java::java.util.UUID, Java::java.util.Set, Java::java.util.List, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_all_usage_for_subscription(subscriptionId, unitType, transitionTimes, context)
+
+          # conversion for subscriptionId [type = java.util.UUID]
+          subscriptionId = java.util.UUID.fromString(subscriptionId.to_s) unless subscriptionId.nil?
+
+          # conversion for unitType [type = java.util.Set]
+          tmp = java.util.TreeSet.new
+          (unitType || []).each do |m|
+            # conversion for m [type = java.lang.String]
+            m = m.to_s unless m.nil?
+            tmp.add(m)
+          end
+          unitType = tmp
+
+          # conversion for transitionTimes [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (transitionTimes || []).each do |m|
+            # conversion for m [type = org.joda.time.DateTime]
+            if !m.nil?
+              m =  (m.kind_of? Time) ? DateTime.parse(m.to_s) : m
+              m = Java::org.joda.time.DateTime.new(m.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            end
+            tmp.add(m)
+          end
+          transitionTimes = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_all_usage_for_subscription(subscriptionId, unitType, transitionTimes, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.usage.api.RolledUpUsage]
+            m = Killbill::Plugin::Model::RolledUpUsage.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
           return res
         end
       end

@@ -23,14 +23,51 @@
 #
 
 
-require 'killbill/gen/plugin-api/hosted_payment_page_descriptor_fields'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/hosted_payment_page_notification'
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/payment_info_plugin'
-require 'killbill/gen/plugin-api/refund_info_plugin'
+module Killbill
+  module Plugin
+    module Model
+
+      java_package 'org.killbill.billing.payment.plugin.api'
+      class Customer
+
+        include org.killbill.billing.payment.plugin.api.Customer
+
+        attr_accessor :first_name, :last_name, :email, :phone
+
+        def initialize()
+        end
+
+        def to_java()
+          # conversion for first_name [type = java.lang.String]
+          @first_name = @first_name.to_s unless @first_name.nil?
+
+          # conversion for last_name [type = java.lang.String]
+          @last_name = @last_name.to_s unless @last_name.nil?
+
+          # conversion for email [type = java.lang.String]
+          @email = @email.to_s unless @email.nil?
+
+          # conversion for phone [type = java.lang.String]
+          @phone = @phone.to_s unless @phone.nil?
+          self
+        end
+
+        def to_ruby(j_obj)
+          # conversion for first_name [type = java.lang.String]
+          @first_name = j_obj.first_name
+
+          # conversion for last_name [type = java.lang.String]
+          @last_name = j_obj.last_name
+
+          # conversion for email [type = java.lang.String]
+          @email = j_obj.email
+
+          # conversion for phone [type = java.lang.String]
+          @phone = j_obj.phone
+          self
+        end
+
+      end
+    end
+  end
+end

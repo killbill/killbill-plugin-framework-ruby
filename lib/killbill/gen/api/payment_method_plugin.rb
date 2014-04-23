@@ -50,7 +50,7 @@ module Killbill
           # conversion for properties [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PaymentMethodKVInfo]
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -115,8 +115,8 @@ module Killbill
           @properties = j_obj.properties
           tmp = []
           (@properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PaymentMethodKVInfo]
-            m = Killbill::Plugin::Model::PaymentMethodKVInfo.new.to_ruby(m) unless m.nil?
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @properties = tmp

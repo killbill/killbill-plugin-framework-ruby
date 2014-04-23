@@ -32,20 +32,20 @@ module Killbill
 
         include org.killbill.billing.catalog.api.PlanPhase
 
-        attr_accessor :recurring_price, :fixed_price, :billing_period, :name, :plan, :duration, :phase_type, :limits
+        attr_accessor :fixed, :recurring, :usages, :name, :plan, :duration, :phase_type
 
         def initialize()
         end
 
         def to_java()
-          # conversion for recurring_price [type = org.killbill.billing.catalog.api.InternationalPrice]
-          @recurring_price = @recurring_price.to_java unless @recurring_price.nil?
+          # conversion for fixed [type = org.killbill.billing.catalog.api.Fixed]
+          @fixed = @fixed.to_java unless @fixed.nil?
 
-          # conversion for fixed_price [type = org.killbill.billing.catalog.api.InternationalPrice]
-          @fixed_price = @fixed_price.to_java unless @fixed_price.nil?
+          # conversion for recurring [type = org.killbill.billing.catalog.api.Recurring]
+          @recurring = @recurring.to_java unless @recurring.nil?
 
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
+          # conversion for usages [type = org.killbill.billing.catalog.api.Usage]
+          @usages = @usages.to_java unless @usages.nil?
 
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
@@ -58,24 +58,21 @@ module Killbill
 
           # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
           @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
-
-          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
-          @limits = @limits.to_java unless @limits.nil?
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for recurring_price [type = org.killbill.billing.catalog.api.InternationalPrice]
-          @recurring_price = j_obj.recurring_price
-          @recurring_price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@recurring_price) unless @recurring_price.nil?
+          # conversion for fixed [type = org.killbill.billing.catalog.api.Fixed]
+          @fixed = j_obj.fixed
+          @fixed = Killbill::Plugin::Model::Fixed.new.to_ruby(@fixed) unless @fixed.nil?
 
-          # conversion for fixed_price [type = org.killbill.billing.catalog.api.InternationalPrice]
-          @fixed_price = j_obj.fixed_price
-          @fixed_price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@fixed_price) unless @fixed_price.nil?
+          # conversion for recurring [type = org.killbill.billing.catalog.api.Recurring]
+          @recurring = j_obj.recurring
+          @recurring = Killbill::Plugin::Model::Recurring.new.to_ruby(@recurring) unless @recurring.nil?
 
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = j_obj.billing_period
-          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
+          # conversion for usages [type = org.killbill.billing.catalog.api.Usage]
+          @usages = j_obj.usages
+          @usages = Killbill::Plugin::Model::Usage.new.to_ruby(@usages) unless @usages.nil?
 
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
@@ -91,10 +88,6 @@ module Killbill
           # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
           @phase_type = j_obj.phase_type
           @phase_type = @phase_type.to_s.to_sym unless @phase_type.nil?
-
-          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
-          @limits = j_obj.limits
-          @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
           self
         end
 

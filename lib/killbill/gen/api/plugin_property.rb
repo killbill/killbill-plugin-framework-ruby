@@ -23,14 +23,49 @@
 #
 
 
-require 'killbill/gen/plugin-api/hosted_payment_page_descriptor_fields'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/hosted_payment_page_notification'
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/payment_info_plugin'
-require 'killbill/gen/plugin-api/refund_info_plugin'
+module Killbill
+  module Plugin
+    module Model
+
+      class PluginProperty
+
+
+        attr_accessor :key, :value, :is_updatable
+
+        def initialize()
+        end
+
+        def to_java()
+          # conversion for key [type = java.lang.String]
+          @key = @key.to_s unless @key.nil?
+
+          # conversion for value [type = java.lang.Object]
+          @value = @value.to_s unless @value.nil?
+
+          # conversion for is_updatable [type = java.lang.Boolean]
+          @is_updatable = @is_updatable.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_updatable)
+          Java::org.killbill.billing.payment.api.PluginProperty.new(@key, @value, @is_updatable)
+        end
+
+        def to_ruby(j_obj)
+          # conversion for key [type = java.lang.String]
+          @key = j_obj.key
+
+          # conversion for value [type = java.lang.Object]
+          @value = j_obj.value
+
+          # conversion for is_updatable [type = java.lang.Boolean]
+          @is_updatable = j_obj.is_updatable
+          if @is_updatable.nil?
+            @is_updatable = false
+          else
+            tmp_bool = (@is_updatable.java_kind_of? java.lang.Boolean) ? @is_updatable.boolean_value : @is_updatable
+            @is_updatable = tmp_bool ? true : false
+          end
+          self
+        end
+
+      end
+    end
+  end
+end

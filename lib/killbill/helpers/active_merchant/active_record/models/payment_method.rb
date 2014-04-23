@@ -177,8 +177,13 @@ module Killbill
 
           private
 
+          # Deprecated
           def create_pm_kv_info(key, value)
-            prop = Killbill::Plugin::Model::PaymentMethodKVInfo.new
+            create_plugin_property(key, value)
+          end
+
+          def create_plugin_property(key, value)
+            prop = Killbill::Plugin::Model::PluginProperty.new
             prop.key = key
             prop.value = value
             prop
