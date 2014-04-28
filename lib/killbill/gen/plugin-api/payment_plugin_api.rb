@@ -684,14 +684,20 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor buildFormDescriptor(Java::java.util.UUID, Java::org.killbill.billing.payment.plugin.api.HostedPaymentPageDescriptorFields, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def build_form_descriptor(kbAccountId, descriptorFields, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor buildFormDescriptor(Java::java.util.UUID, Java::java.lang.Iterable, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def build_form_descriptor(kbAccountId, customFields, properties, context)
 
           # conversion for kbAccountId [type = java.util.UUID]
           kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
 
-          # conversion for descriptorFields [type = org.killbill.billing.payment.plugin.api.HostedPaymentPageDescriptorFields]
-          descriptorFields = Killbill::Plugin::Model::HostedPaymentPageDescriptorFields.new.to_ruby(descriptorFields) unless descriptorFields.nil?
+          # conversion for customFields [type = java.lang.Iterable]
+          tmp = []
+          (customFields.nil? ? [] : customFields.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          customFields = tmp
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = []
@@ -702,10 +708,10 @@ module Killbill
           end
           properties = tmp
 
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
-            res = @delegate_plugin.build_form_descriptor(kbAccountId, descriptorFields, properties, context)
+            res = @delegate_plugin.build_form_descriptor(kbAccountId, customFields, properties, context)
             # conversion for res [type = org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor]
             res = res.to_java unless res.nil?
             return res
@@ -721,7 +727,7 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.HostedPaymentPageNotification processNotification(Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.GatewayNotification processNotification(Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
         def process_notification(notification, properties, context)
 
           # conversion for notification [type = java.lang.String]
@@ -735,11 +741,11 @@ module Killbill
           end
           properties = tmp
 
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
             res = @delegate_plugin.process_notification(notification, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.plugin.api.HostedPaymentPageNotification]
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.GatewayNotification]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e

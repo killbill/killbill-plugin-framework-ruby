@@ -32,7 +32,7 @@ module Killbill
 
         include org.killbill.billing.util.audit.AccountAuditLogs
 
-        attr_accessor :audit_logs_for_account, :audit_logs_for_bundle, :audit_logs_for_subscription, :audit_logs_for_subscription_event, :audit_logs_for_blocking_state, :audit_logs_for_invoice, :audit_logs_for_invoice_item, :audit_logs_for_invoice_payment, :audit_logs_for_payment, :audit_logs_for_payment_method, :audit_logs_for_refund, :audit_logs_for_chargeback, :audit_logs_for_tag, :audit_logs_for_custom_field, :audit_logs
+        attr_accessor :audit_logs_for_account, :audit_logs_for_bundle, :audit_logs_for_subscription, :audit_logs_for_subscription_event, :audit_logs_for_blocking_state, :audit_logs_for_invoice, :audit_logs_for_invoice_item, :audit_logs_for_invoice_payment, :audit_logs_for_payment, :audit_logs_for_direct_payment, :audit_logs_for_direct_payment_transaction, :audit_logs_for_payment_method, :audit_logs_for_refund, :audit_logs_for_chargeback, :audit_logs_for_tag, :audit_logs_for_custom_field, :audit_logs
 
         def initialize()
         end
@@ -118,6 +118,24 @@ module Killbill
             tmp.add(m)
           end
           @audit_logs_for_payment = tmp
+
+          # conversion for audit_logs_for_direct_payment [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@audit_logs_for_direct_payment || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @audit_logs_for_direct_payment = tmp
+
+          # conversion for audit_logs_for_direct_payment_transaction [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@audit_logs_for_direct_payment_transaction || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @audit_logs_for_direct_payment_transaction = tmp
 
           # conversion for audit_logs_for_payment_method [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -259,6 +277,26 @@ module Killbill
             tmp << m
           end
           @audit_logs_for_payment = tmp
+
+          # conversion for audit_logs_for_direct_payment [type = java.util.List]
+          @audit_logs_for_direct_payment = j_obj.audit_logs_for_direct_payment
+          tmp = []
+          (@audit_logs_for_direct_payment || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
+            m = Killbill::Plugin::Model::AuditLog.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @audit_logs_for_direct_payment = tmp
+
+          # conversion for audit_logs_for_direct_payment_transaction [type = java.util.List]
+          @audit_logs_for_direct_payment_transaction = j_obj.audit_logs_for_direct_payment_transaction
+          tmp = []
+          (@audit_logs_for_direct_payment_transaction || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
+            m = Killbill::Plugin::Model::AuditLog.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @audit_logs_for_direct_payment_transaction = tmp
 
           # conversion for audit_logs_for_payment_method [type = java.util.List]
           @audit_logs_for_payment_method = j_obj.audit_logs_for_payment_method

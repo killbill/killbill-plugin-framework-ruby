@@ -28,33 +28,41 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.payment.plugin.api'
-      class HostedPaymentPageFormDescriptor
+      class GatewayNotification
 
-        include org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor
+        include org.killbill.billing.payment.plugin.api.GatewayNotification
 
-        attr_accessor :kb_account_id, :form_method, :form_url, :form_fields, :properties
+        attr_accessor :kb_payment_id, :status, :entity, :headers, :properties
 
         def initialize()
         end
 
         def to_java()
-          # conversion for kb_account_id [type = java.util.UUID]
-          @kb_account_id = java.util.UUID.fromString(@kb_account_id.to_s) unless @kb_account_id.nil?
+          # conversion for kb_payment_id [type = java.util.UUID]
+          @kb_payment_id = java.util.UUID.fromString(@kb_payment_id.to_s) unless @kb_payment_id.nil?
 
-          # conversion for form_method [type = java.lang.String]
-          @form_method = @form_method.to_s unless @form_method.nil?
+          # conversion for status [type = int]
+          @status = @status
 
-          # conversion for form_url [type = java.lang.String]
-          @form_url = @form_url.to_s unless @form_url.nil?
+          # conversion for entity [type = java.lang.String]
+          @entity = @entity.to_s unless @entity.nil?
 
-          # conversion for form_fields [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@form_fields || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @form_fields = tmp
+          # conversion for headers [type = java.util.Map]
+          tmp = java.util.HashMap.new
+          (@headers || {}).each do |k,v|
+            # conversion for k [type = java.lang.String]
+            k = k.to_s unless k.nil?
+              # conversion for v [type = java.util.List]
+              tmp1 = java.util.ArrayList.new
+              (v || []).each do |m|
+                # conversion for m [type = java.lang.String]
+                m = m.to_s unless m.nil?
+                tmp1.add(m)
+              end
+              v = tmp1
+              tmp.put(k, v)
+            end
+          @headers = tmp
 
           # conversion for properties [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -68,25 +76,33 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for kb_account_id [type = java.util.UUID]
-          @kb_account_id = j_obj.kb_account_id
-          @kb_account_id = @kb_account_id.nil? ? nil : @kb_account_id.to_s
+          # conversion for kb_payment_id [type = java.util.UUID]
+          @kb_payment_id = j_obj.kb_payment_id
+          @kb_payment_id = @kb_payment_id.nil? ? nil : @kb_payment_id.to_s
 
-          # conversion for form_method [type = java.lang.String]
-          @form_method = j_obj.form_method
+          # conversion for status [type = int]
+          @status = j_obj.status
 
-          # conversion for form_url [type = java.lang.String]
-          @form_url = j_obj.form_url
+          # conversion for entity [type = java.lang.String]
+          @entity = j_obj.entity
 
-          # conversion for form_fields [type = java.util.List]
-          @form_fields = j_obj.form_fields
-          tmp = []
-          (@form_fields || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @form_fields = tmp
+          # conversion for headers [type = java.util.Map]
+          @headers = j_obj.headers
+          tmp = {}
+          jtmp0 = @headers || java.util.HashMap.new
+          jtmp0.key_set.each do |k|
+            # conversion for k [type = java.lang.String]
+            v = jtmp0.get(k)
+              # conversion for v [type = java.util.List]
+              tmp1 = []
+              (v || []).each do |m|
+                # conversion for m [type = java.lang.String]
+                tmp1 << m
+              end
+              v = tmp1
+              tmp[k] = v
+            end
+          @headers = tmp
 
           # conversion for properties [type = java.util.List]
           @properties = j_obj.properties
