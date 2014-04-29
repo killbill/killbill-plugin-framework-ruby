@@ -4,9 +4,10 @@ module Killbill #:nodoc:
 
       self.table_name = '<%= identifier %>_payment_methods'
 
-      def self.from_response(kb_account_id, kb_payment_method_id, cc_or_token, response, options, extra_params = {})
+      def self.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, cc_or_token, response, options, extra_params = {})
         super(kb_account_id,
               kb_payment_method_id,
+              kb_tenant_id,
               cc_or_token,
               response,
               options,

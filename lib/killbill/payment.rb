@@ -55,7 +55,7 @@ module Killbill
         raise OperationUnsupportedByGatewayError
       end
 
-      def reset_payment_methods(kb_account_id, payment_methods, properties)
+      def reset_payment_methods(kb_account_id, payment_methods, properties, context)
         raise OperationUnsupportedByGatewayError
       end
     end

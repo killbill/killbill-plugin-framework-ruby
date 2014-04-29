@@ -4,6 +4,7 @@ require 'spec_helper'
 describe Killbill::Plugin::Api::PaymentPluginApi do
 
   before(:all) do
+    @call_context = Killbill::Plugin::Model::CallContext.new
     logger = ::Logger.new(STDOUT)
     @paymentPluginApi =  Killbill::Plugin::Api::PaymentPluginApi.new("Killbill::Plugin::PaymentTest", { "logger" => logger })
     @kb_account_id = java.util.UUID.fromString("aa5c926e-3d9d-4435-b44b-719d7b583256")
@@ -117,11 +118,11 @@ describe Killbill::Plugin::Api::PaymentPluginApi do
   end
 
   it "should_test_reset_payment_methods_ok" do
-    @paymentPluginApi.reset_payment_methods(@kb_account_id, java.util.ArrayList.new, @properties)
+    @paymentPluginApi.reset_payment_methods(@kb_account_id, java.util.ArrayList.new, @properties, @call_context)
   end
 
   it "should_test_reset_payment_methods_exception" do
     @paymentPluginApi.delegate_plugin.send(:raise_exception_on_next_calls)
-    lambda { @paymentPluginApi.reset_payment_methods(@kb_account_id, java.util.ArrayList.new, @properties) }.should raise_error Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException
+    lambda { @paymentPluginApi.reset_payment_methods(@kb_account_id, java.util.ArrayList.new, @properties, @call_context) }.should raise_error Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException
   end
 end

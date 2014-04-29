@@ -20,7 +20,7 @@ module Killbill #:nodoc:
         options = {}
 
         properties = merge_properties(properties, options)
-        super(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, context, properties)
+        super(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
       end
 
       def capture_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
@@ -103,7 +103,7 @@ module Killbill #:nodoc:
         super
       end
 
-      def reset_payment_methods(kb_account_id, payment_methods, properties)
+      def reset_payment_methods(kb_account_id, payment_methods, properties, context)
         super
       end
 

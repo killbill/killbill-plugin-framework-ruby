@@ -82,7 +82,7 @@ module Killbill
         end
       end
 
-      def reset_payment_methods(kb_account_id, payment_methods, properties)
+      def reset_payment_methods(kb_account_id, payment_methods, properties, context)
         if @raise_exception
           raise StandardError.new("Test exception")
         end

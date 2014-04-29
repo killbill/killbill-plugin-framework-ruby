@@ -8,29 +8,29 @@ module Killbill
 
           self.abstract_class = true
 
-          def self.authorization_from_kb_payment_id(kb_payment_id)
-            transaction_from_kb_payment_id :authorize, kb_payment_id, :single
+          def self.authorization_from_kb_payment_id(kb_payment_id, kb_tenant_id)
+            transaction_from_kb_payment_id :authorize, kb_payment_id, kb_tenant_id, :single
           end
 
-          def self.charge_from_kb_payment_id(kb_payment_id)
-            transaction_from_kb_payment_id :charge, kb_payment_id, :single
+          def self.charge_from_kb_payment_id(kb_payment_id, kb_tenant_id)
+            transaction_from_kb_payment_id :charge, kb_payment_id, kb_tenant_id, :single
           end
 
-          def self.refunds_from_kb_payment_id(kb_payment_id)
-            transaction_from_kb_payment_id :refund, kb_payment_id, :multiple
+          def self.refunds_from_kb_payment_id(kb_payment_id, kb_tenant_id)
+            transaction_from_kb_payment_id :refund, kb_payment_id, kb_tenant_id, :multiple
           end
 
-          def self.find_candidate_transaction_for_refund(kb_payment_id, amount_in_cents)
+          def self.find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, amount_in_cents)
             begin
-              do_find_candidate_transaction_for_refund :authorize, kb_payment_id, amount_in_cents
+              do_find_candidate_transaction_for_refund :authorize, kb_payment_id, kb_tenant_id, amount_in_cents
             rescue
-              do_find_candidate_transaction_for_refund :charge, kb_payment_id, amount_in_cents
+              do_find_candidate_transaction_for_refund :charge, kb_payment_id, kb_tenant_id, amount_in_cents
             end
           end
 
-          def self.do_find_candidate_transaction_for_refund(api_call, kb_payment_id, amount_in_cents)
+          def self.do_find_candidate_transaction_for_refund(api_call, kb_payment_id, kb_tenant_id, amount_in_cents)
             # Find one successful charge which amount is at least the amount we are trying to refund
-            transactions = where('amount_in_cents >= ? AND api_call = ? and kb_payment_id = ?', amount_in_cents, api_call, kb_payment_id)
+            transactions = where('amount_in_cents >= ? AND api_call = ? AND kb_tenant_id = ? AND kb_payment_id = ?', amount_in_cents, api_call, kb_tenant_id, kb_payment_id)
             raise "Unable to find transaction for payment #{kb_payment_id} and api_call #{api_call}" if transactions.size == 0
 
             # We have candidates, but we now need to make sure we didn't refund more than for the specified amount
@@ -46,8 +46,8 @@ module Killbill
 
           private
 
-          def self.transaction_from_kb_payment_id(api_call, kb_payment_id, how_many)
-            transactions = where('api_call = ? and kb_payment_id = ?', api_call, kb_payment_id)
+          def self.transaction_from_kb_payment_id(api_call, kb_payment_id, kb_tenant_id, how_many)
+            transactions = where('api_call = ? AND kb_tenant_id = ? AND kb_payment_id = ?', api_call, kb_tenant_id, kb_payment_id)
             raise "Unable to find transaction id for payment #{kb_payment_id}" if transactions.empty?
             if how_many == :single
               raise "Kill Bill payment #{kb_payment_id} mapping to multiple plugin transactions" if transactions.size > 1

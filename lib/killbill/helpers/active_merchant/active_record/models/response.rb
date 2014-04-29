@@ -13,10 +13,12 @@ module Killbill
 
           self.abstract_class = true
 
-          def self.from_response(api_call, kb_payment_id, response, extra_params = {}, model = Response)
+          def self.from_response(api_call, kb_account_id, kb_payment_id, kb_tenant_id, response, extra_params = {}, model = Response)
             model.new({
                           :api_call                => api_call,
+                          :kb_account_id           => kb_account_id,
                           :kb_payment_id           => kb_payment_id,
+                          :kb_tenant_id            => kb_tenant_id,
                           :message                 => response.message,
                           :authorization           => response.authorization,
                           :fraud_review            => response.fraud_review?,
@@ -55,10 +57,10 @@ module Killbill
           end
 
           # VisibleForTesting
-          def self.search_query(api_call, search_key, offset = nil, limit = nil)
+          def self.search_query(api_call, search_key, kb_tenant_id, offset = nil, limit = nil)
             t = self.arel_table
 
-            query = t.where(search_where_clause(t, search_key, api_call))
+            query = t.where(search_where_clause(t, search_key, api_call).and(t[:kb_tenant_id].eq(kb_tenant_id)))
                      .order(t[:id])
 
             if offset.blank? and limit.blank?
@@ -74,17 +76,17 @@ module Killbill
             query
           end
 
-          def self.search(search_key, offset = 0, limit = 100, type = :payment)
+          def self.search(search_key, kb_tenant_id, offset = 0, limit = 100, type = :payment)
             api_call                    = type == :payment ? 'charge' : 'refund'
             pagination                  = ::Killbill::Plugin::Model::Pagination.new
             pagination.current_offset   = offset
-            pagination.total_nb_records = self.count_by_sql(self.search_query(api_call, search_key))
+            pagination.total_nb_records = self.count_by_sql(self.search_query(api_call, search_key, kb_tenant_id))
             pagination.max_nb_records   = self.where(:api_call => api_call, :success => true).count
             pagination.next_offset      = (!pagination.total_nb_records.nil? && offset + limit >= pagination.total_nb_records) ? nil : offset + limit
             # Reduce the limit if the specified value is larger than the number of records
             actual_limit                = [pagination.max_nb_records, limit].min
             pagination.iterator         = ::Killbill::Plugin::ActiveMerchant::ActiveRecord::StreamyResultSet.new(actual_limit) do |offset, limit|
-              self.find_by_sql(self.search_query(api_call, search_key, offset, limit))
+              self.find_by_sql(self.search_query(api_call, search_key, kb_tenant_id, offset, limit))
               .map { |x| type == :payment ? x.to_payment_response : x.to_refund_response }
             end
             pagination

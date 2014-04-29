@@ -11,9 +11,10 @@ module Killbill
 
           self.abstract_class = true
 
-          def self.from_response(kb_account_id, kb_payment_method_id, cc_or_token, response, options, extra_params = {}, model = PaymentMethod)
+          def self.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, cc_or_token, response, options, extra_params = {}, model = PaymentMethod)
             model.new({
                           :kb_account_id        => kb_account_id,
+                          :kb_tenant_id         => kb_tenant_id,
                           :kb_payment_method_id => kb_payment_method_id,
                           :token                => response.authorization,
                           :cc_first_name        => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.first_name : nil,
@@ -31,19 +32,19 @@ module Killbill
                       }.merge!(extra_params))
           end
 
-          def self.from_kb_account_id(kb_account_id)
-            where('kb_account_id = ? AND is_deleted = ?', kb_account_id, false)
+          def self.from_kb_account_id(kb_account_id, kb_tenant_id)
+            where('kb_account_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_account_id, kb_tenant_id, false)
           end
 
-          def self.from_kb_payment_method_id(kb_payment_method_id)
-            payment_methods = where('kb_payment_method_id = ? AND is_deleted = ?', kb_payment_method_id, false)
+          def self.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
+            payment_methods = where('kb_payment_method_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_payment_method_id, kb_tenant_id, false)
             raise "No payment method found for payment method #{kb_payment_method_id}" if payment_methods.empty?
             raise "Kill Bill payment method #{kb_payment_method_id} mapping to multiple active plugin payment methods" if payment_methods.size > 1
             payment_methods[0]
           end
 
-          def self.mark_as_deleted!(kb_payment_method_id)
-            payment_method = from_kb_payment_method_id(kb_payment_method_id)
+          def self.mark_as_deleted!(kb_payment_method_id, kb_tenant_id)
+            payment_method = from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
             payment_method.is_deleted = true
             payment_method.save!
           end
@@ -74,10 +75,10 @@ module Killbill
           end
 
           # VisibleForTesting
-          def self.search_query(search_key, offset = nil, limit = nil)
+          def self.search_query(search_key, kb_tenant_id, offset = nil, limit = nil)
             t = self.arel_table
 
-            query = t.where(search_where_clause(t, search_key))
+            query = t.where(search_where_clause(t, search_key).and(t[:kb_tenant_id].eq(kb_tenant_id)))
                      .order(t[:id])
 
             if offset.blank? and limit.blank?
@@ -93,16 +94,16 @@ module Killbill
             query
           end
 
-          def self.search(search_key, offset = 0, limit = 100)
+          def self.search(search_key, kb_tenant_id, offset = 0, limit = 100)
             pagination = Killbill::Plugin::Model::Pagination.new
             pagination.current_offset = offset
-            pagination.total_nb_records = self.count_by_sql(self.search_query(search_key))
+            pagination.total_nb_records = self.count_by_sql(self.search_query(search_key, kb_tenant_id))
             pagination.max_nb_records = self.count
             pagination.next_offset = (!pagination.total_nb_records.nil? && offset + limit >= pagination.total_nb_records) ? nil : offset + limit
             # Reduce the limit if the specified value is larger than the number of records
             actual_limit = [pagination.max_nb_records, limit].min
             pagination.iterator = StreamyResultSet.new(actual_limit) do |offset,limit|
-              self.find_by_sql(self.search_query(search_key, offset, limit))
+              self.find_by_sql(self.search_query(search_key, kb_tenant_id, offset, limit))
                   .map(&:to_payment_method_response)
             end
             pagination

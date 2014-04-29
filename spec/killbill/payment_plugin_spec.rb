@@ -33,6 +33,6 @@ describe Killbill::Plugin::Payment do
 
     lambda { @plugin.get_payment_method_detail(@kb_account_id, @payment_method, @properties, @call_context) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
     lambda { @plugin.get_payment_methods(@kb_account_id, true, @properties, @call_context) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
-    lambda { @plugin.reset_payment_methods(@kb_account_id, @properties, @payment_methods) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
+    lambda { @plugin.reset_payment_methods(@kb_account_id, @properties, @payment_methods, @call_context) }.should raise_error Killbill::Plugin::Payment::OperationUnsupportedByGatewayError
   end
 end

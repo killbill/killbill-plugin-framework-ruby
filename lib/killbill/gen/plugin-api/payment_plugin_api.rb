@@ -647,8 +647,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::void resetPaymentMethods(Java::java.util.UUID, Java::java.util.List, Java::java.lang.Iterable)'
-        def reset_payment_methods(kbAccountId, paymentMethods, properties)
+        java_signature 'Java::void resetPaymentMethods(Java::java.util.UUID, Java::java.util.List, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def reset_payment_methods(kbAccountId, paymentMethods, properties, context)
 
           # conversion for kbAccountId [type = java.util.UUID]
           kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
@@ -670,8 +670,11 @@ module Killbill
             tmp << m
           end
           properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
-            @delegate_plugin.reset_payment_methods(kbAccountId, paymentMethods, properties)
+            @delegate_plugin.reset_payment_methods(kbAccountId, paymentMethods, properties, context)
           rescue Exception => e
             message = "Failure in reset_payment_methods: #{e}"
             unless e.backtrace.nil?
