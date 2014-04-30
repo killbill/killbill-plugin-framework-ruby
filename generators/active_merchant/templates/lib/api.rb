@@ -108,11 +108,31 @@ module Killbill #:nodoc:
       end
 
       def build_form_descriptor(kb_account_id, descriptor_fields, properties, context)
-        super
+        # Pass extra parameters for the gateway here
+        options = {}
+        properties = merge_properties(properties, options)
+
+        # Add your custom static hidden tags here
+        options = {
+            #:token => config[:<%= identifier %>][:token]
+        }
+        descriptor_fields = merge_properties(descriptor_fields, options)
+
+        super(kb_account_id, descriptor_fields, properties, context)
       end
 
       def process_notification(notification, properties, context)
-        super
+        # Pass extra parameters for the gateway here
+        options = {}
+        properties = merge_properties(properties, options)
+
+        super(notification, properties, context) do |gw_notification, service|
+          # Retrieve the payment
+          # gw_notification.kb_payment_id =
+          #
+          # Set the response body
+          # gw_notification.entity =
+        end
       end
     end
   end

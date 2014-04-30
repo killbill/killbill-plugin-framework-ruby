@@ -289,11 +289,94 @@ module Killbill
         end
 
         def build_form_descriptor(kb_account_id, descriptor_fields, properties, context)
-          options = properties_to_hash(properties)
+          options = properties_to_hash(descriptor_fields)
+          order = options.delete(:order_id)
+          account = options.delete(:account_id)
+          service_options = {
+              :amount           => options.delete(:amount),
+              :currency         => options.delete(:currency),
+              :test             => options.delete(:test),
+              :credential2      => options.delete(:credential2),
+              :credential3      => options.delete(:credential3),
+              :credential4      => options.delete(:credential4),
+              :country          => options.delete(:country),
+              :account_name     => options.delete(:account_name),
+              :transaction_type => options.delete(:transaction_type),
+              :authcode         => options.delete(:authcode),
+              :notify_url       => options.delete(:notify_url),
+              :return_url       => options.delete(:return_url),
+              :redirect_param   => options.delete(:redirect_param),
+              :forward_url      => options.delete(:forward_url)
+          }
+
+          # Retrieve the ActiveMerchant integration
+          integration_module = ::ActiveMerchant::Billing::Integrations.const_get(@identifier.to_s.camelize)
+          service_class = integration_module.const_get('Helper')
+          service = service_class.new(order, account, service_options)
+
+          # Add the specified fields
+          options.each do |field, value|
+            mapping = service_class.mappings[field]
+            next if mapping.nil?
+            case mapping
+              when Array
+                mapping.each{ |field2| service.add_field(field2, value) }
+              when Hash
+                options2 = value.is_a?(Hash) ? value : {}
+                mapping.each{ |key, field2| service.add_field(field2, options2[key]) }
+              else
+                service.add_field(mapping, value)
+            end
+          end
+
+          form_fields = {}
+          service.form_fields.each do |field, value|
+            form_fields[field] = value
+          end
+          service.raw_html_fields.each do |field, value|
+            form_fields[field] = value
+          end
+
+          # Build the response object
+          descriptor = ::Killbill::Plugin::Model::HostedPaymentPageFormDescriptor.new
+          descriptor.kb_account_id = kb_account_id
+          descriptor.form_method = service.form_method || 'POST'
+          descriptor.form_url = service.respond_to?(:credential_based_url) ? service.credential_based_url : integration_module.service_url
+          descriptor.form_fields = hash_to_properties(form_fields)
+          # Any other custom property
+          descriptor.properties = hash_to_properties({})
+
+          descriptor
         end
 
-        def process_notification(notification, properties, context)
+        def process_notification(notification, properties, context, &proc)
           options = properties_to_hash(properties)
+
+          # Retrieve the ActiveMerchant integration
+          integration_module = ::ActiveMerchant::Billing::Integrations.const_get(@identifier.to_s.camelize)
+          service_class = integration_module.const_get('Notification')
+          # notification is either a body or a query string
+          service = service_class.new(notification, options)
+
+          if service.respond_to? :acknowledge
+            service.acknowledge
+          end
+
+          gw_notification = ::Killbill::Plugin::Model::GatewayNotification.new
+          gw_notification.kb_payment_id = nil
+          gw_notification.status = service.status == 'Completed' ? 200 : 400
+          gw_notification.headers = {}
+          gw_notification.properties = []
+
+          if service.respond_to? :success_response
+            gw_notification.entity = service.success_response(properties_to_hash(properties))
+          else
+            gw_notification.entity = ''
+          end
+
+          yield(gw_notification, service) if block_given?
+
+          gw_notification
         end
 
         # Utilities
@@ -340,6 +423,14 @@ module Killbill
 
         def gateway
           ::Killbill::Plugin::ActiveMerchant.gateway
+        end
+
+        def config
+          ::Killbill::Plugin::ActiveMerchant.config
+        end
+
+        def hash_to_properties(options)
+          merge_properties([], options)
         end
 
         def properties_to_hash(properties, options = {})
