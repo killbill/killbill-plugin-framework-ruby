@@ -84,6 +84,30 @@ module Killbill
           package_task.package_files = Rake::FileList.new("#{@package_dir.basename}/**/*")
         end
 
+        desc "Deploy the plugin to Kill Bill"
+        task :deploy, [:force, :plugin_dir] => :stage do |t, args|
+          plugins_dir = Pathname.new("#{args.plugin_dir || '/var/tmp/bundles/plugins/ruby'}").expand_path
+          mkdir_p plugins_dir, :verbose => @verbose
+
+          plugin_path = Pathname.new("#{plugins_dir}/#{name}")
+          if plugin_path.exist?
+            if args.force == "true"
+              @logger.info "Deleting previous plugin deployment #{plugin_path}"
+              rm_rf plugin_path, :verbose => @verbose
+            else
+              raise "Cowardly not deleting previous plugin deployment #{plugin_path} - override with rake killbill:deploy[true]"
+            end
+          end
+
+          cp_r @package_dir, plugins_dir, :verbose => @verbose
+
+          Rake::FileList.new("#{@base}/*.yml").each do |config_file|
+            config_file_path = Pathname.new("#{plugin_path}/#{version}/#{File.basename(config_file)}").expand_path
+            @logger.info "Deploying #{config_file} to #{config_file_path}"
+            cp config_file, config_file_path, :verbose => @verbose
+          end
+        end
+
         desc "List all dependencies"
         task :dependency => :validate do
           print_dependencies
@@ -138,7 +162,7 @@ module Killbill
         plugin_gem_files = Dir[File.join(base, "**/#{spec.file_name}")]
         @logger.debug "Gem candidates found: #{plugin_gem_files}"
         # Take the first one, assume the other ones are from build directories (e.g. pkg)
-        plugin_gem_file = Pathname.new(plugin_gem_files.first).expand_path
+        plugin_gem_file = Pathname.new(plugin_gem_files.first).expand_path unless plugin_gem_files.empty?
       end
 
       raise "Unable to find #{gem_name} in #{base}. Did you build it? (`rake build')" unless plugin_gem_file.file?

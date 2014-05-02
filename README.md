@@ -124,13 +124,17 @@ This will generate a tree of files ready to be plugged into Kill Bill. To packag
 
 Most of the work consists of filling in the blank in `api.rb` (payment plugin API for ActiveMerchant gateways) and `application.rb` (sinatra application for ActiveMerchant integrations). Check the [Stripe plugin](https://github.com/killbill/killbill-stripe-plugin) for an example.
 
+In case the templates behind the generator change and you want to upgrade your plugin, you can re-run the above
+generate command on top of your existing code. For each file, you'll be prompted whether you want to overwrite it, show a
+diff, etc.
+
 
 How to expose HTTP endpoints
 ----------------------------
 
 Killbill exports a Rack handler that interfaces directly with the container in which killbill-server runs (e.g. Jetty).
 
-This basically means that Killbill will understand native Rack config.ru files placed in the root of your plugin, e.g. (using Sinatra): 
+This basically means that Killbill will understand native Rack config.ru files placed in the root of your plugin, e.g. (using Sinatra):
 
     require 'sinatra'
 
@@ -168,7 +172,11 @@ To build the artifacts into pkg/:
     # The <plugin_name>-<plugin-version>/ directory is used as a staging directory
     rake killbill:package
 
+For quick testing of your plugin, you can use the `deploy` task:
 
-In case the templates behind the generator change and you want to upgrade your plugin, you can re-run the above
-command on top of your existing code. For each file, you'll be prompted whether you want to overwrite it, show a
-diff, etc.
+    # Deploy the plugin in /var/tmp/bundles
+    rake killbill:deploy
+    # Deploy the plugin and clobber a previous version if needed
+    rake killbill:deploy[true]
+    # You can also specify a custom plugins directory as such
+    rake killbill:deploy[false,/path/to/bundles]
