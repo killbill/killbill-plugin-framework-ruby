@@ -56,7 +56,8 @@ module Killbill
       # Rely on the Gemfile definition, if it exists, to get all dependencies
       # (we assume the Gemfile includes the plugin gemspec, as it should).
       # Otherwise, use only the plugin gemspec.
-      @specs ||= @gemfile_definition ? @gemfile_definition.specs : [@plugin_gemspec]
+      # When using the Gemfile definition, don't include the :development group -- should this be configurable?
+      @specs ||= @gemfile_definition ? @gemfile_definition.specs_for([:default]) : [@plugin_gemspec]
     end
 
     def install
@@ -172,7 +173,22 @@ module Killbill
         next if spec.name == name and spec.version == version
         @logger.debug "Staging #{spec.name} (#{spec.version}) from #{spec.cache_file}"
         begin
-          Gem::Installer.new(spec.cache_file, {:force => true, :install_dir => @target_dir}).install
+          gem_installer                       = Gem::Installer.new(spec.cache_file,
+                                                                   {
+                                                                       :force       => true,
+                                                                       :install_dir => @target_dir,
+                                                                       # Should be redundant with the tweaks below
+                                                                       :development => false,
+                                                                       :wrappers    => true
+                                                                   })
+
+          # Tweak the spec file as there are a lot of things we don't care about
+          gem_installer.spec.executables      = nil
+          gem_installer.spec.extensions       = nil
+          gem_installer.spec.extra_rdoc_files = nil
+          gem_installer.spec.test_files       = nil
+
+          gem_installer.install
         rescue => e
           @logger.warn "Unable to stage #{spec.name} (#{spec.version}) from #{spec.cache_file}: #{e}"
         end
