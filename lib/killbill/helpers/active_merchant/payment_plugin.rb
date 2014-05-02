@@ -310,7 +310,7 @@ module Killbill
           }
 
           # Retrieve the ActiveMerchant integration
-          integration_module = ::ActiveMerchant::Billing::Integrations.const_get(@identifier.to_s.camelize)
+          integration_module = get_active_merchant_module
           service_class = integration_module.const_get('Helper')
           service = service_class.new(order, account, service_options)
 
@@ -353,7 +353,7 @@ module Killbill
           options = properties_to_hash(properties)
 
           # Retrieve the ActiveMerchant integration
-          integration_module = ::ActiveMerchant::Billing::Integrations.const_get(@identifier.to_s.camelize)
+          integration_module = get_active_merchant_module
           service_class = integration_module.const_get('Notification')
           # notification is either a body or a query string
           service = service_class.new(notification, options)
@@ -452,6 +452,10 @@ module Killbill
             properties << p
           end
           properties
+        end
+
+        def get_active_merchant_module
+          ::ActiveMerchant::Billing::Integrations.const_get(@identifier.to_s.camelize)
         end
       end
     end
