@@ -60,8 +60,13 @@ module Killbill
           def self.search_query(api_call, search_key, kb_tenant_id, offset = nil, limit = nil)
             t = self.arel_table
 
-            query = t.where(search_where_clause(t, search_key, api_call).and(t[:kb_tenant_id].eq(kb_tenant_id)))
-                     .order(t[:id])
+            if kb_tenant_id.nil?
+              query = t.where(search_where_clause(t, search_key, api_call))
+              .order(t[:id])
+            else
+              query = t.where(search_where_clause(t, search_key, api_call).and(t[:kb_tenant_id].eq(kb_tenant_id)))
+              .order(t[:id])
+            end
 
             if offset.blank? and limit.blank?
               # true is for count distinct

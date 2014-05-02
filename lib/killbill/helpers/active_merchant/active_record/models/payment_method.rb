@@ -33,11 +33,19 @@ module Killbill
           end
 
           def self.from_kb_account_id(kb_account_id, kb_tenant_id)
-            where('kb_account_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_account_id, kb_tenant_id, false)
+            if kb_tenant_id.nil?
+              where('kb_account_id = ? AND is_deleted = ?', kb_account_id, false)
+            else
+              where('kb_account_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_account_id, kb_tenant_id, false)
+            end
           end
 
           def self.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
-            payment_methods = where('kb_payment_method_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_payment_method_id, kb_tenant_id, false)
+            if kb_tenant_id.nil?
+              payment_methods = where('kb_payment_method_id = ? AND is_deleted = ?', kb_payment_method_id, false)
+            else
+              payment_methods = where('kb_payment_method_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_payment_method_id, kb_tenant_id, false)
+            end
             raise "No payment method found for payment method #{kb_payment_method_id}" if payment_methods.empty?
             raise "Kill Bill payment method #{kb_payment_method_id} mapping to multiple active plugin payment methods" if payment_methods.size > 1
             payment_methods[0]
@@ -78,8 +86,13 @@ module Killbill
           def self.search_query(search_key, kb_tenant_id, offset = nil, limit = nil)
             t = self.arel_table
 
-            query = t.where(search_where_clause(t, search_key).and(t[:kb_tenant_id].eq(kb_tenant_id)))
-                     .order(t[:id])
+            if kb_tenant_id.nil?
+              query = t.where(search_where_clause(t, search_key))
+              .order(t[:id])
+            else
+              query = t.where(search_where_clause(t, search_key).and(t[:kb_tenant_id].eq(kb_tenant_id)))
+              .order(t[:id])
+            end
 
             if offset.blank? and limit.blank?
               # true is for count distinct
