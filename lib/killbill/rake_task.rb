@@ -64,19 +64,22 @@ module Killbill
       namespace :killbill do
         desc "Validate plugin tree"
         # The killbill.properties file is required, but not the config.ru one
-        task :validate => killbill_properties_file do
+        task :validate, [:verbose] => killbill_properties_file do |t, args|
+          set_verbosity(args)
           validate
         end
 
         # Build the .tar.gz and .zip packages
-        task :package => :stage
+        task :package, [:verbose] => :stage
         package_task = Rake::PackageTask.new(name, version) do |p|
           p.need_tar_gz = true
           p.need_zip = true
         end
 
         desc "Stage all dependencies"
-        task :stage => :validate do
+        task :stage, [:verbose] => :validate do |t, args|
+          set_verbosity(args)
+
           stage_dependencies
           stage_extra_files
 
@@ -85,7 +88,9 @@ module Killbill
         end
 
         desc "Deploy the plugin to Kill Bill"
-        task :deploy, [:force, :plugin_dir] => :stage do |t, args|
+        task :deploy, [:force, :plugin_dir, :verbose] => :stage do |t, args|
+          set_verbosity(args)
+
           plugins_dir = Pathname.new("#{args.plugin_dir || '/var/tmp/bundles/plugins/ruby'}").expand_path
           mkdir_p plugins_dir, :verbose => @verbose
 
@@ -121,6 +126,12 @@ module Killbill
     end
 
     private
+
+    def set_verbosity(args)
+      return unless args.verbose == 'true'
+      @verbose = true
+      @logger.level = Logger::DEBUG
+    end
 
     def validate
       @gemfile_definition = find_gemfile

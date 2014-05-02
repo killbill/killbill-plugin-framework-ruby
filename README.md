@@ -180,3 +180,7 @@ For quick testing of your plugin, you can use the `deploy` task:
     rake killbill:deploy[true]
     # You can also specify a custom plugins directory as such
     rake killbill:deploy[false,/path/to/bundles]
+
+To debug packaging issues, pass `true` as the third (optional) parameter:
+
+    rake killbill:deploy[false,/path/to/bundles,true]
