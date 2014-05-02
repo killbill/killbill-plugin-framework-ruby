@@ -99,7 +99,6 @@ module Killbill
     private
 
     def validate
-      @plugin_gem_file    = find_plugin_gem
       @gemfile_definition = find_gemfile
     end
 
@@ -125,20 +124,24 @@ module Killbill
       Bundler.load_gemspec(spec_path)
     end
 
-    def find_plugin_gem
-      if @gem_name
-        # Absolute path?
-        plugin_gem_file = Pathname.new(@gem_name).expand_path
-        # Relative path to the base?
-        plugin_gem_file = @base.join(@gem_name).expand_path unless plugin_gem_file.file?
-        raise "Unable to find your plugin gem in #{@base}. Did you build it (`rake build')?" unless plugin_gem_file.file?
-      else
-        plugin_gem_files = Dir[File.join(@base, "**/#{name}-#{version}.gem")]
+    def find_plugin_gem(spec)
+      gem_name        = spec.file_name
+      # spec.loaded_from is the path to the gemspec file
+      base            = Pathname.new(File.dirname(spec.loaded_from)).expand_path
+
+      # Try in the base directory first
+      plugin_gem_file = Pathname.new(gem_name).expand_path
+      plugin_gem_file = base.join(gem_name).expand_path unless plugin_gem_file.file?
+
+      # Try in subdirectories next
+      unless plugin_gem_file.file?
+        plugin_gem_files = Dir[File.join(base, "**/#{spec.file_name}")]
         @logger.debug "Gem candidates found: #{plugin_gem_files}"
-        raise "Unable to find your plugin gem in #{@base}. Did you build it? (`rake build')" unless plugin_gem_files.size >= 1
         # Take the first one, assume the other ones are from build directories (e.g. pkg)
-        plugin_gem_file = plugin_gem_files.first
+        plugin_gem_file = Pathname.new(plugin_gem_files.first).expand_path
       end
+
+      raise "Unable to find #{gem_name} in #{base}. Did you build it? (`rake build')" unless plugin_gem_file.file?
 
       @logger.debug "Found #{plugin_gem_file}"
       Pathname.new(plugin_gem_file).expand_path
@@ -169,33 +172,38 @@ module Killbill
       # We can't simply use Bundler::Installer unfortunately, because we can't tell it to copy the gems for cached ones
       # (it will default to using Bundler::Source::Path references to the gemspecs on "install").
       specs.each do |spec|
-        # For the plugin itself, install it manually (the cache path is likely to be wrong)
-        next if spec.name == name and spec.version == version
-        @logger.debug "Staging #{spec.name} (#{spec.version}) from #{spec.cache_file}"
-        begin
-          gem_installer                       = Gem::Installer.new(spec.cache_file,
-                                                                   {
-                                                                       :force       => true,
-                                                                       :install_dir => @target_dir,
-                                                                       # Should be redundant with the tweaks below
-                                                                       :development => false,
-                                                                       :wrappers    => true
-                                                                   })
-
-          # Tweak the spec file as there are a lot of things we don't care about
-          gem_installer.spec.executables      = nil
-          gem_installer.spec.extensions       = nil
-          gem_installer.spec.extra_rdoc_files = nil
-          gem_installer.spec.test_files       = nil
-
-          gem_installer.install
-        rescue => e
-          @logger.warn "Unable to stage #{spec.name} (#{spec.version}) from #{spec.cache_file}: #{e}"
+        plugin_gem_file = Pathname.new(spec.cache_file).expand_path
+        if plugin_gem_file.file?
+          @logger.debug "Staging #{spec.name} (#{spec.version}) from #{plugin_gem_file}"
+        else
+          plugin_gem_file = find_plugin_gem(spec)
+          @logger.info "Staging custom gem #{spec.full_name} from #{plugin_gem_file}"
         end
-      end
 
-      @logger.debug "Staging #{name} (#{version}) from #{@plugin_gem_file}"
-      Gem::Installer.new(@plugin_gem_file, {:force => true, :install_dir => @target_dir}).install
+        do_install_gem(plugin_gem_file, spec.name, spec.version)
+      end
+    end
+
+    def do_install_gem(path, name, version)
+      gem_installer                       = Gem::Installer.new(path,
+                                                               {
+                                                                   :force       => true,
+                                                                   :install_dir => @target_dir,
+                                                                   # Should be redundant with the tweaks below
+                                                                   :development => false,
+                                                                   :wrappers    => true
+                                                               })
+
+      # Tweak the spec file as there are a lot of things we don't care about
+      gem_installer.spec.executables      = nil
+      gem_installer.spec.extensions       = nil
+      gem_installer.spec.extra_rdoc_files = nil
+      gem_installer.spec.test_files       = nil
+
+      gem_installer.install
+    rescue => e
+      @logger.warn "Unable to stage #{name} (#{version}) from #{path}: #{e}"
+      raise e
     end
 
     def stage_extra_files
