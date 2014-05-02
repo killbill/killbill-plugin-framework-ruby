@@ -15,14 +15,17 @@ module Killbill
             opts[:plugin_name],                         # Plugin name, e.g. 'klogger'
             opts[:gem_name],                            # Gem file name, e.g. 'klogger-1.0.0.gem'
             opts[:gemfile_name] || "Gemfile",           # Gemfile name
-            opts[:gemfile_lock_name] || "Gemfile.lock") # Gemfile.lock name
+            opts[:gemfile_lock_name] || "Gemfile.lock", # Gemfile.lock name
+            opts[:verbose] || false)
         .install
       end
     end
 
-    def initialize(base_name, plugin_name, gem_name, gemfile_name, gemfile_lock_name)
+    def initialize(base_name, plugin_name, gem_name, gemfile_name, gemfile_lock_name, verbose)
+      @verbose = verbose
+
       @logger = Logger.new(STDOUT)
-      @logger.level = Logger::INFO
+      @logger.level = @verbose ? Logger::DEBUG : Logger::INFO
 
       @base_name = base_name
       @plugin_name = plugin_name
@@ -159,7 +162,7 @@ module Killbill
 
     def stage_dependencies
       # Create the target directory
-      mkdir_p @target_dir.to_s
+      mkdir_p @target_dir.to_s, :verbose => @verbose
 
       @logger.debug "Installing all gem dependencies to #{@target_dir}"
       # We can't simply use Bundler::Installer unfortunately, because we can't tell it to copy the gems for cached ones
@@ -182,11 +185,11 @@ module Killbill
     def stage_extra_files
       unless killbill_properties_file.nil?
         @logger.debug "Staging #{killbill_properties_file} to #{@plugin_root_target_dir}"
-        cp killbill_properties_file, @plugin_root_target_dir
+        cp killbill_properties_file, @plugin_root_target_dir, :verbose => @verbose
       end
       unless config_ru_file.nil?
         @logger.debug "Staging #{config_ru_file} to #{@plugin_root_target_dir}"
-        cp config_ru_file, @plugin_root_target_dir
+        cp config_ru_file, @plugin_root_target_dir, :verbose => @verbose
       end
     end
 
