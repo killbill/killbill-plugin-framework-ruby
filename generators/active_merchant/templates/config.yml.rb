@@ -7,7 +7,7 @@
   :database: test.db
 # For MySQL
 #  :adapter: 'jdbc'
-#  :username: 'your-username'
-#  :password: 'your-password'
+#  :username: 'killbill'
+#  :password: 'killbill'
 #  :driver: 'com.mysql.jdbc.Driver'
-#  :url: 'jdbc:mysql://127.0.0.1:3306/your-database'
+#  :url: 'jdbc:mysql://127.0.0.1:3306/killbill'
