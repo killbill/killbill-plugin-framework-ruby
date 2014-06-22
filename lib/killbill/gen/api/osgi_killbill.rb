@@ -32,7 +32,7 @@ module Killbill
 
         include org.killbill.billing.osgi.api.OSGIKillbill
 
-        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api
+        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api, :security_api
 
         def initialize()
         end
@@ -53,7 +53,7 @@ module Killbill
           # conversion for invoice_user_api [type = org.killbill.billing.invoice.api.InvoiceUserApi]
           @invoice_user_api = @invoice_user_api.to_java unless @invoice_user_api.nil?
 
-          # conversion for payment_api [type = org.killbill.billing.payment.api.PaymentApi]
+          # conversion for payment_api [type = org.killbill.billing.payment.api.DirectPaymentApi]
           @payment_api = @payment_api.to_java unless @payment_api.nil?
 
           # conversion for tenant_user_api [type = org.killbill.billing.tenant.api.TenantUserApi]
@@ -85,6 +85,9 @@ module Killbill
 
           # conversion for plugin_config_service_api [type = org.killbill.billing.osgi.api.config.PluginConfigServiceApi]
           @plugin_config_service_api = @plugin_config_service_api.to_java unless @plugin_config_service_api.nil?
+
+          # conversion for security_api [type = org.killbill.billing.security.api.SecurityApi]
+          @security_api = @security_api.to_java unless @security_api.nil?
           self
         end
 
@@ -109,9 +112,9 @@ module Killbill
           @invoice_user_api = j_obj.invoice_user_api
           @invoice_user_api = Killbill::Plugin::Model::InvoiceUserApi.new.to_ruby(@invoice_user_api) unless @invoice_user_api.nil?
 
-          # conversion for payment_api [type = org.killbill.billing.payment.api.PaymentApi]
+          # conversion for payment_api [type = org.killbill.billing.payment.api.DirectPaymentApi]
           @payment_api = j_obj.payment_api
-          @payment_api = Killbill::Plugin::Model::PaymentApi.new.to_ruby(@payment_api) unless @payment_api.nil?
+          @payment_api = Killbill::Plugin::Model::DirectPaymentApi.new.to_ruby(@payment_api) unless @payment_api.nil?
 
           # conversion for tenant_user_api [type = org.killbill.billing.tenant.api.TenantUserApi]
           @tenant_user_api = j_obj.tenant_user_api
@@ -152,6 +155,10 @@ module Killbill
           # conversion for plugin_config_service_api [type = org.killbill.billing.osgi.api.config.PluginConfigServiceApi]
           @plugin_config_service_api = j_obj.plugin_config_service_api
           @plugin_config_service_api = Killbill::Plugin::Model::PluginConfigServiceApi.new.to_ruby(@plugin_config_service_api) unless @plugin_config_service_api.nil?
+
+          # conversion for security_api [type = org.killbill.billing.security.api.SecurityApi]
+          @security_api = j_obj.security_api
+          @security_api = Killbill::Plugin::Model::SecurityApi.new.to_ruby(@security_api) unless @security_api.nil?
           self
         end
 

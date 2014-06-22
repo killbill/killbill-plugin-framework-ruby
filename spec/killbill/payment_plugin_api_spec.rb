@@ -4,18 +4,18 @@ require 'spec_helper'
 describe Killbill::Plugin::Api::PaymentPluginApi do
 
   before(:all) do
-    @call_context = Killbill::Plugin::Model::CallContext.new
-    logger = ::Logger.new(STDOUT)
-    @paymentPluginApi =  Killbill::Plugin::Api::PaymentPluginApi.new("Killbill::Plugin::PaymentTest", { "logger" => logger })
-    @kb_account_id = java.util.UUID.fromString("aa5c926e-3d9d-4435-b44b-719d7b583256")
-    @kb_payment_id = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
-    @kb_payment_method_id = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
+    @call_context          = Killbill::Plugin::Model::CallContext.new
+    logger                 = ::Logger.new(STDOUT)
+    @paymentPluginApi      = Killbill::Plugin::Api::PaymentPluginApi.new("Killbill::Plugin::PaymentTest", {"logger" => logger})
+    @kb_account_id         = java.util.UUID.fromString("aa5c926e-3d9d-4435-b44b-719d7b583256")
+    @kb_payment_id         = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
+    @kb_payment_method_id  = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
     @payment_method_plugin = nil
-    @amount = java.math.BigDecimal.new("50")
-    @currency = Java::org.killbill.billing.catalog.api.Currency::USD
-    propertyA = Java::org.killbill.billing.payment.api.PluginProperty.new('keyA', 'valueA', false)
-    propertyB = Java::org.killbill.billing.payment.api.PluginProperty.new('keyB', 'valueB', true)
-    @properties = java.util.ArrayList.new
+    @amount                = java.math.BigDecimal.new("50")
+    @currency              = Java::org.killbill.billing.catalog.api.Currency::USD
+    propertyA              = Java::org.killbill.billing.payment.api.PluginProperty.new('keyA', 'valueA', false)
+    propertyB              = Java::org.killbill.billing.payment.api.PluginProperty.new('keyB', 'valueB', true)
+    @properties            = java.util.ArrayList.new
     @properties.add(propertyA)
     @properties.add(propertyB)
   end
@@ -25,7 +25,7 @@ describe Killbill::Plugin::Api::PaymentPluginApi do
   end
 
   it "should_test_charge_ok" do
-    output = @paymentPluginApi.process_payment(@kb_account_id, @kb_payment_id, @kb_payment_method_id, @amount, @currency, @properties, nil)
+    output = @paymentPluginApi.purchase_payment(@kb_account_id, @kb_payment_id, @kb_payment_transaction_id, @kb_payment_method_id, @amount, @currency, @properties, nil)
     output.amount.should be_an_instance_of java.math.BigDecimal
     output.amount.compare_to(@amount).should == 0
     output.status.java_kind_of?(Java::org.killbill.billing.payment.plugin.api.PaymentPluginStatus).should == true
@@ -34,17 +34,18 @@ describe Killbill::Plugin::Api::PaymentPluginApi do
 
   it "should_test_charge_exception" do
     @paymentPluginApi.delegate_plugin.send(:raise_exception_on_next_calls)
-    lambda { @paymentPluginApi.process_payment(@kb_account_id, @kb_payment_id, @kb_payment_method_id, @amount, @currency, @properties, nil) }.should raise_error Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException
+    lambda { @paymentPluginApi.purchase_payment(@kb_account_id, @kb_payment_id, @kb_payment_transaction_id, @kb_payment_method_id, @amount, @currency, @properties, nil) }.should raise_error Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException
   end
 
   it "should_test_get_payment_info_ok" do
     output = @paymentPluginApi.get_payment_info(@kb_account_id, @kb_payment_method_id, @properties, nil)
+    output.size.should == 1
+    output = output.first
     output.amount.should be_an_instance_of java.math.BigDecimal
     output.amount.compare_to(java.math.BigDecimal.new(0)).should == 0
     output.status.java_kind_of?(Java::org.killbill.billing.payment.plugin.api.PaymentPluginStatus).should == true
     output.status.to_s.should == "PROCESSED"
   end
-
 
   it "should_test_get_payment_info_exception" do
     @paymentPluginApi.delegate_plugin.send(:raise_exception_on_next_calls)
@@ -52,17 +53,16 @@ describe Killbill::Plugin::Api::PaymentPluginApi do
   end
 
   it "should_test_refund_ok" do
-    output = @paymentPluginApi.process_refund(@kb_account_id, @kb_payment_method_id, @amount, @currency, @properties, nil)
+    output = @paymentPluginApi.refund_payment(@kb_account_id, @kb_payment_id, @kb_payment_transaction_id, @kb_payment_method_id, @amount, @currency, @properties, nil)
     output.amount.should be_an_instance_of java.math.BigDecimal
     output.amount.compare_to(@amount).should == 0
-    output.status.java_kind_of?(Java::org.killbill.billing.payment.plugin.api.RefundPluginStatus).should == true
+    output.status.java_kind_of?(Java::org.killbill.billing.payment.plugin.api.PaymentPluginStatus).should == true
     output.status.to_s.should == "PROCESSED"
   end
 
-
   it "should_test_refund_exception" do
     @paymentPluginApi.delegate_plugin.send(:raise_exception_on_next_calls)
-    lambda { @paymentPluginApi.process_refund(@kb_account_id, @kb_payment_method_id, @amount, @currency, @properties, nil) }.should raise_error Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException
+    lambda { @paymentPluginApi.refund_payment(@kb_account_id, @kb_payment_id, @kb_payment_transaction_id, @kb_payment_method_id, @amount, @currency, @properties, nil) }.should raise_error Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException
   end
 
   it "should_test_add_payment_method_ok" do

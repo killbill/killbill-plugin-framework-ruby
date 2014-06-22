@@ -10,9 +10,24 @@ module Killbill
     class RackHandler < Java::javax.servlet.http.HttpServlet
       include Singleton
 
+      # A bit convoluted but the Rack API doesn't seem to let you
+      # configure these things out of the command line
+      class KillBillOptions < Rack::Server::Options
+        def parse!(args)
+          super.merge(default_options)
+        end
+
+        def default_options
+          {
+              # Make sure plugins are started in production mode by default
+              :environment => :production
+          }
+        end
+      end
+
       def configure(logger, config_ru)
         @logger = logger
-        @app = Rack::Builder.parse_file(config_ru).first
+        @app    = Rack::Builder.parse_file(config_ru, KillBillOptions.new).first
       end
 
       def unconfigure

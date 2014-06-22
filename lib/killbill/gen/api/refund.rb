@@ -78,7 +78,7 @@ module Killbill
           # conversion for refund_status [type = org.killbill.billing.payment.api.RefundStatus]
           @refund_status = Java::org.killbill.billing.payment.api.RefundStatus.value_of("#{@refund_status.to_s}") unless @refund_status.nil?
 
-          # conversion for refund_info_plugin [type = org.killbill.billing.payment.plugin.api.RefundInfoPlugin]
+          # conversion for refund_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
           @refund_info_plugin = @refund_info_plugin.to_java unless @refund_info_plugin.nil?
           self
         end
@@ -137,9 +137,9 @@ module Killbill
           @refund_status = j_obj.refund_status
           @refund_status = @refund_status.to_s.to_sym unless @refund_status.nil?
 
-          # conversion for refund_info_plugin [type = org.killbill.billing.payment.plugin.api.RefundInfoPlugin]
+          # conversion for refund_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
           @refund_info_plugin = j_obj.refund_info_plugin
-          @refund_info_plugin = Killbill::Plugin::Model::RefundInfoPlugin.new.to_ruby(@refund_info_plugin) unless @refund_info_plugin.nil?
+          @refund_info_plugin = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new.to_ruby(@refund_info_plugin) unless @refund_info_plugin.nil?
           self
         end
 

@@ -33,7 +33,7 @@ module Killbill
           ::ActiveRecord::Base.connection.close
         end
 
-        def authorize_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
+        def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
           options = properties_to_hash(properties)
 
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
@@ -62,7 +62,7 @@ module Killbill
           response.to_payment_response(transaction)
         end
 
-        def capture_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
+        def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
           options = properties_to_hash(properties)
 
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
@@ -82,21 +82,7 @@ module Killbill
           response.to_payment_response(transaction)
         end
 
-        def void_payment(kb_account_id, kb_payment_id, kb_payment_method_id, properties, context)
-          options = properties_to_hash(properties)
-          options[:description] ||= "Kill Bill void for #{kb_payment_id}"
-
-          # Retrieve the authorization
-          authorization = @transaction_model.authorization_from_kb_payment_id(kb_payment_id, context.tenant_id).txn_id
-
-          # Go to the gateway
-          gw_response           = gateway.void authorization, options
-          response, transaction = save_response_and_transaction gw_response, :void, kb_account_id, context.tenant_id, kb_payment_id
-
-          response.to_payment_response(transaction)
-        end
-
-        def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount, currency, properties, context)
+        def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
           options = properties_to_hash(properties)
 
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
@@ -125,7 +111,25 @@ module Killbill
           response.to_payment_response(transaction)
         end
 
-        def process_refund(kb_account_id, kb_payment_id, amount, currency, properties, context)
+        def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context)
+          options = properties_to_hash(properties)
+          options[:description] ||= "Kill Bill void for #{kb_payment_id}"
+
+          # Retrieve the authorization
+          authorization = @transaction_model.authorization_from_kb_payment_id(kb_payment_id, context.tenant_id).txn_id
+
+          # Go to the gateway
+          gw_response           = gateway.void authorization, options
+          response, transaction = save_response_and_transaction gw_response, :void, kb_account_id, context.tenant_id, kb_payment_id
+
+          response.to_payment_response(transaction)
+        end
+
+        def credit_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+          # TODO
+        end
+
+        def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
           options = properties_to_hash(properties)
 
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
@@ -137,7 +141,7 @@ module Killbill
           gw_response           = gateway.refund amount_in_cents, transaction.txn_id, options
           response, transaction = save_response_and_transaction gw_response, :refund, kb_account_id, context.tenant_id, kb_payment_id, amount_in_cents, currency
 
-          response.to_refund_response(transaction)
+          response.to_payment_response(transaction)
         end
 
         def get_payment_info(kb_account_id, kb_payment_id, properties, context)
@@ -146,16 +150,14 @@ module Killbill
           # We assume the payment is immutable in the Gateway and only look at our tables
           transaction = @transaction_model.charge_from_kb_payment_id(kb_payment_id, context.tenant_id)
 
-          transaction.send("#{@identifier}_response").to_payment_response(transaction)
+          # TODO list
+          [transaction.send("#{@identifier}_response").to_payment_response(transaction)]
         end
 
-        def get_refund_info(kb_account_id, kb_payment_id, properties, context)
+        def search_payments(search_key, offset = 0, limit = 100, properties, context)
           options = properties_to_hash(properties)
-
-          # We assume the refund is immutable in the Gateway and only look at our tables
-          transactions = @transaction_model.refunds_from_kb_payment_id(kb_payment_id, context.tenant_id)
-
-          transactions.map { |t| t.send("#{@identifier}_response").to_refund_response(t) }
+          # TODO
+          @response_model.search(search_key, context.tenant_id, offset, limit, :payment)
         end
 
         def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, properties, context)
@@ -230,9 +232,18 @@ module Killbill
           @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).to_payment_method_response
         end
 
+        # No default implementation
+        #def set_default_payment_method(kb_account_id, kb_payment_method_id, properties, context)
+        #end
+
         def get_payment_methods(kb_account_id, refresh_from_gateway = false, properties, context)
           options = properties_to_hash(properties)
           @payment_method_model.from_kb_account_id(kb_account_id, context.tenant_id).collect { |pm| pm.to_payment_method_info_response }
+        end
+
+        def search_payment_methods(search_key, offset = 0, limit = 100, properties, context)
+          options = properties_to_hash(properties)
+          @payment_method_model.search(search_key, context.tenant_id, offset, limit)
         end
 
         def reset_payment_methods(kb_account_id, payment_methods, properties, context)
@@ -271,21 +282,6 @@ module Killbill
                                               :kb_tenant_id         => context.tenant_id,
                                               :token                => payment_method_info_plugin.external_payment_method_id
           end
-        end
-
-        def search_payments(search_key, offset = 0, limit = 100, properties, context)
-          options = properties_to_hash(properties)
-          @response_model.search(search_key, context.tenant_id, offset, limit, :payment)
-        end
-
-        def search_refunds(search_key, offset = 0, limit = 100, properties, context)
-          options = properties_to_hash(properties)
-          @response_model.search(search_key, context.tenant_id, offset, limit, :refund)
-        end
-
-        def search_payment_methods(search_key, offset = 0, limit = 100, properties, context)
-          options = properties_to_hash(properties)
-          @payment_method_model.search(search_key, context.tenant_id, offset, limit)
         end
 
         def build_form_descriptor(kb_account_id, descriptor_fields, properties, context)

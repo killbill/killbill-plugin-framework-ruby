@@ -32,7 +32,7 @@ module Killbill
 
         include org.killbill.billing.payment.api.DirectPayment
 
-        attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_number, :external_key, :auth_amount, :captured_amount, :refunded_amount, :currency, :payment_status, :transactions
+        attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_number, :external_key, :auth_amount, :captured_amount, :purchased_amount, :credited_amount, :refunded_amount, :is_auth_voided, :currency, :transactions
 
         def initialize()
         end
@@ -79,6 +79,20 @@ module Killbill
             @captured_amount = java.math.BigDecimal.new(@captured_amount.to_s)
           end
 
+          # conversion for purchased_amount [type = java.math.BigDecimal]
+          if @purchased_amount.nil?
+            @purchased_amount = java.math.BigDecimal::ZERO
+          else
+            @purchased_amount = java.math.BigDecimal.new(@purchased_amount.to_s)
+          end
+
+          # conversion for credited_amount [type = java.math.BigDecimal]
+          if @credited_amount.nil?
+            @credited_amount = java.math.BigDecimal::ZERO
+          else
+            @credited_amount = java.math.BigDecimal.new(@credited_amount.to_s)
+          end
+
           # conversion for refunded_amount [type = java.math.BigDecimal]
           if @refunded_amount.nil?
             @refunded_amount = java.math.BigDecimal::ZERO
@@ -86,11 +100,11 @@ module Killbill
             @refunded_amount = java.math.BigDecimal.new(@refunded_amount.to_s)
           end
 
+          # conversion for is_auth_voided [type = boolean]
+          @is_auth_voided = @is_auth_voided.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_auth_voided)
+
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
-
-          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
-          @payment_status = Java::org.killbill.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
 
           # conversion for transactions [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -146,17 +160,30 @@ module Killbill
           @captured_amount = j_obj.captured_amount
           @captured_amount = @captured_amount.nil? ? 0 : BigDecimal.new(@captured_amount.to_s)
 
+          # conversion for purchased_amount [type = java.math.BigDecimal]
+          @purchased_amount = j_obj.purchased_amount
+          @purchased_amount = @purchased_amount.nil? ? 0 : BigDecimal.new(@purchased_amount.to_s)
+
+          # conversion for credited_amount [type = java.math.BigDecimal]
+          @credited_amount = j_obj.credited_amount
+          @credited_amount = @credited_amount.nil? ? 0 : BigDecimal.new(@credited_amount.to_s)
+
           # conversion for refunded_amount [type = java.math.BigDecimal]
           @refunded_amount = j_obj.refunded_amount
           @refunded_amount = @refunded_amount.nil? ? 0 : BigDecimal.new(@refunded_amount.to_s)
 
+          # conversion for is_auth_voided [type = boolean]
+          @is_auth_voided = j_obj.is_auth_voided
+          if @is_auth_voided.nil?
+            @is_auth_voided = false
+          else
+            tmp_bool = (@is_auth_voided.java_kind_of? java.lang.Boolean) ? @is_auth_voided.boolean_value : @is_auth_voided
+            @is_auth_voided = tmp_bool ? true : false
+          end
+
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
-
-          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
-          @payment_status = j_obj.payment_status
-          @payment_status = @payment_status.to_s.to_sym unless @payment_status.nil?
 
           # conversion for transactions [type = java.util.List]
           @transactions = j_obj.transactions

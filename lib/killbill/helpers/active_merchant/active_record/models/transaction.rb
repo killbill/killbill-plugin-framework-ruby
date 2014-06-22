@@ -8,28 +8,40 @@ module Killbill
 
           self.abstract_class = true
 
-          def self.authorization_from_kb_payment_id(kb_payment_id, kb_tenant_id)
-            transaction_from_kb_payment_id :authorize, kb_payment_id, kb_tenant_id, :single
+          [:authorize, :capture, :purchase, :credit, :refund].each do |transaction_type|
+            define_method("#{transaction_type.to_s}s_from_kb_payment_id") do |kb_payment_id, kb_tenant_id|
+              transaction_from_kb_payment_id transaction_type, kb_payment_id, kb_tenant_id, :multiple
+            end
+
+            define_method("#{transaction_type.to_s}_from_kb_payment_transaction_id") do |kb_payment_transaction_id, kb_tenant_id|
+              transaction_from_kb_payment_transaction_id transaction_type, kb_payment_transaction_id, kb_tenant_id, :single
+            end
           end
 
-          def self.charge_from_kb_payment_id(kb_payment_id, kb_tenant_id)
-            transaction_from_kb_payment_id :charge, kb_payment_id, kb_tenant_id, :single
+          # For convenience
+          alias_method :authorizations_from_kb_payment_id, :authorizes_from_kb_payment_id
+          alias_method :authorization_from_kb_payment_transaction_id, :authorize_from_kb_payment_transaction_id
+
+          # void is special: unique void per payment_id
+          def self.void_from_kb_payment_id(kb_payment_id, kb_tenant_id)
+            transaction_from_kb_payment_id :void, kb_payment_id, kb_tenant_id, :single
           end
 
-          def self.refunds_from_kb_payment_id(kb_payment_id, kb_tenant_id)
-            transaction_from_kb_payment_id :refund, kb_payment_id, kb_tenant_id, :multiple
+          def self.void_from_kb_payment_transaction_id(kb_payment_transaction_id, kb_tenant_id)
+            transaction_from_kb_payment_transaction_id :void, kb_payment_transaction_id, kb_tenant_id, :single
           end
 
           def self.find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, amount_in_cents)
             begin
               do_find_candidate_transaction_for_refund :authorize, kb_payment_id, kb_tenant_id, amount_in_cents
             rescue
-              do_find_candidate_transaction_for_refund :charge, kb_payment_id, kb_tenant_id, amount_in_cents
+              do_find_candidate_transaction_for_refund :purchase, kb_payment_id, kb_tenant_id, amount_in_cents
             end
           end
 
-          def self.do_find_candidate_transaction_for_refund(api_call, kb_payment_id, kb_tenant_id, amount_in_cents)
+          private
 
+          def self.do_find_candidate_transaction_for_refund(api_call, kb_payment_id, kb_tenant_id, amount_in_cents)
             if kb_tenant_id.nil?
               transactions = where('amount_in_cents >= ? AND api_call = ? AND kb_payment_id = ?', amount_in_cents, api_call, kb_payment_id)
             else
@@ -50,20 +62,20 @@ module Killbill
             transactions.first
           end
 
-          private
-
-          def self.transaction_from_kb_payment_id(api_call, kb_payment_id, kb_tenant_id, how_many)
-            if kb_tenant_id.nil?
-              transactions = where('api_call = ? AND kb_payment_id = ?', api_call, kb_payment_id)
-            else
-              transactions = where('api_call = ? AND kb_tenant_id = ? AND kb_payment_id = ?', api_call, kb_tenant_id, kb_payment_id)
-            end
-            raise "Unable to find transaction id for payment #{kb_payment_id}" if transactions.empty?
-            if how_many == :single
-              raise "Kill Bill payment #{kb_payment_id} mapping to multiple plugin transactions" if transactions.size > 1
-              transactions[0]
-            else
-              transactions
+          [:kb_payment_id, :kb_payment_transaction_id].each do |attribute|
+            define_method("transaction_from_#{attribute.to_s}") do |api_call, attribute_value, kb_tenant_id, how_many|
+              if kb_tenant_id.nil?
+                transactions = where("api_call = ? AND #{attribute.to_s} = ?", api_call, attribute_value)
+              else
+                transactions = where("api_call = ? AND kb_tenant_id = ? AND #{attribute.to_s} = ?", api_call, kb_tenant_id, attribute_value)
+              end
+              raise "Unable to find transaction id for #{attribute} = #{attribute_value}" if transactions.empty?
+              if how_many == :single
+                raise "Kill Bill #{attribute} = #{attribute_value} mapping to multiple plugin transactions" if transactions.size > 1
+                transactions[0]
+              else
+                transactions
+              end
             end
           end
         end

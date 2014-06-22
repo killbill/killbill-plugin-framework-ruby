@@ -13,38 +13,37 @@ module Killbill
 
           self.abstract_class = true
 
-          def self.from_response(api_call, kb_account_id, kb_payment_id, kb_tenant_id, response, extra_params = {}, model = Response)
+          def self.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response, extra_params = {}, model = Response)
             model.new({
-                          :api_call                => api_call,
-                          :kb_account_id           => kb_account_id,
-                          :kb_payment_id           => kb_payment_id,
-                          :kb_tenant_id            => kb_tenant_id,
-                          :message                 => response.message,
-                          :authorization           => response.authorization,
-                          :fraud_review            => response.fraud_review?,
-                          :test                    => response.test?,
-                          :avs_result_code         => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.code : response.avs_result['code'],
-                          :avs_result_message      => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.message : response.avs_result['message'],
-                          :avs_result_street_match => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.street_match : response.avs_result['street_match'],
-                          :avs_result_postal_match => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.postal_match : response.avs_result['postal_match'],
-                          :cvv_result_code         => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.code : response.cvv_result['code'],
-                          :cvv_result_message      => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.message : response.cvv_result['message'],
-                          :success                 => response.success?
+                          :api_call                  => api_call,
+                          :kb_account_id             => kb_account_id,
+                          :kb_payment_id             => kb_payment_id,
+                          :kb_payment_transaction_id => kb_payment_transaction_id,
+                          :transaction_type          => transaction_type,
+                          :kb_tenant_id              => kb_tenant_id,
+                          :message                   => response.message,
+                          :authorization             => response.authorization,
+                          :fraud_review              => response.fraud_review?,
+                          :test                      => response.test?,
+                          :avs_result_code           => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.code : response.avs_result['code'],
+                          :avs_result_message        => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.message : response.avs_result['message'],
+                          :avs_result_street_match   => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.street_match : response.avs_result['street_match'],
+                          :avs_result_postal_match   => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.postal_match : response.avs_result['postal_match'],
+                          :cvv_result_code           => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.code : response.cvv_result['code'],
+                          :cvv_result_message        => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.message : response.cvv_result['message'],
+                          :success                   => response.success?
                       }.merge!(extra_params))
           end
 
           def to_payment_response(transaction=nil)
-            to_killbill_response :payment, transaction
-          end
-
-          def to_refund_response(transaction=nil)
-            to_killbill_response :refund, transaction
+            to_killbill_response transaction
           end
 
           # Override in your plugin if needed
           def self.search_where_clause(t, search_key, api_call)
             # Exact matches only
             where_clause = t[:kb_payment_id].eq(search_key)
+                       .or(t[:kb_payment_transaction_id].eq(search_key))
                        .or(t[:message].eq(search_key))
                        .or(t[:authorization].eq(search_key))
                        .or(t[:fraud_review].eq(search_key))
@@ -139,7 +138,7 @@ module Killbill
 
           private
 
-          def to_killbill_response(type, transaction)
+          def to_killbill_response(transaction)
             if transaction.nil?
               amount_in_cents = nil
               currency        = nil
@@ -150,33 +149,20 @@ module Killbill
               created_date    = transaction.created_at
             end
 
-            if type == :payment
-              p_info_plugin                             = Killbill::Plugin::Model::PaymentInfoPlugin.new
-              p_info_plugin.kb_payment_id               = kb_payment_id
-              p_info_plugin.amount                      = Money.new(amount_in_cents, currency).to_d if currency
-              p_info_plugin.currency                    = currency
-              p_info_plugin.created_date                = created_date
-              p_info_plugin.effective_date              = effective_date
-              p_info_plugin.status                      = (success ? :PROCESSED : :ERROR)
-              p_info_plugin.gateway_error               = gateway_error
-              p_info_plugin.gateway_error_code          = gateway_error_code
-              p_info_plugin.first_payment_reference_id  = first_reference_id
-              p_info_plugin.second_payment_reference_id = second_reference_id
-              p_info_plugin
-            else
-              r_info_plugin                            = Killbill::Plugin::Model::RefundInfoPlugin.new
-              r_info_plugin.kb_payment_id              = kb_payment_id
-              r_info_plugin.amount                     = Money.new(amount_in_cents, currency).to_d if currency
-              r_info_plugin.currency                   = currency
-              r_info_plugin.created_date               = created_date
-              r_info_plugin.effective_date             = effective_date
-              r_info_plugin.status                     = (success ? :PROCESSED : :ERROR)
-              r_info_plugin.gateway_error              = gateway_error
-              r_info_plugin.gateway_error_code         = gateway_error_code
-              r_info_plugin.first_refund_reference_id  = first_reference_id
-              r_info_plugin.second_refund_reference_id = second_reference_id
-              r_info_plugin
-            end
+            p_info_plugin                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
+            p_info_plugin.kb_payment_id               = kb_payment_id
+            p_info_plugin.kb_transaction_payment_id   = "TODO"
+            p_info_plugin.transaction_type            = "TODO"
+            p_info_plugin.amount                      = Money.new(amount_in_cents, currency).to_d if currency
+            p_info_plugin.currency                    = currency
+            p_info_plugin.created_date                = created_date
+            p_info_plugin.effective_date              = effective_date
+            p_info_plugin.status                      = (success ? :PROCESSED : :ERROR)
+            p_info_plugin.gateway_error               = gateway_error
+            p_info_plugin.gateway_error_code          = gateway_error_code
+            p_info_plugin.first_payment_reference_id  = first_reference_id
+            p_info_plugin.second_payment_reference_id = second_reference_id
+            p_info_plugin
           end
         end
       end

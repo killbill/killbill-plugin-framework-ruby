@@ -28,11 +28,11 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.payment.plugin.api'
-      class PaymentInfoPlugin
+      class PaymentTransactionInfoPlugin
 
-        include org.killbill.billing.payment.plugin.api.PaymentInfoPlugin
+        include org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin
 
-        attr_accessor :kb_payment_id, :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_payment_reference_id, :second_payment_reference_id, :properties
+        attr_accessor :kb_payment_id, :kb_transaction_payment_id, :transaction_type, :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_payment_reference_id, :second_payment_reference_id, :properties
 
         def initialize()
         end
@@ -40,6 +40,12 @@ module Killbill
         def to_java()
           # conversion for kb_payment_id [type = java.util.UUID]
           @kb_payment_id = java.util.UUID.fromString(@kb_payment_id.to_s) unless @kb_payment_id.nil?
+
+          # conversion for kb_transaction_payment_id [type = java.util.UUID]
+          @kb_transaction_payment_id = java.util.UUID.fromString(@kb_transaction_payment_id.to_s) unless @kb_transaction_payment_id.nil?
+
+          # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
+          @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of("#{@transaction_type.to_s}") unless @transaction_type.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           if @amount.nil?
@@ -93,6 +99,14 @@ module Killbill
           # conversion for kb_payment_id [type = java.util.UUID]
           @kb_payment_id = j_obj.kb_payment_id
           @kb_payment_id = @kb_payment_id.nil? ? nil : @kb_payment_id.to_s
+
+          # conversion for kb_transaction_payment_id [type = java.util.UUID]
+          @kb_transaction_payment_id = j_obj.kb_transaction_payment_id
+          @kb_transaction_payment_id = @kb_transaction_payment_id.nil? ? nil : @kb_transaction_payment_id.to_s
+
+          # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
+          @transaction_type = j_obj.transaction_type
+          @transaction_type = @transaction_type.to_s.to_sym unless @transaction_type.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount

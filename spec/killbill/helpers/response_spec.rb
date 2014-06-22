@@ -18,21 +18,21 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
 
   it 'should generate the right SQL query' do
     # Check count query (search query numeric)
-    expected_query = "SELECT COUNT(DISTINCT \"test_responses\".\"id\") FROM \"test_responses\"  WHERE (((\"test_responses\".\"kb_payment_id\" = '1234' OR \"test_responses\".\"message\" = '1234') OR \"test_responses\".\"authorization\" = '1234') OR \"test_responses\".\"fraud_review\" = '1234') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\""
+    expected_query = "SELECT COUNT(DISTINCT \"test_responses\".\"id\") FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = '1234' OR \"test_responses\".\"kb_payment_transaction_id\" = '1234') OR \"test_responses\".\"message\" = '1234') OR \"test_responses\".\"authorization\" = '1234') OR \"test_responses\".\"fraud_review\" = '1234') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\""
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestResponse.search_query('charge', '1234', '11-22-33').to_sql.should == expected_query
 
     # Check query with results (search query numeric)
-    expected_query = "SELECT  DISTINCT \"test_responses\".* FROM \"test_responses\"  WHERE (((\"test_responses\".\"kb_payment_id\" = '1234' OR \"test_responses\".\"message\" = '1234') OR \"test_responses\".\"authorization\" = '1234') OR \"test_responses\".\"fraud_review\" = '1234') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\" LIMIT 10 OFFSET 0"
+    expected_query = "SELECT  DISTINCT \"test_responses\".* FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = '1234' OR \"test_responses\".\"kb_payment_transaction_id\" = '1234') OR \"test_responses\".\"message\" = '1234') OR \"test_responses\".\"authorization\" = '1234') OR \"test_responses\".\"fraud_review\" = '1234') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\" LIMIT 10 OFFSET 0"
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestResponse.search_query('charge', '1234', '11-22-33', 0, 10).to_sql.should == expected_query
 
     # Check count query (search query string)
-    expected_query = "SELECT COUNT(DISTINCT \"test_responses\".\"id\") FROM \"test_responses\"  WHERE (((\"test_responses\".\"kb_payment_id\" = 'XXX' OR \"test_responses\".\"message\" = 'XXX') OR \"test_responses\".\"authorization\" = 'XXX') OR \"test_responses\".\"fraud_review\" = 'XXX') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\""
+    expected_query = "SELECT COUNT(DISTINCT \"test_responses\".\"id\") FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = 'XXX' OR \"test_responses\".\"kb_payment_transaction_id\" = 'XXX') OR \"test_responses\".\"message\" = 'XXX') OR \"test_responses\".\"authorization\" = 'XXX') OR \"test_responses\".\"fraud_review\" = 'XXX') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\""
     ::Killbill::Test::TestResponse.search_query('charge', 'XXX', '11-22-33').to_sql.should == expected_query
 
     # Check query with results (search query string)
-    expected_query = "SELECT  DISTINCT \"test_responses\".* FROM \"test_responses\"  WHERE (((\"test_responses\".\"kb_payment_id\" = 'XXX' OR \"test_responses\".\"message\" = 'XXX') OR \"test_responses\".\"authorization\" = 'XXX') OR \"test_responses\".\"fraud_review\" = 'XXX') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\" LIMIT 10 OFFSET 0"
+    expected_query = "SELECT  DISTINCT \"test_responses\".* FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = 'XXX' OR \"test_responses\".\"kb_payment_transaction_id\" = 'XXX') OR \"test_responses\".\"message\" = 'XXX') OR \"test_responses\".\"authorization\" = 'XXX') OR \"test_responses\".\"fraud_review\" = 'XXX') AND \"test_responses\".\"api_call\" = 'charge' AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\" LIMIT 10 OFFSET 0"
     ::Killbill::Test::TestResponse.search_query('charge', 'XXX', '11-22-33', 0, 10).to_sql.should == expected_query
   end
 

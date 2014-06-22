@@ -32,7 +32,7 @@ module Killbill
 
         include org.killbill.billing.payment.api.DirectPaymentTransaction
 
-        attr_accessor :id, :created_date, :updated_date, :direct_payment_id, :transaction_type, :effective_date, :amount, :currency, :gateway_error_code, :gateway_error_msg, :payment_status, :payment_info_plugin
+        attr_accessor :id, :created_date, :updated_date, :direct_payment_id, :external_key, :transaction_type, :effective_date, :amount, :currency, :processed_amount, :processed_currency, :gateway_error_code, :gateway_error_msg, :transaction_status, :payment_info_plugin
 
         def initialize()
         end
@@ -56,6 +56,9 @@ module Killbill
           # conversion for direct_payment_id [type = java.util.UUID]
           @direct_payment_id = java.util.UUID.fromString(@direct_payment_id.to_s) unless @direct_payment_id.nil?
 
+          # conversion for external_key [type = java.lang.String]
+          @external_key = @external_key.to_s unless @external_key.nil?
+
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
           @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of("#{@transaction_type.to_s}") unless @transaction_type.nil?
 
@@ -75,16 +78,26 @@ module Killbill
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
+          # conversion for processed_amount [type = java.math.BigDecimal]
+          if @processed_amount.nil?
+            @processed_amount = java.math.BigDecimal::ZERO
+          else
+            @processed_amount = java.math.BigDecimal.new(@processed_amount.to_s)
+          end
+
+          # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
+          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
+
           # conversion for gateway_error_code [type = java.lang.String]
           @gateway_error_code = @gateway_error_code.to_s unless @gateway_error_code.nil?
 
           # conversion for gateway_error_msg [type = java.lang.String]
           @gateway_error_msg = @gateway_error_msg.to_s unless @gateway_error_msg.nil?
 
-          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
-          @payment_status = Java::org.killbill.billing.payment.api.PaymentStatus.value_of("#{@payment_status.to_s}") unless @payment_status.nil?
+          # conversion for transaction_status [type = org.killbill.billing.payment.api.TransactionStatus]
+          @transaction_status = Java::org.killbill.billing.payment.api.TransactionStatus.value_of("#{@transaction_status.to_s}") unless @transaction_status.nil?
 
-          # conversion for payment_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
+          # conversion for payment_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
           @payment_info_plugin = @payment_info_plugin.to_java unless @payment_info_plugin.nil?
           self
         end
@@ -114,6 +127,9 @@ module Killbill
           @direct_payment_id = j_obj.direct_payment_id
           @direct_payment_id = @direct_payment_id.nil? ? nil : @direct_payment_id.to_s
 
+          # conversion for external_key [type = java.lang.String]
+          @external_key = j_obj.external_key
+
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
           @transaction_type = j_obj.transaction_type
           @transaction_type = @transaction_type.to_s.to_sym unless @transaction_type.nil?
@@ -134,19 +150,27 @@ module Killbill
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 
+          # conversion for processed_amount [type = java.math.BigDecimal]
+          @processed_amount = j_obj.processed_amount
+          @processed_amount = @processed_amount.nil? ? 0 : BigDecimal.new(@processed_amount.to_s)
+
+          # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
+          @processed_currency = j_obj.processed_currency
+          @processed_currency = @processed_currency.to_s.to_sym unless @processed_currency.nil?
+
           # conversion for gateway_error_code [type = java.lang.String]
           @gateway_error_code = j_obj.gateway_error_code
 
           # conversion for gateway_error_msg [type = java.lang.String]
           @gateway_error_msg = j_obj.gateway_error_msg
 
-          # conversion for payment_status [type = org.killbill.billing.payment.api.PaymentStatus]
-          @payment_status = j_obj.payment_status
-          @payment_status = @payment_status.to_s.to_sym unless @payment_status.nil?
+          # conversion for transaction_status [type = org.killbill.billing.payment.api.TransactionStatus]
+          @transaction_status = j_obj.transaction_status
+          @transaction_status = @transaction_status.to_s.to_sym unless @transaction_status.nil?
 
-          # conversion for payment_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
+          # conversion for payment_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
           @payment_info_plugin = j_obj.payment_info_plugin
-          @payment_info_plugin = Killbill::Plugin::Model::PaymentInfoPlugin.new.to_ruby(@payment_info_plugin) unless @payment_info_plugin.nil?
+          @payment_info_plugin = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new.to_ruby(@payment_info_plugin) unless @payment_info_plugin.nil?
           self
         end
 

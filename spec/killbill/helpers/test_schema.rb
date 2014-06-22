@@ -28,14 +28,15 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
 
   create_table "test_transactions", :force => true do |t|
     t.integer  "response_id",  :null => false
-    t.string   "api_call",              :null => false
-    t.string   "kb_payment_id",         :null => false
-    t.integer  "amount_in_cents",       :null => false
-    t.string   "currency",              :null => false
-    t.datetime "created_at",            :null => false
-    t.datetime "updated_at",            :null => false
-    t.string   "kb_account_id",         :null => false
-    t.string   "kb_tenant_id",          :null => false
+    t.string   "api_call",                  :null => false
+    t.string   "kb_payment_id",             :null => false
+    t.string   "kb_payment_transaction_id", :null => false
+    t.integer  "amount_in_cents",           :null => false
+    t.string   "currency",                  :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+    t.string   "kb_account_id",             :null => false
+    t.string   "kb_tenant_id",              :null => false
   end
 
   add_index(:test_transactions, :kb_payment_id)
@@ -43,6 +44,7 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
   create_table "test_responses", :force => true do |t|
     t.string   "api_call",        :null => false
     t.string   "kb_payment_id"
+    t.string   "kb_payment_transaction_id"
     t.string   "message"
     t.string   "authorization"
     t.boolean  "fraud_review"

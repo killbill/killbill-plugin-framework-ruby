@@ -23,12 +23,45 @@
 #
 
 
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/gateway_notification'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/payment_transaction_info_plugin'
+module Killbill
+  module Plugin
+    module Model
+
+      java_package 'org.killbill.billing.payment.api'
+      class PaymentOptions
+
+        include org.killbill.billing.payment.api.PaymentOptions
+
+        attr_accessor :is_external_payment, :payment_control_plugin_name
+
+        def initialize()
+        end
+
+        def to_java()
+          # conversion for is_external_payment [type = boolean]
+          @is_external_payment = @is_external_payment.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_external_payment)
+
+          # conversion for payment_control_plugin_name [type = java.lang.String]
+          @payment_control_plugin_name = @payment_control_plugin_name.to_s unless @payment_control_plugin_name.nil?
+          self
+        end
+
+        def to_ruby(j_obj)
+          # conversion for is_external_payment [type = boolean]
+          @is_external_payment = j_obj.is_external_payment
+          if @is_external_payment.nil?
+            @is_external_payment = false
+          else
+            tmp_bool = (@is_external_payment.java_kind_of? java.lang.Boolean) ? @is_external_payment.boolean_value : @is_external_payment
+            @is_external_payment = tmp_bool ? true : false
+          end
+
+          # conversion for payment_control_plugin_name [type = java.lang.String]
+          @payment_control_plugin_name = j_obj.payment_control_plugin_name
+          self
+        end
+
+      end
+    end
+  end
+end

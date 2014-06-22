@@ -8,11 +8,11 @@ module Killbill
         @raise_exception = false
       end
 
-      def process_payment(kb_account_id, kb_payment_id, kb_payment_method_id, amount_in_cents, currency, properties, context)
+      def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount_in_cents, currency, properties, context)
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          res = Killbill::Plugin::Model::PaymentInfoPlugin.new
+          res = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
           res.amount=amount_in_cents
           res.status=:PROCESSED
           res
@@ -23,18 +23,18 @@ module Killbill
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          res = Killbill::Plugin::Model::PaymentInfoPlugin.new
+          res = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
           res.amount=0
           res.status=:PROCESSED
-          res
+          [res]
         end
       end
 
-      def process_refund(kb_account_id, kb_payment_id, amount_in_cents, currency, properties, context)
+      def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount_in_cents, currency, properties, context)
         if @raise_exception
           raise StandardError.new("Test exception")
         else
-          res = Killbill::Plugin::Model::RefundInfoPlugin.new
+          res = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
           res.amount=50
           res.status=:PROCESSED
           res
@@ -98,7 +98,6 @@ module Killbill
       def clear_exception_on_next_calls
         @raise_exception = false
       end
-
     end
   end
 end

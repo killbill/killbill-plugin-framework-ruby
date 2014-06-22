@@ -134,6 +134,7 @@ module Killbill
 
           def to_payment_method_response
             properties = []
+            properties << create_pm_kv_info('type', 'CreditCard')
             properties << create_pm_kv_info('token', external_payment_method_id)
             properties << create_pm_kv_info('ccName', cc_name)
             properties << create_pm_kv_info('ccType', cc_type)
@@ -152,18 +153,6 @@ module Killbill
             pm_plugin.external_payment_method_id = external_payment_method_id
             pm_plugin.is_default_payment_method = is_default
             pm_plugin.properties = properties
-            pm_plugin.type = 'CreditCard'
-            pm_plugin.cc_name = cc_name
-            pm_plugin.cc_type = cc_type
-            pm_plugin.cc_expiration_month = cc_exp_month
-            pm_plugin.cc_expiration_year = cc_exp_year
-            pm_plugin.cc_last4 = cc_last_4
-            pm_plugin.address1 = address1
-            pm_plugin.address2 = address2
-            pm_plugin.city = city
-            pm_plugin.state = state
-            pm_plugin.zip = zip
-            pm_plugin.country = country
 
             pm_plugin
           end

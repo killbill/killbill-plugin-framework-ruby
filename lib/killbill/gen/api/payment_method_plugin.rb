@@ -32,7 +32,7 @@ module Killbill
 
         include org.killbill.billing.payment.api.PaymentMethodPlugin
 
-        attr_accessor :kb_payment_method_id, :external_payment_method_id, :is_default_payment_method, :properties, :type, :cc_name, :cc_type, :cc_expiration_month, :cc_expiration_year, :cc_last4, :address1, :address2, :city, :state, :zip, :country
+        attr_accessor :kb_payment_method_id, :external_payment_method_id, :is_default_payment_method, :properties
 
         def initialize()
         end
@@ -55,42 +55,6 @@ module Killbill
             tmp.add(m)
           end
           @properties = tmp
-
-          # conversion for type [type = java.lang.String]
-          @type = @type.to_s unless @type.nil?
-
-          # conversion for cc_name [type = java.lang.String]
-          @cc_name = @cc_name.to_s unless @cc_name.nil?
-
-          # conversion for cc_type [type = java.lang.String]
-          @cc_type = @cc_type.to_s unless @cc_type.nil?
-
-          # conversion for cc_expiration_month [type = java.lang.String]
-          @cc_expiration_month = @cc_expiration_month.to_s unless @cc_expiration_month.nil?
-
-          # conversion for cc_expiration_year [type = java.lang.String]
-          @cc_expiration_year = @cc_expiration_year.to_s unless @cc_expiration_year.nil?
-
-          # conversion for cc_last4 [type = java.lang.String]
-          @cc_last4 = @cc_last4.to_s unless @cc_last4.nil?
-
-          # conversion for address1 [type = java.lang.String]
-          @address1 = @address1.to_s unless @address1.nil?
-
-          # conversion for address2 [type = java.lang.String]
-          @address2 = @address2.to_s unless @address2.nil?
-
-          # conversion for city [type = java.lang.String]
-          @city = @city.to_s unless @city.nil?
-
-          # conversion for state [type = java.lang.String]
-          @state = @state.to_s unless @state.nil?
-
-          # conversion for zip [type = java.lang.String]
-          @zip = @zip.to_s unless @zip.nil?
-
-          # conversion for country [type = java.lang.String]
-          @country = @country.to_s unless @country.nil?
           self
         end
 
@@ -120,42 +84,6 @@ module Killbill
             tmp << m
           end
           @properties = tmp
-
-          # conversion for type [type = java.lang.String]
-          @type = j_obj.type
-
-          # conversion for cc_name [type = java.lang.String]
-          @cc_name = j_obj.cc_name
-
-          # conversion for cc_type [type = java.lang.String]
-          @cc_type = j_obj.cc_type
-
-          # conversion for cc_expiration_month [type = java.lang.String]
-          @cc_expiration_month = j_obj.cc_expiration_month
-
-          # conversion for cc_expiration_year [type = java.lang.String]
-          @cc_expiration_year = j_obj.cc_expiration_year
-
-          # conversion for cc_last4 [type = java.lang.String]
-          @cc_last4 = j_obj.cc_last4
-
-          # conversion for address1 [type = java.lang.String]
-          @address1 = j_obj.address1
-
-          # conversion for address2 [type = java.lang.String]
-          @address2 = j_obj.address2
-
-          # conversion for city [type = java.lang.String]
-          @city = j_obj.city
-
-          # conversion for state [type = java.lang.String]
-          @state = j_obj.state
-
-          # conversion for zip [type = java.lang.String]
-          @zip = j_obj.zip
-
-          # conversion for country [type = java.lang.String]
-          @country = j_obj.country
           self
         end
 

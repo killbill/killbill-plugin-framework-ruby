@@ -24,15 +24,18 @@ begin
   IMPORT_KILLBILL_APIS = %w(
     org.killbill.billing.account.api.AccountUserApi
     org.killbill.billing.catalog.api.CatalogUserApi
-    org.killbill.billing.invoice.api.InvoicePaymentApi
+    org.killbill.billing.currency.api.CurrencyConversionApi
     org.killbill.billing.entitlement.api.EntitlementApi
     org.killbill.billing.entitlement.api.SubscriptionApi
+    org.killbill.billing.invoice.api.InvoicePaymentApi
     org.killbill.billing.invoice.api.InvoiceUserApi
-    org.killbill.billing.overdue.OverdueUserApi
-    org.killbill.billing.payment.api.PaymentApi
+    org.killbill.billing.payment.api.DirectPaymentApi
+    org.killbill.billing.payment.api.PaymentGatewayApi
+    org.killbill.billing.tenant.api.TenantUserApi
+    org.killbill.billing.usage.api.UsageUserApi
+    org.killbill.billing.util.api.AuditUserApi
     org.killbill.billing.util.api.CustomFieldUserApi
     org.killbill.billing.util.api.TagUserApi
-    org.killbill.billing.currency.api.CurrencyConversionApi
     javax.servlet.http.HttpServlet
   )
 

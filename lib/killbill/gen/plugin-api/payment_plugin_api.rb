@@ -37,14 +37,17 @@ module Killbill
         end
 
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentInfoPlugin authorizePayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def authorize_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, amount, currency, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin authorizePayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def authorize_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
 
           # conversion for kbAccountId [type = java.util.UUID]
           kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
 
           # conversion for kbPaymentId [type = java.util.UUID]
           kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
+
+          # conversion for kbTransactionId [type = java.util.UUID]
+          kbTransactionId = kbTransactionId.nil? ? nil : kbTransactionId.to_s
 
           # conversion for kbPaymentMethodId [type = java.util.UUID]
           kbPaymentMethodId = kbPaymentMethodId.nil? ? nil : kbPaymentMethodId.to_s
@@ -67,8 +70,8 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
-            res = @delegate_plugin.authorize_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, amount, currency, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
+            res = @delegate_plugin.authorize_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e
@@ -83,14 +86,17 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentInfoPlugin capturePayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def capture_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, amount, currency, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin capturePayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def capture_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
 
           # conversion for kbAccountId [type = java.util.UUID]
           kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
 
           # conversion for kbPaymentId [type = java.util.UUID]
           kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
+
+          # conversion for kbTransactionId [type = java.util.UUID]
+          kbTransactionId = kbTransactionId.nil? ? nil : kbTransactionId.to_s
 
           # conversion for kbPaymentMethodId [type = java.util.UUID]
           kbPaymentMethodId = kbPaymentMethodId.nil? ? nil : kbPaymentMethodId.to_s
@@ -113,8 +119,8 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
-            res = @delegate_plugin.capture_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, amount, currency, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
+            res = @delegate_plugin.capture_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e
@@ -129,14 +135,17 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentInfoPlugin processPayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def process_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, amount, currency, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin purchasePayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def purchase_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
 
           # conversion for kbAccountId [type = java.util.UUID]
           kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
 
           # conversion for kbPaymentId [type = java.util.UUID]
           kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
+
+          # conversion for kbTransactionId [type = java.util.UUID]
+          kbTransactionId = kbTransactionId.nil? ? nil : kbTransactionId.to_s
 
           # conversion for kbPaymentMethodId [type = java.util.UUID]
           kbPaymentMethodId = kbPaymentMethodId.nil? ? nil : kbPaymentMethodId.to_s
@@ -159,30 +168,33 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
-            res = @delegate_plugin.process_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, amount, currency, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
+            res = @delegate_plugin.purchase_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e
-            message = "Failure in process_payment: #{e}"
+            message = "Failure in purchase_payment: #{e}"
             unless e.backtrace.nil?
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("process_payment failure", e.message)
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("purchase_payment failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentInfoPlugin voidPayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def void_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin voidPayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def void_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, properties, context)
 
           # conversion for kbAccountId [type = java.util.UUID]
           kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
 
           # conversion for kbPaymentId [type = java.util.UUID]
           kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
+
+          # conversion for kbTransactionId [type = java.util.UUID]
+          kbTransactionId = kbTransactionId.nil? ? nil : kbTransactionId.to_s
 
           # conversion for kbPaymentMethodId [type = java.util.UUID]
           kbPaymentMethodId = kbPaymentMethodId.nil? ? nil : kbPaymentMethodId.to_s
@@ -199,8 +211,8 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
-            res = @delegate_plugin.void_payment(kbAccountId, kbPaymentId, kbPaymentMethodId, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
+            res = @delegate_plugin.void_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e
@@ -215,7 +227,105 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentInfoPlugin getPaymentInfo(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin creditPayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def credit_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
+
+          # conversion for kbAccountId [type = java.util.UUID]
+          kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
+
+          # conversion for kbPaymentId [type = java.util.UUID]
+          kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
+
+          # conversion for kbTransactionId [type = java.util.UUID]
+          kbTransactionId = kbTransactionId.nil? ? nil : kbTransactionId.to_s
+
+          # conversion for kbPaymentMethodId [type = java.util.UUID]
+          kbPaymentMethodId = kbPaymentMethodId.nil? ? nil : kbPaymentMethodId.to_s
+
+          # conversion for amount [type = java.math.BigDecimal]
+          amount = amount.nil? ? 0 : BigDecimal.new(amount.to_s)
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = currency.to_s.to_sym unless currency.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = []
+          (properties.nil? ? [] : properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
+          begin
+            res = @delegate_plugin.credit_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
+            res = res.to_java unless res.nil?
+            return res
+          rescue Exception => e
+            message = "Failure in credit_payment: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("credit_payment failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin refundPayment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def refund_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
+
+          # conversion for kbAccountId [type = java.util.UUID]
+          kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
+
+          # conversion for kbPaymentId [type = java.util.UUID]
+          kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
+
+          # conversion for kbTransactionId [type = java.util.UUID]
+          kbTransactionId = kbTransactionId.nil? ? nil : kbTransactionId.to_s
+
+          # conversion for kbPaymentMethodId [type = java.util.UUID]
+          kbPaymentMethodId = kbPaymentMethodId.nil? ? nil : kbPaymentMethodId.to_s
+
+          # conversion for amount [type = java.math.BigDecimal]
+          amount = amount.nil? ? 0 : BigDecimal.new(amount.to_s)
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = currency.to_s.to_sym unless currency.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = []
+          (properties.nil? ? [] : properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
+          begin
+            res = @delegate_plugin.refund_payment(kbAccountId, kbPaymentId, kbTransactionId, kbPaymentMethodId, amount, currency, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
+            res = res.to_java unless res.nil?
+            return res
+          rescue Exception => e
+            message = "Failure in refund_payment: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("refund_payment failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
+        java_signature 'Java::java.util.List getPaymentInfo(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_payment_info(kbAccountId, kbPaymentId, properties, context)
 
           # conversion for kbAccountId [type = java.util.UUID]
@@ -237,8 +347,14 @@ module Killbill
           context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
           begin
             res = @delegate_plugin.get_payment_info(kbAccountId, kbPaymentId, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.plugin.api.PaymentInfoPlugin]
-            res = res.to_java unless res.nil?
+            # conversion for res [type = java.util.List]
+            tmp = java.util.ArrayList.new
+            (res || []).each do |m|
+              # conversion for m [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
+              m = m.to_java unless m.nil?
+              tmp.add(m)
+            end
+            res = tmp
             return res
           rescue Exception => e
             message = "Failure in get_payment_info: #{e}"
@@ -284,129 +400,6 @@ module Killbill
             end
             logger.warn message
             raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("search_payments failure", e.message)
-          ensure
-            @delegate_plugin.after_request
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.RefundInfoPlugin processRefund(Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def process_refund(kbAccountId, kbPaymentId, refundAmount, currency, properties, context)
-
-          # conversion for kbAccountId [type = java.util.UUID]
-          kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
-
-          # conversion for kbPaymentId [type = java.util.UUID]
-          kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
-
-          # conversion for refundAmount [type = java.math.BigDecimal]
-          refundAmount = refundAmount.nil? ? 0 : BigDecimal.new(refundAmount.to_s)
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = currency.to_s.to_sym unless currency.nil?
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = []
-          (properties.nil? ? [] : properties.iterator).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          properties = tmp
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
-          begin
-            res = @delegate_plugin.process_refund(kbAccountId, kbPaymentId, refundAmount, currency, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.plugin.api.RefundInfoPlugin]
-            res = res.to_java unless res.nil?
-            return res
-          rescue Exception => e
-            message = "Failure in process_refund: #{e}"
-            unless e.backtrace.nil?
-              message = "#{message}\n#{e.backtrace.join("\n")}"
-            end
-            logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("process_refund failure", e.message)
-          ensure
-            @delegate_plugin.after_request
-          end
-        end
-
-        java_signature 'Java::java.util.List getRefundInfo(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_refund_info(kbAccountId, kbPaymentId, properties, context)
-
-          # conversion for kbAccountId [type = java.util.UUID]
-          kbAccountId = kbAccountId.nil? ? nil : kbAccountId.to_s
-
-          # conversion for kbPaymentId [type = java.util.UUID]
-          kbPaymentId = kbPaymentId.nil? ? nil : kbPaymentId.to_s
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = []
-          (properties.nil? ? [] : properties.iterator).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          properties = tmp
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
-          begin
-            res = @delegate_plugin.get_refund_info(kbAccountId, kbPaymentId, properties, context)
-            # conversion for res [type = java.util.List]
-            tmp = java.util.ArrayList.new
-            (res || []).each do |m|
-              # conversion for m [type = org.killbill.billing.payment.plugin.api.RefundInfoPlugin]
-              m = m.to_java unless m.nil?
-              tmp.add(m)
-            end
-            res = tmp
-            return res
-          rescue Exception => e
-            message = "Failure in get_refund_info: #{e}"
-            unless e.backtrace.nil?
-              message = "#{message}\n#{e.backtrace.join("\n")}"
-            end
-            logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_refund_info failure", e.message)
-          ensure
-            @delegate_plugin.after_request
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.util.entity.Pagination searchRefunds(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def search_refunds(searchKey, offset, limit, properties, context)
-
-          # conversion for searchKey [type = java.lang.String]
-
-          # conversion for offset [type = java.lang.Long]
-
-          # conversion for limit [type = java.lang.Long]
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = []
-          (properties.nil? ? [] : properties.iterator).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          properties = tmp
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
-          begin
-            res = @delegate_plugin.search_refunds(searchKey, offset, limit, properties, context)
-            # conversion for res [type = org.killbill.billing.util.entity.Pagination]
-            res = res.to_java unless res.nil?
-            return res
-          rescue Exception => e
-            message = "Failure in search_refunds: #{e}"
-            unless e.backtrace.nil?
-              message = "#{message}\n#{e.backtrace.join("\n")}"
-            end
-            logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("search_refunds failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
