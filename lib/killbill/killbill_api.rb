@@ -42,9 +42,6 @@ module Killbill
       private
 
       def create_proxy_api(api_name, java_api)
-        if api_name == "overdue_user_api"
-          return nil
-        end
         proxy_class_name = "Killbill::Plugin::Api::#{api_name.to_s.split('_').map{|e| e.capitalize}.join}"
         proxy_class_name.to_class.new(java_api)
       end
