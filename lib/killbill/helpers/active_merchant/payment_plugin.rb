@@ -60,7 +60,8 @@ module Killbill
           options[:description] ||= "Kill Bill capture for #{kb_payment_transaction_id}"
 
           # Retrieve the authorization
-          authorization         = @transaction_model.from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
+          # TODO We use the last AUTH transaction at the moment, is it good enough?
+          authorization         = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last.txn_id
 
           # Go to the gateway
           gw_response           = gateway.capture(amount_in_cents, authorization, options)
@@ -92,7 +93,8 @@ module Killbill
           options[:description] ||= "Kill Bill void for #{kb_payment_transaction_id}"
 
           # Retrieve the authorization
-          authorization         = @transaction_model.from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
+          # TODO We use the last AUTH transaction at the moment, is it good enough?
+          authorization         = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last.txn_id
 
           # Go to the gateway
           gw_response           = gateway.void(authorization, options)
