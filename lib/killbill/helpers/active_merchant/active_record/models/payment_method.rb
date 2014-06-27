@@ -3,6 +3,7 @@ module Killbill
     module ActiveMerchant
       module ActiveRecord
         require 'active_record'
+        require 'active_merchant'
         require 'killbill/helpers/active_merchant/active_record/models/helpers'
 
         class PaymentMethod < ::ActiveRecord::Base
@@ -14,9 +15,9 @@ module Killbill
           def self.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, cc_or_token, response, options, extra_params = {}, model = PaymentMethod)
             model.new({
                           :kb_account_id        => kb_account_id,
-                          :kb_tenant_id         => kb_tenant_id,
                           :kb_payment_method_id => kb_payment_method_id,
-                          :token                => response.authorization,
+                          :kb_tenant_id         => kb_tenant_id,
+                          :token                => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? response.authorization : (cc_or_token || response.authorization),
                           :cc_first_name        => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.first_name : nil,
                           :cc_last_name         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_name : nil,
                           :cc_type              => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.brand : nil,
@@ -34,7 +35,7 @@ module Killbill
 
           def self.from_kb_account_id(kb_account_id, kb_tenant_id)
             if kb_tenant_id.nil?
-              where('kb_account_id = ? AND is_deleted = ?', kb_account_id, false)
+              where('kb_account_id = ? AND kb_tenant_id is NULL AND is_deleted = ?', kb_account_id, false)
             else
               where('kb_account_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_account_id, kb_tenant_id, false)
             end
@@ -42,7 +43,7 @@ module Killbill
 
           def self.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
             if kb_tenant_id.nil?
-              payment_methods = where('kb_payment_method_id = ? AND is_deleted = ?', kb_payment_method_id, false)
+              payment_methods = where('kb_payment_method_id = ? AND kb_tenant_id is NULL AND is_deleted = ?', kb_payment_method_id, false)
             else
               payment_methods = where('kb_payment_method_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_payment_method_id, kb_tenant_id, false)
             end
@@ -117,7 +118,7 @@ module Killbill
             actual_limit = [pagination.max_nb_records, limit].min
             pagination.iterator = StreamyResultSet.new(actual_limit) do |offset,limit|
               self.find_by_sql(self.search_query(search_key, kb_tenant_id, offset, limit))
-                  .map(&:to_payment_method_response)
+                  .map(&:to_payment_method_plugin)
             end
             pagination
           end
@@ -132,21 +133,20 @@ module Killbill
             false
           end
 
-          def to_payment_method_response
+          def to_payment_method_plugin
             properties = []
-            properties << create_pm_kv_info('type', 'CreditCard')
-            properties << create_pm_kv_info('token', external_payment_method_id)
-            properties << create_pm_kv_info('ccName', cc_name)
-            properties << create_pm_kv_info('ccType', cc_type)
-            properties << create_pm_kv_info('ccExpirationMonth', cc_exp_month)
-            properties << create_pm_kv_info('ccExpirationYear', cc_exp_year)
-            properties << create_pm_kv_info('ccLast4', cc_last_4)
-            properties << create_pm_kv_info('address1', address1)
-            properties << create_pm_kv_info('address2', address2)
-            properties << create_pm_kv_info('city', city)
-            properties << create_pm_kv_info('state', state)
-            properties << create_pm_kv_info('zip', zip)
-            properties << create_pm_kv_info('country', country)
+            properties << create_plugin_property('token', external_payment_method_id)
+            properties << create_plugin_property('ccName', cc_name)
+            properties << create_plugin_property('ccType', cc_type)
+            properties << create_plugin_property('ccExpirationMonth', cc_exp_month)
+            properties << create_plugin_property('ccExpirationYear', cc_exp_year)
+            properties << create_plugin_property('ccLast4', cc_last_4)
+            properties << create_plugin_property('address1', address1)
+            properties << create_plugin_property('address2', address2)
+            properties << create_plugin_property('city', city)
+            properties << create_plugin_property('state', state)
+            properties << create_plugin_property('zip', zip)
+            properties << create_plugin_property('country', country)
 
             pm_plugin = Killbill::Plugin::Model::PaymentMethodPlugin.new
             pm_plugin.kb_payment_method_id = kb_payment_method_id
@@ -157,7 +157,7 @@ module Killbill
             pm_plugin
           end
 
-          def to_payment_method_info_response
+          def to_payment_method_info_plugin
             pm_info_plugin = Killbill::Plugin::Model::PaymentMethodInfoPlugin.new
             pm_info_plugin.account_id = kb_account_id
             pm_info_plugin.payment_method_id = kb_payment_method_id
@@ -179,11 +179,6 @@ module Killbill
           end
 
           private
-
-          # Deprecated
-          def create_pm_kv_info(key, value)
-            create_plugin_property(key, value)
-          end
 
           def create_plugin_property(key, value)
             prop = Killbill::Plugin::Model::PluginProperty.new

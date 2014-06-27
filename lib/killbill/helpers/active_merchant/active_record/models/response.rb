@@ -35,12 +35,50 @@ module Killbill
                       }.merge!(extra_params))
           end
 
-          def to_payment_response(transaction=nil)
-            to_killbill_response transaction
+          def to_transaction_info_plugin(transaction=nil)
+            if transaction.nil?
+              amount_in_cents = nil
+              currency        = nil
+              created_date    = created_at
+            else
+              amount_in_cents = transaction.amount_in_cents
+              currency        = transaction.currency
+              created_date    = transaction.created_at
+            end
+
+            t_info_plugin                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
+            t_info_plugin.kb_payment_id               = kb_payment_id
+            t_info_plugin.kb_transaction_payment_id   = kb_payment_transaction_id
+            t_info_plugin.transaction_type            = transaction_type
+            t_info_plugin.amount                      = Money.new(amount_in_cents, currency).to_d if currency
+            t_info_plugin.currency                    = currency
+            t_info_plugin.created_date                = created_date
+            t_info_plugin.effective_date              = effective_date
+            t_info_plugin.status                      = (success ? :PROCESSED : :ERROR)
+            t_info_plugin.gateway_error               = gateway_error
+            t_info_plugin.gateway_error_code          = gateway_error_code
+            t_info_plugin.first_payment_reference_id  = first_reference_id
+            t_info_plugin.second_payment_reference_id = second_reference_id
+
+            properties = []
+            properties << create_plugin_property('message', message)
+            properties << create_plugin_property('authorization', authorization)
+            properties << create_plugin_property('fraudReview', fraud_review)
+            properties << create_plugin_property('test', self.read_attribute(:test))
+            properties << create_plugin_property('avsResultCode', avs_result_code)
+            properties << create_plugin_property('avsResultMessage', avs_result_message)
+            properties << create_plugin_property('avsResultStreetMatch', avs_result_street_match)
+            properties << create_plugin_property('avsResultPostalMatch', avs_result_postal_match)
+            properties << create_plugin_property('cvvResultCode', cvv_result_code)
+            properties << create_plugin_property('cvvResultMessage', cvv_result_message)
+            properties << create_plugin_property('success', success)
+            t_info_plugin.properties = properties
+
+            t_info_plugin
           end
 
           # Override in your plugin if needed
-          def self.search_where_clause(t, search_key, api_call)
+          def self.search_where_clause(t, search_key)
             # Exact matches only
             where_clause = t[:kb_payment_id].eq(search_key)
                        .or(t[:kb_payment_transaction_id].eq(search_key))
@@ -49,21 +87,20 @@ module Killbill
                        .or(t[:fraud_review].eq(search_key))
 
             # Only search successful payments and refunds
-            where_clause = where_clause.and(t[:api_call].eq(api_call))
-                                       .and(t[:success].eq(true))
+            where_clause = where_clause.and(t[:success].eq(true))
 
             where_clause
           end
 
           # VisibleForTesting
-          def self.search_query(api_call, search_key, kb_tenant_id, offset = nil, limit = nil)
+          def self.search_query(search_key, kb_tenant_id, offset = nil, limit = nil)
             t = self.arel_table
 
             if kb_tenant_id.nil?
-              query = t.where(search_where_clause(t, search_key, api_call))
+              query = t.where(search_where_clause(t, search_key))
               .order(t[:id])
             else
-              query = t.where(search_where_clause(t, search_key, api_call).and(t[:kb_tenant_id].eq(kb_tenant_id)))
+              query = t.where(search_where_clause(t, search_key).and(t[:kb_tenant_id].eq(kb_tenant_id)))
               .order(t[:id])
             end
 
@@ -80,18 +117,16 @@ module Killbill
             query
           end
 
-          def self.search(search_key, kb_tenant_id, offset = 0, limit = 100, type = :payment)
-            api_call                    = type == :payment ? 'charge' : 'refund'
+          def self.search(search_key, kb_tenant_id, offset = 0, limit = 100)
             pagination                  = ::Killbill::Plugin::Model::Pagination.new
             pagination.current_offset   = offset
-            pagination.total_nb_records = self.count_by_sql(self.search_query(api_call, search_key, kb_tenant_id))
-            pagination.max_nb_records   = self.where(:api_call => api_call, :success => true).count
+            pagination.total_nb_records = self.count_by_sql(self.search_query(search_key, kb_tenant_id))
+            pagination.max_nb_records   = self.where(:success => true).count
             pagination.next_offset      = (!pagination.total_nb_records.nil? && offset + limit >= pagination.total_nb_records) ? nil : offset + limit
             # Reduce the limit if the specified value is larger than the number of records
             actual_limit                = [pagination.max_nb_records, limit].min
             pagination.iterator         = ::Killbill::Plugin::ActiveMerchant::ActiveRecord::StreamyResultSet.new(actual_limit) do |offset, limit|
-              self.find_by_sql(self.search_query(api_call, search_key, kb_tenant_id, offset, limit))
-              .map { |x| type == :payment ? x.to_payment_response : x.to_refund_response }
+              self.find_by_sql(self.search_query(search_key, kb_tenant_id, offset, limit)).map { |x| x.to_transaction_info_plugin }
             end
             pagination
           end
@@ -99,16 +134,6 @@ module Killbill
           # Override in your plugin if needed
           def txn_id
             authorization
-          end
-
-          # Override in your plugin if needed
-          def first_payment_reference_id
-            nil
-          end
-
-          # Override in your plugin if needed
-          def second_payment_reference_id
-            nil
           end
 
           # Override in your plugin if needed
@@ -138,31 +163,11 @@ module Killbill
 
           private
 
-          def to_killbill_response(transaction)
-            if transaction.nil?
-              amount_in_cents = nil
-              currency        = nil
-              created_date    = created_at
-            else
-              amount_in_cents = transaction.amount_in_cents
-              currency        = transaction.currency
-              created_date    = transaction.created_at
-            end
-
-            p_info_plugin                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
-            p_info_plugin.kb_payment_id               = kb_payment_id
-            p_info_plugin.kb_transaction_payment_id   = "TODO"
-            p_info_plugin.transaction_type            = "TODO"
-            p_info_plugin.amount                      = Money.new(amount_in_cents, currency).to_d if currency
-            p_info_plugin.currency                    = currency
-            p_info_plugin.created_date                = created_date
-            p_info_plugin.effective_date              = effective_date
-            p_info_plugin.status                      = (success ? :PROCESSED : :ERROR)
-            p_info_plugin.gateway_error               = gateway_error
-            p_info_plugin.gateway_error_code          = gateway_error_code
-            p_info_plugin.first_payment_reference_id  = first_reference_id
-            p_info_plugin.second_payment_reference_id = second_reference_id
-            p_info_plugin
+          def create_plugin_property(key, value)
+            prop       = Killbill::Plugin::Model::PluginProperty.new
+            prop.key   = key
+            prop.value = value
+            prop
           end
         end
       end

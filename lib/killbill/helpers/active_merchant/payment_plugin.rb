@@ -34,138 +34,127 @@ module Killbill
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          options = properties_to_hash(properties)
+          amount_in_cents = to_cents(amount, currency)
 
-          # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
-          amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
-
-          # If the authorization was already made, just return the status (one auth per kb payment id)
-          transaction = @transaction_model.authorization_from_kb_payment_id(kb_payment_id, context.tenant_id) rescue nil
-          return transaction.send("#{@identifier}_response").to_payment_response(transaction) unless transaction.nil?
-
-          options[:order_id]    ||= kb_payment_id
+          options               = properties_to_hash(properties)
+          options[:order_id]    ||= kb_payment_transaction_id
           options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill authorization for #{kb_payment_id}"
+          options[:description] ||= "Kill Bill authorization for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          if options[:credit_card].blank?
-            pm             = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
-            payment_source = pm.token
-          else
-            payment_source = ::ActiveMerchant::Billing::CreditCard.new(options[:credit_card])
-          end
+          payment_source        = get_payment_source(kb_payment_method_id, context)
 
           # Go to the gateway
-          gw_response           = gateway.authorize amount_in_cents, payment_source, options
-          response, transaction = save_response_and_transaction gw_response, :authorize, kb_account_id, context.tenant_id, kb_payment_id, amount_in_cents, currency
+          gw_response           = gateway.authorize(amount_in_cents, payment_source, options)
+          response, transaction = save_response_and_transaction(gw_response, :authorize, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :AUTHORIZE, amount_in_cents, currency)
 
-          response.to_payment_response(transaction)
+          response.to_transaction_info_plugin(transaction)
         end
 
         def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          options = properties_to_hash(properties)
+          amount_in_cents = to_cents(amount, currency)
 
-          # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
-          amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
-
-          options[:order_id]    ||= kb_payment_id
+          options               = properties_to_hash(properties)
+          options[:order_id]    ||= kb_payment_transaction_id
           options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill capture for #{kb_payment_id}"
+          options[:description] ||= "Kill Bill capture for #{kb_payment_transaction_id}"
 
           # Retrieve the authorization
-          authorization = @transaction_model.authorization_from_kb_payment_id(kb_payment_id, context.tenant_id).txn_id
+          authorization         = @transaction_model.authorization_from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
 
           # Go to the gateway
-          gw_response           = gateway.capture amount_in_cents, authorization, options
-          response, transaction = save_response_and_transaction gw_response, :capture, kb_account_id, context.tenant_id, kb_payment_id, amount_in_cents, currency
+          gw_response           = gateway.capture(amount_in_cents, authorization, options)
+          response, transaction = save_response_and_transaction(gw_response, :capture, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :CAPTURE, amount_in_cents, currency)
 
-          response.to_payment_response(transaction)
+          response.to_transaction_info_plugin(transaction)
         end
 
         def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          options = properties_to_hash(properties)
+          amount_in_cents = to_cents(amount, currency)
 
-          # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
-          amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
-
-          # If the payment was already made, just return the status
-          transaction = @transaction_model.charge_from_kb_payment_id(kb_payment_id, context.tenant_id) rescue nil
-          return transaction.send("#{@identifier}_response").to_payment_response(transaction) unless transaction.nil?
-
-          options[:order_id]    ||= kb_payment_id
+          options               = properties_to_hash(properties)
+          options[:order_id]    ||= kb_payment_transaction_id
           options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill payment for #{kb_payment_id}"
+          options[:description] ||= "Kill Bill purchase for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          if options[:credit_card].blank?
-            pm             = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
-            payment_source = pm.token
-          else
-            payment_source = ::ActiveMerchant::Billing::CreditCard.new(options[:credit_card])
-          end
+          payment_source        = get_payment_source(kb_payment_method_id, context)
 
           # Go to the gateway
-          gw_response           = gateway.purchase amount_in_cents, payment_source, options
-          response, transaction = save_response_and_transaction gw_response, :charge, kb_account_id, context.tenant_id, kb_payment_id, amount_in_cents, currency
+          gw_response           = gateway.purchase(amount_in_cents, payment_source, options)
+          response, transaction = save_response_and_transaction(gw_response, :purchase, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :PURCHASE, amount_in_cents, currency)
 
-          response.to_payment_response(transaction)
+          response.to_transaction_info_plugin(transaction)
         end
 
         def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context)
-          options = properties_to_hash(properties)
-          options[:description] ||= "Kill Bill void for #{kb_payment_id}"
+          options               = properties_to_hash(properties)
+          options[:description] ||= "Kill Bill void for #{kb_payment_transaction_id}"
 
           # Retrieve the authorization
-          authorization = @transaction_model.authorization_from_kb_payment_id(kb_payment_id, context.tenant_id).txn_id
+          authorization         = @transaction_model.authorization_from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
 
           # Go to the gateway
-          gw_response           = gateway.void authorization, options
-          response, transaction = save_response_and_transaction gw_response, :void, kb_account_id, context.tenant_id, kb_payment_id
+          gw_response           = gateway.void(authorization, options)
+          response, transaction = save_response_and_transaction(gw_response, :void, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :VOID)
 
-          response.to_payment_response(transaction)
+          response.to_transaction_info_plugin(transaction)
         end
 
         def credit_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          # TODO
+          amount_in_cents = to_cents(amount, currency)
+
+          options               = properties_to_hash(properties)
+          options[:order_id]    ||= kb_payment_transaction_id
+          options[:currency]    ||= currency.to_s.upcase
+          options[:description] ||= "Kill Bill credit for #{kb_payment_transaction_id}"
+
+          # Retrieve the payment method
+          payment_source        = get_payment_source(kb_payment_method_id, context)
+
+          # Go to the gateway
+          gw_response           = gateway.credit(amount_in_cents, payment_source, options)
+          response, transaction = save_response_and_transaction(gw_response, :credit, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :CREDIT, amount_in_cents, currency)
+
+          response.to_transaction_info_plugin(transaction)
         end
 
         def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          options = properties_to_hash(properties)
+          amount_in_cents = to_cents(amount, currency)
 
-          # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
-          amount_in_cents = Monetize.from_numeric(amount, currency).cents.to_i
+          options               = properties_to_hash(properties)
+          options[:order_id]    ||= kb_payment_transaction_id
+          options[:currency]    ||= currency.to_s.upcase
+          options[:description] ||= "Kill Bill refund for #{kb_payment_transaction_id}"
 
+          # Find a transaction to refund
           transaction           = @transaction_model.find_candidate_transaction_for_refund(kb_payment_id, context.tenant_id, amount_in_cents)
 
           # Go to the gateway
-          gw_response           = gateway.refund amount_in_cents, transaction.txn_id, options
-          response, transaction = save_response_and_transaction gw_response, :refund, kb_account_id, context.tenant_id, kb_payment_id, amount_in_cents, currency
+          gw_response           = gateway.refund(amount_in_cents, transaction.txn_id, options)
+          response, transaction = save_response_and_transaction(gw_response, :refund, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :REFUND, amount_in_cents, currency)
 
-          response.to_payment_response(transaction)
+          response.to_transaction_info_plugin(transaction)
         end
 
         def get_payment_info(kb_account_id, kb_payment_id, properties, context)
-          options = properties_to_hash(properties)
-
           # We assume the payment is immutable in the Gateway and only look at our tables
-          transaction = @transaction_model.charge_from_kb_payment_id(kb_payment_id, context.tenant_id)
-
-          # TODO list
-          [transaction.send("#{@identifier}_response").to_payment_response(transaction)]
+          @transaction_model.transactions_from_kb_payment_id(kb_payment_id, context.tenant_id).collect do |transaction|
+            transaction.send("#{@identifier}_response").to_transaction_info_plugin(transaction)
+          end
         end
 
         def search_payments(search_key, offset = 0, limit = 100, properties, context)
           options = properties_to_hash(properties)
-          # TODO
           @response_model.search(search_key, context.tenant_id, offset, limit, :payment)
         end
 
         def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, properties, context)
-          options = properties_to_hash(properties)
+          options               = properties_to_hash(properties)
           options[:set_default] ||= set_default
 
           # Registering a card or a token
-          cc_or_token = find_value_from_payment_method_props(payment_method_props, 'token') || find_value_from_payment_method_props(payment_method_props, 'cardId')
+          cc_or_token           = find_value_from_payment_method_props(payment_method_props, 'token') || find_value_from_payment_method_props(payment_method_props, 'cardId')
           if cc_or_token.blank?
             # Nope - real credit card
             cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
@@ -190,7 +179,7 @@ module Killbill
           }
 
           # To make various gateway implementations happy...
-          options[:billing_address].each { |k,v| options[k] ||= v }
+          options[:billing_address].each { |k, v| options[k] ||= v }
 
           options[:order_id]    ||= kb_payment_method_id
 
@@ -229,7 +218,7 @@ module Killbill
 
         def get_payment_method_detail(kb_account_id, kb_payment_method_id, properties, context)
           options = properties_to_hash(properties)
-          @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).to_payment_method_response
+          @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).to_payment_method_plugin
         end
 
         # No default implementation
@@ -238,7 +227,7 @@ module Killbill
 
         def get_payment_methods(kb_account_id, refresh_from_gateway = false, properties, context)
           options = properties_to_hash(properties)
-          @payment_method_model.from_kb_account_id(kb_account_id, context.tenant_id).collect { |pm| pm.to_payment_method_info_response }
+          @payment_method_model.from_kb_account_id(kb_account_id, context.tenant_id).collect { |pm| pm.to_payment_method_info_plugin }
         end
 
         def search_payment_methods(search_key, offset = 0, limit = 100, properties, context)
@@ -285,10 +274,10 @@ module Killbill
         end
 
         def build_form_descriptor(kb_account_id, descriptor_fields, properties, context)
-          options = properties_to_hash(descriptor_fields)
-          order = options.delete(:order_id)
-          account = options.delete(:account_id)
-          service_options = {
+          options            = properties_to_hash(descriptor_fields)
+          order              = options.delete(:order_id)
+          account            = options.delete(:account_id)
+          service_options    = {
               :amount           => options.delete(:amount),
               :currency         => options.delete(:currency),
               :test             => options.delete(:test),
@@ -307,8 +296,8 @@ module Killbill
 
           # Retrieve the ActiveMerchant integration
           integration_module = get_active_merchant_module
-          service_class = integration_module.const_get('Helper')
-          service = service_class.new(order, account, service_options)
+          service_class      = integration_module.const_get('Helper')
+          service            = service_class.new(order, account, service_options)
 
           # Add the specified fields
           options.each do |field, value|
@@ -316,10 +305,10 @@ module Killbill
             next if mapping.nil?
             case mapping
               when Array
-                mapping.each{ |field2| service.add_field(field2, value) }
+                mapping.each { |field2| service.add_field(field2, value) }
               when Hash
                 options2 = value.is_a?(Hash) ? value : {}
-                mapping.each{ |key, field2| service.add_field(field2, options2[key]) }
+                mapping.each { |key, field2| service.add_field(field2, options2[key]) }
               else
                 service.add_field(mapping, value)
             end
@@ -334,35 +323,35 @@ module Killbill
           end
 
           # Build the response object
-          descriptor = ::Killbill::Plugin::Model::HostedPaymentPageFormDescriptor.new
+          descriptor               = ::Killbill::Plugin::Model::HostedPaymentPageFormDescriptor.new
           descriptor.kb_account_id = kb_account_id
-          descriptor.form_method = service.form_method || 'POST'
-          descriptor.form_url = service.respond_to?(:credential_based_url) ? service.credential_based_url : integration_module.service_url
-          descriptor.form_fields = hash_to_properties(form_fields)
+          descriptor.form_method   = service.form_method || 'POST'
+          descriptor.form_url      = service.respond_to?(:credential_based_url) ? service.credential_based_url : integration_module.service_url
+          descriptor.form_fields   = hash_to_properties(form_fields)
           # Any other custom property
-          descriptor.properties = hash_to_properties({})
+          descriptor.properties    = hash_to_properties({})
 
           descriptor
         end
 
         def process_notification(notification, properties, context, &proc)
-          options = properties_to_hash(properties)
+          options            = properties_to_hash(properties)
 
           # Retrieve the ActiveMerchant integration
           integration_module = get_active_merchant_module
-          service_class = integration_module.const_get('Notification')
+          service_class      = integration_module.const_get('Notification')
           # notification is either a body or a query string
-          service = service_class.new(notification, options)
+          service            = service_class.new(notification, options)
 
           if service.respond_to? :acknowledge
             service.acknowledge
           end
 
-          gw_notification = ::Killbill::Plugin::Model::GatewayNotification.new
+          gw_notification               = ::Killbill::Plugin::Model::GatewayNotification.new
           gw_notification.kb_payment_id = nil
-          gw_notification.status = service.status == 'Completed' ? 200 : 400
-          gw_notification.headers = {}
-          gw_notification.properties = []
+          gw_notification.status        = service.status == 'Completed' ? 200 : 400
+          gw_notification.headers       = {}
+          gw_notification.properties    = []
 
           if service.respond_to? :success_response
             gw_notification.entity = service.success_response(properties_to_hash(properties))
@@ -376,6 +365,19 @@ module Killbill
         end
 
         # Utilities
+
+        def to_cents(amount, currency)
+          # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
+          Monetize.from_numeric(amount, currency).cents.to_i
+        end
+
+        def get_payment_source(kb_payment_method_id, context)
+          if options[:credit_card].blank?
+            @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).token
+          else
+            ::ActiveMerchant::Billing::CreditCard.new(options[:credit_card])
+          end
+        end
 
         # Deprecated
         def find_value_from_payment_method_props(payment_method_props, key)
@@ -392,7 +394,7 @@ module Killbill
           account.currency
         end
 
-        def save_response_and_transaction(response, api_call, kb_account_id, kb_tenant_id, kb_payment_id=nil, amount_in_cents=0, currency=nil)
+        def save_response_and_transaction(response, api_call, kb_account_id, kb_tenant_id, kb_payment_id=nil, kb_payment_transaction_id=nil, transaction_type=nil, amount_in_cents=0, currency=nil)
           @logger.warn "Unsuccessful #{api_call}: #{response.message}" unless response.success?
 
           # Save the response to our logs
@@ -404,13 +406,15 @@ module Killbill
           if response.success and !kb_payment_id.blank? and !txn_id.blank?
             # Record the transaction
             transaction = response.send("create_#{@identifier}_transaction!",
-                                        :kb_account_id   => kb_account_id,
-                                        :kb_tenant_id    => kb_tenant_id,
-                                        :amount_in_cents => amount_in_cents,
-                                        :currency        => currency,
-                                        :api_call        => api_call,
-                                        :kb_payment_id   => kb_payment_id,
-                                        :txn_id          => txn_id)
+                                        :kb_account_id             => kb_account_id,
+                                        :kb_tenant_id              => kb_tenant_id,
+                                        :amount_in_cents           => amount_in_cents,
+                                        :currency                  => currency,
+                                        :api_call                  => api_call,
+                                        :kb_payment_id             => kb_payment_id,
+                                        :kb_payment_transaction_id => kb_payment_transaction_id,
+                                        :transaction_type          => transaction_type,
+                                        :txn_id                    => txn_id)
 
             @logger.debug "Recorded transaction: #{transaction.inspect}"
           end

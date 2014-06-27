@@ -8,6 +8,14 @@ module Killbill
 
           self.abstract_class = true
 
+          def transactions_from_kb_payment_id(kb_payment_id, kb_tenant_id)
+            if kb_tenant_id.nil?
+              where(:kb_payment_id => kb_payment_id)
+            else
+              where(:kb_payment_id => kb_payment_id, :kb_tenant_id => kb_tenant_id)
+            end
+          end
+
           [:authorize, :capture, :purchase, :credit, :refund].each do |transaction_type|
             define_method("#{transaction_type.to_s}s_from_kb_payment_id") do |kb_payment_id, kb_tenant_id|
               transaction_from_kb_payment_id transaction_type, kb_payment_id, kb_tenant_id, :multiple

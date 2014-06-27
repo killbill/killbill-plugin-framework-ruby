@@ -60,19 +60,6 @@ module Killbill
           pm.should == payment_method
           pm.kb_account_id.should == kb_account_id
           pm.kb_payment_method_id.should == kb_payment_method_id
-          # Depends on the gateway
-          #pm.cc_first_name.should == cc_first_name + ' ' + cc_last_name
-          #pm.cc_last_name.should == cc_last_name
-          pm.cc_type.should == cc_type
-          pm.cc_exp_month.should == cc_exp_month
-          pm.cc_exp_year.should == cc_exp_year
-          #pm.cc_last_4.should == cc_last_4
-          pm.address1.should == address1
-          pm.address2.should == address2
-          pm.city.should == city
-          pm.state.should == state
-          pm.zip.should == zip.to_s
-          pm.country.should == country
 
           pm
         end
