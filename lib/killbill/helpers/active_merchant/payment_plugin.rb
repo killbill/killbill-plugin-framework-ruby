@@ -42,7 +42,7 @@ module Killbill
           options[:description] ||= "Kill Bill authorization for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, context)
+          payment_source        = get_payment_source(kb_payment_method_id, options, context)
 
           # Go to the gateway
           gw_response           = gateway.authorize(amount_in_cents, payment_source, options)
@@ -60,7 +60,7 @@ module Killbill
           options[:description] ||= "Kill Bill capture for #{kb_payment_transaction_id}"
 
           # Retrieve the authorization
-          authorization         = @transaction_model.authorization_from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
+          authorization         = @transaction_model.from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
 
           # Go to the gateway
           gw_response           = gateway.capture(amount_in_cents, authorization, options)
@@ -78,7 +78,7 @@ module Killbill
           options[:description] ||= "Kill Bill purchase for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, context)
+          payment_source        = get_payment_source(kb_payment_method_id, options, context)
 
           # Go to the gateway
           gw_response           = gateway.purchase(amount_in_cents, payment_source, options)
@@ -92,7 +92,7 @@ module Killbill
           options[:description] ||= "Kill Bill void for #{kb_payment_transaction_id}"
 
           # Retrieve the authorization
-          authorization         = @transaction_model.authorization_from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
+          authorization         = @transaction_model.from_kb_payment_transaction_id(kb_payment_transaction_id, context.tenant_id).txn_id
 
           # Go to the gateway
           gw_response           = gateway.void(authorization, options)
@@ -110,7 +110,7 @@ module Killbill
           options[:description] ||= "Kill Bill credit for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, context)
+          payment_source        = get_payment_source(kb_payment_method_id, options, context)
 
           # Go to the gateway
           gw_response           = gateway.credit(amount_in_cents, payment_source, options)
@@ -371,7 +371,7 @@ module Killbill
           Monetize.from_numeric(amount, currency).cents.to_i
         end
 
-        def get_payment_source(kb_payment_method_id, context)
+        def get_payment_source(kb_payment_method_id, options, context)
           if options[:credit_card].blank?
             @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).token
           else
@@ -398,7 +398,7 @@ module Killbill
           @logger.warn "Unsuccessful #{api_call}: #{response.message}" unless response.success?
 
           # Save the response to our logs
-          response = @response_model.from_response(api_call, kb_account_id, kb_payment_id, kb_tenant_id, response)
+          response = @response_model.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response)
           response.save!
 
           transaction = nil

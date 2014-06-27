@@ -49,7 +49,7 @@ module Killbill
             t_info_plugin                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
             t_info_plugin.kb_payment_id               = kb_payment_id
             t_info_plugin.kb_transaction_payment_id   = kb_payment_transaction_id
-            t_info_plugin.transaction_type            = transaction_type
+            t_info_plugin.transaction_type            = transaction_type.nil? ? nil : transaction_type.to_sym
             t_info_plugin.amount                      = Money.new(amount_in_cents, currency).to_d if currency
             t_info_plugin.currency                    = currency
             t_info_plugin.created_date                = created_date
