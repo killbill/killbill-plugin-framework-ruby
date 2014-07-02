@@ -381,8 +381,8 @@ module Killbill
           end
         end
 
-        # Deprecated
         def find_value_from_payment_method_props(payment_method_props, key)
+          return nil if payment_method_props.nil?
           find_value_from_properties(payment_method_props.properties, key)
         end
 
