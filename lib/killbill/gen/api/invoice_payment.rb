@@ -1,10 +1,11 @@
 ###################################################################################
 #                                                                                 #
 #                   Copyright 2010-2013 Ning, Inc.                                #
+#                   Copyright 2014 The Billing Project, LLC                       #
 #                                                                                 #
-#      Ning licenses this file to you under the Apache License, version 2.0       #
-#      (the "License"); you may not use this file except in compliance with the   #
-#      License.  You may obtain a copy of the License at:                         #
+#      The Billing Project licenses this file to you under the Apache License,    #
+#      version 2.0 (the "License"); you may not use this file except in           #
+#      compliance with the License.  You may obtain a copy of the License at:     #
 #                                                                                 #
 #          http://www.apache.org/licenses/LICENSE-2.0                             #
 #                                                                                 #
@@ -81,8 +82,8 @@ module Killbill
           # conversion for linked_invoice_payment_id [type = java.util.UUID]
           @linked_invoice_payment_id = java.util.UUID.fromString(@linked_invoice_payment_id.to_s) unless @linked_invoice_payment_id.nil?
 
-          # conversion for payment_cookie_id [type = java.util.UUID]
-          @payment_cookie_id = java.util.UUID.fromString(@payment_cookie_id.to_s) unless @payment_cookie_id.nil?
+          # conversion for payment_cookie_id [type = java.lang.String]
+          @payment_cookie_id = @payment_cookie_id.to_s unless @payment_cookie_id.nil?
 
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
           @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
@@ -142,9 +143,8 @@ module Killbill
           @linked_invoice_payment_id = j_obj.linked_invoice_payment_id
           @linked_invoice_payment_id = @linked_invoice_payment_id.nil? ? nil : @linked_invoice_payment_id.to_s
 
-          # conversion for payment_cookie_id [type = java.util.UUID]
+          # conversion for payment_cookie_id [type = java.lang.String]
           @payment_cookie_id = j_obj.payment_cookie_id
-          @payment_cookie_id = @payment_cookie_id.nil? ? nil : @payment_cookie_id.to_s
 
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
           @processed_currency = j_obj.processed_currency

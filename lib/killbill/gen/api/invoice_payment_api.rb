@@ -1,10 +1,11 @@
 ###################################################################################
 #                                                                                 #
 #                   Copyright 2010-2013 Ning, Inc.                                #
+#                   Copyright 2014 The Billing Project, LLC                       #
 #                                                                                 #
-#      Ning licenses this file to you under the Apache License, version 2.0       #
-#      (the "License"); you may not use this file except in compliance with the   #
-#      License.  You may obtain a copy of the License at:                         #
+#      The Billing Project licenses this file to you under the Apache License,    #
+#      version 2.0 (the "License"); you may not use this file except in           #
+#      compliance with the License.  You may obtain a copy of the License at:     #
 #                                                                                 #
 #          http://www.apache.org/licenses/LICENSE-2.0                             #
 #                                                                                 #
@@ -37,44 +38,6 @@ module Killbill
         end
 
 
-        java_signature 'Java::java.util.List getAllInvoicesByAccount(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_all_invoices_by_account(accountId, context)
-
-          # conversion for accountId [type = java.util.UUID]
-          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_all_invoices_by_account(accountId, context)
-          # conversion for res [type = java.util.List]
-          tmp = []
-          (res || []).each do |m|
-            # conversion for m [type = org.killbill.billing.invoice.api.Invoice]
-            m = Killbill::Plugin::Model::Invoice.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          res = tmp
-          return res
-        end
-
-        java_signature 'Java::org.killbill.billing.invoice.api.Invoice getInvoice(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_invoice(invoiceId, context)
-
-          # conversion for invoiceId [type = java.util.UUID]
-          invoiceId = java.util.UUID.fromString(invoiceId.to_s) unless invoiceId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_invoice(invoiceId, context)
-            # conversion for res [type = org.killbill.billing.invoice.api.Invoice]
-            res = Killbill::Plugin::Model::Invoice.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
-          end
-        end
-
         java_signature 'Java::java.util.List getInvoicePayments(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_invoice_payments(paymentId, context)
 
@@ -95,68 +58,15 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoicePayment getInvoicePaymentForAttempt(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_invoice_payment_for_attempt(paymentId, context)
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_invoice_payment_for_attempt(paymentId, context)
-          # conversion for res [type = org.killbill.billing.invoice.api.InvoicePayment]
-          res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
-          return res
-        end
-
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoicePayment createChargeback(Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_chargeback(invoicePaymentId, amount, context)
-
-          # conversion for invoicePaymentId [type = java.util.UUID]
-          invoicePaymentId = java.util.UUID.fromString(invoicePaymentId.to_s) unless invoicePaymentId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_chargeback(invoicePaymentId, amount, context)
-            # conversion for res [type = org.killbill.billing.invoice.api.InvoicePayment]
-            res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::java.math.BigDecimal getRemainingAmountPaid(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_remaining_amount_paid(invoicePaymentId, context)
-
-          # conversion for invoicePaymentId [type = java.util.UUID]
-          invoicePaymentId = java.util.UUID.fromString(invoicePaymentId.to_s) unless invoicePaymentId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_remaining_amount_paid(invoicePaymentId, context)
-          # conversion for res [type = java.math.BigDecimal]
-          res = res.nil? ? 0 : BigDecimal.new(res.to_s)
-          return res
-        end
-
-        java_signature 'Java::java.util.List getChargebacksByAccountId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_chargebacks_by_account_id(accountId, context)
+        java_signature 'Java::java.util.List getInvoicePaymentsByAccount(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_invoice_payments_by_account(accountId, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_chargebacks_by_account_id(accountId, context)
+          res = @real_java_api.get_invoice_payments_by_account(accountId, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
@@ -166,62 +76,6 @@ module Killbill
           end
           res = tmp
           return res
-        end
-
-        java_signature 'Java::java.util.UUID getAccountIdFromInvoicePaymentId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_account_id_from_invoice_payment_id(uuid, context)
-
-          # conversion for uuid [type = java.util.UUID]
-          uuid = java.util.UUID.fromString(uuid.to_s) unless uuid.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_account_id_from_invoice_payment_id(uuid, context)
-            # conversion for res [type = java.util.UUID]
-            res = res.nil? ? nil : res.to_s
-            return res
-          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::java.util.List getChargebacksByPaymentId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_chargebacks_by_payment_id(paymentId, context)
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_chargebacks_by_payment_id(paymentId, context)
-          # conversion for res [type = java.util.List]
-          tmp = []
-          (res || []).each do |m|
-            # conversion for m [type = org.killbill.billing.invoice.api.InvoicePayment]
-            m = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          res = tmp
-          return res
-        end
-
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoicePayment getChargebackById(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_chargeback_by_id(chargebackId, context)
-
-          # conversion for chargebackId [type = java.util.UUID]
-          chargebackId = java.util.UUID.fromString(chargebackId.to_s) unless chargebackId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_chargeback_by_id(chargebackId, context)
-            # conversion for res [type = org.killbill.billing.invoice.api.InvoicePayment]
-            res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
-            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
-          end
         end
       end
     end

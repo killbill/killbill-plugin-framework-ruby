@@ -1,10 +1,11 @@
 ###################################################################################
 #                                                                                 #
 #                   Copyright 2010-2013 Ning, Inc.                                #
+#                   Copyright 2014 The Billing Project, LLC                       #
 #                                                                                 #
-#      Ning licenses this file to you under the Apache License, version 2.0       #
-#      (the "License"); you may not use this file except in compliance with the   #
-#      License.  You may obtain a copy of the License at:                         #
+#      The Billing Project licenses this file to you under the Apache License,    #
+#      version 2.0 (the "License"); you may not use this file except in           #
+#      compliance with the License.  You may obtain a copy of the License at:     #
 #                                                                                 #
 #          http://www.apache.org/licenses/LICENSE-2.0                             #
 #                                                                                 #
@@ -401,6 +402,77 @@ module Killbill
           end
         end
 
+        java_signature 'Java::org.killbill.billing.payment.api.DirectPayment createChargeback(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback(account, directPaymentId, amount, currency, directPaymentTransactionExternalKey, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for directPaymentId [type = java.util.UUID]
+          directPaymentId = java.util.UUID.fromString(directPaymentId.to_s) unless directPaymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+
+          # conversion for directPaymentTransactionExternalKey [type = java.lang.String]
+          directPaymentTransactionExternalKey = directPaymentTransactionExternalKey.to_s unless directPaymentTransactionExternalKey.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_chargeback(account, directPaymentId, amount, currency, directPaymentTransactionExternalKey, context)
+            # conversion for res [type = org.killbill.billing.payment.api.DirectPayment]
+            res = Killbill::Plugin::Model::DirectPayment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.DirectPayment createChargebackWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback_with_payment_control(account, directPaymentId, amount, currency, directPaymentTransactionExternalKey, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for directPaymentId [type = java.util.UUID]
+          directPaymentId = java.util.UUID.fromString(directPaymentId.to_s) unless directPaymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+
+          # conversion for directPaymentTransactionExternalKey [type = java.lang.String]
+          directPaymentTransactionExternalKey = directPaymentTransactionExternalKey.to_s unless directPaymentTransactionExternalKey.nil?
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_chargeback_with_payment_control(account, directPaymentId, amount, currency, directPaymentTransactionExternalKey, paymentOptions, context)
+            # conversion for res [type = org.killbill.billing.payment.api.DirectPayment]
+            res = Killbill::Plugin::Model::DirectPayment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
         java_signature 'Java::void notifyPendingTransactionOfStateChanged(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::org.killbill.billing.util.callcontext.CallContext)'
         def notify_pending_transaction_of_state_changed(account, directPaymentTransactionId, isSuccess, context)
 
@@ -418,8 +490,8 @@ module Killbill
           @real_java_api.notify_pending_transaction_of_state_changed(account, directPaymentTransactionId, isSuccess, context)
         end
 
-        java_signature 'Java::void notifyChargeback(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.String, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def notify_chargeback(account, directPaymentTransactionId, chargebackTransactionExternalKey, amount, currency, context)
+        java_signature 'Java::void notifyPendingTransactionOfStateChangedWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def notify_pending_transaction_of_state_changed_with_payment_control(account, directPaymentTransactionId, isSuccess, paymentOptions, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -427,22 +499,15 @@ module Killbill
           # conversion for directPaymentTransactionId [type = java.util.UUID]
           directPaymentTransactionId = java.util.UUID.fromString(directPaymentTransactionId.to_s) unless directPaymentTransactionId.nil?
 
-          # conversion for chargebackTransactionExternalKey [type = java.lang.String]
-          chargebackTransactionExternalKey = chargebackTransactionExternalKey.to_s unless chargebackTransactionExternalKey.nil?
+          # conversion for isSuccess [type = boolean]
+          isSuccess = isSuccess.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(isSuccess)
 
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
-          @real_java_api.notify_chargeback(account, directPaymentTransactionId, chargebackTransactionExternalKey, amount, currency, context)
+          @real_java_api.notify_pending_transaction_of_state_changed_with_payment_control(account, directPaymentTransactionId, isSuccess, paymentOptions, context)
         end
 
         java_signature 'Java::java.util.List getAccountPayments(Java::java.util.UUID, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
@@ -602,11 +667,14 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::java.util.UUID addPaymentMethod(Java::org.killbill.billing.account.api.Account, Java::java.lang.String, Java::boolean, Java::org.killbill.billing.payment.api.PaymentMethodPlugin, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def add_payment_method(account, pluginName, setDefault, paymentMethodInfo, properties, context)
+        java_signature 'Java::java.util.UUID addPaymentMethod(Java::org.killbill.billing.account.api.Account, Java::java.lang.String, Java::java.lang.String, Java::boolean, Java::org.killbill.billing.payment.api.PaymentMethodPlugin, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def add_payment_method(account, paymentMethodExternalKey, pluginName, setDefault, paymentMethodInfo, properties, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
+
+          # conversion for paymentMethodExternalKey [type = java.lang.String]
+          paymentMethodExternalKey = paymentMethodExternalKey.to_s unless paymentMethodExternalKey.nil?
 
           # conversion for pluginName [type = java.lang.String]
           pluginName = pluginName.to_s unless pluginName.nil?
@@ -629,7 +697,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.add_payment_method(account, pluginName, setDefault, paymentMethodInfo, properties, context)
+            res = @real_java_api.add_payment_method(account, paymentMethodExternalKey, pluginName, setDefault, paymentMethodInfo, properties, context)
             # conversion for res [type = java.util.UUID]
             res = res.nil? ? nil : res.to_s
             return res
@@ -699,6 +767,39 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.get_payment_method_by_id(paymentMethodId, includedInactive, withPluginInfo, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.api.PaymentMethod]
+            res = Killbill::Plugin::Model::PaymentMethod.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.PaymentMethod getPaymentMethodByExternalKey(Java::java.lang.String, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_method_by_external_key(paymentMethodExternalKey, includedInactive, withPluginInfo, properties, context)
+
+          # conversion for paymentMethodExternalKey [type = java.lang.String]
+          paymentMethodExternalKey = paymentMethodExternalKey.to_s unless paymentMethodExternalKey.nil?
+
+          # conversion for includedInactive [type = boolean]
+          includedInactive = includedInactive.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includedInactive)
+
+          # conversion for withPluginInfo [type = boolean]
+          withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_payment_method_by_external_key(paymentMethodExternalKey, includedInactive, withPluginInfo, properties, context)
             # conversion for res [type = org.killbill.billing.payment.api.PaymentMethod]
             res = Killbill::Plugin::Model::PaymentMethod.new.to_ruby(res) unless res.nil?
             return res

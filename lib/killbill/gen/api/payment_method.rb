@@ -1,10 +1,11 @@
 ###################################################################################
 #                                                                                 #
 #                   Copyright 2010-2013 Ning, Inc.                                #
+#                   Copyright 2014 The Billing Project, LLC                       #
 #                                                                                 #
-#      Ning licenses this file to you under the Apache License, version 2.0       #
-#      (the "License"); you may not use this file except in compliance with the   #
-#      License.  You may obtain a copy of the License at:                         #
+#      The Billing Project licenses this file to you under the Apache License,    #
+#      version 2.0 (the "License"); you may not use this file except in           #
+#      compliance with the License.  You may obtain a copy of the License at:     #
 #                                                                                 #
 #          http://www.apache.org/licenses/LICENSE-2.0                             #
 #                                                                                 #
@@ -32,7 +33,7 @@ module Killbill
 
         include org.killbill.billing.payment.api.PaymentMethod
 
-        attr_accessor :id, :created_date, :updated_date, :account_id, :is_active, :plugin_name, :plugin_detail
+        attr_accessor :id, :created_date, :updated_date, :external_key, :account_id, :is_active, :plugin_name, :plugin_detail
 
         def initialize()
         end
@@ -52,6 +53,9 @@ module Killbill
             @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
+
+          # conversion for external_key [type = java.lang.String]
+          @external_key = @external_key.to_s unless @external_key.nil?
 
           # conversion for account_id [type = java.util.UUID]
           @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
@@ -87,6 +91,9 @@ module Killbill
             str = fmt.print(@updated_date)
             @updated_date = DateTime.iso8601(str)
           end
+
+          # conversion for external_key [type = java.lang.String]
+          @external_key = j_obj.external_key
 
           # conversion for account_id [type = java.util.UUID]
           @account_id = j_obj.account_id

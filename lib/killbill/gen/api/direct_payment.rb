@@ -1,10 +1,11 @@
 ###################################################################################
 #                                                                                 #
 #                   Copyright 2010-2013 Ning, Inc.                                #
+#                   Copyright 2014 The Billing Project, LLC                       #
 #                                                                                 #
-#      Ning licenses this file to you under the Apache License, version 2.0       #
-#      (the "License"); you may not use this file except in compliance with the   #
-#      License.  You may obtain a copy of the License at:                         #
+#      The Billing Project licenses this file to you under the Apache License,    #
+#      version 2.0 (the "License"); you may not use this file except in           #
+#      compliance with the License.  You may obtain a copy of the License at:     #
 #                                                                                 #
 #          http://www.apache.org/licenses/LICENSE-2.0                             #
 #                                                                                 #
@@ -100,7 +101,7 @@ module Killbill
             @refunded_amount = java.math.BigDecimal.new(@refunded_amount.to_s)
           end
 
-          # conversion for is_auth_voided [type = boolean]
+          # conversion for is_auth_voided [type = java.lang.Boolean]
           @is_auth_voided = @is_auth_voided.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_auth_voided)
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
@@ -172,7 +173,7 @@ module Killbill
           @refunded_amount = j_obj.refunded_amount
           @refunded_amount = @refunded_amount.nil? ? 0 : BigDecimal.new(@refunded_amount.to_s)
 
-          # conversion for is_auth_voided [type = boolean]
+          # conversion for is_auth_voided [type = java.lang.Boolean]
           @is_auth_voided = j_obj.is_auth_voided
           if @is_auth_voided.nil?
             @is_auth_voided = false
