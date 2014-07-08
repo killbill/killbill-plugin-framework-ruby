@@ -20,6 +20,21 @@ module Killbill
           context = context.to_ruby(context)
 
           # Generate a token
+          properties = build_pm_properties(account)
+
+          info            = Killbill::Plugin::Model::PaymentMethodPlugin.new
+          info.properties = properties
+          payment_method  = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, [], context)
+
+          pm = payment_method_model.from_kb_payment_method_id kb_payment_method_id, context.tenant_id
+          pm.should == payment_method
+          pm.kb_account_id.should == kb_account_id
+          pm.kb_payment_method_id.should == kb_payment_method_id
+
+          pm
+        end
+
+        def build_pm_properties(account = nil)
           cc_number             = '4242424242424242'
           cc_first_name         = 'John'
           cc_last_name          = 'Doe'
@@ -43,7 +58,7 @@ module Killbill
           properties << create_pm_kv_info('ccExpirationMonth', cc_exp_month)
           properties << create_pm_kv_info('ccExpirationYear', cc_exp_year)
           properties << create_pm_kv_info('ccLast4', cc_last_4)
-          properties << create_pm_kv_info('email', account.nil? ? nil : account.email)
+          properties << create_pm_kv_info('email', account.nil? ? Time.now.to_i.to_s + '-test@tester.com' : account.email) # Required by e.g. CyberSource
           properties << create_pm_kv_info('address1', address1)
           properties << create_pm_kv_info('address2', address2)
           properties << create_pm_kv_info('city', city)
@@ -51,17 +66,7 @@ module Killbill
           properties << create_pm_kv_info('zip', zip)
           properties << create_pm_kv_info('country', country)
           properties << create_pm_kv_info('ccVerificationValue', cc_verification_value)
-
-          info            = Killbill::Plugin::Model::PaymentMethodPlugin.new
-          info.properties = properties
-          payment_method  = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, [], context)
-
-          pm = payment_method_model.from_kb_payment_method_id kb_payment_method_id, context.tenant_id
-          pm.should == payment_method
-          pm.kb_account_id.should == kb_account_id
-          pm.kb_payment_method_id.should == kb_payment_method_id
-
-          pm
+          properties
         end
 
         def create_kb_account(kb_account_id)
