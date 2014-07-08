@@ -42,7 +42,7 @@ module Killbill
           options[:description] ||= "Kill Bill authorization for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, options, context)
+          payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
 
           # Go to the gateway
           gw_response           = gateway.authorize(amount_in_cents, payment_source, options)
@@ -79,7 +79,7 @@ module Killbill
           options[:description] ||= "Kill Bill purchase for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, options, context)
+          payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
 
           # Go to the gateway
           gw_response           = gateway.purchase(amount_in_cents, payment_source, options)
@@ -112,7 +112,7 @@ module Killbill
           options[:description] ||= "Kill Bill credit for #{kb_payment_transaction_id}"
 
           # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, options, context)
+          payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
 
           # Go to the gateway
           gw_response           = gateway.credit(amount_in_cents, payment_source, options)
@@ -152,45 +152,21 @@ module Killbill
         end
 
         def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, properties, context)
+          all_properties = (payment_method_props || payment_method_props.properties || []) + properties
           options               = properties_to_hash(properties)
           options[:set_default] ||= set_default
-
-          # Registering a card or a token
-          cc_or_token           = find_value_from_payment_method_props(payment_method_props, 'token') || find_value_from_payment_method_props(payment_method_props, 'cardId')
-          if cc_or_token.blank?
-            # Nope - real credit card
-            cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
-                :number             => find_value_from_payment_method_props(payment_method_props, 'ccNumber'),
-                :brand              => find_value_from_payment_method_props(payment_method_props, 'ccType'),
-                :month              => find_value_from_payment_method_props(payment_method_props, 'ccExpirationMonth'),
-                :year               => find_value_from_payment_method_props(payment_method_props, 'ccExpirationYear'),
-                :verification_value => find_value_from_payment_method_props(payment_method_props, 'ccVerificationValue'),
-                :first_name         => find_value_from_payment_method_props(payment_method_props, 'ccFirstName'),
-                :last_name          => find_value_from_payment_method_props(payment_method_props, 'ccLastName')
-            )
-          end
-
-          options[:billing_address] ||= {
-              :email    => find_value_from_payment_method_props(payment_method_props, 'email'),
-              :address1 => find_value_from_payment_method_props(payment_method_props, 'address1'),
-              :address2 => find_value_from_payment_method_props(payment_method_props, 'address2'),
-              :city     => find_value_from_payment_method_props(payment_method_props, 'city'),
-              :zip      => find_value_from_payment_method_props(payment_method_props, 'zip'),
-              :state    => find_value_from_payment_method_props(payment_method_props, 'state'),
-              :country  => find_value_from_payment_method_props(payment_method_props, 'country')
-          }
-
-          # To make various gateway implementations happy...
-          options[:billing_address].each { |k, v| options[k] ||= v }
-
           options[:order_id]    ||= kb_payment_method_id
 
+          # Registering a card or a token
+          payment_source        = get_payment_source(nil, all_properties, options, context)
+
           # Go to the gateway
-          gw_response           = gateway.store cc_or_token, options
+          gw_response           = gateway.store payment_source, options
           response, transaction = save_response_and_transaction gw_response, :add_payment_method, kb_account_id, context.tenant_id
 
           if response.success
-            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, cc_or_token, gw_response, options)
+            # response.authorization may be a String combination separated by ; - don't split it! Some plugins expect it as-is (they split it themselves)
+            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, response.authorization, gw_response, options)
             payment_method.save!
             payment_method
           else
@@ -373,21 +349,47 @@ module Killbill
           Monetize.from_numeric(amount, currency).cents.to_i
         end
 
-        def get_payment_source(kb_payment_method_id, options, context)
-          if options[:credit_card].blank?
-            @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).token
-          else
-            ::ActiveMerchant::Billing::CreditCard.new(options[:credit_card])
-          end
-        end
+        def get_payment_source(kb_payment_method_id, properties, options, context)
+          cc_number   = find_value_from_properties(properties, 'ccNumber')
+          cc_or_token = find_value_from_properties(properties, 'token') || find_value_from_properties(properties, 'cardId')
 
-        def find_value_from_payment_method_props(payment_method_props, key)
-          return nil if payment_method_props.nil?
-          find_value_from_properties(payment_method_props.properties, key)
+          if cc_number.blank? and cc_or_token.blank?
+            # Existing token
+            cc_or_token = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).token
+          elsif !cc_number.blank? and cc_or_token.blank?
+            # Real credit card
+            cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
+                :number             => cc_number,
+                :brand              => find_value_from_properties(properties, 'ccType'),
+                :month              => find_value_from_properties(properties, 'ccExpirationMonth'),
+                :year               => find_value_from_properties(properties, 'ccExpirationYear'),
+                :verification_value => find_value_from_properties(properties, 'ccVerificationValue'),
+                :first_name         => find_value_from_properties(properties, 'ccFirstName'),
+                :last_name          => find_value_from_properties(properties, 'ccLastName')
+            )
+          else
+            # Use specified token
+          end
+
+          options[:billing_address] ||= {
+              :email    => find_value_from_properties(properties, 'email'),
+              :address1 => find_value_from_properties(properties, 'address1'),
+              :address2 => find_value_from_properties(properties, 'address2'),
+              :city     => find_value_from_properties(properties, 'city'),
+              :zip      => find_value_from_properties(properties, 'zip'),
+              :state    => find_value_from_properties(properties, 'state'),
+              :country  => find_value_from_properties(properties, 'country')
+          }
+
+          # To make various gateway implementations happy...
+          options[:billing_address].each { |k, v| options[k] ||= v }
+
+          cc_or_token
         end
 
         def find_value_from_properties(properties, key)
-          prop = (properties.find { |kv| kv.key == key })
+          return nil if key.nil?
+          prop = (properties.find { |kv| kv.key.to_s == key.to_s })
           prop.nil? ? nil : prop.value
         end
 
