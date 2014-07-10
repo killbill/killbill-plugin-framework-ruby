@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   else
     s.add_development_dependency 'sqlite3', '~> 1.3.7'
   end
-  s.add_development_dependency 'activemerchant', '~> 1.36.0'
+  s.add_development_dependency 'activemerchant', '~> 1.42.0'
   s.add_development_dependency 'jbundler', '~> 0.4.3'
   s.add_development_dependency 'rack', '>= 1.5.2'
   s.add_development_dependency 'rake', '>= 0.8.7'
