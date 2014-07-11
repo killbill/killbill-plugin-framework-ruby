@@ -54,7 +54,7 @@ module Killbill
           # conversion for invoice_user_api [type = org.killbill.billing.invoice.api.InvoiceUserApi]
           @invoice_user_api = @invoice_user_api.to_java unless @invoice_user_api.nil?
 
-          # conversion for payment_api [type = org.killbill.billing.payment.api.DirectPaymentApi]
+          # conversion for payment_api [type = org.killbill.billing.payment.api.PaymentApi]
           @payment_api = @payment_api.to_java unless @payment_api.nil?
 
           # conversion for tenant_user_api [type = org.killbill.billing.tenant.api.TenantUserApi]
@@ -113,9 +113,9 @@ module Killbill
           @invoice_user_api = j_obj.invoice_user_api
           @invoice_user_api = Killbill::Plugin::Model::InvoiceUserApi.new.to_ruby(@invoice_user_api) unless @invoice_user_api.nil?
 
-          # conversion for payment_api [type = org.killbill.billing.payment.api.DirectPaymentApi]
+          # conversion for payment_api [type = org.killbill.billing.payment.api.PaymentApi]
           @payment_api = j_obj.payment_api
-          @payment_api = Killbill::Plugin::Model::DirectPaymentApi.new.to_ruby(@payment_api) unless @payment_api.nil?
+          @payment_api = Killbill::Plugin::Model::PaymentApi.new.to_ruby(@payment_api) unless @payment_api.nil?
 
           # conversion for tenant_user_api [type = org.killbill.billing.tenant.api.TenantUserApi]
           @tenant_user_api = j_obj.tenant_user_api

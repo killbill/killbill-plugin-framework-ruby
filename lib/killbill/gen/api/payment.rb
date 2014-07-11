@@ -29,9 +29,9 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.payment.api'
-      class DirectPayment
+      class Payment
 
-        include org.killbill.billing.payment.api.DirectPayment
+        include org.killbill.billing.payment.api.Payment
 
         attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_number, :external_key, :auth_amount, :captured_amount, :purchased_amount, :credited_amount, :refunded_amount, :is_auth_voided, :currency, :transactions
 
@@ -110,7 +110,7 @@ module Killbill
           # conversion for transactions [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@transactions || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.DirectPaymentTransaction]
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentTransaction]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
@@ -190,8 +190,8 @@ module Killbill
           @transactions = j_obj.transactions
           tmp = []
           (@transactions || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.DirectPaymentTransaction]
-            m = Killbill::Plugin::Model::DirectPaymentTransaction.new.to_ruby(m) unless m.nil?
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentTransaction]
+            m = Killbill::Plugin::Model::PaymentTransaction.new.to_ruby(m) unless m.nil?
             tmp << m
           end
           @transactions = tmp

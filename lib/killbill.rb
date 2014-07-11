@@ -29,7 +29,7 @@ begin
     org.killbill.billing.entitlement.api.SubscriptionApi
     org.killbill.billing.invoice.api.InvoicePaymentApi
     org.killbill.billing.invoice.api.InvoiceUserApi
-    org.killbill.billing.payment.api.DirectPaymentApi
+    org.killbill.billing.payment.api.PaymentApi
     org.killbill.billing.payment.api.PaymentGatewayApi
     org.killbill.billing.tenant.api.TenantUserApi
     org.killbill.billing.usage.api.UsageUserApi

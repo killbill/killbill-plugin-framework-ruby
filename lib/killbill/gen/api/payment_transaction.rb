@@ -29,11 +29,11 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.payment.api'
-      class DirectPaymentTransaction
+      class PaymentTransaction
 
-        include org.killbill.billing.payment.api.DirectPaymentTransaction
+        include org.killbill.billing.payment.api.PaymentTransaction
 
-        attr_accessor :id, :created_date, :updated_date, :direct_payment_id, :external_key, :transaction_type, :effective_date, :amount, :currency, :processed_amount, :processed_currency, :gateway_error_code, :gateway_error_msg, :transaction_status, :payment_info_plugin
+        attr_accessor :id, :created_date, :updated_date, :payment_id, :external_key, :transaction_type, :effective_date, :amount, :currency, :processed_amount, :processed_currency, :gateway_error_code, :gateway_error_msg, :transaction_status, :payment_info_plugin
 
         def initialize()
         end
@@ -54,8 +54,8 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for direct_payment_id [type = java.util.UUID]
-          @direct_payment_id = java.util.UUID.fromString(@direct_payment_id.to_s) unless @direct_payment_id.nil?
+          # conversion for payment_id [type = java.util.UUID]
+          @payment_id = java.util.UUID.fromString(@payment_id.to_s) unless @payment_id.nil?
 
           # conversion for external_key [type = java.lang.String]
           @external_key = @external_key.to_s unless @external_key.nil?
@@ -124,9 +124,9 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
-          # conversion for direct_payment_id [type = java.util.UUID]
-          @direct_payment_id = j_obj.direct_payment_id
-          @direct_payment_id = @direct_payment_id.nil? ? nil : @direct_payment_id.to_s
+          # conversion for payment_id [type = java.util.UUID]
+          @payment_id = j_obj.payment_id
+          @payment_id = @payment_id.nil? ? nil : @payment_id.to_s
 
           # conversion for external_key [type = java.lang.String]
           @external_key = j_obj.external_key
