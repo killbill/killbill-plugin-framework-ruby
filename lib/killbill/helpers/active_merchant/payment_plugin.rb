@@ -152,7 +152,7 @@ module Killbill
         end
 
         def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, properties, context)
-          all_properties = (payment_method_props || payment_method_props.properties || []) + properties
+          all_properties = (payment_method_props.nil? || payment_method_props.properties.nil? ? [] : payment_method_props.properties) + properties
           options               = properties_to_hash(properties)
           options[:set_default] ||= set_default
           options[:order_id]    ||= kb_payment_method_id
