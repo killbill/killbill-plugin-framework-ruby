@@ -2,8 +2,8 @@
 #require "killbill/gen/plugin-api/payment_transaction_info_plugin"
 #require "killbill/gen/plugin-api/customer"
 #require 'plugin-api/payment_transaction_info_plugin'
-#require "killbill/kevin_utils"
-require 'killbill/notification'
+require "killbill/kevin_utils"
+#require 'killbill/notification'
 #require 'killbill/helpers/active_merchant'
 #require 'killbill/gen/api/limit'
 
