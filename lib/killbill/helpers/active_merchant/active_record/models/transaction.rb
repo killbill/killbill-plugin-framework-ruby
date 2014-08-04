@@ -6,9 +6,14 @@ module Killbill
 
         class Transaction < ::ActiveRecord::Base
 
+          extend ::Killbill::Plugin::ActiveMerchant::Helpers
+
           self.abstract_class = true
 
+          @@quotes_cache = build_quotes_cache
+
           class << self
+
             def transactions_from_kb_payment_id(kb_payment_id, kb_tenant_id)
               where(:kb_payment_id => kb_payment_id, :kb_tenant_id => kb_tenant_id).order(:created_at)
             end
@@ -44,15 +49,14 @@ module Killbill
             def do_find_candidate_transaction_for_refund(api_call, kb_payment_id, kb_tenant_id, amount_in_cents)
               # Find one successful charge which amount is at least the amount we are trying to refund
               if kb_tenant_id.nil?
-                transactions = where('amount_in_cents >= ? AND api_call = ? AND kb_tenant_id is NULL AND kb_payment_id = ?', amount_in_cents, api_call, kb_payment_id).order(:created_at)
+                transactions = where("amount_in_cents >= #{@@quotes_cache[amount_in_cents]} AND api_call = #{@@quotes_cache[api_call]} AND kb_tenant_id is NULL AND kb_payment_id = #{@@quotes_cache[kb_payment_id]}").order(:created_at)
               else
-                transactions = where('amount_in_cents >= ? AND api_call = ? AND kb_tenant_id = ? AND kb_payment_id = ?', amount_in_cents, api_call, kb_tenant_id, kb_payment_id).order(:created_at)
+                transactions = where("amount_in_cents >= #{@@quotes_cache[amount_in_cents]} AND api_call = #{@@quotes_cache[api_call]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND kb_payment_id = #{@@quotes_cache[kb_payment_id]}").order(:created_at)
               end
               raise "Unable to find transaction for payment #{kb_payment_id} and api_call #{api_call}" if transactions.size == 0
 
               # We have candidates, but we now need to make sure we didn't refund more than for the specified amount
-              amount_refunded_in_cents = where('api_call = ? and kb_payment_id = ?', :refund, kb_payment_id)
-                                         .sum('amount_in_cents')
+              amount_refunded_in_cents = where("api_call = #{@@quotes_cache['refund']} and kb_payment_id = #{@@quotes_cache[kb_payment_id]}").sum('amount_in_cents')
 
               amount_left_to_refund_in_cents = -amount_refunded_in_cents
               transactions.map { |transaction| amount_left_to_refund_in_cents += transaction.amount_in_cents }
@@ -67,13 +71,13 @@ module Killbill
                   if transaction_type.nil?
                     transactions = where("kb_tenant_id is NULL AND #{attribute.to_s} = ?", attribute_value).order(:created_at)
                   else
-                    transactions = where("transaction_type = ? AND kb_tenant_id is NULL AND #{attribute.to_s} = ?", transaction_type, attribute_value).order(:created_at)
+                    transactions = where("transaction_type = #{@@quotes_cache[transaction_type]} AND kb_tenant_id is NULL AND #{attribute.to_s} = #{@@quotes_cache[attribute_value]}").order(:created_at)
                   end
                 else
                   if transaction_type.nil?
-                    transactions = where("kb_tenant_id = ? AND #{attribute.to_s} = ?", kb_tenant_id, attribute_value).order(:created_at)
+                    transactions = where("kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND #{attribute.to_s} = #{@@quotes_cache[attribute_value]}").order(:created_at)
                   else
-                    transactions = where("transaction_type = ? AND kb_tenant_id = ? AND #{attribute.to_s} = ?", transaction_type, kb_tenant_id, attribute_value).order(:created_at)
+                    transactions = where("transaction_type = #{@@quotes_cache[transaction_type]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND #{attribute.to_s} = #{@@quotes_cache[attribute_value]}").order(:created_at)
                   end
                 end
                 if how_many == :single

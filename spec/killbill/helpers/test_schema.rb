@@ -27,11 +27,12 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
   add_index(:test_payment_methods, :kb_payment_method_id)
 
   create_table "test_transactions", :force => true do |t|
-    t.integer  "response_id",  :null => false
+    t.integer  "test_response_id",          :null => false
     t.string   "api_call",                  :null => false
     t.string   "kb_payment_id",             :null => false
     t.string   "kb_payment_transaction_id", :null => false
     t.string   "transaction_type",          :null => false
+    t.string   "txn_id"
     t.integer  "amount_in_cents",           :null => false
     t.string   "currency",                  :null => false
     t.datetime "created_at",                :null => false
@@ -43,7 +44,7 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
   add_index(:test_transactions, :kb_payment_id)
 
   create_table "test_responses", :force => true do |t|
-    t.string   "api_call",        :null => false
+    t.string   "api_call",          :null => false
     t.string   "kb_payment_id"
     t.string   "kb_payment_transaction_id"
     t.string   "transaction_type"

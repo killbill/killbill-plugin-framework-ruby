@@ -35,6 +35,43 @@ module Killbill
                       }.merge!(extra_params))
           end
 
+          def self.create_response_and_transaction(identifier, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, am_response, amount_in_cents, currency, extra_params = {}, model = Response)
+            response, transaction, exception = nil
+
+            # Rails wraps all create/save calls in a transaction. To speed things up, create a single transaction for both rows.
+            # This has a small gotcha in the unhappy path though (see below).
+            transaction do
+              # Save the response to our logs
+              response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, am_response, extra_params, model)
+              response.save!
+
+              transaction = nil
+              txn_id      = response.txn_id
+              if response.success and !kb_payment_id.blank? and !txn_id.blank?
+                # Record the transaction
+                # Note that we want to avoid throwing an exception here because we don't want to rollback the response row
+                begin
+                  transaction = response.send("create_#{identifier}_transaction!",
+                                              :kb_account_id             => kb_account_id,
+                                              :kb_tenant_id              => kb_tenant_id,
+                                              :amount_in_cents           => amount_in_cents,
+                                              :currency                  => currency,
+                                              :api_call                  => api_call,
+                                              :kb_payment_id             => kb_payment_id,
+                                              :kb_payment_transaction_id => kb_payment_transaction_id,
+                                              :transaction_type          => transaction_type,
+                                              :txn_id                    => txn_id)
+                rescue => e
+                  exception = e
+                end
+              end
+            end
+
+            raise exception unless exception.nil?
+
+            return response, transaction
+          end
+
           def to_transaction_info_plugin(transaction=nil)
             if transaction.nil?
               amount_in_cents = nil

@@ -12,6 +12,8 @@ module Killbill
 
           self.abstract_class = true
 
+          @@quotes_cache = build_quotes_cache
+
           def self.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, cc_or_token, response, options, extra_params = {}, model = PaymentMethod)
             model.new({
                           :kb_account_id        => kb_account_id,
@@ -35,17 +37,17 @@ module Killbill
 
           def self.from_kb_account_id(kb_account_id, kb_tenant_id)
             if kb_tenant_id.nil?
-              where('kb_account_id = ? AND kb_tenant_id is NULL AND is_deleted = ?', kb_account_id, false)
+              where("kb_account_id = #{@@quotes_cache[kb_account_id]} AND kb_tenant_id is NULL AND is_deleted = #{@@quotes_cache[false]}")
             else
-              where('kb_account_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_account_id, kb_tenant_id, false)
+              where("kb_account_id = #{@@quotes_cache[kb_account_id]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND is_deleted = #{@@quotes_cache[false]}")
             end
           end
 
           def self.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
             if kb_tenant_id.nil?
-              payment_methods = where('kb_payment_method_id = ? AND kb_tenant_id is NULL AND is_deleted = ?', kb_payment_method_id, false)
+              payment_methods = where("kb_payment_method_id = #{@@quotes_cache[kb_payment_method_id]} AND kb_tenant_id is NULL AND is_deleted = #{@@quotes_cache[false]}")
             else
-              payment_methods = where('kb_payment_method_id = ? AND kb_tenant_id = ? AND is_deleted = ?', kb_payment_method_id, kb_tenant_id, false)
+              payment_methods = where("kb_payment_method_id = #{@@quotes_cache[kb_payment_method_id]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND is_deleted = #{@@quotes_cache[false]}")
             end
             raise "No payment method found for payment method #{kb_payment_method_id}" if payment_methods.empty?
             raise "Kill Bill payment method #{kb_payment_method_id} mapping to multiple active plugin payment methods" if payment_methods.size > 1

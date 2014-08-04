@@ -152,7 +152,7 @@ module Killbill
         end
 
         def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, properties, context)
-          all_properties = (payment_method_props.nil? || payment_method_props.properties.nil? ? [] : payment_method_props.properties) + properties
+          all_properties        = (payment_method_props.nil? || payment_method_props.properties.nil? ? [] : payment_method_props.properties) + properties
           options               = properties_to_hash(properties)
           options[:set_default] ||= set_default
           options[:order_id]    ||= kb_payment_method_id
@@ -401,27 +401,10 @@ module Killbill
         def save_response_and_transaction(response, api_call, kb_account_id, kb_tenant_id, kb_payment_id=nil, kb_payment_transaction_id=nil, transaction_type=nil, amount_in_cents=0, currency=nil)
           @logger.warn "Unsuccessful #{api_call}: #{response.message}" unless response.success?
 
-          # Save the response to our logs
-          response = @response_model.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response)
-          response.save!
+          response, transaction = @response_model.create_response_and_transaction(@identifier, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response, amount_in_cents, currency)
 
-          transaction = nil
-          txn_id      = response.txn_id
-          if response.success and !kb_payment_id.blank? and !txn_id.blank?
-            # Record the transaction
-            transaction = response.send("create_#{@identifier}_transaction!",
-                                        :kb_account_id             => kb_account_id,
-                                        :kb_tenant_id              => kb_tenant_id,
-                                        :amount_in_cents           => amount_in_cents,
-                                        :currency                  => currency,
-                                        :api_call                  => api_call,
-                                        :kb_payment_id             => kb_payment_id,
-                                        :kb_payment_transaction_id => kb_payment_transaction_id,
-                                        :transaction_type          => transaction_type,
-                                        :txn_id                    => txn_id)
+          @logger.debug "Recorded transaction: #{transaction.inspect}" unless transaction.nil?
 
-            @logger.debug "Recorded transaction: #{transaction.inspect}"
-          end
           return response, transaction
         end
 
