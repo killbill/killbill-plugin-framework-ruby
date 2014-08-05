@@ -43,7 +43,7 @@ module Killbill
             transaction do
               # Save the response to our logs
               response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, am_response, extra_params, model)
-              response.save!
+              response.save!(shared_activerecord_options)
 
               transaction = nil
               txn_id      = response.txn_id

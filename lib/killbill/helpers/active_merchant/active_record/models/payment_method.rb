@@ -57,7 +57,7 @@ module Killbill
           def self.mark_as_deleted!(kb_payment_method_id, kb_tenant_id)
             payment_method = from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
             payment_method.is_deleted = true
-            payment_method.save!
+            payment_method.save!(shared_activerecord_options)
           end
 
           # Override in your plugin if needed

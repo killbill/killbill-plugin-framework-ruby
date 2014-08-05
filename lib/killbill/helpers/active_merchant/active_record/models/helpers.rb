@@ -27,6 +27,13 @@ module Killbill
           Killbill::Plugin::ActiveMerchant::Utils::BoundedLRUCache.new(quote_bound_value_proc, max_size)
         end
 
+        def shared_activerecord_options
+          {
+              # We don't use validations -- small performance gain by bypassing the stack
+              :validate => false
+          }
+        end
+
         # Useful helper to extract params from AM response objects, e.g. extract(response, 'card', 'address_country')
         def extract(response, key1, key2=nil, key3=nil)
           return nil if response.nil? || response.params.nil?
