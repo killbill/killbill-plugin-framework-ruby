@@ -35,7 +35,7 @@ module Killbill
                       }.merge!(extra_params))
           end
 
-          def self.create_response_and_transaction(identifier, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, am_response, amount_in_cents, currency, extra_params = {}, model = Response)
+          def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, am_response, amount_in_cents, currency, extra_params = {}, model = Response)
             response, transaction, exception = nil
 
             # Rails wraps all create/save calls in a transaction. To speed things up, create a single transaction for both rows.
@@ -51,16 +51,19 @@ module Killbill
                 # Record the transaction
                 # Note that we want to avoid throwing an exception here because we don't want to rollback the response row
                 begin
-                  transaction = response.send("create_#{identifier}_transaction!",
-                                              :kb_account_id             => kb_account_id,
-                                              :kb_tenant_id              => kb_tenant_id,
-                                              :amount_in_cents           => amount_in_cents,
-                                              :currency                  => currency,
-                                              :api_call                  => api_call,
-                                              :kb_payment_id             => kb_payment_id,
-                                              :kb_payment_transaction_id => kb_payment_transaction_id,
-                                              :transaction_type          => transaction_type,
-                                              :txn_id                    => txn_id)
+                  # Originally, we used response.send("build_#{identifier}_transaction"), but the ActiveRecord magic was adding
+                  # about 20% overhead - instead, we now construct the transaction record manually
+                  transaction = transaction_model.new(:kb_account_id              => kb_account_id,
+                                                      :kb_tenant_id               => kb_tenant_id,
+                                                      :amount_in_cents            => amount_in_cents,
+                                                      :currency                   => currency,
+                                                      :api_call                   => api_call,
+                                                      :kb_payment_id              => kb_payment_id,
+                                                      :kb_payment_transaction_id  => kb_payment_transaction_id,
+                                                      :transaction_type           => transaction_type,
+                                                      :txn_id                     => txn_id,
+                                                      "#{identifier}_response_id" => response.id)
+                  transaction.save!(shared_activerecord_options)
                 rescue => e
                   exception = e
                 end

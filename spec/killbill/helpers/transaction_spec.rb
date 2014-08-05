@@ -6,6 +6,8 @@ module Killbill #:nodoc:
 
       self.table_name = 'test_transactions'
 
+      belongs_to :test_response
+
     end
   end
 end

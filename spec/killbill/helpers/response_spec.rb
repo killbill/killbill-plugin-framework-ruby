@@ -1,10 +1,13 @@
 require 'spec_helper'
+require 'spec/killbill/helpers/transaction_spec'
 
 module Killbill #:nodoc:
   module Test #:nodoc:
     class TestResponse < ::Killbill::Plugin::ActiveMerchant::ActiveRecord::Response
 
       self.table_name = 'test_responses'
+
+      has_one :test_transaction
 
     end
   end
@@ -64,6 +67,37 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     ptip.first_payment_reference_id.should be_nil
     ptip.second_payment_reference_id.should be_nil
     ptip.properties.size.should == 11
+  end
+
+  it 'should create responses and transactions correctly' do
+    api_call                  = 'for debugging only'
+    kb_account_id             = SecureRandom.uuid
+    kb_payment_id             = SecureRandom.uuid
+    kb_payment_transaction_id = SecureRandom.uuid
+    transaction_type          = :PURCHASE
+    kb_tenant_id              = SecureRandom.uuid
+    success_response          = ::ActiveMerchant::Billing::Response.new(true, 'Message', {}, {
+        :authorization => SecureRandom.uuid,
+        :avs_result    => ::ActiveMerchant::Billing::AVSResult.new(:code => 'P')
+    })
+    failure_response          = ::ActiveMerchant::Billing::Response.new(false, 'Message', {}, {
+        :authorization => SecureRandom.uuid,
+        :avs_result    => ::ActiveMerchant::Billing::AVSResult.new(:code => 'P')
+    })
+
+    response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+    found_response        = ::Killbill::Test::TestResponse.find(response.id)
+    found_response.should == response
+    found_response.test_transaction.should == transaction
+    found_transaction = ::Killbill::Test::TestTransaction.find(transaction.id)
+    found_transaction.should == transaction
+    found_transaction.test_response.should == response
+
+    response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, failure_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+    transaction.should be_nil
+    found_response = ::Killbill::Test::TestResponse.find(response.id)
+    found_response.should == response
+    found_response.test_transaction.should be_nil
   end
 
   it 'should generate the right SQL query' do
