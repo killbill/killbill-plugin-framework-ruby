@@ -1,3 +1,8 @@
+3.1.6
+    Updates to support killbill-api 0.9.8
+    Fix properties handling in add_payment_method
+    Performance improvements
+
 3.1.5
     Updates to support killbill-api 0.9.7
 
