@@ -6,7 +6,7 @@
   :adapter: sqlite3
   :database: test.db
 # For MySQL
-#  :adapter: 'jdbc'
+#  :adapter: 'jdbcmysql'
 #  :username: 'killbill'
 #  :password: 'killbill'
 #  :driver: 'com.mysql.jdbc.Driver'
