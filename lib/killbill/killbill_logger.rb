@@ -8,24 +8,24 @@ module Killbill
       attr_accessor :log_level
 
       def initialize(delegate)
-        @logger = delegate
+        @logger    = delegate
         # Match Logger levels
         @log_level = 1 # Logger::INFO
       end
 
-      def debug(message, &block)
+      def debug(message=nil, &block)
         @logger.log(4, build_message(message, &block))
       end
 
-      def info(message, &block)
+      def info(message=nil, &block)
         @logger.log(3, build_message(message, &block))
       end
 
-      def warn(message, &block)
+      def warn(message=nil, &block)
         @logger.log(2, build_message(message, &block))
       end
 
-      def error(message, &block)
+      def error(message=nil, &block)
         @logger.log(1, build_message(message, &block))
       end
 
@@ -39,15 +39,34 @@ module Killbill
       def close
       end
 
-      def build_message(message, &block)
+      def add(severity, message = nil, progname = nil, &block)
+        case severity
+          when 0 # Logger::DEBUG
+            debug(message || progname, &block)
+          when 1 # Logger::INFO
+            info(message || progname, &block)
+          when 2 # Logger::WARN
+            warn(message || progname, &block)
+          when 3 # Logger::ERROR
+            error(message || progname, &block)
+          when 4 # Logger::FATAL
+            fatal(message || progname, &block)
+          when 5 # Logger::UNKNOWN
+            info(message || progname, &block)
+          else
+            info(message || progname, &block)
+        end
+      end
+
+      def build_message(message=nil, &block)
         if message.nil?
           if block_given?
             message = yield
           else
-            message = "(nil)"
+            message = '(nil)'
           end
         end
-        message.nil? ? "(nil)" : message.to_s
+        message.nil? ? '(nil)' : message.to_s
       end
 
       alias_method :fatal, :error
