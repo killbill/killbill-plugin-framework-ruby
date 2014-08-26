@@ -4,7 +4,7 @@ module Killbill #:nodoc:
 
       self.table_name = '<%= identifier %>_payment_methods'
 
-      def self.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, cc_or_token, response, options, extra_params = {})
+      def self.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, cc_or_token, response, options, extra_params = {}, model = ::Killbill::<%= class_name %>::<%= class_name %>PaymentMethod)
         super(kb_account_id,
               kb_payment_method_id,
               kb_tenant_id,
@@ -16,7 +16,7 @@ module Killbill #:nodoc:
                   #:params_id => extract(response, 'id'),
                   #:params_card_id => extract(response, 'card', 'id')
               }.merge!(extra_params),
-              ::Killbill::<%= class_name %>::<%= class_name %>PaymentMethod)
+              model)
       end
     end
   end
