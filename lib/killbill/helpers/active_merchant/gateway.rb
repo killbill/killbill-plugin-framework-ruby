@@ -4,7 +4,9 @@ module Killbill
       require 'active_merchant'
 
       class Gateway
-        def self.wrap(gateway_builder, config)
+        def self.wrap(gateway_builder, logger, config)
+          ::ActiveMerchant::Billing::Gateway.logger = logger
+
           if config[:test]
             ::ActiveMerchant::Billing::Base.mode = :test
           end

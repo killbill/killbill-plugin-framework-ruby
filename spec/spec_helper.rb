@@ -2,6 +2,7 @@ require 'java'
 
 require 'bundler'
 require 'logger'
+require 'tempfile'
 
 require 'killbill'
 require 'killbill/killbill_logger'
@@ -12,6 +13,8 @@ require 'killbill/payment_test'
 require 'killbill/notification_test'
 require 'killbill/helpers/active_merchant'
 require 'killbill/helpers/active_merchant/active_record/models/helpers'
+
+require 'killbill/ext/active_merchant/typhoeus_connection'
 
 %w(
   MockAccountUserApi

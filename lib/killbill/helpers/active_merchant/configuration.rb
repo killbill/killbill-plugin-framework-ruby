@@ -19,7 +19,7 @@ module Killbill
         @@kb_apis = kb_apis
         @@test = @@config[gateway_name][:test]
 
-        @@gateway = Gateway.wrap(gateway_builder, @@config[gateway_name.to_sym])
+        @@gateway = Gateway.wrap(gateway_builder, logger, @@config[gateway_name.to_sym])
 
         @@logger = logger
         @@logger.log_level = Logger::DEBUG if (@@config[:logger] || {})[:debug]
@@ -40,6 +40,12 @@ module Killbill
           ::ActiveRecord::Base.logger = @@logger
         rescue => e
           @@logger.warn "Unable to establish a database connection: #{e}"
+        end
+
+        # Configure the ActiveMerchant HTTP backend
+        connection_type = (@@config[:active_merchant] || {})[:connection_type]
+        if connection_type == :typhoeus
+          require 'killbill/ext/active_merchant/typhoeus_connection'
         end
 
         @@initialized = true

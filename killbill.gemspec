@@ -17,12 +17,13 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.bindir        = 'bin'
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.rdoc_options << '--exclude' << '.'
 
   s.add_dependency 'sinatra', '~> 1.3.4'
+  s.add_dependency 'typhoeus', '~> 0.6.9'
   s.add_dependency 'tzinfo', '~> 1.1.0'
 
   s.add_development_dependency 'activerecord', '~> 4.1.0'

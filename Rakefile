@@ -6,8 +6,21 @@ Bundler::GemHelper.install_tasks
 
 # Install test tasks
 require 'rspec/core/rake_task'
-desc "Run RSpec"
-RSpec::Core::RakeTask.new
+namespace :test do
+  desc 'Run RSpec tests'
+  RSpec::Core::RakeTask.new do |task|
+    task.name    = 'spec'
+    task.pattern = './spec/*/{,helpers/}*_spec.rb'
+  end
+
+  namespace :remote do
+    desc 'Run RSpec remote tests'
+    RSpec::Core::RakeTask.new do |task|
+      task.name    = 'spec'
+      task.pattern = './spec/*/remote/*_spec.rb'
+    end
+  end
+end
 
 # Run tests by default
-task :default => :spec
+task :default => 'test:spec'
