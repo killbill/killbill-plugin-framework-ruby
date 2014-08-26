@@ -2,6 +2,7 @@ module Killbill
   module Plugin
     module ActiveMerchant
       require 'active_record'
+      require 'monetize'
       require 'money'
 
       class PaymentPlugin < ::Killbill::Plugin::Payment
@@ -346,7 +347,7 @@ module Killbill
 
         def to_cents(amount, currency)
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
-          Monetize.from_numeric(amount, currency).cents.to_i
+          ::Monetize.from_numeric(amount, currency).cents.to_i
         end
 
         def get_payment_source(kb_payment_method_id, properties, options, context)

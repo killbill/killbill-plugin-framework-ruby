@@ -28,11 +28,14 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'activerecord', '~> 4.1.0'
   if defined?(JRUBY_VERSION)
+    s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3.7'
     s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3.7'
   else
     s.add_development_dependency 'sqlite3', '~> 1.3.7'
   end
   s.add_development_dependency 'activemerchant', '~> 1.42.0'
+  s.add_development_dependency 'monetize', '~> 0.3.0'
+  s.add_development_dependency 'money', '~> 6.1.1'
   s.add_development_dependency 'jbundler', '~> 0.4.3'
   s.add_development_dependency 'rack', '>= 1.5.2'
   s.add_development_dependency 'rake', '>= 0.8.7'
