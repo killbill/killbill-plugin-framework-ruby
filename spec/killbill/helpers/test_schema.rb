@@ -33,8 +33,8 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
     t.string   "kb_payment_transaction_id", :null => false
     t.string   "transaction_type",          :null => false
     t.string   "txn_id"
-    t.integer  "amount_in_cents",           :null => false
-    t.string   "currency",                  :null => false
+    t.integer  "amount_in_cents"
+    t.string   "currency"
     t.datetime "created_at",                :null => false
     t.datetime "updated_at",                :null => false
     t.string   "kb_account_id",             :null => false

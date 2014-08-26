@@ -39,8 +39,9 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
     t.string   "kb_payment_transaction_id",      :null => false
     t.string   "transaction_type",               :null => false
     t.string   "txn_id"                          # <%= identifier %> transaction id
-    t.integer  "amount_in_cents",                :null => false
-    t.string   "currency",                       :null => false
+    # Both null for void
+    t.integer  "amount_in_cents"
+    t.string   "currency"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
     t.string   "kb_account_id",                  :null => false

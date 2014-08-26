@@ -47,7 +47,7 @@ module Killbill
 
               transaction = nil
               txn_id      = response.txn_id
-              if response.success and !kb_payment_id.blank? and !txn_id.blank?
+              if response.success and !kb_payment_id.blank?
                 # Record the transaction
                 # Note that we want to avoid throwing an exception here because we don't want to rollback the response row
                 begin
