@@ -25,10 +25,17 @@ module Killbill
 
         # Unfortunate name...
         def capture(money, authorization, options = {})
-          @gateway.capture(money, authorization, options)
+          method_missing(:capture, money, authorization, options)
         end
 
         def method_missing(m, *args, &block)
+          # The options hash should be the last argument, iterate through all to be safe
+          args.reverse.each do |arg|
+            if arg.respond_to?(:has_key?) && arg.has_key?(:skip_gw)
+              return ::ActiveMerchant::Billing::Response.new(true, 'Skipped Gateway call')
+            end
+          end
+
           @gateway.send(m, *args, &block)
         end
       end

@@ -162,12 +162,19 @@ module Killbill
           payment_source        = get_payment_source(nil, all_properties, options, context)
 
           # Go to the gateway
-          gw_response           = gateway.store payment_source, options
+          gw_response           = gateway.store(payment_source, options)
           response, transaction = save_response_and_transaction gw_response, :add_payment_method, kb_account_id, context.tenant_id
 
           if response.success
-            # response.authorization may be a String combination separated by ; - don't split it! Some plugins expect it as-is (they split it themselves)
-            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, response.authorization, gw_response, options)
+            # If we have skipped the call to the gateway, we still need to store the payment method
+            if options[:skip_gw]
+              cc_or_token = payment_source
+            else
+              # response.authorization may be a String combination separated by ; - don't split it! Some plugins expect it as-is (they split it themselves)
+              cc_or_token = response.authorization
+            end
+
+            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, cc_or_token, gw_response, options, {}, @payment_method_model)
             payment_method.save!
             payment_method
           else
