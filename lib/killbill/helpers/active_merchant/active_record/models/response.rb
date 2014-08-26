@@ -35,14 +35,14 @@ module Killbill
                       }.merge!(extra_params))
           end
 
-          def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, am_response, amount_in_cents, currency, extra_params = {}, model = Response)
+          def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, gw_response, amount_in_cents, currency, extra_params = {}, model = Response)
             response, transaction, exception = nil
 
             # Rails wraps all create/save calls in a transaction. To speed things up, create a single transaction for both rows.
             # This has a small gotcha in the unhappy path though (see below).
             transaction do
               # Save the response to our logs
-              response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, am_response, extra_params, model)
+              response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, gw_response, extra_params, model)
               response.save!(shared_activerecord_options)
 
               transaction = nil

@@ -398,10 +398,10 @@ module Killbill
           account.currency
         end
 
-        def save_response_and_transaction(response, api_call, kb_account_id, kb_tenant_id, kb_payment_id=nil, kb_payment_transaction_id=nil, transaction_type=nil, amount_in_cents=0, currency=nil)
-          @logger.warn "Unsuccessful #{api_call}: #{response.message}" unless response.success?
+        def save_response_and_transaction(gw_response, api_call, kb_account_id, kb_tenant_id, kb_payment_id=nil, kb_payment_transaction_id=nil, transaction_type=nil, amount_in_cents=0, currency=nil)
+          @logger.warn "Unsuccessful #{api_call}: #{gw_response.message}" unless gw_response.success?
 
-          response, transaction = @response_model.create_response_and_transaction(@identifier, @transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response, amount_in_cents, currency, {}, @response_model)
+          response, transaction = @response_model.create_response_and_transaction(@identifier, @transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, gw_response, amount_in_cents, currency, {}, @response_model)
 
           @logger.debug "Recorded transaction: #{transaction.inspect}" unless transaction.nil?
 
