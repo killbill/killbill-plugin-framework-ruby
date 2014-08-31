@@ -1,5 +1,9 @@
 3.1.8
     Make ActiveMerchant HTTP backend configurable, add support for Typhoeus
+    generator:
+      - Remove transactions.txn_id, transactions.amount_in_cents and transactions.currency NOT NULL constraint
+      - Update PaymentMethod.from_response signature
+      - Add :skip_gw option to skip the gateway entirely
 
 3.1.7
     Support more Logger APIs
