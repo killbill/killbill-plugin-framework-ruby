@@ -46,9 +46,13 @@ module Killbill
           # Retrieve the payment method
           payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
 
+          before_gateway(kb_transaction, nil, payment_source, amount_in_cents, currency, options)
+
           # Go to the gateway
           gw_response           = gateway.authorize(amount_in_cents, payment_source, options)
           response, transaction = save_response_and_transaction(gw_response, :authorize, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :AUTHORIZE, amount_in_cents, currency)
+
+          after_gateway(response, transaction, gw_response)
 
           response.to_transaction_info_plugin(transaction)
         end
@@ -66,9 +70,13 @@ module Killbill
           # TODO We use the last AUTH transaction at the moment, is it good enough?
           authorization         = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last.txn_id
 
+          before_gateway(kb_transaction, authorization, nil, amount_in_cents, currency, options)
+
           # Go to the gateway
           gw_response           = gateway.capture(amount_in_cents, authorization, options)
           response, transaction = save_response_and_transaction(gw_response, :capture, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :CAPTURE, amount_in_cents, currency)
+
+          after_gateway(response, transaction, gw_response)
 
           response.to_transaction_info_plugin(transaction)
         end
@@ -85,9 +93,13 @@ module Killbill
           # Retrieve the payment method
           payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
 
+          before_gateway(kb_transaction, nil, payment_source, amount_in_cents, currency, options)
+
           # Go to the gateway
           gw_response           = gateway.purchase(amount_in_cents, payment_source, options)
           response, transaction = save_response_and_transaction(gw_response, :purchase, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :PURCHASE, amount_in_cents, currency)
+
+          after_gateway(response, transaction, gw_response)
 
           response.to_transaction_info_plugin(transaction)
         end
@@ -101,7 +113,7 @@ module Killbill
 
           # If an authorization is being voided, we're performing an 'auth_reversal', otherwise,
           # we're voiding an unsettled capture or purchase (which often needs to happen within 24 hours).
-          last_transaction = @transaction_model.purchases_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+          last_transaction      = @transaction_model.purchases_from_kb_payment_id(kb_payment_id, context.tenant_id).last
           if last_transaction.nil?
             last_transaction = @transaction_model.captures_from_kb_payment_id(kb_payment_id, context.tenant_id).last
             if last_transaction.nil?
@@ -113,10 +125,14 @@ module Killbill
           end
           authorization = last_transaction.txn_id
 
+          before_gateway(kb_transaction, last_transaction, nil, nil, nil, options)
+
           # Go to the gateway - while some gateways implementations are smart and have void support 'auth_reversal' and 'void' (e.g. Litle),
           # others (e.g. CyberSource) implement different methods
-          gw_response = last_transaction.transaction_type == 'AUTHORIZE' && gateway.respond_to?(:auth_reversal) ? gateway.auth_reversal(last_transaction.amount_in_cents, authorization, options) : gateway.void(authorization, options)
+          gw_response           = last_transaction.transaction_type == 'AUTHORIZE' && gateway.respond_to?(:auth_reversal) ? gateway.auth_reversal(last_transaction.amount_in_cents, authorization, options) : gateway.void(authorization, options)
           response, transaction = save_response_and_transaction(gw_response, :void, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :VOID)
+
+          after_gateway(response, transaction, gw_response)
 
           response.to_transaction_info_plugin(transaction)
         end
@@ -133,9 +149,13 @@ module Killbill
           # Retrieve the payment method
           payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
 
+          before_gateway(kb_transaction, nil, payment_source, amount_in_cents, currency, options)
+
           # Go to the gateway
           gw_response           = gateway.credit(amount_in_cents, payment_source, options)
           response, transaction = save_response_and_transaction(gw_response, :credit, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :CREDIT, amount_in_cents, currency)
+
+          after_gateway(response, transaction, gw_response)
 
           response.to_transaction_info_plugin(transaction)
         end
@@ -152,9 +172,13 @@ module Killbill
           # Find a transaction to refund
           transaction           = @transaction_model.find_candidate_transaction_for_refund(kb_payment_id, context.tenant_id, amount_in_cents)
 
+          before_gateway(kb_transaction, transaction, nil, amount_in_cents, currency, options)
+
           # Go to the gateway
           gw_response           = gateway.refund(amount_in_cents, transaction.txn_id, options)
           response, transaction = save_response_and_transaction(gw_response, :refund, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :REFUND, amount_in_cents, currency)
+
+          after_gateway(response, transaction, gw_response)
 
           response.to_transaction_info_plugin(transaction)
         end
@@ -377,6 +401,14 @@ module Killbill
           # This should never happen...
           raise ArgumentError.new("Unable to find Kill Bill transaction for id #{kb_payment_transaction_id}") if kb_transaction.nil?
           kb_transaction
+        end
+
+        def before_gateway(kb_transaction, transaction, payment_source, amount_in_cents, currency, options)
+          # Can be used to implement idempotency for example: lookup the payment in the gateway
+          # and pass options[:skip_gw] if the payment has already been through
+        end
+
+        def after_gateway(response, transaction, gw_response)
         end
 
         def to_cents(amount, currency)
