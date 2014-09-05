@@ -13,6 +13,7 @@ require 'killbill/payment_test'
 require 'killbill/notification_test'
 require 'killbill/helpers/active_merchant'
 require 'killbill/helpers/active_merchant/active_record/models/helpers'
+require 'killbill/helpers/active_merchant/killbill_spec_helper'
 
 require 'killbill/ext/active_merchant/typhoeus_connection'
 

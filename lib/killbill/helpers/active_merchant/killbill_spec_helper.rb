@@ -107,6 +107,38 @@ module Killbill
             @accounts.find { |account| account.external_key == external_key.to_s }
           end
         end
+
+        class FakeJavaPaymentApi
+          attr_accessor :payments
+
+          def initialize
+            @payments = []
+          end
+
+          # For testing
+          def add_payment(kb_payment_id=SecureRandom.uuid, kb_payment_transaction_id=SecureRandom.uuid, kb_payment_transaction_external_key=SecureRandom.uuid, transaction_type=:PURCHASE)
+            kb_payment = get_payment kb_payment_id
+            if kb_payment.nil?
+              kb_payment              = ::Killbill::Plugin::Model::Payment.new
+              kb_payment.id           = kb_payment_id
+              kb_payment.transactions = []
+              @payments << kb_payment
+            end
+
+            kb_payment_transaction                  = ::Killbill::Plugin::Model::PaymentTransaction.new
+            kb_payment_transaction.id               = kb_payment_transaction_id
+            kb_payment_transaction.transaction_type = transaction_type
+            kb_payment_transaction.external_key     = kb_payment_transaction_external_key
+            kb_payment_transaction.created_date     = Java::org.joda.time.DateTime.new(Java::org.joda.time.DateTimeZone::UTC)
+            kb_payment.transactions << kb_payment_transaction
+
+            kb_payment
+          end
+
+          def get_payment(id, with_plugin_info=false, properties=[], context=nil)
+            @payments.find { |payment| payment.id == id.to_s }
+          end
+        end
       end
     end
   end

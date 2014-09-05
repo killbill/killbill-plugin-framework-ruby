@@ -23,6 +23,8 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
                                                                                    ::Killbill::Test::TestPaymentMethod,
                                                                                    ::Killbill::Test::TestTransaction,
                                                                                    ::Killbill::Test::TestResponse)
+      @payment_api         = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaPaymentApi.new
+      @plugin.kb_apis      = ::Killbill::Plugin::KillbillApi.new('test', {:payment_api => @payment_api})
       @plugin.logger       = Logger.new(STDOUT)
       @plugin.logger.level = Logger::INFO
       @plugin.conf_dir     = File.dirname(file)
@@ -66,26 +68,32 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     ::Killbill::Test::TestPaymentMethod.where(:kb_payment_method_id => @kb_payment_method_id).first.token.should == @payment_method_props.properties[0].value
 
     authorization_id = SecureRandom.uuid
+    @payment_api.add_payment(@kb_payment_id, authorization_id, SecureRandom.uuid, :AUTHORIZE)
     authorization    = @plugin.authorize_payment(@kb_account_id, @kb_payment_id, authorization_id, @kb_payment_method_id, @amount_in_cents, @currency, @properties, @call_context)
     verify_transaction_info_plugin(authorization, authorization_id, :AUTHORIZE, 1)
 
     capture_id = SecureRandom.uuid
+    @payment_api.add_payment(@kb_payment_id, capture_id, SecureRandom.uuid, :CAPTURE)
     capture    = @plugin.capture_payment(@kb_account_id, @kb_payment_id, capture_id, @kb_payment_method_id, @amount_in_cents, @currency, @properties, @call_context)
     verify_transaction_info_plugin(capture, capture_id, :CAPTURE, 2)
 
     purchase_id = SecureRandom.uuid
+    @payment_api.add_payment(@kb_payment_id, purchase_id, SecureRandom.uuid, :PURCHASE)
     purchase    = @plugin.purchase_payment(@kb_account_id, @kb_payment_id, purchase_id, @kb_payment_method_id, @amount_in_cents, @currency, @properties, @call_context)
     verify_transaction_info_plugin(purchase, purchase_id, :PURCHASE, 3)
 
     void_id = SecureRandom.uuid
+    @payment_api.add_payment(@kb_payment_id, void_id, SecureRandom.uuid, :VOID)
     void    = @plugin.void_payment(@kb_account_id, @kb_payment_id, void_id, @kb_payment_method_id, @properties, @call_context)
     verify_transaction_info_plugin(void, void_id, :VOID, 4)
 
     credit_id = SecureRandom.uuid
+    @payment_api.add_payment(@kb_payment_id, credit_id, SecureRandom.uuid, :CREDIT)
     credit    = @plugin.credit_payment(@kb_account_id, @kb_payment_id, credit_id, @kb_payment_method_id, @amount_in_cents, @currency, @properties, @call_context)
     verify_transaction_info_plugin(credit, credit_id, :CREDIT, 5)
 
     refund_id = SecureRandom.uuid
+    @payment_api.add_payment(@kb_payment_id, refund_id, SecureRandom.uuid, :REFUND)
     refund    = @plugin.refund_payment(@kb_account_id, @kb_payment_id, refund_id, @kb_payment_method_id, @amount_in_cents, @currency, @properties, @call_context)
     verify_transaction_info_plugin(refund, refund_id, :REFUND, 6)
 
