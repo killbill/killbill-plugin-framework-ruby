@@ -38,6 +38,10 @@ module Killbill
 
           @gateway.send(m, *args, &block)
         end
+
+        def respond_to?(method, include_private=false)
+          @gateway.respond_to?(method, include_private) || super
+        end
       end
     end
   end

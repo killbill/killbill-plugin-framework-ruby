@@ -93,12 +93,23 @@ module Killbill
           options               = properties_to_hash(properties)
           options[:description] ||= "Kill Bill void for #{kb_payment_transaction_id}"
 
-          # Retrieve the authorization
-          # TODO We use the last AUTH transaction at the moment, is it good enough?
-          authorization         = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last.txn_id
+          # If an authorization is being voided, we're performing an 'auth_reversal', otherwise,
+          # we're voiding an unsettled capture or purchase (which often needs to happen within 24 hours).
+          last_transaction = @transaction_model.purchases_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+          if last_transaction.nil?
+            last_transaction = @transaction_model.captures_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+            if last_transaction.nil?
+              last_transaction = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+              if last_transaction.nil?
+                raise ArgumentError.new("Kill Bill payment #{kb_payment_id} has no auth, capture or purchase, thus cannot be voided")
+              end
+            end
+          end
+          authorization = last_transaction.txn_id
 
-          # Go to the gateway
-          gw_response           = gateway.void(authorization, options)
+          # Go to the gateway - while some gateways implementations are smart and have void support 'auth_reversal' and 'void' (e.g. Litle),
+          # others (e.g. CyberSource) implement different methods
+          gw_response = last_transaction.transaction_type == 'AUTHORIZE' && gateway.respond_to?(:auth_reversal) ? gateway.auth_reversal(last_transaction.amount_in_cents, authorization, options) : gateway.void(authorization, options)
           response, transaction = save_response_and_transaction(gw_response, :void, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :VOID)
 
           response.to_transaction_info_plugin(transaction)
