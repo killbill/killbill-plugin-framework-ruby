@@ -35,10 +35,11 @@ module Killbill
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_payment_transaction_id
+          options[:order_id]    ||= kb_transaction.external_key
           options[:currency]    ||= currency.to_s.upcase
           options[:description] ||= "Kill Bill authorization for #{kb_payment_transaction_id}"
 
@@ -53,10 +54,11 @@ module Killbill
         end
 
         def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_payment_transaction_id
+          options[:order_id]    ||= kb_transaction.external_key
           options[:currency]    ||= currency.to_s.upcase
           options[:description] ||= "Kill Bill capture for #{kb_payment_transaction_id}"
 
@@ -72,10 +74,11 @@ module Killbill
         end
 
         def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_payment_transaction_id
+          options[:order_id]    ||= kb_transaction.external_key
           options[:currency]    ||= currency.to_s.upcase
           options[:description] ||= "Kill Bill purchase for #{kb_payment_transaction_id}"
 
@@ -90,7 +93,10 @@ module Killbill
         end
 
         def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context)
+          kb_transaction = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+
           options               = properties_to_hash(properties)
+          options[:order_id]    ||= kb_transaction.external_key
           options[:description] ||= "Kill Bill void for #{kb_payment_transaction_id}"
 
           # If an authorization is being voided, we're performing an 'auth_reversal', otherwise,
@@ -116,10 +122,11 @@ module Killbill
         end
 
         def credit_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_payment_transaction_id
+          options[:order_id]    ||= kb_transaction.external_key
           options[:currency]    ||= currency.to_s.upcase
           options[:description] ||= "Kill Bill credit for #{kb_payment_transaction_id}"
 
@@ -134,10 +141,11 @@ module Killbill
         end
 
         def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_payment_transaction_id
+          options[:order_id]    ||= kb_transaction.external_key
           options[:currency]    ||= currency.to_s.upcase
           options[:description] ||= "Kill Bill refund for #{kb_payment_transaction_id}"
 
@@ -362,6 +370,14 @@ module Killbill
         end
 
         # Utilities
+
+        def get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+          kb_payment     = @kb_apis.payment_api.get_payment(kb_payment_id, false, [], @kb_apis.create_context)
+          kb_transaction = kb_payment.transactions.find { |t| t.id == kb_payment_transaction_id }
+          # This should never happen...
+          raise ArgumentError.new("Unable to find Kill Bill transaction for id #{kb_payment_transaction_id}") if kb_transaction.nil?
+          kb_transaction
+        end
 
         def to_cents(amount, currency)
           # Use Money to compute the amount in cents, as it depends on the currency (1 cent of BTC is 1 Satoshi, not 0.01 BTC)
