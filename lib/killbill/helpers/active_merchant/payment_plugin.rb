@@ -31,7 +31,12 @@ module Killbill
 
         # return DB connections to the Pool if required
         def after_request
-          ::ActiveRecord::Base.connection.close
+          pool = ::ActiveRecord::Base.connection_pool
+          connection = ::ActiveRecord::Base.connection
+          pool.remove(connection)
+          connection.disconnect!
+
+          @logger.debug "after_request: pool.active_connection? = #{pool.active_connection?}, connection.active? = #{connection.active?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}"
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
