@@ -40,7 +40,7 @@ module Killbill
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
@@ -63,7 +63,7 @@ module Killbill
         end
 
         def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
@@ -87,7 +87,7 @@ module Killbill
         end
 
         def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
@@ -110,7 +110,7 @@ module Killbill
         end
 
         def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context)
-          kb_transaction = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+          kb_transaction = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
 
           options               = properties_to_hash(properties)
           options[:order_id]    ||= kb_transaction.external_key
@@ -143,7 +143,7 @@ module Killbill
         end
 
         def credit_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
@@ -166,7 +166,7 @@ module Killbill
         end
 
         def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
+          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
           amount_in_cents = to_cents(amount, currency)
 
           options               = properties_to_hash(properties)
@@ -400,8 +400,8 @@ module Killbill
 
         # Utilities
 
-        def get_kb_transaction(kb_payment_id, kb_payment_transaction_id)
-          kb_payment     = @kb_apis.payment_api.get_payment(kb_payment_id, false, [], @kb_apis.create_context)
+        def get_kb_transaction(kb_payment_id, kb_payment_transaction_id, kb_tenant_id)
+          kb_payment     = @kb_apis.payment_api.get_payment(kb_payment_id, false, [], @kb_apis.create_context(kb_tenant_id))
           kb_transaction = kb_payment.transactions.find { |t| t.id == kb_payment_transaction_id }
           # This should never happen...
           raise ArgumentError.new("Unable to find Kill Bill transaction for id #{kb_payment_transaction_id}") if kb_transaction.nil?
@@ -465,8 +465,8 @@ module Killbill
           prop.nil? ? nil : prop.value
         end
 
-        def account_currency(kb_account_id)
-          account = @kb_apis.account_user_api.get_account_by_id(kb_account_id, @kb_apis.create_context)
+        def account_currency(kb_account_id, kb_tenant_id)
+          account = @kb_apis.account_user_api.get_account_by_id(kb_account_id, @kb_apis.create_context(kb_tenant_id))
           account.currency
         end
 
