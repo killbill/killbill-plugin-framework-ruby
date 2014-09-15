@@ -5,6 +5,7 @@ module Killbill
         require 'active_record'
         require 'active_merchant'
         require 'money'
+        require 'time'
         require 'killbill/helpers/active_merchant/active_record/models/helpers'
 
         class Response < ::ActiveRecord::Base
@@ -14,6 +15,8 @@ module Killbill
           self.abstract_class = true
 
           def self.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response, extra_params = {}, model = Response)
+            # Under high load, Rails sometimes fails to set timestamps. Unclear why...
+            current_time = Time.now.utc
             model.new({
                           :api_call                  => api_call,
                           :kb_account_id             => kb_account_id,
@@ -31,7 +34,9 @@ module Killbill
                           :avs_result_postal_match   => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.postal_match : response.avs_result['postal_match'],
                           :cvv_result_code           => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.code : response.cvv_result['code'],
                           :cvv_result_message        => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.message : response.cvv_result['message'],
-                          :success                   => response.success?
+                          :success                   => response.success?,
+                          :created_at                => current_time,
+                          :updated_at                => current_time
                       }.merge!(extra_params))
           end
 
@@ -62,7 +67,10 @@ module Killbill
                                                       :kb_payment_transaction_id  => kb_payment_transaction_id,
                                                       :transaction_type           => transaction_type,
                                                       :txn_id                     => txn_id,
-                                                      "#{identifier}_response_id" => response.id)
+                                                      "#{identifier}_response_id" => response.id,
+                                                      # See Response#from_response
+                                                      :created_at                 => response.created_at,
+                                                      :updated_at                 => response.updated_at)
                   transaction.save!(shared_activerecord_options)
                 rescue => e
                   exception = e

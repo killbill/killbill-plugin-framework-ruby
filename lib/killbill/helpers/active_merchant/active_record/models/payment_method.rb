@@ -4,6 +4,7 @@ module Killbill
       module ActiveRecord
         require 'active_record'
         require 'active_merchant'
+        require 'time'
         require 'killbill/helpers/active_merchant/active_record/models/helpers'
 
         class PaymentMethod < ::ActiveRecord::Base
@@ -15,6 +16,8 @@ module Killbill
           @@quotes_cache = build_quotes_cache
 
           def self.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, cc_or_token, response, options, extra_params = {}, model = PaymentMethod)
+            # See Response#from_response
+            current_time = Time.now.utc
             model.new({
                           :kb_account_id        => kb_account_id,
                           :kb_payment_method_id => kb_payment_method_id,
@@ -31,7 +34,9 @@ module Killbill
                           :city                 => (options[:billing_address] || {})[:city],
                           :state                => (options[:billing_address] || {})[:state],
                           :zip                  => (options[:billing_address] || {})[:zip],
-                          :country              => (options[:billing_address] || {})[:country]
+                          :country              => (options[:billing_address] || {})[:country],
+                          :created_at           => current_time,
+                          :updated_at           => current_time
                       }.merge!(extra_params))
           end
 

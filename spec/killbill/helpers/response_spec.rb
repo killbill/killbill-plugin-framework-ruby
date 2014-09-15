@@ -58,9 +58,6 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     # No associated transaction
     ptip.amount.should be_nil
     ptip.currency.should be_nil
-    # Row not created
-    ptip.created_date.should be_nil
-    ptip.effective_date.should be_nil
     ptip.status.should == :PROCESSED
     ptip.gateway_error.should == 'Message'
     ptip.gateway_error_code.should be_nil
