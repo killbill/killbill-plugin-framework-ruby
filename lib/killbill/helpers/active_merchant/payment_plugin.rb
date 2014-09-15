@@ -32,6 +32,8 @@ module Killbill
         # return DB connections to the Pool if required
         def after_request
           pool = ::ActiveRecord::Base.connection_pool
+          return unless pool.active_connection?
+
           connection = ::ActiveRecord::Base.connection
           pool.remove(connection)
           connection.disconnect!
