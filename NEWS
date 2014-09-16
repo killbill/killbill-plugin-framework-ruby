@@ -1,3 +1,7 @@
+3.1.9
+    Fix memory leak in database connection handling
+    Change void implementation to be more generic (and work with Cybersource)
+
 3.1.8
     Make ActiveMerchant HTTP backend configurable, add support for Typhoeus
     generator:
