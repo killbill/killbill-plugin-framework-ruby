@@ -9,7 +9,8 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
     # Verify the reaper is a no-op. Management is in our hands
     pool.reaper.frequency.should be_nil
 
-    # spec_helper created the table, so there is one active connection for that thread already
+    # Check-out a new connection or retrieve the one associated with the thread
+    ::ActiveRecord::Base.connection.should_not be_nil
     pool.active_connection?.should be_true
     pool.connections.size.should == 1
 
