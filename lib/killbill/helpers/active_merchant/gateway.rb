@@ -16,10 +16,13 @@ module Killbill
             ::ActiveMerchant::Billing::Gateway.wiredump_device.sync = true
           end
 
-          Gateway.new(gateway_builder.call(config))
+          Gateway.new(config, gateway_builder.call(config))
         end
 
-        def initialize(am_gateway)
+        attr_reader :config
+
+        def initialize(config, am_gateway)
+          @config = config
           @gateway = am_gateway
         end
 
