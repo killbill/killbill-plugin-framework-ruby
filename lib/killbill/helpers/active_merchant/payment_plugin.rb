@@ -42,152 +42,72 @@ module Killbill
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
-          amount_in_cents = to_cents(amount, currency)
+          gateway_call_proc = Proc.new do |gateway, payment_source, amount_in_cents, options|
+            gateway.authorize(amount_in_cents, payment_source, options)
+          end
 
-          options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
-          options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill authorization for #{kb_payment_transaction_id}"
-
-          # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
-
-          before_gateway(kb_transaction, nil, payment_source, amount_in_cents, currency, options)
-
-          # Go to the gateway
-          gw_response           = gateway.authorize(amount_in_cents, payment_source, options)
-          response, transaction = save_response_and_transaction(gw_response, :authorize, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :AUTHORIZE, amount_in_cents, currency)
-
-          after_gateway(response, transaction, gw_response)
-
-          response.to_transaction_info_plugin(transaction)
+          dispatch_to_gateways(:authorize, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
         end
 
         def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
-          amount_in_cents = to_cents(amount, currency)
+          gateway_call_proc = Proc.new do |gateway, payment_source, amount_in_cents, options|
+            # TODO We use the last transaction at the moment, is it good enough?
+            last_authorization = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+            raise "Unable to retrieve last authorization for operation=capture, kb_payment_id=#{kb_payment_id}, kb_payment_transaction_id=#{kb_payment_transaction_id}, kb_payment_method_id=#{kb_payment_method_id}" if last_authorization.nil?
+            gateway.capture(amount_in_cents, last_authorization.txn_id, options)
+          end
 
-          options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
-          options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill capture for #{kb_payment_transaction_id}"
-
-          # Retrieve the authorization
-          # TODO We use the last AUTH transaction at the moment, is it good enough?
-          authorization         = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last.txn_id
-
-          before_gateway(kb_transaction, authorization, nil, amount_in_cents, currency, options)
-
-          # Go to the gateway
-          gw_response           = gateway.capture(amount_in_cents, authorization, options)
-          response, transaction = save_response_and_transaction(gw_response, :capture, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :CAPTURE, amount_in_cents, currency)
-
-          after_gateway(response, transaction, gw_response)
-
-          response.to_transaction_info_plugin(transaction)
+          dispatch_to_gateways(:capture, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
         end
 
         def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
-          amount_in_cents = to_cents(amount, currency)
+          gateway_call_proc = Proc.new do |gateway, payment_source, amount_in_cents, options|
+            gateway.purchase(amount_in_cents, payment_source, options)
+          end
 
-          options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
-          options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill purchase for #{kb_payment_transaction_id}"
-
-          # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
-
-          before_gateway(kb_transaction, nil, payment_source, amount_in_cents, currency, options)
-
-          # Go to the gateway
-          gw_response           = gateway.purchase(amount_in_cents, payment_source, options)
-          response, transaction = save_response_and_transaction(gw_response, :purchase, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :PURCHASE, amount_in_cents, currency)
-
-          after_gateway(response, transaction, gw_response)
-
-          response.to_transaction_info_plugin(transaction)
+          dispatch_to_gateways(:purchase, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
         end
 
         def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context)
-          kb_transaction = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
-
-          options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
-          options[:description] ||= "Kill Bill void for #{kb_payment_transaction_id}"
-
-          # If an authorization is being voided, we're performing an 'auth_reversal', otherwise,
-          # we're voiding an unsettled capture or purchase (which often needs to happen within 24 hours).
-          last_transaction      = @transaction_model.purchases_from_kb_payment_id(kb_payment_id, context.tenant_id).last
-          if last_transaction.nil?
-            last_transaction = @transaction_model.captures_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+          gateway_call_proc = Proc.new do |gateway, payment_source, amount_in_cents, options|
+            # If an authorization is being voided, we're performing an 'auth_reversal', otherwise,
+            # we're voiding an unsettled capture or purchase (which often needs to happen within 24 hours).
+            last_transaction = @transaction_model.purchases_from_kb_payment_id(kb_payment_id, context.tenant_id).last
             if last_transaction.nil?
-              last_transaction = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+              last_transaction = @transaction_model.captures_from_kb_payment_id(kb_payment_id, context.tenant_id).last
               if last_transaction.nil?
-                raise ArgumentError.new("Kill Bill payment #{kb_payment_id} has no auth, capture or purchase, thus cannot be voided")
+                last_transaction = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last
+                if last_transaction.nil?
+                  raise ArgumentError.new("Kill Bill payment #{kb_payment_id} has no auth, capture or purchase, thus cannot be voided")
+                end
               end
             end
+            authorization = last_transaction.txn_id
+
+            # Go to the gateway - while some gateways implementations are smart and have void support 'auth_reversal' and 'void' (e.g. Litle),
+            # others (e.g. CyberSource) implement different methods
+            last_transaction.transaction_type == 'AUTHORIZE' && gateway.respond_to?(:auth_reversal) ? gateway.auth_reversal(last_transaction.amount_in_cents, authorization, options) : gateway.void(authorization, options)
           end
-          authorization = last_transaction.txn_id
 
-          before_gateway(kb_transaction, last_transaction, nil, nil, nil, options)
-
-          # Go to the gateway - while some gateways implementations are smart and have void support 'auth_reversal' and 'void' (e.g. Litle),
-          # others (e.g. CyberSource) implement different methods
-          gw_response           = last_transaction.transaction_type == 'AUTHORIZE' && gateway.respond_to?(:auth_reversal) ? gateway.auth_reversal(last_transaction.amount_in_cents, authorization, options) : gateway.void(authorization, options)
-          response, transaction = save_response_and_transaction(gw_response, :void, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :VOID)
-
-          after_gateway(response, transaction, gw_response)
-
-          response.to_transaction_info_plugin(transaction)
+          dispatch_to_gateways(:void, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, nil, nil, properties, context, gateway_call_proc)
         end
 
         def credit_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
-          amount_in_cents = to_cents(amount, currency)
+          gateway_call_proc = Proc.new do |gateway, payment_source, amount_in_cents, options|
+            gateway.credit(amount_in_cents, payment_source, options)
+          end
 
-          options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
-          options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill credit for #{kb_payment_transaction_id}"
-
-          # Retrieve the payment method
-          payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
-
-          before_gateway(kb_transaction, nil, payment_source, amount_in_cents, currency, options)
-
-          # Go to the gateway
-          gw_response           = gateway.credit(amount_in_cents, payment_source, options)
-          response, transaction = save_response_and_transaction(gw_response, :credit, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :CREDIT, amount_in_cents, currency)
-
-          after_gateway(response, transaction, gw_response)
-
-          response.to_transaction_info_plugin(transaction)
+          dispatch_to_gateways(:credit, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
         end
 
         def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
-          kb_transaction  = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
-          amount_in_cents = to_cents(amount, currency)
+          gateway_call_proc = Proc.new do |gateway, payment_source, amount_in_cents, options|
+            transaction = @transaction_model.find_candidate_transaction_for_refund(kb_payment_id, context.tenant_id, amount_in_cents)
+            raise "Unable to retrieve transaction to refund for operation=capture, kb_payment_id=#{kb_payment_id}, kb_payment_transaction_id=#{kb_payment_transaction_id}, kb_payment_method_id=#{kb_payment_method_id}" if transaction.nil?
+            gateway.refund(amount_in_cents, transaction.txn_id, options)
+          end
 
-          options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
-          options[:currency]    ||= currency.to_s.upcase
-          options[:description] ||= "Kill Bill refund for #{kb_payment_transaction_id}"
-
-          # Find a transaction to refund
-          transaction           = @transaction_model.find_candidate_transaction_for_refund(kb_payment_id, context.tenant_id, amount_in_cents)
-
-          before_gateway(kb_transaction, transaction, nil, amount_in_cents, currency, options)
-
-          # Go to the gateway
-          gw_response           = gateway.refund(amount_in_cents, transaction.txn_id, options)
-          response, transaction = save_response_and_transaction(gw_response, :refund, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, :REFUND, amount_in_cents, currency)
-
-          after_gateway(response, transaction, gw_response)
-
-          response.to_transaction_info_plugin(transaction)
+          dispatch_to_gateways(:refund, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
         end
 
         def get_payment_info(kb_account_id, kb_payment_id, properties, context)
@@ -212,6 +132,7 @@ module Killbill
           payment_source        = get_payment_source(nil, all_properties, options, context)
 
           # Go to the gateway
+          gateway               = lookup_gateway(options[:payment_processor_account_id] || :default)
           gw_response           = gateway.store(payment_source, options)
           response, transaction = save_response_and_transaction gw_response, :add_payment_method, kb_account_id, context.tenant_id
 
@@ -235,9 +156,10 @@ module Killbill
         def delete_payment_method(kb_account_id, kb_payment_method_id, properties, context)
           options = properties_to_hash(properties)
 
-          pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
+          pm      = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
 
           # Delete the card
+          gateway = lookup_gateway(options[:payment_processor_account_id] || :default)
           if options[:customer_id]
             gw_response = gateway.unstore(options[:customer_id], pm.token, options)
           else
@@ -402,6 +324,64 @@ module Killbill
 
         # Utilities
 
+        # TODO Split settlements is partially implemented. Left to be done:
+        # * payment_source should probably be retrieved per gateway
+        # * amount per gateway should be retrieved from the options
+        def dispatch_to_gateways(operation, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
+          kb_transaction        = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
+          amount_in_cents       = amount.nil? ? nil : to_cents(amount, currency)
+
+          # Setup options for ActiveMerchant
+          options               = properties_to_hash(properties)
+          options[:order_id]    ||= kb_transaction.external_key
+          options[:currency]    ||= currency.to_s.upcase unless currency.nil?
+          options[:description] ||= "Kill Bill #{operation.to_s} for #{kb_payment_transaction_id}"
+
+          # Retrieve the payment method
+          payment_source        = get_payment_source(kb_payment_method_id, properties, options, context)
+
+          # Sanity checks
+          if [:authorize, :purchase, :credit].include?(operation)
+            raise "Unable to retrieve payment source for operation=#{operation}, kb_payment_id=#{kb_payment_id}, kb_payment_transaction_id=#{kb_payment_transaction_id}, kb_payment_method_id=#{kb_payment_method_id}" if payment_source.nil?
+          end
+
+          # Retrieve the previous transaction for the same operation and payment id - this is useful to detect dups for example
+          last_transaction = @transaction_model.send("#{operation.to_s}s_from_kb_payment_id", kb_payment_id, context.tenant_id).last
+
+          # Filter before all gateways call
+          before_gateways(kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
+
+          # Dispatch to the gateways. In most cases (non split settlements), we only dispatch to a single gateway account
+          gw_responses                  = []
+          responses                     = []
+          transactions                  = []
+          payment_processor_account_ids = options[:payment_processor_account_ids].nil? ? [options[:payment_processor_account_id] || :default] : options[:payment_processor_account_ids].split(',')
+          payment_processor_account_ids.each do |payment_processor_account_id|
+            # Find the gateway
+            gateway = lookup_gateway(payment_processor_account_id)
+
+            # Filter before each gateway call
+            before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
+
+            # Perform the operation in the gateway
+            gw_response           = gateway_call_proc.call(gateway, payment_source, amount_in_cents, options)
+            response, transaction = save_response_and_transaction(gw_response, operation, kb_account_id, context.tenant_id, kb_payment_id, kb_payment_transaction_id, operation.upcase, amount_in_cents, currency)
+
+            # Filter after each gateway call
+            after_gateway(response, transaction, gw_response)
+
+            gw_responses << gw_response
+            responses << response
+            transactions << transaction
+          end
+
+          # Filter after all gateways call
+          after_gateways(responses, transactions, gw_responses)
+
+          # Merge data
+          merge_transaction_info_plugins(payment_processor_account_ids, responses, transactions)
+        end
+
         def get_kb_transaction(kb_payment_id, kb_payment_transaction_id, kb_tenant_id)
           kb_payment     = @kb_apis.payment_api.get_payment(kb_payment_id, false, [], @kb_apis.create_context(kb_tenant_id))
           kb_transaction = kb_payment.transactions.find { |t| t.id == kb_payment_transaction_id }
@@ -410,7 +390,13 @@ module Killbill
           kb_transaction
         end
 
-        def before_gateway(kb_transaction, transaction, payment_source, amount_in_cents, currency, options)
+        def before_gateways(kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
+        end
+
+        def after_gateways(response, transaction, gw_response)
+        end
+
+        def before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
           # Can be used to implement idempotency for example: lookup the payment in the gateway
           # and pass options[:skip_gw] if the payment has already been through
         end
@@ -482,8 +468,10 @@ module Killbill
           return response, transaction
         end
 
-        def gateway
-          ::Killbill::Plugin::ActiveMerchant.gateway
+        def lookup_gateway(payment_processor_account_id=:default)
+          gateway = ::Killbill::Plugin::ActiveMerchant.gateways[payment_processor_account_id.to_sym]
+          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways}" if gateway.nil?
+          gateway
         end
 
         def config
@@ -517,6 +505,68 @@ module Killbill
 
         def get_active_merchant_module
           ::ActiveMerchant::Billing::Integrations.const_get(@identifier.to_s.camelize)
+        end
+
+        def merge_transaction_info_plugins(payment_processor_account_ids, responses, transactions)
+          result                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
+          result.amount                      = nil
+          result.properties                  = []
+          result.status                      = :PROCESSED
+          # Nothing meaningful we can set here
+          result.first_payment_reference_id  = nil
+          result.second_payment_reference_id = nil
+
+          responses.each_with_index do |response, idx|
+            t_info_plugin = response.to_transaction_info_plugin(transactions[idx])
+            if responses.size == 1
+              # We're done
+              return t_info_plugin
+            end
+
+            # Unique values
+            [:kb_payment_id, :kb_transaction_payment_id, :transaction_type, :currency].each do |element|
+              result_element        = result.send(element)
+              t_info_plugin_element = t_info_plugin.send(element)
+              if result_element.nil?
+                result.send("#{element}=", t_info_plugin_element)
+              elsif result_element != t_info_plugin_element
+                raise "#{element.to_s} mismatch, #{result_element} != #{t_info_plugin_element}"
+              end
+            end
+
+            # Arbitrary values
+            [:created_date, :effective_date].each do |element|
+              if result.send(element).nil?
+                result.send("#{element}=", t_info_plugin.send(element))
+              end
+            end
+
+            t_info_plugin.properties.each do |property|
+              prop       = Killbill::Plugin::Model::PluginProperty.new
+              prop.key   = "#{property.key}_#{payment_processor_account_ids[idx]}"
+              prop.value = property.value
+              result.properties << prop
+            end
+
+            if result.amount.nil?
+              result.amount = t_info_plugin.amount
+            elsif !t_info_plugin.nil?
+              # TODO Adding decimals - are we losing precision?
+              result.amount = result.amount + t_info_plugin.amount
+            end
+
+            # We set an error status if we have at least one error
+            # TODO Does this work well with retries?
+            if t_info_plugin.status == :ERROR
+              result.status             = :ERROR
+
+              # Return the first error
+              result.gateway_error      = t_info_plugin.gateway_error if  result.gateway_error.nil?
+              result.gateway_error_code = t_info_plugin.gateway_error_code if  result.gateway_error_code.nil?
+            end
+          end
+
+          result
         end
       end
     end

@@ -5,24 +5,38 @@ module Killbill
     module ActiveMerchant
       mattr_reader :config
       mattr_reader :currency_conversions
-      mattr_reader :gateway
+      mattr_reader :gateways
       mattr_reader :initialized
       mattr_reader :kb_apis
       mattr_reader :logger
-      mattr_reader :test
 
       def self.initialize!(gateway_builder, gateway_name, logger, config_file, kb_apis)
         @@config = Properties.new(config_file)
         @@config.parse!
 
-        @@currency_conversions = @@config[:currency_conversions]
-        @@kb_apis = kb_apis
-        @@test = @@config[gateway_name][:test]
-
-        @@gateway = Gateway.wrap(gateway_builder, logger, @@config[gateway_name.to_sym])
-
-        @@logger = logger
+        @@logger           = logger
         @@logger.log_level = Logger::DEBUG if (@@config[:logger] || {})[:debug]
+
+        @@currency_conversions = @@config[:currency_conversions]
+        @@kb_apis              = kb_apis
+
+        @@gateways      = {}
+        gateway_configs = @@config[gateway_name.to_sym]
+        if gateway_configs.is_a?(Array)
+          default_gateway = nil
+          gateway_configs.each_with_index do |gateway_config, idx|
+            gateway_account_id = gateway_config[:account_id]
+            if gateway_account_id.nil?
+              @@logger.warn "Skipping config #{gateway_config} -- missing :account_id"
+            else
+              @@gateways[gateway_account_id.to_sym] = Gateway.wrap(gateway_builder, logger, gateway_config)
+              default_gateway                       = @@gateways[gateway_account_id.to_sym] if idx == 0
+            end
+          end
+          @@gateways[:default] = default_gateway if @@gateways[:default].nil?
+        else
+          @@gateways[:default] = Gateway.wrap(gateway_builder, logger, gateway_configs)
+        end
 
         if defined?(JRUBY_VERSION)
           begin

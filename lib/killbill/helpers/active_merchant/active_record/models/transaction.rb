@@ -27,6 +27,11 @@ module Killbill
             # For convenience
             alias_method :authorizations_from_kb_payment_id, :authorizes_from_kb_payment_id
 
+            # For convenience
+            def voids_from_kb_payment_id(kb_payment_id, kb_tenant_id)
+              [void_from_kb_payment_id(kb_payment_id, kb_tenant_id)]
+            end
+
             # void is special: unique void per payment_id
             def void_from_kb_payment_id(kb_payment_id, kb_tenant_id)
               transaction_from_kb_payment_id(:VOID, kb_payment_id, kb_tenant_id, :single)
