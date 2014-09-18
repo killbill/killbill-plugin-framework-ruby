@@ -20,16 +20,73 @@ module Killbill
         # Relies on the fact that hashes enumerate their values in the order that the corresponding keys were inserted (Ruby 1.9+)
         class BoundedLRUCache
 
-          def initialize(proc, max_size=1000)
+          def initialize(proc, max_size=10000)
             @proc     = proc
             @max_size = max_size
 
-            @semaphore = Mutex.new
-            # TODO Pre-allocate?
-            @data      = {}
+            if defined?(JRUBY_VERSION)
+              @is_jruby  = true
+              @semaphore = nil
+
+              lru_cache = Class.new(java.util.LinkedHashMap) do
+                def initialize(max_size)
+                  super(max_size, 1.0, true)
+                  @max_size = max_size
+                end
+
+                # Note: renaming it to remove_eldest_entry won't work
+                def removeEldestEntry(eldest)
+                  size > @max_size
+                end
+              end.new(@max_size)
+              @data     = java.util.Collections.synchronizedMap(lru_cache)
+            else
+              @is_jruby  = false
+              @semaphore = Mutex.new
+              # TODO Pre-allocate?
+              @data      = {}
+            end
           end
 
           def [](key)
+            @is_jruby ? jruby_get(key) : ruby_get(key)
+          end
+
+          def []=(key, val)
+            @is_jruby ? jruby_set(key, val) : ruby_set(key, val)
+          end
+
+          # For testing
+
+          def size
+            @data.size
+          end
+
+          def keys_to_a
+            @is_jruby ? @data.key_set.to_a : @data.keys
+          end
+
+          def values_to_a
+            @is_jruby ? @data.values.to_a : @data.values
+          end
+
+          private
+
+          def jruby_get(key)
+            value = @data.get(key)
+            if value.nil?
+              value = @proc.call(key)
+              # Somebody may have beaten us to it but the mapping key -> value is constant for our purposes
+              jruby_set(key, value)
+            end
+            value
+          end
+
+          def jruby_set(key, val)
+            @data.put(key, val)
+          end
+
+          def ruby_get(key)
             @semaphore.synchronize do
               found = true
               value = @data.delete(key) { found = false }
@@ -43,7 +100,7 @@ module Killbill
             end
           end
 
-          def []=(key, val)
+          def ruby_set(key, val)
             @semaphore.synchronize do
               @data.delete(key)
               @data[key] = val

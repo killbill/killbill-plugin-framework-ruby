@@ -8,7 +8,7 @@ module Killbill
         # We don't want to issue raw SQL because we still want to be able to support multiple back-ends (at least SQLite and MySQL),
         # so we cache the quoted values (this should also give us SQL injection protection).
         # The gain is not 50% but more around 30% due to the Mutex overhead in the cache
-        def build_quotes_cache(max_size=1000)
+        def build_quotes_cache(max_size=10000)
           # See ::ActiveRecord::Sanitization::ClassMethods.quote_bound_value
           quote_bound_value_proc = Proc.new { |value|
             c = connection
