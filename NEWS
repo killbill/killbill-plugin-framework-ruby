@@ -1,6 +1,15 @@
+3.1.10
+    Add workarounds for ActiveRecord bugs under high load/concurrency
+    BoundedLRUCache performance improvements
+    Introduce :payment_processor_account_id option to route payment requests
+    Add before_gateways / after_gateways hooks
+
 3.1.9
     Fix memory leak in database connection handling
     Change void implementation to be more generic (and work with Cybersource)
+    ActiveMerchant: pass the transaction external key as the order id
+    Add before_gateway / after_gateway hooks
+    Fix API queries in multi-tenancy mode
 
 3.1.8
     Make ActiveMerchant HTTP backend configurable, add support for Typhoeus
