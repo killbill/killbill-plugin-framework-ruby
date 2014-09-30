@@ -1,5 +1,6 @@
 require 'active_utils/common/posts_data'
 
+# Pass the proxy details to the connection object - see https://github.com/Shopify/active_utils/pull/44
 module ActiveMerchant #:nodoc:
   module PostsData #:nodoc:
 
@@ -48,7 +49,6 @@ module ActiveMerchant #:nodoc:
 
       connection.ignore_http_status = @options[:ignore_http_status] if @options
 
-      # Pass the proxy details to the connection object
       connection.proxy_address = proxy_address
       connection.proxy_port = proxy_port
 
