@@ -4,6 +4,7 @@ module Killbill
       require 'killbill'
 
       require 'killbill/ext/active_merchant/jdbc_connection'
+      require 'killbill/ext/active_merchant/proxy_support'
 
       require 'active_support/core_ext'
       require File.dirname(__FILE__) + '/active_merchant/core_ext.rb'

@@ -16,9 +16,11 @@ module ActiveMerchant
 
           result   = nil
           realtime = Benchmark.realtime do
-            options        = {:method => method, :headers => headers}
-            options[:body] = body if body
-            result         = http(endpoint.to_s, options)
+            options         = {:method => method, :headers => headers}
+            options[:body]  = body if body
+            options[:proxy] = proxy_address if proxy_address
+            options[:proxy] += ":#{proxy_port}" if proxy_address and proxy_port
+            result          = http(endpoint.to_s, options)
           end
 
           debug '--> response_code=%d (body_length=%d total_time=%.4fs realtime=%.4fs)' % [result.code, result.body ? result.body.length : 0, result.total_time, realtime], tag

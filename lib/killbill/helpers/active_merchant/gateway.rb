@@ -16,6 +16,15 @@ module Killbill
             ::ActiveMerchant::Billing::Gateway.wiredump_device.sync = true
           end
 
+          ::ActiveMerchant::Billing::Gateway.open_timeout  = config[:open_timeout] if config[:open_timeout]
+          ::ActiveMerchant::Billing::Gateway.read_timeout  = config[:read_timeout] if config[:read_timeout]
+          ::ActiveMerchant::Billing::Gateway.retry_safe    = config[:retry_safe] if config[:retry_safe]
+          ::ActiveMerchant::Billing::Gateway.ssl_strict    = config[:ssl_strict] if config[:ssl_strict]
+          ::ActiveMerchant::Billing::Gateway.ssl_version   = config[:ssl_version] if config[:ssl_version]
+          ::ActiveMerchant::Billing::Gateway.max_retries   = config[:max_retries] if config[:max_retries]
+          ::ActiveMerchant::Billing::Gateway.proxy_address = config[:proxy_address] if config[:proxy_address]
+          ::ActiveMerchant::Billing::Gateway.proxy_port    = config[:proxy_port] if config[:proxy_port]
+
           Gateway.new(config, gateway_builder.call(config))
         end
 
