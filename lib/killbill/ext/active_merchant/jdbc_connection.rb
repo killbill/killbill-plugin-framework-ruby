@@ -35,6 +35,29 @@ module ActiveRecord
       def self.jndi_retries(config)
         (config[:jndi_retries] || 5).to_i
       end
+
+      protected
+
+      def setup_jndi_factory
+        data_source = config[:data_source] || Java::JavaxNaming::InitialContext.new.lookup(config[:jndi].to_s)
+
+        @jndi                   = true
+        # Really slow under high load (see https://github.com/jruby/activerecord-jdbc-adapter/pull/588).
+        #self.connection_factory = JdbcConnectionFactory.impl { data_source.connection }
+        self.connection_factory = RubyJdbcConnectionFactory.new(data_source)
+      end
+
+      class RubyJdbcConnectionFactory
+        include JdbcConnectionFactory
+
+        def initialize(data_source)
+          @data_source = data_source
+        end
+
+        def new_connection
+          @data_source.connection
+        end
+      end
     end
   end
 end
