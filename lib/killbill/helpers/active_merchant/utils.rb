@@ -17,6 +17,23 @@ module Killbill
           no_hyphens.insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-")
         end
 
+        class KBWiredumpDevice < IO
+
+          # Required for compatibility, but unused
+          attr_accessor :sync
+
+          def initialize(logger, method = :info)
+            @logger = logger
+            @method = method
+          end
+
+          # We mostly care about the << method
+          def write(string)
+            sanitized_string = string.to_s.chomp("\n")
+            @logger.send(@method, sanitized_string) if sanitized_string.size > 0
+          end
+        end
+
         # Relies on the fact that hashes enumerate their values in the order that the corresponding keys were inserted (Ruby 1.9+)
         class BoundedLRUCache
 

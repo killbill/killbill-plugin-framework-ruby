@@ -13,8 +13,11 @@ module Killbill
 
           if config[:log_file]
             ::ActiveMerchant::Billing::Gateway.wiredump_device = File.open(config[:log_file], 'w')
-            ::ActiveMerchant::Billing::Gateway.wiredump_device.sync = true
+          else
+            log_method = config[:quiet] ? :debug : :info
+            ::ActiveMerchant::Billing::Gateway.wiredump_device = ::Killbill::Plugin::ActiveMerchant::Utils::KBWiredumpDevice.new(logger, log_method)
           end
+          ::ActiveMerchant::Billing::Gateway.wiredump_device.sync = true
 
           ::ActiveMerchant::Billing::Gateway.open_timeout  = config[:open_timeout] if config[:open_timeout]
           ::ActiveMerchant::Billing::Gateway.read_timeout  = config[:read_timeout] if config[:read_timeout]

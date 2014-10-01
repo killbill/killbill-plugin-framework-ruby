@@ -20,6 +20,22 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
     end
   end
 
+  it 'should implement a wiredump device for the Kill Bill logger' do
+    logger       = Logger.new(STDOUT)
+    logger.level = Logger::INFO
+
+    io      = ::Killbill::Plugin::ActiveMerchant::Utils::KBWiredumpDevice.new(logger)
+    io.sync = true
+    io.sync.should be_true
+    io << 'This is an I/O test'
+
+    jlogger  = ::Killbill::Plugin::KillbillLogger.new(logger)
+    jio      = ::Killbill::Plugin::ActiveMerchant::Utils::KBWiredumpDevice.new(jlogger)
+    jio.sync = true
+    jio.sync.should be_true
+    jio << 'This is an I/O test (via Java)'
+  end
+
   it 'should implement a thread-safe LRU cache' do
     require 'benchmark'
 
