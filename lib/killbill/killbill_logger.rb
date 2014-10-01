@@ -6,6 +6,7 @@ module Killbill
     class KillbillLogger
 
       attr_accessor :log_level
+      attr_accessor :progname
 
       def initialize(delegate)
         @logger    = delegate
@@ -66,7 +67,8 @@ module Killbill
             message = '(nil)'
           end
         end
-        message.nil? ? '(nil)' : message.to_s
+        final_message = message.nil? ? '(nil)' : message.to_s
+        @progname ? "[#{@progname}] #{final_message}" : final_message
       end
 
       alias_method :fatal, :error

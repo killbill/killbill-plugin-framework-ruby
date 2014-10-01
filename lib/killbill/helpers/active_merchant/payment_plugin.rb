@@ -18,6 +18,8 @@ module Killbill
         end
 
         def start_plugin
+          @logger.progname = "#{@identifier.to_s}-plugin"
+
           ::Killbill::Plugin::ActiveMerchant.initialize! @gateway_builder,
                                                          @identifier.to_sym,
                                                          @logger,
