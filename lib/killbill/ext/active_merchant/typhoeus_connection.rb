@@ -16,7 +16,7 @@ module ActiveMerchant
 
           result   = nil
           realtime = Benchmark.realtime do
-            options         = {:method => method, :headers => headers}
+            options         = {:method => method, :headers => headers, :connecttimeout => open_timeout}
             options[:body]  = body if body
             options[:proxy] = proxy_address if proxy_address
             options[:proxy] += ":#{proxy_port}" if proxy_address and proxy_port
