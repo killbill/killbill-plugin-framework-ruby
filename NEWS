@@ -1,3 +1,10 @@
+3.1.11
+    ActiveMerchant:
+      - add proxy support
+      - redirect wiredump device to Kill Bill log
+      - expose networking configuration options
+    ActiveRecord performance improvements
+
 3.1.10
     Add workarounds for ActiveRecord bugs under high load/concurrency
     BoundedLRUCache performance improvements
