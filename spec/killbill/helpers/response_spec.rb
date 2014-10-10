@@ -20,24 +20,26 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
   end
 
   it 'should construct responses correctly' do
-    api_call                  = 'for debugging only'
-    kb_account_id             = SecureRandom.uuid
-    kb_payment_id             = SecureRandom.uuid
-    kb_payment_transaction_id = SecureRandom.uuid
-    transaction_type          = :PURCHASE
-    kb_tenant_id              = SecureRandom.uuid
-    response                  = ::ActiveMerchant::Billing::Response.new(true, 'Message', {}, {
+    api_call                     = 'for debugging only'
+    kb_account_id                = SecureRandom.uuid
+    kb_payment_id                = SecureRandom.uuid
+    kb_payment_transaction_id    = SecureRandom.uuid
+    transaction_type             = :PURCHASE
+    payment_processor_account_id = 'petit_poucet'
+    kb_tenant_id                 = SecureRandom.uuid
+    response                     = ::ActiveMerchant::Billing::Response.new(true, 'Message', {}, {
         :authorization => SecureRandom.uuid,
         :avs_result    => ::ActiveMerchant::Billing::AVSResult.new(:code => 'P')
     })
 
-    r = ::Killbill::Test::TestResponse.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response, {}, ::Killbill::Test::TestResponse)
+    r = ::Killbill::Test::TestResponse.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, response, {}, ::Killbill::Test::TestResponse)
     r.api_call.should == api_call
-    r.kb_account_id.should ==kb_account_id
-    r.kb_payment_id.should ==kb_payment_id
-    r.kb_payment_transaction_id.should ==kb_payment_transaction_id
-    r.transaction_type.should ==transaction_type
-    r.kb_tenant_id.should ==kb_tenant_id
+    r.kb_account_id.should == kb_account_id
+    r.kb_payment_id.should == kb_payment_id
+    r.kb_payment_transaction_id.should == kb_payment_transaction_id
+    r.transaction_type.should == transaction_type
+    r.payment_processor_account_id.should == payment_processor_account_id
+    r.kb_tenant_id.should == kb_tenant_id
     r.message.should == response.message
     r.authorization.should == response.authorization
     r.fraud_review.should == response.fraud_review?
@@ -63,26 +65,27 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     ptip.gateway_error_code.should be_nil
     ptip.first_payment_reference_id.should be_nil
     ptip.second_payment_reference_id.should be_nil
-    ptip.properties.size.should == 11
+    ptip.properties.size.should == 12
   end
 
   it 'should create responses and transactions correctly' do
-    api_call                  = 'for debugging only'
-    kb_account_id             = SecureRandom.uuid
-    kb_payment_id             = SecureRandom.uuid
-    kb_payment_transaction_id = SecureRandom.uuid
-    transaction_type          = :PURCHASE
-    kb_tenant_id              = SecureRandom.uuid
-    success_response          = ::ActiveMerchant::Billing::Response.new(true, 'Message', {}, {
+    api_call                     = 'for debugging only'
+    kb_account_id                = SecureRandom.uuid
+    kb_payment_id                = SecureRandom.uuid
+    kb_payment_transaction_id    = SecureRandom.uuid
+    transaction_type             = :PURCHASE
+    payment_processor_account_id = 'petit_poucet'
+    kb_tenant_id                 = SecureRandom.uuid
+    success_response             = ::ActiveMerchant::Billing::Response.new(true, 'Message', {}, {
         :authorization => SecureRandom.uuid,
         :avs_result    => ::ActiveMerchant::Billing::AVSResult.new(:code => 'P')
     })
-    failure_response          = ::ActiveMerchant::Billing::Response.new(false, 'Message', {}, {
+    failure_response             = ::ActiveMerchant::Billing::Response.new(false, 'Message', {}, {
         :authorization => SecureRandom.uuid,
         :avs_result    => ::ActiveMerchant::Billing::AVSResult.new(:code => 'P')
     })
 
-    response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+    response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
     found_response        = ::Killbill::Test::TestResponse.find(response.id)
     found_response.should == response
     found_response.test_transaction.should == transaction
@@ -90,7 +93,7 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     found_transaction.should == transaction
     found_transaction.test_response.should == response
 
-    response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, failure_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+    response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, failure_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
     transaction.should be_nil
     found_response = ::Killbill::Test::TestResponse.find(response.id)
     found_response.should == response

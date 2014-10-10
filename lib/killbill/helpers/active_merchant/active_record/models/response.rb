@@ -14,40 +14,41 @@ module Killbill
 
           self.abstract_class = true
 
-          def self.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, response, extra_params = {}, model = Response)
+          def self.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, response, extra_params = {}, model = Response)
             # Under high load, Rails sometimes fails to set timestamps. Unclear why...
             current_time = Time.now.utc
             model.new({
-                          :api_call                  => api_call,
-                          :kb_account_id             => kb_account_id,
-                          :kb_payment_id             => kb_payment_id,
-                          :kb_payment_transaction_id => kb_payment_transaction_id,
-                          :transaction_type          => transaction_type,
-                          :kb_tenant_id              => kb_tenant_id,
-                          :message                   => response.message,
-                          :authorization             => response.authorization,
-                          :fraud_review              => response.fraud_review?,
-                          :test                      => response.test?,
-                          :avs_result_code           => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.code : response.avs_result['code'],
-                          :avs_result_message        => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.message : response.avs_result['message'],
-                          :avs_result_street_match   => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.street_match : response.avs_result['street_match'],
-                          :avs_result_postal_match   => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.postal_match : response.avs_result['postal_match'],
-                          :cvv_result_code           => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.code : response.cvv_result['code'],
-                          :cvv_result_message        => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.message : response.cvv_result['message'],
-                          :success                   => response.success?,
-                          :created_at                => current_time,
-                          :updated_at                => current_time
+                          :api_call                     => api_call,
+                          :kb_account_id                => kb_account_id,
+                          :kb_payment_id                => kb_payment_id,
+                          :kb_payment_transaction_id    => kb_payment_transaction_id,
+                          :transaction_type             => transaction_type,
+                          :payment_processor_account_id => payment_processor_account_id,
+                          :kb_tenant_id                 => kb_tenant_id,
+                          :message                      => response.message,
+                          :authorization                => response.authorization,
+                          :fraud_review                 => response.fraud_review?,
+                          :test                         => response.test?,
+                          :avs_result_code              => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.code : response.avs_result['code'],
+                          :avs_result_message           => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.message : response.avs_result['message'],
+                          :avs_result_street_match      => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.street_match : response.avs_result['street_match'],
+                          :avs_result_postal_match      => response.avs_result.kind_of?(::ActiveMerchant::Billing::AVSResult) ? response.avs_result.postal_match : response.avs_result['postal_match'],
+                          :cvv_result_code              => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.code : response.cvv_result['code'],
+                          :cvv_result_message           => response.cvv_result.kind_of?(::ActiveMerchant::Billing::CVVResult) ? response.cvv_result.message : response.cvv_result['message'],
+                          :success                      => response.success?,
+                          :created_at                   => current_time,
+                          :updated_at                   => current_time
                       }.merge!(extra_params))
           end
 
-          def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, gw_response, amount_in_cents, currency, extra_params = {}, model = Response)
+          def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, extra_params = {}, model = Response)
             response, transaction, exception = nil
 
             # Rails wraps all create/save calls in a transaction. To speed things up, create a single transaction for both rows.
             # This has a small gotcha in the unhappy path though (see below).
             transaction do
               # Save the response to our logs
-              response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, kb_tenant_id, gw_response, extra_params, model)
+              response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, extra_params, model)
               response.save!(shared_activerecord_options)
 
               transaction = nil
@@ -58,19 +59,20 @@ module Killbill
                 begin
                   # Originally, we used response.send("build_#{identifier}_transaction"), but the ActiveRecord magic was adding
                   # about 20% overhead - instead, we now construct the transaction record manually
-                  transaction = transaction_model.new(:kb_account_id              => kb_account_id,
-                                                      :kb_tenant_id               => kb_tenant_id,
-                                                      :amount_in_cents            => amount_in_cents,
-                                                      :currency                   => currency,
-                                                      :api_call                   => api_call,
-                                                      :kb_payment_id              => kb_payment_id,
-                                                      :kb_payment_transaction_id  => kb_payment_transaction_id,
-                                                      :transaction_type           => transaction_type,
-                                                      :txn_id                     => txn_id,
-                                                      "#{identifier}_response_id" => response.id,
+                  transaction = transaction_model.new(:kb_account_id                => kb_account_id,
+                                                      :kb_tenant_id                 => kb_tenant_id,
+                                                      :amount_in_cents              => amount_in_cents,
+                                                      :currency                     => currency,
+                                                      :api_call                     => api_call,
+                                                      :kb_payment_id                => kb_payment_id,
+                                                      :kb_payment_transaction_id    => kb_payment_transaction_id,
+                                                      :transaction_type             => transaction_type,
+                                                      :payment_processor_account_id => payment_processor_account_id,
+                                                      :txn_id                       => txn_id,
+                                                      "#{identifier}_response_id"   => response.id,
                                                       # See Response#from_response
-                                                      :created_at                 => response.created_at,
-                                                      :updated_at                 => response.updated_at)
+                                                      :created_at                   => response.created_at,
+                                                      :updated_at                   => response.updated_at)
                   transaction.save!(shared_activerecord_options)
                 rescue => e
                   exception = e
@@ -109,6 +111,7 @@ module Killbill
             t_info_plugin.second_payment_reference_id = second_reference_id
 
             properties = []
+            properties << create_plugin_property('payment_processor_account_id', payment_processor_account_id)
             properties << create_plugin_property('message', message)
             properties << create_plugin_property('authorization', authorization)
             properties << create_plugin_property('fraudReview', fraud_review)
