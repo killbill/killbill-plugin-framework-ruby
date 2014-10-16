@@ -21,6 +21,7 @@ module Killbill
               # Optimization: bail out if no more results
               break if result.nil? || result.empty?
             end if @batch > 0
+          ensure
             # Make sure to return DB connections to the Pool
             close_connection
           end
