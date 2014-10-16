@@ -22,11 +22,22 @@ module Killbill
               break if result.nil? || result.empty?
             end if @batch > 0
             # Make sure to return DB connections to the Pool
-            ::ActiveRecord::Base.connection.close
+            close_connection
           end
 
           def to_a
             super.to_a.flatten
+          end
+
+          private
+
+          def close_connection
+            pool = ::ActiveRecord::Base.connection_pool
+            return unless pool.active_connection?
+
+            connection = ::ActiveRecord::Base.connection
+            pool.remove(connection)
+            connection.disconnect!
           end
         end
       end

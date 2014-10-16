@@ -22,7 +22,12 @@ module Killbill
 
         after do
           # return DB connections to the Pool if required
-          ::ActiveRecord::Base.connection.close
+          pool = ::ActiveRecord::Base.connection_pool
+          if pool.active_connection?
+            connection = ::ActiveRecord::Base.connection
+            pool.remove(connection)
+            connection.disconnect!
+          end
         end
       end
     end
