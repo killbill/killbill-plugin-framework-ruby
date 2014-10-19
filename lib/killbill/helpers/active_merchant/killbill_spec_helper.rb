@@ -3,7 +3,7 @@ module Killbill
     module ActiveMerchant
       module RSpec
 
-        def create_payment_method(payment_method_model=::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod, kb_account_id=nil, kb_tenant_id=nil)
+        def create_payment_method(payment_method_model=::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod, kb_account_id=nil, kb_tenant_id=nil, options = {})
           kb_payment_method_id = SecureRandom.uuid
 
           if kb_account_id.nil?
@@ -20,7 +20,7 @@ module Killbill
           context = context.to_ruby(context)
 
           # Generate a token
-          properties = build_pm_properties(account)
+          properties = build_pm_properties(account, options)
 
           info            = Killbill::Plugin::Model::PaymentMethodPlugin.new
           info.properties = properties
@@ -34,21 +34,21 @@ module Killbill
           pm
         end
 
-        def build_pm_properties(account = nil)
-          cc_number             = '4242424242424242'
-          cc_first_name         = 'John'
-          cc_last_name          = 'Doe'
-          cc_type               = 'Visa'
-          cc_exp_month          = 12
-          cc_exp_year           = 2017
-          cc_last_4             = 4242
-          address1              = '5, oakriu road'
-          address2              = 'apt. 298'
-          city                  = 'Gdio Foia'
-          state                 = 'FL'
-          zip                   = 49302
-          country               = 'US'
-          cc_verification_value = 1234
+        def build_pm_properties(account = nil, overrides = {})
+          cc_number             = (overrides[:cc_number] || '4242424242424242')
+          cc_first_name         = (overrides[:cc_first_name] || 'John')
+          cc_last_name          = (overrides[:cc_last_name] || 'Doe')
+          cc_type               = (overrides[:cc_type] || 'Visa')
+          cc_exp_month          = (overrides[:cc_exp_month] || 12)
+          cc_exp_year           = (overrides[:cc_exp_year] || 2017)
+          cc_last_4             = (overrides[:cc_last_4] || 4242)
+          address1              = (overrides[:address1] || '5, oakriu road')
+          address2              = (overrides[:address2] || 'apt. 298')
+          city                  = (overrides[:city] || 'Gdio Foia')
+          state                 = (overrides[:state] || 'FL')
+          zip                   = (overrides[:zip] || 49302)
+          country               = (overrides[:country] || 'US')
+          cc_verification_value = (overrides[:cc_verification_value] || 1234)
 
           properties = []
           properties << create_pm_kv_info('ccNumber', cc_number)
