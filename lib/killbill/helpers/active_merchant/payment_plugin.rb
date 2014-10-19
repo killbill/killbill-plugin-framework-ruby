@@ -527,7 +527,7 @@ module Killbill
         end
 
         def get_active_merchant_module
-          ::ActiveMerchant::Billing::Integrations.const_get(@identifier.to_s.camelize)
+          ::OffsitePayments.integration(@identifier.to_s.camelize)
         end
 
         def merge_transaction_info_plugins(payment_processor_account_ids, responses, transactions)

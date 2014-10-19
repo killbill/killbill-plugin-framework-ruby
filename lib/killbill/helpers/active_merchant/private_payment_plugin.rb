@@ -13,7 +13,7 @@ module Killbill
         include ::ActionController::RequestForgeryProtection
         include ::ActionView::Context
         include ::ActionView::Helpers::FormTagHelper
-        include ::ActiveMerchant::Billing::Integrations::ActionViewHelper
+        include ::OffsitePayments::ActionViewHelper
 
         # For RequestForgeryProtection
         attr_reader :session
@@ -33,7 +33,7 @@ module Killbill
         #
         # Additionally, you can have a :html key which will be passed through to the link_to helper
         def payment_link_for(name, order_id, account_id, service, options = {})
-          integration_module = ::ActiveMerchant::Billing::Integrations.const_get(service.to_s.camelize)
+          integration_module = ::OffsitePayments.integration(service.to_s.camelize)
           service_class      = integration_module.const_get('Helper')
 
           link_options = options.delete(:html) || {}
