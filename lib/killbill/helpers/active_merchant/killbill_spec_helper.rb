@@ -35,20 +35,20 @@ module Killbill
         end
 
         def build_pm_properties(account = nil, overrides = {})
-          cc_number             = (overrides[:cc_number] || '4242424242424242')
-          cc_first_name         = (overrides[:cc_first_name] || 'John')
-          cc_last_name          = (overrides[:cc_last_name] || 'Doe')
-          cc_type               = (overrides[:cc_type] || 'Visa')
-          cc_exp_month          = (overrides[:cc_exp_month] || 12)
-          cc_exp_year           = (overrides[:cc_exp_year] || 2017)
-          cc_last_4             = (overrides[:cc_last_4] || 4242)
-          address1              = (overrides[:address1] || '5, oakriu road')
-          address2              = (overrides[:address2] || 'apt. 298')
-          city                  = (overrides[:city] || 'Gdio Foia')
-          state                 = (overrides[:state] || 'FL')
-          zip                   = (overrides[:zip] || 49302)
-          country               = (overrides[:country] || 'US')
-          cc_verification_value = (overrides[:cc_verification_value] || 1234)
+          cc_number             = (overrides.delete(:cc_number) || '4242424242424242')
+          cc_first_name         = (overrides.delete(:cc_first_name) || 'John')
+          cc_last_name          = (overrides.delete(:cc_last_name) || 'Doe')
+          cc_type               = (overrides.delete(:cc_type) || 'Visa')
+          cc_exp_month          = (overrides.delete(:cc_exp_month) || 12)
+          cc_exp_year           = (overrides.delete(:cc_exp_year) || 2017)
+          cc_last_4             = (overrides.delete(:cc_last_4) || 4242)
+          address1              = (overrides.delete(:address1) || '5, oakriu road')
+          address2              = (overrides.delete(:address2) || 'apt. 298')
+          city                  = (overrides.delete(:city) || 'Gdio Foia')
+          state                 = (overrides.delete(:state) || 'FL')
+          zip                   = (overrides.delete(:zip) || 49302)
+          country               = (overrides.delete(:country) || 'US')
+          cc_verification_value = (overrides.delete(:cc_verification_value) || 1234)
 
           properties = []
           properties << create_pm_kv_info('ccNumber', cc_number)
@@ -66,6 +66,11 @@ module Killbill
           properties << create_pm_kv_info('zip', zip)
           properties << create_pm_kv_info('country', country)
           properties << create_pm_kv_info('ccVerificationValue', cc_verification_value)
+
+          overrides.each do |key, value|
+            properties << create_pm_kv_info(key, value)
+          end
+
           properties
         end
 
