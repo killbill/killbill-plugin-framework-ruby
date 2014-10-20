@@ -3,7 +3,7 @@ module Killbill
     module ActiveMerchant
       module RSpec
 
-        def create_payment_method(payment_method_model=::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod, kb_account_id=nil, kb_tenant_id=nil, options = {})
+        def create_payment_method(payment_method_model=::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod, kb_account_id=nil, kb_tenant_id=nil, properties = [], options = {})
           kb_payment_method_id = SecureRandom.uuid
 
           if kb_account_id.nil?
@@ -13,18 +13,18 @@ module Killbill
             create_kb_account kb_account_id
           end
 
-          context = @plugin.kb_apis.create_context(kb_tenant_id)
-          account = @plugin.kb_apis.account_user_api.get_account_by_id(kb_account_id, context)
+          context       = @plugin.kb_apis.create_context(kb_tenant_id)
+          account       = @plugin.kb_apis.account_user_api.get_account_by_id(kb_account_id, context)
 
           # The rest is pure Ruby
-          context = context.to_ruby(context)
+          context       = context.to_ruby(context)
 
           # Generate a token
-          properties = build_pm_properties(account, options)
+          pm_properties = build_pm_properties(account, options)
 
           info            = Killbill::Plugin::Model::PaymentMethodPlugin.new
-          info.properties = properties
-          payment_method  = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, [], context)
+          info.properties = pm_properties
+          payment_method  = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, properties, context)
 
           pm = payment_method_model.from_kb_payment_method_id kb_payment_method_id, context.tenant_id
           pm.should == payment_method

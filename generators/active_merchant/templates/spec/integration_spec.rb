@@ -23,10 +23,10 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
     @plugin.conf_dir     = File.expand_path(File.dirname(__FILE__) + '../../../../')
     @plugin.start_plugin
 
-    @pm         = create_payment_method(::Killbill::<%= class_name %>::<%= class_name %>PaymentMethod, nil, @call_context.tenant_id)
+    @properties = []
+    @pm         = create_payment_method(::Killbill::<%= class_name %>::<%= class_name %>PaymentMethod, nil, @call_context.tenant_id, @properties)
     @amount     = BigDecimal.new('100')
     @currency   = 'USD'
-    @properties = []
 
     kb_payment_id = SecureRandom.uuid
     1.upto(6) do
