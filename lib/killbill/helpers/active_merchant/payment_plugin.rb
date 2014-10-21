@@ -1,9 +1,11 @@
 module Killbill
   module Plugin
     module ActiveMerchant
+      require 'active_merchant'
       require 'active_record'
       require 'monetize'
       require 'money'
+      require 'offsite_payments'
 
       class PaymentPlugin < ::Killbill::Plugin::Payment
 

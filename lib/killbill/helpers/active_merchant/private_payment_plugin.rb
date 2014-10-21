@@ -3,8 +3,10 @@ module Killbill
     module ActiveMerchant
       require 'action_controller'
       require 'action_view'
+      require 'active_merchant'
       require 'active_support'
       require 'cgi'
+      require 'offsite_payments'
 
       class PrivatePaymentPlugin < ::Killbill::Plugin::Payment
 
@@ -69,36 +71,13 @@ module Killbill
           output_buffer
         end
 
-        protected
+        def save_response_and_transaction(gw_response, api_call, kb_account_id, kb_tenant_id, payment_processor_account_id, kb_payment_id=nil, kb_payment_transaction_id=nil, transaction_type=nil, amount_in_cents=0, currency=nil)
+          logger.warn "Unsuccessful #{api_call}: #{gw_response.message}" unless gw_response.success?
 
-        def reset_output_buffer
-          @output_buffer = ''
-        end
+          response, transaction = @response_model.create_response_and_transaction(@identifier, @transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, {}, @response_model)
 
-        def save_response(response, api_call)
-          save_response_and_transaction(response, api_call)[0]
-        end
+          logger.debug "Recorded transaction: #{transaction.inspect}" unless transaction.nil?
 
-        def save_response_and_transaction(response, api_call, kb_payment_id=nil, amount_in_cents=0, currency=nil)
-          logger.warn "Unsuccessful #{api_call}: #{response.message}" unless response.success?
-
-          # Save the response to our logs
-          response = @response_model.from_response(api_call, kb_payment_id, response)
-          response.save!
-
-          transaction = nil
-          txn_id      = response.txn_id
-          if response.success and !kb_payment_id.blank? and !txn_id.blank?
-            # Record the transaction
-            transaction = response.send("create_#{@identifier}_transaction!",
-                                        :amount_in_cents => amount_in_cents,
-                                        :currency        => currency,
-                                        :api_call        => api_call,
-                                        :kb_payment_id   => kb_payment_id,
-                                        :txn_id          => txn_id)
-
-            logger.debug "Recorded transaction: #{transaction.inspect}"
-          end
           return response, transaction
         end
 
@@ -106,12 +85,20 @@ module Killbill
           ::Killbill::Plugin::ActiveMerchant.kb_apis
         end
 
-        def gateway
-          ::Killbill::Plugin::ActiveMerchant.gateway
+        def gateway(payment_processor_account_id=:default)
+          gateway = ::Killbill::Plugin::ActiveMerchant.gateways[payment_processor_account_id.to_sym]
+          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways}" if gateway.nil?
+          gateway
         end
 
         def logger
           ::Killbill::Plugin::ActiveMerchant.logger
+        end
+
+        protected
+
+        def reset_output_buffer
+          @output_buffer = ''
         end
       end
     end
