@@ -18,11 +18,7 @@ end
 
 helpers do
   def plugin(session = {})
-    ::Killbill::<%= class_name %>::PrivatePaymentPlugin.new(:<%= identifier %>,
-                                                            ::Killbill::<%= class_name %>::<%= class_name %>PaymentMethod,
-                                                            ::Killbill::<%= class_name %>::<%= class_name %>Transaction,
-                                                            ::Killbill::<%= class_name %>::<%= class_name %>Response,
-                                                            session)
+    ::Killbill::<%= class_name %>::PrivatePaymentPlugin.new(session)
   end
 end
 
