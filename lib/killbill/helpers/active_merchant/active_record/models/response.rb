@@ -14,6 +14,8 @@ module Killbill
 
           self.abstract_class = true
 
+          @@quotes_cache = build_quotes_cache
+
           def self.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, response, extra_params = {}, model = Response)
             # Under high load, Rails sometimes fails to set timestamps. Unclear why...
             current_time = Time.now.utc
@@ -219,6 +221,32 @@ module Killbill
             prop.key   = key
             prop.value = value
             prop
+          end
+
+          class << self
+            [:kb_payment_id, :kb_payment_transaction_id].each do |attribute|
+              define_method("responses_from_#{attribute.to_s}") do |transaction_type, attribute_value, kb_tenant_id, how_many = :multiple|
+                if kb_tenant_id.nil?
+                  if transaction_type.nil?
+                    transactions = where("kb_tenant_id is NULL AND #{attribute.to_s} = ?", attribute_value).order(:created_at)
+                  else
+                    transactions = where("transaction_type = #{@@quotes_cache[transaction_type]} AND kb_tenant_id is NULL AND #{attribute.to_s} = #{@@quotes_cache[attribute_value]}").order(:created_at)
+                  end
+                else
+                  if transaction_type.nil?
+                    transactions = where("kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND #{attribute.to_s} = #{@@quotes_cache[attribute_value]}").order(:created_at)
+                  else
+                    transactions = where("transaction_type = #{@@quotes_cache[transaction_type]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND #{attribute.to_s} = #{@@quotes_cache[attribute_value]}").order(:created_at)
+                  end
+                end
+                if how_many == :single
+                  raise "Kill Bill #{attribute} = #{attribute_value} mapping to multiple plugin transactions" if transactions.size > 1
+                  transactions[0]
+                else
+                  transactions
+                end
+              end
+            end
           end
         end
       end

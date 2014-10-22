@@ -41,11 +41,15 @@ module Killbill
               transaction_from_kb_payment_transaction_id(nil, kb_payment_transaction_id, kb_tenant_id, :single)
             end
 
-            def find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, amount_in_cents)
-              begin
-                do_find_candidate_transaction_for_refund(:authorize, kb_payment_id, kb_tenant_id, amount_in_cents)
-              rescue
-                do_find_candidate_transaction_for_refund(:purchase, kb_payment_id, kb_tenant_id, amount_in_cents)
+            def find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, amount_in_cents, transaction_type = nil)
+              if transaction_type.nil?
+                begin
+                  do_find_candidate_transaction_for_refund(:authorize, kb_payment_id, kb_tenant_id, amount_in_cents)
+                rescue
+                  do_find_candidate_transaction_for_refund(:purchase, kb_payment_id, kb_tenant_id, amount_in_cents)
+                end
+              else
+                do_find_candidate_transaction_for_refund(transaction_type, kb_payment_id, kb_tenant_id, amount_in_cents)
               end
             end
 

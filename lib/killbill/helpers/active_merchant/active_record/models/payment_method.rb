@@ -48,6 +48,10 @@ module Killbill
             end
           end
 
+          def self.from_kb_account_id_and_token(token, kb_account_id, kb_tenant_id)
+            from_kb_account_id(kb_account_id, kb_tenant_id).where("token = #{@@quotes_cache[token]}")
+          end
+
           def self.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
             if kb_tenant_id.nil?
               payment_methods = where("kb_payment_method_id = #{@@quotes_cache[kb_payment_method_id]} AND kb_tenant_id is NULL AND is_deleted = #{@@quotes_cache[false]}")

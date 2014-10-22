@@ -149,6 +149,11 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
     expect { ::Killbill::Test::TestPaymentMethod.from_kb_payment_method_id(SecureRandom.uuid, kb_tenant_id) }.to raise_error
     ::Killbill::Test::TestPaymentMethod.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id).kb_payment_method_id.should == kb_payment_method_id
 
+    # Retrieve by account id and token
+    pms = ::Killbill::Test::TestPaymentMethod.from_kb_account_id_and_token(token, kb_account_id, kb_tenant_id)
+    pms.size.should == 1
+    pms[0].kb_payment_method_id.should == kb_payment_method_id
+
     # Delete the payment method and verify we cannot find it anymore
     ::Killbill::Test::TestPaymentMethod.mark_as_deleted!(kb_payment_method_id, kb_tenant_id)
     ::Killbill::Test::TestPaymentMethod.from_kb_account_id(kb_account_id, kb_tenant_id).size.should == 0

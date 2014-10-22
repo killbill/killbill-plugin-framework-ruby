@@ -98,6 +98,26 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     found_response = ::Killbill::Test::TestResponse.find(response.id)
     found_response.should == response
     found_response.test_transaction.should be_nil
+
+    # Lookup responses for kb_payment_id
+    responses = ::Killbill::Test::TestResponse.responses_from_kb_payment_id(transaction_type, kb_payment_id, kb_tenant_id)
+    responses.size.should == 2
+    responses[0].success.should be_true
+    responses[1].success.should be_false
+
+    # Lookup responses for kb_payment_transaction_id
+    responses = ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(transaction_type, kb_payment_transaction_id, kb_tenant_id)
+    responses.size.should == 2
+    responses[0].success.should be_true
+    responses[1].success.should be_false
+
+    # Dummy queries
+    ::Killbill::Test::TestResponse.responses_from_kb_payment_id(:foo, kb_payment_id, kb_tenant_id).size.should == 0
+    ::Killbill::Test::TestResponse.responses_from_kb_payment_id(transaction_type, SecureRandom.uuid, kb_tenant_id).size.should == 0
+    ::Killbill::Test::TestResponse.responses_from_kb_payment_id(transaction_type, kb_payment_id, SecureRandom.uuid).size.should == 0
+    ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(:foo, kb_payment_transaction_id, kb_tenant_id).size.should == 0
+    ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(transaction_type, SecureRandom.uuid, kb_tenant_id).size.should == 0
+    ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(transaction_type, kb_payment_transaction_id, SecureRandom.uuid).size.should == 0
   end
 
   it 'should generate the right SQL query' do
