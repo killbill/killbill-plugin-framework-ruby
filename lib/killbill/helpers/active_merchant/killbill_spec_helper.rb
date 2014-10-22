@@ -26,7 +26,7 @@ module Killbill
           info.properties = pm_properties
           payment_method  = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, properties, context)
 
-          pm = payment_method_model.from_kb_payment_method_id kb_payment_method_id, context.tenant_id
+          pm = payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
           pm.should == payment_method
           pm.kb_account_id.should == kb_account_id
           pm.kb_payment_method_id.should == kb_payment_method_id

@@ -12,7 +12,7 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
     @account_api    = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaUserAccountApi.new
     @payment_api    = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaPaymentApi.new
     svcs            = {:account_user_api => @account_api, :payment_api => @payment_api}
-    @plugin.kb_apis = Killbill::Plugin::KillbillApi.new('cybersource', svcs)
+    @plugin.kb_apis = Killbill::Plugin::KillbillApi.new('<%= identifier %>', svcs)
 
     @call_context           = ::Killbill::Plugin::Model::CallContext.new
     @call_context.tenant_id = '00000011-0022-0033-0044-000000000055'
@@ -69,7 +69,7 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
 
     # Try a full refund
     refund_response = @plugin.refund_payment(@pm.kb_account_id, @kb_payment.id, @kb_payment.transactions[1].id, @pm.kb_payment_method_id, @amount, @currency, @properties, @call_context)
-    refund_response.status.should eq(:PROCESSED), payment_response.gateway_error
+    refund_response.status.should eq(:PROCESSED), refund_response.gateway_error
     refund_response.amount.should == @amount
     refund_response.transaction_type.should == :REFUND
   end
@@ -91,7 +91,7 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
 
     # Try a partial refund
     refund_response = @plugin.refund_payment(@pm.kb_account_id, @kb_payment.id, @kb_payment.transactions[4].id, @pm.kb_payment_method_id, partial_capture_amount, @currency, @properties, @call_context)
-    refund_response.status.should eq(:PROCESSED), payment_response.gateway_error
+    refund_response.status.should eq(:PROCESSED), refund_response.gateway_error
     refund_response.amount.should == partial_capture_amount
     refund_response.transaction_type.should == :REFUND
 
