@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.usage.api.RolledUpUsage
 
-        attr_accessor :subscription_id, :unit_type, :start_time, :end_time, :amount
+        attr_accessor :subscription_id, :start, :end, :rolled_up_units
 
         def initialize()
         end
@@ -43,27 +43,24 @@ module Killbill
           # conversion for subscription_id [type = java.util.UUID]
           @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?
 
-          # conversion for unit_type [type = java.lang.String]
-          @unit_type = @unit_type.to_s unless @unit_type.nil?
-
-          # conversion for start_time [type = org.joda.time.DateTime]
-          if !@start_time.nil?
-            @start_time =  (@start_time.kind_of? Time) ? DateTime.parse(@start_time.to_s) : @start_time
-            @start_time = Java::org.joda.time.DateTime.new(@start_time.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for start [type = org.joda.time.LocalDate]
+          if !@start.nil?
+            @start = Java::org.joda.time.LocalDate.parse(@start.to_s)
           end
 
-          # conversion for end_time [type = org.joda.time.DateTime]
-          if !@end_time.nil?
-            @end_time =  (@end_time.kind_of? Time) ? DateTime.parse(@end_time.to_s) : @end_time
-            @end_time = Java::org.joda.time.DateTime.new(@end_time.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for end [type = org.joda.time.LocalDate]
+          if !@end.nil?
+            @end = Java::org.joda.time.LocalDate.parse(@end.to_s)
           end
 
-          # conversion for amount [type = java.math.BigDecimal]
-          if @amount.nil?
-            @amount = java.math.BigDecimal::ZERO
-          else
-            @amount = java.math.BigDecimal.new(@amount.to_s)
+          # conversion for rolled_up_units [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@rolled_up_units || []).each do |m|
+            # conversion for m [type = org.killbill.billing.usage.api.RolledUpUnit]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
           end
+          @rolled_up_units = tmp
           self
         end
 
@@ -72,28 +69,27 @@ module Killbill
           @subscription_id = j_obj.subscription_id
           @subscription_id = @subscription_id.nil? ? nil : @subscription_id.to_s
 
-          # conversion for unit_type [type = java.lang.String]
-          @unit_type = j_obj.unit_type
-
-          # conversion for start_time [type = org.joda.time.DateTime]
-          @start_time = j_obj.start_time
-          if !@start_time.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
-            str = fmt.print(@start_time)
-            @start_time = DateTime.iso8601(str)
+          # conversion for start [type = org.joda.time.LocalDate]
+          @start = j_obj.start
+          if !@start.nil?
+            @start = @start.to_s
           end
 
-          # conversion for end_time [type = org.joda.time.DateTime]
-          @end_time = j_obj.end_time
-          if !@end_time.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
-            str = fmt.print(@end_time)
-            @end_time = DateTime.iso8601(str)
+          # conversion for end [type = org.joda.time.LocalDate]
+          @end = j_obj.end
+          if !@end.nil?
+            @end = @end.to_s
           end
 
-          # conversion for amount [type = java.math.BigDecimal]
-          @amount = j_obj.amount
-          @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
+          # conversion for rolled_up_units [type = java.util.List]
+          @rolled_up_units = j_obj.rolled_up_units
+          tmp = []
+          (@rolled_up_units || []).each do |m|
+            # conversion for m [type = org.killbill.billing.usage.api.RolledUpUnit]
+            m = Killbill::Plugin::Model::RolledUpUnit.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @rolled_up_units = tmp
           self
         end
 

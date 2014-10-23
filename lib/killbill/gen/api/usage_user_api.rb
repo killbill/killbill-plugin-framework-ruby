@@ -39,41 +39,19 @@ module Killbill
         end
 
 
-        java_signature 'Java::void recordRolledUpUsage(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.DateTime, Java::org.joda.time.DateTime, Java::java.math.BigDecimal, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def record_rolled_up_usage(subscriptionId, unitType, startTime, endTime, amount, context)
+        java_signature 'Java::void recordRolledUpUsage(Java::org.killbill.billing.usage.api.SubscriptionUsageRecord, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def record_rolled_up_usage(usage, context)
 
-          # conversion for subscriptionId [type = java.util.UUID]
-          subscriptionId = java.util.UUID.fromString(subscriptionId.to_s) unless subscriptionId.nil?
-
-          # conversion for unitType [type = java.lang.String]
-          unitType = unitType.to_s unless unitType.nil?
-
-          # conversion for startTime [type = org.joda.time.DateTime]
-          if !startTime.nil?
-            startTime =  (startTime.kind_of? Time) ? DateTime.parse(startTime.to_s) : startTime
-            startTime = Java::org.joda.time.DateTime.new(startTime.to_s, Java::org.joda.time.DateTimeZone::UTC)
-          end
-
-          # conversion for endTime [type = org.joda.time.DateTime]
-          if !endTime.nil?
-            endTime =  (endTime.kind_of? Time) ? DateTime.parse(endTime.to_s) : endTime
-            endTime = Java::org.joda.time.DateTime.new(endTime.to_s, Java::org.joda.time.DateTimeZone::UTC)
-          end
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
+          # conversion for usage [type = org.killbill.billing.usage.api.SubscriptionUsageRecord]
+          usage = usage.to_java unless usage.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
-          @real_java_api.record_rolled_up_usage(subscriptionId, unitType, startTime, endTime, amount, context)
+          @real_java_api.record_rolled_up_usage(usage, context)
         end
 
-        java_signature 'Java::org.killbill.billing.usage.api.RolledUpUsage getUsageForSubscription(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.DateTime, Java::org.joda.time.DateTime, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_usage_for_subscription(subscriptionId, unitType, startTime, endTime, context)
+        java_signature 'Java::org.killbill.billing.usage.api.RolledUpUsage getUsageForSubscription(Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_usage_for_subscription(subscriptionId, unitType, startDate, endDate, context)
 
           # conversion for subscriptionId [type = java.util.UUID]
           subscriptionId = java.util.UUID.fromString(subscriptionId.to_s) unless subscriptionId.nil?
@@ -81,56 +59,44 @@ module Killbill
           # conversion for unitType [type = java.lang.String]
           unitType = unitType.to_s unless unitType.nil?
 
-          # conversion for startTime [type = org.joda.time.DateTime]
-          if !startTime.nil?
-            startTime =  (startTime.kind_of? Time) ? DateTime.parse(startTime.to_s) : startTime
-            startTime = Java::org.joda.time.DateTime.new(startTime.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for startDate [type = org.joda.time.LocalDate]
+          if !startDate.nil?
+            startDate = Java::org.joda.time.LocalDate.parse(startDate.to_s)
           end
 
-          # conversion for endTime [type = org.joda.time.DateTime]
-          if !endTime.nil?
-            endTime =  (endTime.kind_of? Time) ? DateTime.parse(endTime.to_s) : endTime
-            endTime = Java::org.joda.time.DateTime.new(endTime.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for endDate [type = org.joda.time.LocalDate]
+          if !endDate.nil?
+            endDate = Java::org.joda.time.LocalDate.parse(endDate.to_s)
           end
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_usage_for_subscription(subscriptionId, unitType, startTime, endTime, context)
+          res = @real_java_api.get_usage_for_subscription(subscriptionId, unitType, startDate, endDate, context)
           # conversion for res [type = org.killbill.billing.usage.api.RolledUpUsage]
           res = Killbill::Plugin::Model::RolledUpUsage.new.to_ruby(res) unless res.nil?
           return res
         end
 
-        java_signature 'Java::java.util.List getAllUsageForSubscription(Java::java.util.UUID, Java::java.util.Set, Java::java.util.List, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_all_usage_for_subscription(subscriptionId, unitType, transitionTimes, context)
+        java_signature 'Java::java.util.List getAllUsageForSubscription(Java::java.util.UUID, Java::java.util.List, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_all_usage_for_subscription(subscriptionId, transitionDates, context)
 
           # conversion for subscriptionId [type = java.util.UUID]
           subscriptionId = java.util.UUID.fromString(subscriptionId.to_s) unless subscriptionId.nil?
 
-          # conversion for unitType [type = java.util.Set]
-          tmp = java.util.TreeSet.new
-          (unitType || []).each do |m|
-            # conversion for m [type = java.lang.String]
-            m = m.to_s unless m.nil?
-            tmp.add(m)
-          end
-          unitType = tmp
-
-          # conversion for transitionTimes [type = java.util.List]
+          # conversion for transitionDates [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (transitionTimes || []).each do |m|
-            # conversion for m [type = org.joda.time.DateTime]
+          (transitionDates || []).each do |m|
+            # conversion for m [type = org.joda.time.LocalDate]
             if !m.nil?
-              m =  (m.kind_of? Time) ? DateTime.parse(m.to_s) : m
-              m = Java::org.joda.time.DateTime.new(m.to_s, Java::org.joda.time.DateTimeZone::UTC)
+              m = Java::org.joda.time.LocalDate.parse(m.to_s)
             end
             tmp.add(m)
           end
-          transitionTimes = tmp
+          transitionDates = tmp
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_all_usage_for_subscription(subscriptionId, unitType, transitionTimes, context)
+          res = @real_java_api.get_all_usage_for_subscription(subscriptionId, transitionDates, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|

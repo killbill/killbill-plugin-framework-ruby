@@ -29,54 +29,34 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.notification.plugin.api'
-      class ExtBusEvent
+      class UsageRecord
 
-        include org.killbill.billing.notification.plugin.api.ExtBusEvent
 
-        attr_accessor :event_type, :object_type, :object_id, :account_id, :tenant_id
+        attr_accessor :date, :amount
 
         def initialize()
         end
 
         def to_java()
-          # conversion for event_type [type = org.killbill.billing.notification.plugin.api.ExtBusEventType]
-          @event_type = Java::org.killbill.billing.notification.plugin.api.ExtBusEventType.value_of("#{@event_type.to_s}") unless @event_type.nil?
+          # conversion for date [type = org.joda.time.LocalDate]
+          if !@date.nil?
+            @date = Java::org.joda.time.LocalDate.parse(@date.to_s)
+          end
 
-          # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
-
-          # conversion for object_id [type = java.util.UUID]
-          @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
-
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
-
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
-          self
+          # conversion for amount [type = java.lang.Long]
+          @amount = @amount
+          Java::org.killbill.billing.usage.api.UsageRecord.new(@date, @amount)
         end
 
         def to_ruby(j_obj)
-          # conversion for event_type [type = org.killbill.billing.notification.plugin.api.ExtBusEventType]
-          @event_type = j_obj.event_type
-          @event_type = @event_type.to_s.to_sym unless @event_type.nil?
+          # conversion for date [type = org.joda.time.LocalDate]
+          @date = j_obj.date
+          if !@date.nil?
+            @date = @date.to_s
+          end
 
-          # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = j_obj.object_type
-          @object_type = @object_type.to_s.to_sym unless @object_type.nil?
-
-          # conversion for object_id [type = java.util.UUID]
-          @object_id = j_obj.object_id
-          @object_id = @object_id.nil? ? nil : @object_id.to_s
-
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = j_obj.account_id
-          @account_id = @account_id.nil? ? nil : @account_id.to_s
-
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = j_obj.tenant_id
-          @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
+          # conversion for amount [type = java.lang.Long]
+          @amount = j_obj.amount
           self
         end
 

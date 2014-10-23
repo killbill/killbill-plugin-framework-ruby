@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.payment.api.PaymentOptions
 
-        attr_accessor :is_external_payment, :payment_control_plugin_name
+        attr_accessor :is_external_payment, :payment_control_plugin_names
 
         def initialize()
         end
@@ -43,8 +43,14 @@ module Killbill
           # conversion for is_external_payment [type = boolean]
           @is_external_payment = @is_external_payment.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_external_payment)
 
-          # conversion for payment_control_plugin_name [type = java.lang.String]
-          @payment_control_plugin_name = @payment_control_plugin_name.to_s unless @payment_control_plugin_name.nil?
+          # conversion for payment_control_plugin_names [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@payment_control_plugin_names || []).each do |m|
+            # conversion for m [type = java.lang.String]
+            m = m.to_s unless m.nil?
+            tmp.add(m)
+          end
+          @payment_control_plugin_names = tmp
           self
         end
 
@@ -58,8 +64,14 @@ module Killbill
             @is_external_payment = tmp_bool ? true : false
           end
 
-          # conversion for payment_control_plugin_name [type = java.lang.String]
-          @payment_control_plugin_name = j_obj.payment_control_plugin_name
+          # conversion for payment_control_plugin_names [type = java.util.List]
+          @payment_control_plugin_names = j_obj.payment_control_plugin_names
+          tmp = []
+          (@payment_control_plugin_names || []).each do |m|
+            # conversion for m [type = java.lang.String]
+            tmp << m
+          end
+          @payment_control_plugin_names = tmp
           self
         end
 

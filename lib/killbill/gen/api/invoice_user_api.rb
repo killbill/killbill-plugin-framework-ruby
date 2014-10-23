@@ -203,8 +203,8 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::org.killbill.billing.invoice.api.Invoice triggerInvoiceGeneration(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::boolean, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def trigger_invoice_generation(accountId, targetDate, dryRun, context)
+        java_signature 'Java::org.killbill.billing.invoice.api.Invoice triggerInvoiceGeneration(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::org.killbill.billing.invoice.api.DryRunArguments, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def trigger_invoice_generation(accountId, targetDate, dryRunArguments, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -214,13 +214,13 @@ module Killbill
             targetDate = Java::org.joda.time.LocalDate.parse(targetDate.to_s)
           end
 
-          # conversion for dryRun [type = boolean]
-          dryRun = dryRun.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(dryRun)
+          # conversion for dryRunArguments [type = org.killbill.billing.invoice.api.DryRunArguments]
+          dryRunArguments = dryRunArguments.to_java unless dryRunArguments.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.trigger_invoice_generation(accountId, targetDate, dryRun, context)
+            res = @real_java_api.trigger_invoice_generation(accountId, targetDate, dryRunArguments, context)
             # conversion for res [type = org.killbill.billing.invoice.api.Invoice]
             res = Killbill::Plugin::Model::Invoice.new.to_ruby(res) unless res.nil?
             return res

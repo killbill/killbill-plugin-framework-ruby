@@ -29,54 +29,42 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.notification.plugin.api'
-      class ExtBusEvent
+      class UnitUsageRecord
 
-        include org.killbill.billing.notification.plugin.api.ExtBusEvent
 
-        attr_accessor :event_type, :object_type, :object_id, :account_id, :tenant_id
+        attr_accessor :unit_type, :daily_amount
 
         def initialize()
         end
 
         def to_java()
-          # conversion for event_type [type = org.killbill.billing.notification.plugin.api.ExtBusEventType]
-          @event_type = Java::org.killbill.billing.notification.plugin.api.ExtBusEventType.value_of("#{@event_type.to_s}") unless @event_type.nil?
+          # conversion for unit_type [type = java.lang.String]
+          @unit_type = @unit_type.to_s unless @unit_type.nil?
 
-          # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
-
-          # conversion for object_id [type = java.util.UUID]
-          @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
-
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
-
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
-          self
+          # conversion for daily_amount [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@daily_amount || []).each do |m|
+            # conversion for m [type = org.killbill.billing.usage.api.UsageRecord]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @daily_amount = tmp
+          Java::org.killbill.billing.usage.api.UnitUsageRecord.new(@unit_type, @daily_amount)
         end
 
         def to_ruby(j_obj)
-          # conversion for event_type [type = org.killbill.billing.notification.plugin.api.ExtBusEventType]
-          @event_type = j_obj.event_type
-          @event_type = @event_type.to_s.to_sym unless @event_type.nil?
+          # conversion for unit_type [type = java.lang.String]
+          @unit_type = j_obj.unit_type
 
-          # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = j_obj.object_type
-          @object_type = @object_type.to_s.to_sym unless @object_type.nil?
-
-          # conversion for object_id [type = java.util.UUID]
-          @object_id = j_obj.object_id
-          @object_id = @object_id.nil? ? nil : @object_id.to_s
-
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = j_obj.account_id
-          @account_id = @account_id.nil? ? nil : @account_id.to_s
-
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = j_obj.tenant_id
-          @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
+          # conversion for daily_amount [type = java.util.List]
+          @daily_amount = j_obj.daily_amount
+          tmp = []
+          (@daily_amount || []).each do |m|
+            # conversion for m [type = org.killbill.billing.usage.api.UsageRecord]
+            m = Killbill::Plugin::Model::UsageRecord.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @daily_amount = tmp
           self
         end
 

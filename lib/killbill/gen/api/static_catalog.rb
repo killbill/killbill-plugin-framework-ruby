@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.StaticCatalog
 
-        attr_accessor :catalog_name, :recurring_billing_mode, :effective_date, :current_supported_currencies, :current_products, :current_units, :current_plans, :available_base_plan_listings, :available_addon_listings
+        attr_accessor :catalog_name, :recurring_billing_mode, :effective_date, :current_supported_currencies, :current_products, :current_units, :current_plans, :available_base_plan_listings, :available_add_on_listings
 
         def initialize()
         end
@@ -74,14 +74,14 @@ module Killbill
           end
           @available_base_plan_listings = tmp
 
-          # conversion for available_addon_listings [type = java.util.List]
+          # conversion for available_add_on_listings [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (@available_addon_listings || []).each do |m|
+          (@available_add_on_listings || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Listing]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @available_addon_listings = tmp
+          @available_add_on_listings = tmp
           self
         end
 
@@ -128,15 +128,15 @@ module Killbill
           end
           @available_base_plan_listings = tmp
 
-          # conversion for available_addon_listings [type = java.util.List]
-          @available_addon_listings = j_obj.available_addon_listings
+          # conversion for available_add_on_listings [type = java.util.List]
+          @available_add_on_listings = j_obj.available_add_on_listings
           tmp = []
-          (@available_addon_listings || []).each do |m|
+          (@available_add_on_listings || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Listing]
             m = Killbill::Plugin::Model::Listing.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @available_addon_listings = tmp
+          @available_add_on_listings = tmp
           self
         end
 

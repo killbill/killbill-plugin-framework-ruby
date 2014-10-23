@@ -1,5 +1,8 @@
 3.1.12
-    ActiveMerchant: store payment_processor_account_id (DDL change)
+    ActiveMerchant:
+      - store payment_processor_account_id (DDL change)
+      - let the plugin override the linked transaction type (capture/refund)
+      - generator enhancements
 
 3.1.11
     ActiveMerchant:
