@@ -29,21 +29,31 @@ end
 
 require 'rspec'
 
+require defined?(JRUBY_VERSION) ? 'arjdbc' : 'active_record'
+db_config = {
+  :adapter => ENV['AR_ADAPTER'] || 'sqlite3',
+  :database => ENV['AR_DATABASE'] || 'test.db',
+}
+db_config[:username] = ENV['AR_USERNAME'] if ENV['AR_USERNAME']
+db_config[:password] = ENV['AR_PASSWORD'] if ENV['AR_PASSWORD']
+ActiveRecord::Base.establish_connection(db_config)
+
+# For debugging
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+ActiveRecord::Base.logger.level =
+  if level = ENV['LOG_LEVEL']
+    level.to_i.to_s == level ? level.to_i : Logger.const_get(level.upcase)
+  else
+    Logger::INFO
+  end
+# Create the schema
+require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
+
 RSpec.configure do |config|
   config.color_enabled = true
   config.tty = true
   config.formatter = 'documentation'
 end
-
-require 'active_record'
-ActiveRecord::Base.establish_connection(
-  :adapter => 'sqlite3',
-  :database => 'test.db'
-)
-# For debugging
-#ActiveRecord::Base.logger = Logger.new(STDOUT)
-# Create the schema
-require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
 
 begin
   require 'securerandom'
