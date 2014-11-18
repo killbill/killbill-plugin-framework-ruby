@@ -3,6 +3,7 @@ require 'java'
 require 'bundler'
 require 'logger'
 require 'tempfile'
+require 'tmpdir'
 
 require 'killbill'
 require 'killbill/killbill_logger'
@@ -49,10 +50,32 @@ ActiveRecord::Base.logger.level =
 # Create the schema
 require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
 
+module Killbill
+  module Plugin
+    module SpecHelper
+      def with_plugin_yaml_config(file_name, plugin_config, include_db_config = true)
+        if include_db_config
+          db_config = ActiveRecord::Base.connection_config.select do |key,_|
+            [ :adapter, :database, :username, :password ].include? key
+          end
+          plugin_config = plugin_config.dup
+          plugin_config[:database] = db_config
+        end
+        Dir.mktmpdir do |dir|
+          file = File.join(dir, file_name)
+          File.open(file, 'w+') { |f| f.write plugin_config.to_yaml }
+          yield file
+        end
+      end
+    end
+  end
+end
+
 RSpec.configure do |config|
   config.color_enabled = true
   config.tty = true
   config.formatter = 'documentation'
+  config.include Killbill::Plugin::SpecHelper
 end
 
 begin
