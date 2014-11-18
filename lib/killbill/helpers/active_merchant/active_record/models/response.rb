@@ -48,7 +48,7 @@ module Killbill
 
             # Rails wraps all create/save calls in a transaction. To speed things up, create a single transaction for both rows.
             # This has a small gotcha in the unhappy path though (see below).
-            transaction do
+            with_connection_and_transaction do
               # Save the response to our logs
               response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, extra_params, model)
               response.save!(shared_activerecord_options)
