@@ -45,7 +45,7 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
     Killbill::<%= class_name %>::<%= class_name %>Response.all.size.should == 1
     Killbill::<%= class_name %>::<%= class_name %>Transaction.all.size.should == 0
 
-    payment_response = @plugin.purchase_payment(@pm.kb_account_id, @kb_payment.id, @kb_payment.transactions[0].id, SecureRandom.uuid, @amount, @currency, properties, @call_context)
+    payment_response = @plugin.purchase_payment(@pm.kb_account_id, @kb_payment.id, @kb_payment.transactions[0].id, @pm.kb_payment_method_id, @amount, @currency, properties, @call_context)
     payment_response.status.should eq(:PROCESSED), payment_response.gateway_error
     payment_response.amount.should == @amount
     payment_response.transaction_type.should == :PURCHASE
