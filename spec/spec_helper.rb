@@ -55,16 +55,19 @@ module Killbill
     module SpecHelper
       def with_plugin_yaml_config(file_name, plugin_config, include_db_config = true)
         if include_db_config
-          db_config = ActiveRecord::Base.connection_config.select do |key,_|
-            [ :adapter, :database, :username, :password ].include? key
-          end
           plugin_config = plugin_config.dup
-          plugin_config[:database] = db_config
+          plugin_config[:database] = database_config
         end
         Dir.mktmpdir do |dir|
           file = File.join(dir, file_name)
           File.open(file, 'w+') { |f| f.write plugin_config.to_yaml }
           yield file
+        end
+      end
+
+      def database_config
+        ActiveRecord::Base.connection_config.select do |key,_|
+          [ :adapter, :database, :username, :password ].include? key
         end
       end
     end

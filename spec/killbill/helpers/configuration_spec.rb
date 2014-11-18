@@ -93,6 +93,10 @@ describe Killbill::Plugin::ActiveMerchant do
   end
 
   def do_initialize!(extra_config='')
+    db_config = ''
+    database_config.to_yaml.sub("---\n", '').
+      each_line { |line| db_config << "  #{line}" } # indent
+
     Dir.mktmpdir do |dir|
       file = File.new(File.join(dir, 'test.yml'), 'w+')
       file.write(<<-eos)
@@ -100,8 +104,7 @@ describe Killbill::Plugin::ActiveMerchant do
 #{extra_config}
 # As defined by spec_helper.rb
 :database:
-  :adapter: 'sqlite3'
-  :database: 'test.db'
+#{db_config}
       eos
       file.close
 
