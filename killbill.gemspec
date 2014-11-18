@@ -29,8 +29,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'thread_safe', '~> 0.3.4'
   s.add_development_dependency 'activerecord', '~> 4.1.0'
   if defined?(JRUBY_VERSION)
-    s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3.7'
-    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3.7'
+    s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3.12'
+    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3.12'
   else
     s.add_development_dependency 'sqlite3', '~> 1.3.7'
   end
