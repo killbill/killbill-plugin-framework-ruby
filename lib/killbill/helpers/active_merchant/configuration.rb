@@ -50,6 +50,7 @@ module Killbill
 
         begin
           require 'active_record'
+          require 'arjdbc' if defined?(JRUBY_VERSION)
           ::ActiveRecord::Base.establish_connection(@@config[:database])
           ::ActiveRecord::Base.logger = @@logger
         rescue => e
