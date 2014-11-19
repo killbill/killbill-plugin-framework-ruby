@@ -51,7 +51,21 @@ module Killbill
         begin
           require 'active_record'
           require 'arjdbc' if defined?(JRUBY_VERSION)
-          ::ActiveRecord::Base.establish_connection(@@config[:database])
+          db_config = @@config[:database]
+          if defined?(JRUBY_VERSION) && db_config.is_a?(Hash)
+            # we accept a **pool: false** configuration in which case we
+            # the built-in pool is replaced with a false one (under JNDI) :
+            if db_config[:pool] == false && ( db_config[:jndi] || db_config[:data_source] )
+              begin; require 'active_record/bogacs'
+                pool_class = ::ActiveRecord::Bogacs::FalsePool
+                ::ActiveRecord::ConnectionAdapters::ConnectionHandler.connection_pool_class = pool_class
+              rescue LoadError
+                db_config.delete(:pool) # do not confuse AR's built-in pool
+                @@logger.warn "ActiveRecord-Bogacs missing, will use default (built-in) AR pool."
+              end
+            end
+          end
+          ::ActiveRecord::Base.establish_connection(db_config)
           ::ActiveRecord::Base.logger = @@logger
         rescue => e
           @@logger.warn "Unable to establish a database connection: #{e}"

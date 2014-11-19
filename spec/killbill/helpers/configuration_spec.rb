@@ -2,9 +2,10 @@ require 'spec_helper'
 
 describe Killbill::Plugin::ActiveMerchant do
 
-  before(:all) do
-    @logger       = Logger.new(STDOUT)
-    @logger.level = Logger::INFO
+  let(:logger) do
+    logger       = Logger.new(STDOUT)
+    logger.level = Logger::INFO
+    logger
   end
 
   it 'should support a configuration for a single gateway' do
@@ -82,6 +83,23 @@ describe Killbill::Plugin::ActiveMerchant do
     gw[:default][:password].should == 'password_1'
   end
 
+  it 'sets up false pool with jndi database configuration' do
+    db_config = { :adapter => 'mysql2', :jndi => 'jdbc/MyDB', :pool => false }
+
+    ActiveRecord::Base.should_receive(:establish_connection).with(db_config).once
+    do_initialize!({ :test => true }, db_config)
+
+    pool_class = ActiveRecord::Base.connection_handler.connection_pool_class
+    expect( pool_class ).to be ActiveRecord::Bogacs::FalsePool
+  end
+
+  after do
+    if ::ActiveRecord::ConnectionAdapters::ConnectionHandler.respond_to?(:connection_pool_class=)
+      pool_class = ::ActiveRecord::ConnectionAdapters::ConnectionPool # restore if Bogacs loaded
+      ::ActiveRecord::ConnectionAdapters::ConnectionHandler.connection_pool_class = pool_class
+    end
+  end
+
   private
 
   def do_common_checks
@@ -89,29 +107,29 @@ describe Killbill::Plugin::ActiveMerchant do
     ::Killbill::Plugin::ActiveMerchant.currency_conversions.should be_nil
     ::Killbill::Plugin::ActiveMerchant.initialized.should be_true
     ::Killbill::Plugin::ActiveMerchant.kb_apis.should_not be_nil
-    ::Killbill::Plugin::ActiveMerchant.logger.should == @logger
+    ::Killbill::Plugin::ActiveMerchant.logger.should == logger
   end
 
-  def do_initialize!(extra_config='')
-    db_config = ''
-    database_config.to_yaml.sub("---\n", '').
-      each_line { |line| db_config << "  #{line}" } # indent
+  def do_initialize!(extra_config = '', db_config = database_config)
+    extra_config_yaml = ''; db_config_yaml = ''
+
+    [ [ extra_config, extra_config_yaml ],
+      [ db_config,    db_config_yaml ] ].each do |config, config_yaml|
+      if config.is_a?(String) then config_yaml.replace(config)
+      else
+        config.to_yaml.sub("---\n", '').
+          each_line { |line| config_yaml << "  #{line}" } # indent
+      end
+    end
 
     Dir.mktmpdir do |dir|
-      file = File.new(File.join(dir, 'test.yml'), 'w+')
-      file.write(<<-eos)
-:test:
-#{extra_config}
-# As defined by spec_helper.rb
-:database:
-#{db_config}
-      eos
-      file.close
-
+      File.open(path = File.join(dir, 'test.yml'), 'w+') do |file|
+        file.write(":test:\n#{extra_config_yaml}:database:\n#{db_config_yaml}")
+      end
       ::Killbill::Plugin::ActiveMerchant.initialize! Proc.new { |config| config },
                                                      :test,
-                                                     @logger,
-                                                     file.path,
+                                                     logger,
+                                                     path,
                                                      ::Killbill::Plugin::KillbillApi.new('test', {})
     end
   end
