@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Killbill
   module Plugin
     module ActiveMerchant
