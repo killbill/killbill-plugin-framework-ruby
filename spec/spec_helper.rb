@@ -1,6 +1,5 @@
-require 'java'
-
 require 'bundler'
+
 require 'logger'
 require 'tempfile'
 require 'tmpdir'
@@ -19,12 +18,16 @@ require 'killbill/helpers/active_merchant/killbill_spec_helper'
 
 require 'killbill/ext/active_merchant/typhoeus_connection'
 
-%w(
-  MockAccountUserApi
-).each do |api|
-  begin
-    java_import "org.killbill.billing.mock.api.#{api}"
-  rescue LoadError
+if defined? JRUBY_VERSION
+  require 'java'
+  %w(
+    MockAccountUserApi
+  ).each do |api|
+    begin
+      java_import "org.killbill.billing.mock.api.#{api}"
+    rescue LoadError => e
+      puts e
+    end
   end
 end
 
