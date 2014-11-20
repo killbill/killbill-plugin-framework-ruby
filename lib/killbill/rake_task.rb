@@ -160,26 +160,47 @@ module Killbill
     end
 
     def find_plugin_gem(spec)
-      gem_name        = spec.file_name
+      gem_name = spec.file_name
       # spec.loaded_from is the path to the gemspec file
-      base            = Pathname.new(File.dirname(spec.loaded_from)).expand_path
+      if spec.loaded_from # will likely be nil for the plugin's gemspec
+        base = Pathname.new(File.dirname(spec.loaded_from)).expand_path
+      else
+        base = nil
+      end
 
       # Try in the base directory first
       plugin_gem_file = Pathname.new(gem_name).expand_path
-      plugin_gem_file = base.join(gem_name).expand_path unless plugin_gem_file.file?
-
-      # Try in subdirectories next
-      unless plugin_gem_file.file?
-        plugin_gem_files = Dir[File.join(base, "**/#{spec.file_name}")]
-        @logger.debug "Gem candidates found: #{plugin_gem_files}"
-        # Take the first one, assume the other ones are from build directories (e.g. pkg)
-        plugin_gem_file = Pathname.new(plugin_gem_files.first).expand_path unless plugin_gem_files.empty?
+      if base && ! plugin_gem_file.file?
+        plugin_gem_file = base.join(gem_name).expand_path
+      end
+      unless plugin_gem_file.file? # `rake build` (./pkg)
+        plugin_gem_file = Pathname.new(File.join('pkg', gem_name))
       end
 
-      raise "Unable to find #{gem_name} in #{base}. Did you build it? (`rake build')" unless plugin_gem_file.file?
+      unless plugin_gem_file.file?
+        gem_paths = Gem.paths.path.dup; gem_paths.unshift(base) if base
+        # NOTE: in case it's the plugin.gem not sure if this makes sense
+        gem_paths.each do |gem_path| # e.g. /opt/rvm/gems/jruby-1.7.16@global
+          if File.directory? cache_dir = File.join(gem_path, 'cache')
+            if File.file? gem_file = File.join(cache_dir, gem_name)
+              plugin_gem_file = Pathname.new(gem_file); break
+            end
+          else
+            gem_files = Dir[File.join(gem_path, "**/#{gem_name}")]
+            unless gem_files.empty?
+              @logger.debug "Gem candidates found: #{gem_files.inspect}"
+              plugin_gem_file = Pathname.new(gem_files.first); break
+            end
+          end
+        end
+      end
+
+      unless plugin_gem_file.file?
+        raise "Unable to find #{gem_name} in #{base}. Did you build it? (`rake build')"
+      end
 
       @logger.debug "Found #{plugin_gem_file}"
-      Pathname.new(plugin_gem_file).expand_path
+      plugin_gem_file.expand_path
     end
 
     # Parse the existing Gemfile and Gemfile.lock files
