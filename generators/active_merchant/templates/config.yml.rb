@@ -14,6 +14,5 @@
 # In Kill Bill
 #  :adapter: 'jdbcmysql'
 #  :jndi: 'killbill/osgi/jdbc'
-#  :driver: 'com.mysql.jdbc.Driver'
 #  :connection_alive_sql: 'select 1'
 #  :pool: 250
