@@ -38,16 +38,6 @@ module Killbill
           @@gateways[:default] = Gateway.wrap(gateway_builder, logger, gateway_configs)
         end
 
-        if defined?(JRUBY_VERSION)
-          begin
-            # See https://github.com/jruby/activerecord-jdbc-adapter/issues/302
-            require 'jdbc/mysql'
-            ::Jdbc::MySQL.load_driver(:require) if ::Jdbc::MySQL.respond_to?(:load_driver)
-          rescue => e
-            @@logger.warn "Unable to load the JDBC driver: #{e}"
-          end
-        end
-
         begin
           require 'active_record'
           require 'arjdbc' if defined?(JRUBY_VERSION)
