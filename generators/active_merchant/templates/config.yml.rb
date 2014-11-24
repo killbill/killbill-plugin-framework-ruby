@@ -1,6 +1,5 @@
 :<%= identifier %>:
   :test: true
-  :log_file: /var/tmp/<%= identifier %>.log
 
 :database:
   :adapter: sqlite3
