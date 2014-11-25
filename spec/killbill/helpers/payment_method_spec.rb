@@ -250,7 +250,7 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
     pmp = pm.to_payment_method_plugin
     pmp.kb_payment_method_id.should == kb_payment_method_id
     pmp.external_payment_method_id.should == external_payment_method_id
-    pmp.properties.size.should == 12
+    pmp.properties.size.should == 15
 
     # Verify conversion to PaymentMethodInfoPlugin
     pmip = pm.to_payment_method_info_plugin

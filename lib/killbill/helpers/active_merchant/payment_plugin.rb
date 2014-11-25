@@ -152,7 +152,12 @@ module Killbill
           options[:order_id]    ||= kb_payment_method_id
 
           # Registering a card or a token
-          payment_source        = get_payment_source(nil, all_properties, options, context)
+          if options[:skip_gw]
+            # If nothing is passed, that's fine -  we probably just want a placeholder row in the plugin
+            payment_source = get_payment_source(nil, all_properties, options, context) rescue nil
+          else
+            payment_source = get_payment_source(nil, all_properties, options, context)
+          end
 
           # Go to the gateway
           payment_processor_account_id = options[:payment_processor_account_id] || :default
@@ -161,7 +166,7 @@ module Killbill
           response, transaction        = save_response_and_transaction(gw_response, :add_payment_method, kb_account_id, context.tenant_id, payment_processor_account_id)
 
           if response.success
-            # If we have skipped the call to the gateway, we still need to store the payment method
+            # If we have skipped the call to the gateway, we still need to store the payment method (either a token or the full credit card)
             if options[:skip_gw]
               cc_or_token = payment_source
             else
@@ -442,12 +447,30 @@ module Killbill
         end
 
         def get_payment_source(kb_payment_method_id, properties, options, context)
+          # Use ccNumber for the real number (if stored locally) or an in-house token (proxy tokenization). It is assumed the rest
+          # of the card details are filled (expiration dates, etc.).
           cc_number   = find_value_from_properties(properties, 'ccNumber')
+          # Use token for the token stored in an external vault. The token itself should be enough to process payments.
           cc_or_token = find_value_from_properties(properties, 'token') || find_value_from_properties(properties, 'cardId')
 
           if cc_number.blank? and cc_or_token.blank?
-            # Existing token
-            cc_or_token = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id).token
+            # Lookup existing token
+            pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
+            if pm.token.nil?
+              # Real credit card
+              cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
+                  :number             => pm.cc_number,
+                  :brand              => pm.cc_type,
+                  :month              => pm.cc_exp_month,
+                  :year               => pm.cc_exp_year,
+                  :verification_value => pm.cc_verification_value,
+                  :first_name         => pm.cc_first_name,
+                  :last_name          => pm.cc_last_name
+              )
+            else
+              # Tokenized card
+              cc_or_token = pm.token
+            end
           elsif !cc_number.blank? and cc_or_token.blank?
             # Real credit card
             cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(

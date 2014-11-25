@@ -29,6 +29,7 @@ module Killbill
                           :cc_exp_month         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.month : nil,
                           :cc_exp_year          => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.year : nil,
                           :cc_last_4            => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_digits : nil,
+                          :cc_number            => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.number : nil,
                           :address1             => (options[:billing_address] || {})[:address1],
                           :address2             => (options[:billing_address] || {})[:address2],
                           :city                 => (options[:billing_address] || {})[:city],
@@ -147,11 +148,14 @@ module Killbill
           def to_payment_method_plugin
             properties = []
             properties << create_plugin_property('token', external_payment_method_id)
+            properties << create_plugin_property('ccFirstName', cc_first_name)
+            properties << create_plugin_property('ccLastName', cc_last_name)
             properties << create_plugin_property('ccName', cc_name)
             properties << create_plugin_property('ccType', cc_type)
             properties << create_plugin_property('ccExpirationMonth', cc_exp_month)
             properties << create_plugin_property('ccExpirationYear', cc_exp_year)
             properties << create_plugin_property('ccLast4', cc_last_4)
+            properties << create_plugin_property('ccNumber', cc_number)
             properties << create_plugin_property('address1', address1)
             properties << create_plugin_property('address2', address2)
             properties << create_plugin_property('city', city)
