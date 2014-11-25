@@ -151,10 +151,10 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     @plugin.find_value_from_properties(pm.properties, 'ccFirstName').should == 'Paul'
     @plugin.find_value_from_properties(pm.properties, 'ccLastName').should == 'Dupond'
     @plugin.find_value_from_properties(pm.properties, 'ccType').should == 'visa'
-    @plugin.find_value_from_properties(pm.properties, 'ccExpirationMonth').should == 12
-    @plugin.find_value_from_properties(pm.properties, 'ccExpirationYear').should == 17
-    @plugin.find_value_from_properties(pm.properties, 'ccLast4').should == 1111
-    @plugin.find_value_from_properties(pm.properties, 'ccNumber').should == 41111111111111111
+    @plugin.find_value_from_properties(pm.properties, 'ccExpirationMonth').should == '12'
+    @plugin.find_value_from_properties(pm.properties, 'ccExpirationYear').should == '17'
+    @plugin.find_value_from_properties(pm.properties, 'ccLast4').should == '1111'
+    @plugin.find_value_from_properties(pm.properties, 'ccNumber').should == '41111111111111111'
 
     # Verify we can retrieve the payment source, during the payment call
     source = @plugin.get_payment_source(pm.kb_payment_method_id, [], {}, @call_context)

@@ -12,7 +12,7 @@ end
 
 describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
 
-  before :all do
+  before :each do
     ::Killbill::Test::TestPaymentMethod.delete_all
   end
 
@@ -50,9 +50,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
     pm.cc_first_name.should == cc.first_name
     pm.cc_last_name.should == cc.last_name
     pm.cc_type.should == cc.brand
-    pm.cc_exp_month.should == cc.month.to_i
-    pm.cc_exp_year.should == cc.year.to_i
-    pm.cc_last_4.should == cc.last_digits.to_i
+    pm.cc_exp_month.should == cc.month
+    pm.cc_exp_year.should == cc.year
+    pm.cc_last_4.should == cc.last_digits
     pm.address1.should == options[:billing_address][:address1]
     pm.address2.should == options[:billing_address][:address2]
     pm.city.should == options[:billing_address][:city]
@@ -71,9 +71,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
     pm.cc_first_name.should == cc.first_name
     pm.cc_last_name.should == cc.last_name
     pm.cc_type.should == cc.brand
-    pm.cc_exp_month.should == cc.month.to_i
-    pm.cc_exp_year.should == cc.year.to_i
-    pm.cc_last_4.should == cc.last_digits.to_i
+    pm.cc_exp_month.should == cc.month
+    pm.cc_exp_year.should == cc.year
+    pm.cc_last_4.should == cc.last_digits
     pm.address1.should be_nil
     pm.address2.should be_nil
     pm.city.should be_nil
@@ -132,7 +132,7 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
     kb_tenant_id         = SecureRandom.uuid
     response             = ::ActiveMerchant::Billing::Response.new(true, nil, {}, {:authorization => SecureRandom.uuid})
     token                = SecureRandom.uuid
-    pm = ::Killbill::Test::TestPaymentMethod.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, token, response, {}, {}, ::Killbill::Test::TestPaymentMethod)
+    pm                   = ::Killbill::Test::TestPaymentMethod.from_response(kb_account_id, kb_payment_method_id, kb_tenant_id, token, response, {}, {}, ::Killbill::Test::TestPaymentMethod)
     pm.save!
 
     # Retrieve by account id
@@ -160,14 +160,39 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
     expect { ::Killbill::Test::TestPaymentMethod.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id) }.to raise_error
   end
 
+  it 'should handle non-numeric credit card values' do
+    pm = ::Killbill::Test::TestPaymentMethod.create :kb_account_id        => '11-22-33-44',
+                                                    :kb_payment_method_id => '55-66-77-88',
+                                                    :kb_tenant_id         => '11-22-33',
+                                                    :cc_first_name        => 'ccFirstName',
+                                                    :cc_last_name         => 'ccLastName',
+                                                    :cc_type              => 'ccType',
+                                                    :cc_exp_month         => '07',
+                                                    :cc_exp_year          => '01',
+                                                    :cc_last_4            => '0001',
+                                                    :cc_number            => 'some-proprietary-token-format',
+                                                    :address1             => 'address1',
+                                                    :address2             => 'address2',
+                                                    :city                 => 'city',
+                                                    :state                => 'state',
+                                                    :zip                  => 'zip',
+                                                    :country              => 'country'
+
+    pm = ::Killbill::Test::TestPaymentMethod.from_kb_payment_method_id(pm.kb_payment_method_id, pm.kb_tenant_id)
+    pm.cc_exp_month.should == '07'
+    pm.cc_exp_year.should == '01'
+    pm.cc_last_4.should == '0001'
+    pm.cc_number.should == 'some-proprietary-token-format'
+  end
+
   it 'should generate the right SQL query' do
     # Check count query (search query numeric)
-    expected_query = "SELECT COUNT(DISTINCT \"test_payment_methods\".\"id\") FROM \"test_payment_methods\"  WHERE ((((((((((((((\"test_payment_methods\".\"kb_account_id\" = '1234' OR \"test_payment_methods\".\"kb_payment_method_id\" = '1234') OR \"test_payment_methods\".\"token\" = '1234') OR \"test_payment_methods\".\"cc_type\" = '1234') OR \"test_payment_methods\".\"state\" = '1234') OR \"test_payment_methods\".\"zip\" = '1234') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%1234%') OR \"test_payment_methods\".\"address1\" LIKE '%1234%') OR \"test_payment_methods\".\"address2\" LIKE '%1234%') OR \"test_payment_methods\".\"city\" LIKE '%1234%') OR \"test_payment_methods\".\"country\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_exp_month\" = 1234) OR \"test_payment_methods\".\"cc_exp_year\" = 1234) OR \"test_payment_methods\".\"cc_last_4\" = 1234) AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\""
+    expected_query = "SELECT COUNT(DISTINCT \"test_payment_methods\".\"id\") FROM \"test_payment_methods\"  WHERE ((((((((((((((\"test_payment_methods\".\"kb_account_id\" = '1234' OR \"test_payment_methods\".\"kb_payment_method_id\" = '1234') OR \"test_payment_methods\".\"token\" = '1234') OR \"test_payment_methods\".\"cc_type\" = '1234') OR \"test_payment_methods\".\"state\" = '1234') OR \"test_payment_methods\".\"zip\" = '1234') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%1234%') OR \"test_payment_methods\".\"address1\" LIKE '%1234%') OR \"test_payment_methods\".\"address2\" LIKE '%1234%') OR \"test_payment_methods\".\"city\" LIKE '%1234%') OR \"test_payment_methods\".\"country\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_exp_month\" = '1234') OR \"test_payment_methods\".\"cc_exp_year\" = '1234') OR \"test_payment_methods\".\"cc_last_4\" = '1234') AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\""
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestPaymentMethod.search_query('1234', '11-22-33').to_sql.should == expected_query
 
     # Check query with results (search query numeric)
-    expected_query = "SELECT  DISTINCT \"test_payment_methods\".* FROM \"test_payment_methods\"  WHERE ((((((((((((((\"test_payment_methods\".\"kb_account_id\" = '1234' OR \"test_payment_methods\".\"kb_payment_method_id\" = '1234') OR \"test_payment_methods\".\"token\" = '1234') OR \"test_payment_methods\".\"cc_type\" = '1234') OR \"test_payment_methods\".\"state\" = '1234') OR \"test_payment_methods\".\"zip\" = '1234') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%1234%') OR \"test_payment_methods\".\"address1\" LIKE '%1234%') OR \"test_payment_methods\".\"address2\" LIKE '%1234%') OR \"test_payment_methods\".\"city\" LIKE '%1234%') OR \"test_payment_methods\".\"country\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_exp_month\" = 1234) OR \"test_payment_methods\".\"cc_exp_year\" = 1234) OR \"test_payment_methods\".\"cc_last_4\" = 1234) AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\" LIMIT 10 OFFSET 0"
+    expected_query = "SELECT  DISTINCT \"test_payment_methods\".* FROM \"test_payment_methods\"  WHERE ((((((((((((((\"test_payment_methods\".\"kb_account_id\" = '1234' OR \"test_payment_methods\".\"kb_payment_method_id\" = '1234') OR \"test_payment_methods\".\"token\" = '1234') OR \"test_payment_methods\".\"cc_type\" = '1234') OR \"test_payment_methods\".\"state\" = '1234') OR \"test_payment_methods\".\"zip\" = '1234') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%1234%') OR \"test_payment_methods\".\"address1\" LIKE '%1234%') OR \"test_payment_methods\".\"address2\" LIKE '%1234%') OR \"test_payment_methods\".\"city\" LIKE '%1234%') OR \"test_payment_methods\".\"country\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_exp_month\" = '1234') OR \"test_payment_methods\".\"cc_exp_year\" = '1234') OR \"test_payment_methods\".\"cc_last_4\" = '1234') AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\" LIMIT 10 OFFSET 0"
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestPaymentMethod.search_query('1234', '11-22-33', 0, 10).to_sql.should == expected_query
 
