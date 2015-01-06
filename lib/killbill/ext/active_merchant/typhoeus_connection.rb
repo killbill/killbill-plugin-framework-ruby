@@ -1,11 +1,10 @@
 require 'benchmark'
-require 'active_utils/common/error'
-require 'active_utils/common/network_connection_retries'
-require 'active_utils/common/connection'
+require 'openssl' # active_utils internals assume OpenSSL loaded
+require 'active_utils'
 require 'typhoeus'
 
 module ActiveMerchant
-  class Connection
+  Connection.class_eval do # force auto-load (loads network_connection_retries)
 
     def request(method, body, headers = {})
       request_start = Time.now.to_f
