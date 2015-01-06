@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'sinatra', '~> 1.3.4'
   s.add_dependency 'typhoeus', '~> 0.6.9'
-  s.add_dependency 'tzinfo', '~> 1.1.0'
+  s.add_dependency 'tzinfo', '~> 1.2.0'
 
   s.add_development_dependency 'thread_safe', '~> 0.3.4'
   s.add_development_dependency 'activerecord', '~> 4.1.0'
