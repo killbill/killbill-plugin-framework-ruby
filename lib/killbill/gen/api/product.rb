@@ -46,11 +46,23 @@ module Killbill
           # conversion for is_retired [type = boolean]
           @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
-          # conversion for available [type = org.killbill.billing.catalog.api.Product]
-          @available = @available.to_java unless @available.nil?
+          # conversion for available [type = org.killbill.billing.catalog.api.Product[]]
+          tmp = java.util.ArrayList.new
+          (@available || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Product]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @available = tmp.toArray
 
-          # conversion for included [type = org.killbill.billing.catalog.api.Product]
-          @included = @included.to_java unless @included.nil?
+          # conversion for included [type = org.killbill.billing.catalog.api.Product[]]
+          tmp = java.util.ArrayList.new
+          (@included || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Product]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @included = tmp.toArray
 
           # conversion for category [type = org.killbill.billing.catalog.api.ProductCategory]
           @category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@category.to_s}") unless @category.nil?
@@ -58,8 +70,14 @@ module Killbill
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
 
-          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
-          @limits = @limits.to_java unless @limits.nil?
+          # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
+          tmp = java.util.ArrayList.new
+          (@limits || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Limit]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @limits = tmp.toArray
           self
         end
 
@@ -76,13 +94,25 @@ module Killbill
             @is_retired = tmp_bool ? true : false
           end
 
-          # conversion for available [type = org.killbill.billing.catalog.api.Product]
+          # conversion for available [type = org.killbill.billing.catalog.api.Product[]]
           @available = j_obj.available
-          @available = Killbill::Plugin::Model::Product.new.to_ruby(@available) unless @available.nil?
+          tmp = []
+          (@available || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Product]
+            m = Killbill::Plugin::Model::Product.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @available = tmp
 
-          # conversion for included [type = org.killbill.billing.catalog.api.Product]
-          @included = j_obj.included
-          @included = Killbill::Plugin::Model::Product.new.to_ruby(@included) unless @included.nil?
+          # conversion for included [type = org.killbill.billing.catalog.api.Product[]]
+          @included = j_obj.get_included
+          tmp = []
+          (@included || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Product]
+            m = Killbill::Plugin::Model::Product.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @included = tmp
 
           # conversion for category [type = org.killbill.billing.catalog.api.ProductCategory]
           @category = j_obj.category
@@ -91,9 +121,15 @@ module Killbill
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = j_obj.catalog_name
 
-          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
+          # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
           @limits = j_obj.limits
-          @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
+          tmp = []
+          (@limits || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Limit]
+            m = Killbill::Plugin::Model::Limit.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @limits = tmp
           self
         end
 

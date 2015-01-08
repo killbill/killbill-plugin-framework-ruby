@@ -34,33 +34,14 @@ module Killbill
 
         include org.killbill.billing.util.audit.AccountAuditLogsForObjectType
 
-        attr_accessor :audit_logs
-
         def initialize()
         end
 
         def to_java()
-          # conversion for audit_logs [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@audit_logs || []).each do |m|
-            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @audit_logs = tmp
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for audit_logs [type = java.util.List]
-          @audit_logs = j_obj.audit_logs
-          tmp = []
-          (@audit_logs || []).each do |m|
-            # conversion for m [type = org.killbill.billing.util.audit.AuditLog]
-            m = Killbill::Plugin::Model::AuditLog.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @audit_logs = tmp
           self
         end
 

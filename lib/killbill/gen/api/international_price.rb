@@ -34,21 +34,20 @@ module Killbill
 
         include org.killbill.billing.catalog.api.InternationalPrice
 
-        attr_accessor :prices, :price, :is_zero
+        attr_accessor :prices, :is_zero
 
         def initialize()
         end
 
         def to_java()
-          # conversion for prices [type = org.killbill.billing.catalog.api.Price]
-          @prices = @prices.to_java unless @prices.nil?
-
-          # conversion for price [type = java.math.BigDecimal]
-          if @price.nil?
-            @price = java.math.BigDecimal::ZERO
-          else
-            @price = java.math.BigDecimal.new(@price.to_s)
+          # conversion for prices [type = org.killbill.billing.catalog.api.Price[]]
+          tmp = java.util.ArrayList.new
+          (@prices || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Price]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
           end
+          @prices = tmp.toArray
 
           # conversion for is_zero [type = boolean]
           @is_zero = @is_zero.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_zero)
@@ -56,13 +55,15 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for prices [type = org.killbill.billing.catalog.api.Price]
+          # conversion for prices [type = org.killbill.billing.catalog.api.Price[]]
           @prices = j_obj.prices
-          @prices = Killbill::Plugin::Model::Price.new.to_ruby(@prices) unless @prices.nil?
-
-          # conversion for price [type = java.math.BigDecimal]
-          @price = j_obj.price
-          @price = @price.nil? ? 0 : BigDecimal.new(@price.to_s)
+          tmp = []
+          (@prices || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Price]
+            m = Killbill::Plugin::Model::Price.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @prices = tmp
 
           # conversion for is_zero [type = boolean]
           @is_zero = j_obj.is_zero

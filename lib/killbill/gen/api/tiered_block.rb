@@ -77,7 +77,7 @@ module Killbill
           @price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@price) unless @price.nil?
 
           # conversion for min_top_up_credit [type = java.lang.Double]
-          @min_top_up_credit = j_obj.min_top_up_credit
+          #@min_top_up_credit = j_obj.min_top_up_credit
 
           # conversion for max [type = java.lang.Double]
           @max = j_obj.max

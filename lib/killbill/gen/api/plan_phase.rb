@@ -46,8 +46,14 @@ module Killbill
           # conversion for recurring [type = org.killbill.billing.catalog.api.Recurring]
           @recurring = @recurring.to_java unless @recurring.nil?
 
-          # conversion for usages [type = org.killbill.billing.catalog.api.Usage]
-          @usages = @usages.to_java unless @usages.nil?
+          # conversion for usages [type = org.killbill.billing.catalog.api.Usage[]]
+          tmp = java.util.ArrayList.new
+          (@usages || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Usage]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @usages = tmp.toArray
 
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
@@ -72,16 +78,22 @@ module Killbill
           @recurring = j_obj.recurring
           @recurring = Killbill::Plugin::Model::Recurring.new.to_ruby(@recurring) unless @recurring.nil?
 
-          # conversion for usages [type = org.killbill.billing.catalog.api.Usage]
+          # conversion for usages [type = org.killbill.billing.catalog.api.Usage[]]
           @usages = j_obj.usages
-          @usages = Killbill::Plugin::Model::Usage.new.to_ruby(@usages) unless @usages.nil?
+          tmp = []
+          (@usages || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Usage]
+            m = Killbill::Plugin::Model::Usage.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @usages = tmp
 
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
 
           # conversion for plan [type = org.killbill.billing.catalog.api.Plan]
-          @plan = j_obj.plan
-          @plan = Killbill::Plugin::Model::Plan.new.to_ruby(@plan) unless @plan.nil?
+          #@plan = j_obj.plan
+          #@plan = Killbill::Plugin::Model::Plan.new.to_ruby(@plan) unless @plan.nil?
 
           # conversion for duration [type = org.killbill.billing.catalog.api.Duration]
           @duration = j_obj.duration

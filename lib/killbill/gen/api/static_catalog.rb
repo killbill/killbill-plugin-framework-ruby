@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.StaticCatalog
 
-        attr_accessor :catalog_name, :recurring_billing_mode, :effective_date, :current_supported_currencies, :current_products, :current_units, :current_plans, :available_base_plan_listings, :available_add_on_listings
+        attr_accessor :catalog_name, :recurring_billing_mode, :effective_date, :current_supported_currencies, :current_products, :current_units, :current_plans, :available_base_plan_listings
 
         def initialize()
         end
@@ -53,17 +53,41 @@ module Killbill
             @effective_date = @effective_date.to_date
           end
 
-          # conversion for current_supported_currencies [type = org.killbill.billing.catalog.api.Currency]
-          @current_supported_currencies = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@current_supported_currencies.to_s}") unless @current_supported_currencies.nil?
+          # conversion for current_supported_currencies [type = org.killbill.billing.catalog.api.Currency[]]
+          tmp = java.util.ArrayList.new
+          (@current_supported_currencies || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Currency]
+            m = Java::org.killbill.billing.catalog.api.Currency.value_of("#{m.to_s}") unless m.nil?
+            tmp.add(m)
+          end
+          @current_supported_currencies = tmp.toArray
 
-          # conversion for current_products [type = org.killbill.billing.catalog.api.Product]
-          @current_products = @current_products.to_java unless @current_products.nil?
+          # conversion for current_products [type = org.killbill.billing.catalog.api.Product[]]
+          tmp = java.util.ArrayList.new
+          (@current_products || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Product]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @current_products = tmp.toArray
 
-          # conversion for current_units [type = org.killbill.billing.catalog.api.Unit]
-          @current_units = @current_units.to_java unless @current_units.nil?
+          # conversion for current_units [type = org.killbill.billing.catalog.api.Unit[]]
+          tmp = java.util.ArrayList.new
+          (@current_units || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Unit]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @current_units = tmp.toArray
 
-          # conversion for current_plans [type = org.killbill.billing.catalog.api.Plan]
-          @current_plans = @current_plans.to_java unless @current_plans.nil?
+          # conversion for current_plans [type = org.killbill.billing.catalog.api.Plan[]]
+          tmp = java.util.ArrayList.new
+          (@current_plans || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Plan]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @current_plans = tmp.toArray
 
           # conversion for available_base_plan_listings [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -73,15 +97,6 @@ module Killbill
             tmp.add(m)
           end
           @available_base_plan_listings = tmp
-
-          # conversion for available_add_on_listings [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@available_add_on_listings || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.Listing]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @available_add_on_listings = tmp
           self
         end
 
@@ -102,21 +117,45 @@ module Killbill
             @effective_date = DateTime.iso8601(str)
           end
 
-          # conversion for current_supported_currencies [type = org.killbill.billing.catalog.api.Currency]
+          # conversion for current_supported_currencies [type = org.killbill.billing.catalog.api.Currency[]]
           @current_supported_currencies = j_obj.current_supported_currencies
-          @current_supported_currencies = @current_supported_currencies.to_s.to_sym unless @current_supported_currencies.nil?
+          tmp = []
+          (@current_supported_currencies || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Currency]
+            m = m.to_s.to_sym unless m.nil?
+            tmp << m
+          end
+          @current_supported_currencies = tmp
 
-          # conversion for current_products [type = org.killbill.billing.catalog.api.Product]
+          # conversion for current_products [type = org.killbill.billing.catalog.api.Product[]]
           @current_products = j_obj.current_products
-          @current_products = Killbill::Plugin::Model::Product.new.to_ruby(@current_products) unless @current_products.nil?
+          tmp = []
+          (@current_products || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Product]
+            m = Killbill::Plugin::Model::Product.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @current_products = tmp
 
-          # conversion for current_units [type = org.killbill.billing.catalog.api.Unit]
+          # conversion for current_units [type = org.killbill.billing.catalog.api.Unit[]]
           @current_units = j_obj.current_units
-          @current_units = Killbill::Plugin::Model::Unit.new.to_ruby(@current_units) unless @current_units.nil?
+          tmp = []
+          (@current_units || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Unit]
+            m = Killbill::Plugin::Model::Unit.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @current_units = tmp
 
-          # conversion for current_plans [type = org.killbill.billing.catalog.api.Plan]
+          # conversion for current_plans [type = org.killbill.billing.catalog.api.Plan[]]
           @current_plans = j_obj.current_plans
-          @current_plans = Killbill::Plugin::Model::Plan.new.to_ruby(@current_plans) unless @current_plans.nil?
+          tmp = []
+          (@current_plans || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Plan]
+            m = Killbill::Plugin::Model::Plan.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @current_plans = tmp
 
           # conversion for available_base_plan_listings [type = java.util.List]
           @available_base_plan_listings = j_obj.available_base_plan_listings
@@ -127,16 +166,6 @@ module Killbill
             tmp << m
           end
           @available_base_plan_listings = tmp
-
-          # conversion for available_add_on_listings [type = java.util.List]
-          @available_add_on_listings = j_obj.available_add_on_listings
-          tmp = []
-          (@available_add_on_listings || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.Listing]
-            m = Killbill::Plugin::Model::Listing.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @available_add_on_listings = tmp
           self
         end
 

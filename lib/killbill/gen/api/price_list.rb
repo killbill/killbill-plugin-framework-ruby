@@ -46,8 +46,14 @@ module Killbill
           # conversion for is_retired [type = boolean]
           @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
-          # conversion for plans [type = org.killbill.billing.catalog.api.Plan]
-          @plans = @plans.to_java unless @plans.nil?
+          # conversion for plans [type = org.killbill.billing.catalog.api.Plan[]]
+          tmp = java.util.ArrayList.new
+          (@plans || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Plan]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @plans = tmp.toArray
           self
         end
 
@@ -64,9 +70,15 @@ module Killbill
             @is_retired = tmp_bool ? true : false
           end
 
-          # conversion for plans [type = org.killbill.billing.catalog.api.Plan]
+          # conversion for plans [type = org.killbill.billing.catalog.api.Plan[]]
           @plans = j_obj.plans
-          @plans = Killbill::Plugin::Model::Plan.new.to_ruby(@plans) unless @plans.nil?
+          tmp = []
+          (@plans || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Plan]
+            m = Killbill::Plugin::Model::Plan.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @plans = tmp
           self
         end
 

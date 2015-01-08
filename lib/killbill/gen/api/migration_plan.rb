@@ -40,8 +40,14 @@ module Killbill
         end
 
         def to_java()
-          # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase]
-          @initial_phases = @initial_phases.to_java unless @initial_phases.nil?
+          # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
+          tmp = java.util.ArrayList.new
+          (@initial_phases || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhase]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @initial_phases = tmp.toArray
 
           # conversion for product [type = org.killbill.billing.catalog.api.Product]
           @product = @product.to_java unless @product.nil?
@@ -64,8 +70,14 @@ module Killbill
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = @plans_allowed_in_bundle
 
-          # conversion for all_phases [type = org.killbill.billing.catalog.api.PlanPhase]
-          @all_phases = @all_phases.to_java unless @all_phases.nil?
+          # conversion for all_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
+          tmp = java.util.ArrayList.new
+          (@all_phases || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhase]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @all_phases = tmp.toArray
 
           # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
           if !@effective_date_for_existing_subscriptons.nil?
@@ -77,9 +89,15 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase]
+          # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
           @initial_phases = j_obj.initial_phases
-          @initial_phases = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@initial_phases) unless @initial_phases.nil?
+          tmp = []
+          (@initial_phases || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhase]
+            m = Killbill::Plugin::Model::PlanPhase.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @initial_phases = tmp
 
           # conversion for product [type = org.killbill.billing.catalog.api.Product]
           @product = j_obj.product
@@ -111,9 +129,15 @@ module Killbill
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = j_obj.plans_allowed_in_bundle
 
-          # conversion for all_phases [type = org.killbill.billing.catalog.api.PlanPhase]
+          # conversion for all_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
           @all_phases = j_obj.all_phases
-          @all_phases = Killbill::Plugin::Model::PlanPhase.new.to_ruby(@all_phases) unless @all_phases.nil?
+          tmp = []
+          (@all_phases || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhase]
+            m = Killbill::Plugin::Model::PlanPhase.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @all_phases = tmp
 
           # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
           @effective_date_for_existing_subscriptons = j_obj.effective_date_for_existing_subscriptons

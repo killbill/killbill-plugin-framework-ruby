@@ -40,11 +40,23 @@ module Killbill
         end
 
         def to_java()
-          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
-          @limits = @limits.to_java unless @limits.nil?
+          # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
+          tmp = java.util.ArrayList.new
+          (@limits || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Limit]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @limits = tmp.toArray
 
-          # conversion for tiered_blocks [type = org.killbill.billing.catalog.api.TieredBlock]
-          @tiered_blocks = @tiered_blocks.to_java unless @tiered_blocks.nil?
+          # conversion for tiered_blocks [type = org.killbill.billing.catalog.api.TieredBlock[]]
+          tmp = java.util.ArrayList.new
+          (@tiered_blocks || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.TieredBlock]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @tiered_blocks = tmp.toArray
 
           # conversion for fixed_price [type = org.killbill.billing.catalog.api.InternationalPrice]
           @fixed_price = @fixed_price.to_java unless @fixed_price.nil?
@@ -55,13 +67,25 @@ module Killbill
         end
 
         def to_ruby(j_obj)
-          # conversion for limits [type = org.killbill.billing.catalog.api.Limit]
+          # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
           @limits = j_obj.limits
-          @limits = Killbill::Plugin::Model::Limit.new.to_ruby(@limits) unless @limits.nil?
+          tmp = []
+          (@limits || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.Limit]
+            m = Killbill::Plugin::Model::Limit.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @limits = tmp
 
-          # conversion for tiered_blocks [type = org.killbill.billing.catalog.api.TieredBlock]
+          # conversion for tiered_blocks [type = org.killbill.billing.catalog.api.TieredBlock[]]
           @tiered_blocks = j_obj.tiered_blocks
-          @tiered_blocks = Killbill::Plugin::Model::TieredBlock.new.to_ruby(@tiered_blocks) unless @tiered_blocks.nil?
+          tmp = []
+          (@tiered_blocks || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.TieredBlock]
+            m = Killbill::Plugin::Model::TieredBlock.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @tiered_blocks = tmp
 
           # conversion for fixed_price [type = org.killbill.billing.catalog.api.InternationalPrice]
           @fixed_price = j_obj.fixed_price
