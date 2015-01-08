@@ -1,3 +1,6 @@
+3.2.1
+    Regenerate models
+
 3.2.0
     ActiveMerchant:
       - fix openssl require error with the latest version of active_utils
