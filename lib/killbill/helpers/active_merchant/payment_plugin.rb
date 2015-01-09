@@ -42,7 +42,7 @@ module Killbill
           pool.remove(connection)
           connection.disconnect!
 
-          @logger.debug "after_request: pool.active_connection? = #{pool.active_connection?}, connection.active? = #{connection.active?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}"
+          @logger.debug { "after_request: pool.active_connection? = #{pool.active_connection?}, connection.active? = #{connection.active?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}" }
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
