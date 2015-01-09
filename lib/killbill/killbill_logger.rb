@@ -15,19 +15,19 @@ module Killbill
       end
 
       def debug(message=nil, &block)
-        @logger.log(4, build_message(message, &block))
+        @logger.log(4, build_message(message, &block)) if debug?
       end
 
       def info(message=nil, &block)
-        @logger.log(3, build_message(message, &block))
+        @logger.log(3, build_message(message, &block)) if info?
       end
 
       def warn(message=nil, &block)
-        @logger.log(2, build_message(message, &block))
+        @logger.log(2, build_message(message, &block)) if warn?
       end
 
       def error(message=nil, &block)
-        @logger.log(1, build_message(message, &block))
+        @logger.log(1, build_message(message, &block)) if error?
       end
 
       # Rack Error stream
@@ -59,7 +59,7 @@ module Killbill
         end
       end
 
-      def build_message(message=nil, &block)
+      def build_message(message = nil)
         if message.nil?
           if block_given?
             message = yield

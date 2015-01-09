@@ -42,7 +42,7 @@ module Killbill
           pool.remove(connection)
           connection.disconnect!
 
-          @logger.debug "after_request: pool.active_connection? = #{pool.active_connection?}, connection.active? = #{connection.active?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}"
+          @logger.debug { "after_request: pool.active_connection? = #{pool.active_connection?}, connection.active? = #{connection.active?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}" }
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
@@ -518,7 +518,7 @@ module Killbill
 
           response, transaction = @response_model.create_response_and_transaction(@identifier, @transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, {}, @response_model)
 
-          @logger.debug "Recorded transaction: #{transaction.inspect}" unless transaction.nil?
+          @logger.debug { "Recorded transaction: #{transaction.inspect}" } unless transaction.nil?
 
           return response, transaction
         end
