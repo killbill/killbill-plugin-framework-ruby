@@ -76,7 +76,7 @@ module Killbill
 
           response, transaction = @response_model.create_response_and_transaction(@identifier, @transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, {}, @response_model)
 
-          logger.debug "Recorded transaction: #{transaction.inspect}" unless transaction.nil?
+          logger.debug { "Recorded transaction: #{transaction.inspect}" } unless transaction.nil?
 
           return response, transaction
         end
