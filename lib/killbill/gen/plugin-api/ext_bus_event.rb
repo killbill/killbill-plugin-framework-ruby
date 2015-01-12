@@ -34,6 +34,9 @@ module Killbill
 
         include org.killbill.billing.notification.plugin.api.ExtBusEvent
 
+        java_import org.killbill.billing.notification.plugin.api.ExtBusEventType
+        java_import org.killbill.billing.ObjectType
+
         attr_accessor :event_type, :object_type, :object_id, :account_id, :tenant_id
 
         def initialize()
@@ -41,10 +44,10 @@ module Killbill
 
         def to_java()
           # conversion for event_type [type = org.killbill.billing.notification.plugin.api.ExtBusEventType]
-          @event_type = Java::org.killbill.billing.notification.plugin.api.ExtBusEventType.value_of("#{@event_type.to_s}") unless @event_type.nil?
+          @event_type = ExtBusEventType.value_of(@event_type.to_s) unless @event_type.nil?
 
           # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
+          @object_type = ObjectType.value_of(@object_type.to_s) unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?

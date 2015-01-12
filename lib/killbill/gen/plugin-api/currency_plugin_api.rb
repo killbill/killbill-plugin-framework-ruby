@@ -34,6 +34,9 @@ module Killbill
 
         include org.killbill.billing.currency.plugin.api.CurrencyPluginApi
 
+        java_import org.killbill.billing.catalog.api.Currency
+        java_import org.killbill.billing.payment.plugin.api.PaymentPluginApiException
+
         def initialize(real_class_name, services = {})
           super(real_class_name, services)
         end
@@ -47,7 +50,7 @@ module Killbill
           tmp = java.util.TreeSet.new
           (res || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Currency]
-            m = Java::org.killbill.billing.catalog.api.Currency.value_of("#{m.to_s}") unless m.nil?
+            m = Currency.value_of(m.to_s) unless m.nil?
             tmp.add(m)
           end
           res = tmp
@@ -58,7 +61,7 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_base_currencies failure", e.message)
+          raise PaymentPluginApiException.new("get_base_currencies failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
@@ -74,7 +77,7 @@ module Killbill
           # conversion for res [type = org.joda.time.DateTime]
           if !res.nil?
             res =  (res.kind_of? Time) ? DateTime.parse(res.to_s) : res
-            res = Java::org.joda.time.DateTime.new(res.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            res = org.joda.time.DateTime.new(res.to_s, org.joda.time.DateTimeZone::UTC)
           end
           return res
         rescue Exception => e
@@ -83,7 +86,7 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_latest_conversion_date failure", e.message)
+          raise PaymentPluginApiException.new("get_latest_conversion_date failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
@@ -102,7 +105,7 @@ module Killbill
             # conversion for m [type = org.joda.time.DateTime]
             if !m.nil?
               m =  (m.kind_of? Time) ? DateTime.parse(m.to_s) : m
-              m = Java::org.joda.time.DateTime.new(m.to_s, Java::org.joda.time.DateTimeZone::UTC)
+              m = org.joda.time.DateTime.new(m.to_s, org.joda.time.DateTimeZone::UTC)
             end
             tmp.add(m)
           end
@@ -114,7 +117,7 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_conversion_dates failure", e.message)
+          raise PaymentPluginApiException.new("get_conversion_dates failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
@@ -142,7 +145,7 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_current_rates failure", e.message)
+          raise PaymentPluginApiException.new("get_current_rates failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
@@ -156,7 +159,7 @@ module Killbill
 
         # conversion for conversionDate [type = org.joda.time.DateTime]
         if !conversionDate.nil?
-          fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+          fmt = org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
           str = fmt.print(conversionDate)
           conversionDate = DateTime.iso8601(str)
         end
@@ -177,7 +180,7 @@ module Killbill
             message = "#{message}\n#{e.backtrace.join("\n")}"
           end
           logger.warn message
-          raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_rates failure", e.message)
+          raise PaymentPluginApiException.new("get_rates failure", e.message)
         ensure
           @delegate_plugin.after_request
         end
