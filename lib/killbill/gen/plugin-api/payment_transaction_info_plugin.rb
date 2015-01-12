@@ -156,14 +156,11 @@ module Killbill
           @second_payment_reference_id = j_obj.second_payment_reference_id
 
           # conversion for properties [type = java.util.List]
-          @properties = j_obj.properties
-          tmp = []
-          (@properties || []).each do |m|
+          @properties = ( j_obj.properties || [] ).map do |m|
             # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
             m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
+            m
           end
-          @properties = tmp
           self
         end
 
