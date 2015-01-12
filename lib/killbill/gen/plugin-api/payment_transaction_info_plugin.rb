@@ -52,7 +52,7 @@ module Killbill
           @kb_transaction_payment_id = java.util.UUID.fromString(@kb_transaction_payment_id.to_s) unless @kb_transaction_payment_id.nil?
 
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
-          @transaction_type = TransactionType.value_of("#{@transaction_type.to_s}") unless @transaction_type.nil?
+          @transaction_type = TransactionType.value_of(@transaction_type.to_s) unless @transaction_type.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           if @amount.nil?
@@ -62,7 +62,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Currency.value_of(@currency.to_s) unless @currency.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
@@ -77,7 +77,7 @@ module Killbill
           end
 
           # conversion for status [type = org.killbill.billing.payment.plugin.api.PaymentPluginStatus]
-          @status = PaymentPluginStatus.value_of("#{@status.to_s}") unless @status.nil?
+          @status = PaymentPluginStatus.value_of(@status.to_s) unless @status.nil?
 
           # conversion for gateway_error [type = java.lang.String]
           @gateway_error = @gateway_error.to_s unless @gateway_error.nil?
