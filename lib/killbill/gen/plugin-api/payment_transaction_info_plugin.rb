@@ -30,9 +30,14 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.payment.plugin.api'
+
       class PaymentTransactionInfoPlugin
 
         include org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin
+
+        java_import org.killbill.billing.catalog.api.Currency
+        java_import org.killbill.billing.payment.api.TransactionType
+        java_import org.killbill.billing.payment.plugin.api.PaymentPluginStatus
 
         attr_accessor :kb_payment_id, :kb_transaction_payment_id, :transaction_type, :amount, :currency, :created_date, :effective_date, :status, :gateway_error, :gateway_error_code, :first_payment_reference_id, :second_payment_reference_id, :properties
 
@@ -47,7 +52,7 @@ module Killbill
           @kb_transaction_payment_id = java.util.UUID.fromString(@kb_transaction_payment_id.to_s) unless @kb_transaction_payment_id.nil?
 
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
-          @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of("#{@transaction_type.to_s}") unless @transaction_type.nil?
+          @transaction_type = TransactionType.value_of("#{@transaction_type.to_s}") unless @transaction_type.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           if @amount.nil?
@@ -57,22 +62,22 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
             @created_date =  (@created_date.kind_of? Time) ? DateTime.parse(@created_date.to_s) : @created_date
-            @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            @created_date = org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for effective_date [type = org.joda.time.DateTime]
           if !@effective_date.nil?
             @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
-            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            @effective_date = org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for status [type = org.killbill.billing.payment.plugin.api.PaymentPluginStatus]
-          @status = Java::org.killbill.billing.payment.plugin.api.PaymentPluginStatus.value_of("#{@status.to_s}") unless @status.nil?
+          @status = PaymentPluginStatus.value_of("#{@status.to_s}") unless @status.nil?
 
           # conversion for gateway_error [type = java.lang.String]
           @gateway_error = @gateway_error.to_s unless @gateway_error.nil?
@@ -121,7 +126,7 @@ module Killbill
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date
           if !@created_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            fmt = org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@created_date)
             @created_date = DateTime.iso8601(str)
           end
@@ -129,7 +134,7 @@ module Killbill
           # conversion for effective_date [type = org.joda.time.DateTime]
           @effective_date = j_obj.effective_date
           if !@effective_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            fmt = org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
             str = fmt.print(@effective_date)
             @effective_date = DateTime.iso8601(str)
           end
