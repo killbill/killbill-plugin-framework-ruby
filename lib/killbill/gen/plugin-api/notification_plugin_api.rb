@@ -34,6 +34,8 @@ module Killbill
 
         include org.killbill.billing.notification.plugin.api.NotificationPluginApi
 
+        java_import org.killbill.billing.payment.plugin.api.PaymentPluginApiException
+
         def initialize(real_class_name, services = {})
           super(real_class_name, services)
         end
@@ -52,7 +54,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("on_event failure", e.message)
+            raise PaymentPluginApiException.new("on_event failure", e.message)
           ensure
             @delegate_plugin.after_request
           end

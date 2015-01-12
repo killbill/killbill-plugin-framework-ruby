@@ -34,6 +34,8 @@ module Killbill
 
         include org.killbill.billing.payment.plugin.api.PaymentPluginApi
 
+        java_import org.killbill.billing.payment.plugin.api.PaymentPluginApiException
+
         def initialize(real_class_name, services = {})
           super(real_class_name, services)
         end
@@ -82,7 +84,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("authorize_payment failure", e.message)
+            raise PaymentPluginApiException.new("authorize_payment failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -131,7 +133,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("capture_payment failure", e.message)
+            raise PaymentPluginApiException.new("capture_payment failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -180,7 +182,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("purchase_payment failure", e.message)
+            raise PaymentPluginApiException.new("purchase_payment failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -223,7 +225,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("void_payment failure", e.message)
+            raise PaymentPluginApiException.new("void_payment failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -272,7 +274,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("credit_payment failure", e.message)
+            raise PaymentPluginApiException.new("credit_payment failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -321,7 +323,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("refund_payment failure", e.message)
+            raise PaymentPluginApiException.new("refund_payment failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -364,7 +366,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_payment_info failure", e.message)
+            raise PaymentPluginApiException.new("get_payment_info failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -401,7 +403,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("search_payments failure", e.message)
+            raise PaymentPluginApiException.new("search_payments failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -446,7 +448,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("add_payment_method failure", e.message)
+            raise PaymentPluginApiException.new("add_payment_method failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -480,7 +482,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("delete_payment_method failure", e.message)
+            raise PaymentPluginApiException.new("delete_payment_method failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -517,7 +519,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_payment_method_detail failure", e.message)
+            raise PaymentPluginApiException.new("get_payment_method_detail failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -551,7 +553,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("set_default_payment_method failure", e.message)
+            raise PaymentPluginApiException.new("set_default_payment_method failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -599,7 +601,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_payment_methods failure", e.message)
+            raise PaymentPluginApiException.new("get_payment_methods failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -636,7 +638,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("search_payment_methods failure", e.message)
+            raise PaymentPluginApiException.new("search_payment_methods failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -676,7 +678,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("reset_payment_methods failure", e.message)
+            raise PaymentPluginApiException.new("reset_payment_methods failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -719,7 +721,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("build_form_descriptor failure", e.message)
+            raise PaymentPluginApiException.new("build_form_descriptor failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
@@ -752,7 +754,7 @@ module Killbill
               message = "#{message}\n#{e.backtrace.join("\n")}"
             end
             logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("process_notification failure", e.message)
+            raise PaymentPluginApiException.new("process_notification failure", e.message)
           ensure
             @delegate_plugin.after_request
           end
