@@ -44,10 +44,10 @@ module Killbill
 
         def to_java()
           # conversion for event_type [type = org.killbill.billing.notification.plugin.api.ExtBusEventType]
-          @event_type = ExtBusEventType.value_of(@event_type.to_s) unless @event_type.nil?
+          @event_type = Java::JavaLang::Enum.value_of(ExtBusEventType.java_class, @event_type.to_s) unless @event_type.nil?
 
           # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = ObjectType.value_of(@object_type.to_s) unless @object_type.nil?
+          @object_type = Java::JavaLang::Enum.value_of(ObjectType.java_class, @object_type.to_s) unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
