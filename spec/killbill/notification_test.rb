@@ -1,5 +1,6 @@
 require 'killbill/notification'
 
+# See notification_plugin_api_spec.rb
 module Killbill
   module Plugin
     class NotificationTest < Notification
