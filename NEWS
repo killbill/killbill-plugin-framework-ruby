@@ -1,3 +1,7 @@
+3.2.2
+    Logger performance improvement
+    Initial support for invoice plugins
+
 3.2.1
     Regenerate models
 
