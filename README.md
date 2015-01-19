@@ -4,14 +4,17 @@
 killbill-plugin-framework-ruby
 ==============================
 
-Framework to write Killbill plugins in Ruby.
+Framework to write Kill Bill plugins in Ruby.
 
 There are various types of plugins one can write for Killbill:
 
-1. notifications plugins, which listen to external bus events and can react to it
-2. payment plugins, which are used to issue payments against a payment gateway
+* notifications plugins, which listen to external bus events and can react to it
+* payment plugins, which issue payments against a payment gateway
+* payment routing plugins, which modify the behavior of payments
+* invoice plugins, which add line items during the creation of an invoice
+* currency plugins, which return currency conversion information
 
-Both types of plugin can interact with Killbill directly via killbill-library APIs and expose HTTP endpoints.
+All plugin types can interact with Kill Bill directly via APIs and expose HTTP endpoints.
 
 How to write a Notification plugin
 ----------------------------------
@@ -140,6 +143,15 @@ In case the templates behind the generator change and you want to upgrade your p
 generate command on top of your existing code. For each file, you'll be prompted whether you want to overwrite it, show a
 diff, etc.
 
+How to write an Invoice plugin
+------------------------------
+
+See the [killbill-invoice-test-plugin](https://github.com/killbill/killbill-invoice-test-plugin).
+
+How to write a Currency plugin
+------------------------------
+
+See the [killbill-currency-plugin](https://github.com/killbill/killbill-currency-plugin).
 
 How to expose HTTP endpoints
 ----------------------------
