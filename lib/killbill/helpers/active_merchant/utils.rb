@@ -91,11 +91,11 @@ module Killbill
             @data.size
           end
 
-          def keys_to_a
+          def keys
             @is_jruby ? @data.key_set.to_a : @data.keys
           end
 
-          def values_to_a
+          def values
             @is_jruby ? @data.values.to_a : @data.values
           end
 

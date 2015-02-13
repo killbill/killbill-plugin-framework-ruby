@@ -45,7 +45,7 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
     keys_per_thread = 1000
 
     cache = nil
-    bm    = Benchmark.bm do |x|
+    Benchmark.bm do |x|
       runs.times do |n|
         x.report("run ##{n}:") do
           cache = ::Killbill::Plugin::ActiveMerchant::Utils::BoundedLRUCache.new(Proc.new { |value| -1 }, cache_size)
@@ -66,14 +66,14 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
       end
     end
 
-    last_keys   = cache.keys_to_a
-    last_values = cache.values_to_a
+    last_keys   = cache.keys
+    last_values = cache.values
     0.upto(cache_size - 1) do |i|
       # No overlap with test keys or values above
       cache[-1 * i - 1] = -2
 
-      new_keys   = cache.keys_to_a
-      new_values = cache.values_to_a
+      new_keys   = cache.keys
+      new_values = cache.values
 
       # Verify the changes we made
       0.upto(i) do |j|
