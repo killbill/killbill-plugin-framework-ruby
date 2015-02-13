@@ -41,7 +41,7 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
 
     runs            = 2
     cache_size      = 50
-    nb_threads      = 200
+    nb_threads      = (ENV['NB_THREADS'] || 200).to_i
     keys_per_thread = 1000
 
     cache = nil
