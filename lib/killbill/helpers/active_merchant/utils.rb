@@ -1,4 +1,3 @@
-require 'thread'
 require 'thread_safe'
 
 module Killbill
@@ -50,6 +49,7 @@ module Killbill
         end
 
         class BoundedLRUCache
+          include ThreadSafe::Util::CheapLockable
 
           def initialize(proc, max_size = 10000)
             @max_size = max_size
@@ -60,7 +60,6 @@ module Killbill
               set_value
             end
             @keys = []
-            @semaphore = Mutex.new
           end
 
           def [](key); @data[key] end
@@ -76,25 +75,25 @@ module Killbill
 
           # @private for testing
           def keys
-            @semaphore.synchronize { @keys.dup }
+            cheap_synchronize { @keys.dup }
           end
 
           # @private for testing
           def values
-            @semaphore.synchronize { @keys.map { |key| self[key] } }
+            cheap_synchronize { @keys.map { |key| self[key] } }
           end
 
           protected
 
           def store_key(key)
-            @semaphore.synchronize do
+            cheap_synchronize do
               @keys << key
               remove_eldest_key_if_full
             end
           end
 
           def update_key(key)
-            @semaphore.synchronize do
+            cheap_synchronize do
               @keys.delete(key); @keys << key
               remove_eldest_key_if_full
             end
@@ -103,7 +102,7 @@ module Killbill
           private
 
           def remove_eldest_key_if_full
-            @data.delete @keys.shift if @keys.length > @max_size
+            @data.delete @keys.shift if @data.size > @max_size
           end
 
         end
