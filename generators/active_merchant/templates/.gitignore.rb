@@ -19,8 +19,6 @@ _yardoc
 doc/
 
 .jbundler
-Jarfile.lock
-Gemfile.lock
 
 .DS_Store
 
@@ -29,6 +27,8 @@ killbill-<%= identifier %>/
 
 # Testing database
 test.db
+
+<%= identifier %>.log
 
 target
 pom.xml.asc
