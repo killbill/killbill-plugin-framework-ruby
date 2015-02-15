@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'money', '~> 6.1.1'
   s.add_dependency 'monetize', '~> 0.3.0'
   s.add_dependency 'sinatra', '~> 1.3.4'
+  s.add_dependency 'thread_safe', '~> 0.3.4'
   if defined?(JRUBY_VERSION)
     s.add_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3.7'
     # Required to avoid errors like java.lang.NoClassDefFoundError: org/bouncycastle/asn1/DERBoolean
