@@ -220,7 +220,7 @@ module Killbill
     end
 
     def do_install_gem(path, name, version)
-      gem_installer                       = Gem::Installer.new(path,
+      gem_installer                       = Gem::Installer.new(path.to_s,
                                                                {
                                                                    :force       => true,
                                                                    :install_dir => @target_dir,
