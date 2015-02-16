@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra', '~> 1.3.4'
   s.add_dependency 'thread_safe', '~> 0.3.4'
   if defined?(JRUBY_VERSION)
-    s.add_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3.12'
+    s.add_dependency 'activerecord-jdbc-adapter', '~> 1.3.12'
     # Required to avoid errors like java.lang.NoClassDefFoundError: org/bouncycastle/asn1/DERBoolean
     s.add_dependency 'jruby-openssl', '~> 0.9.6'
   end
@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake', '>= 10.0.0'
   s.add_development_dependency 'rspec', '~> 2.12.0'
   if defined?(JRUBY_VERSION)
-    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3.12'
+    s.add_development_dependency 'jdbc-sqlite3', '~> 3.7'
   else
     s.add_development_dependency 'sqlite3', '~> 1.3.7'
   end
