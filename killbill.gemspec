@@ -29,8 +29,8 @@ Gem::Specification.new do |s|
   # semi-optional:
   s.add_development_dependency 'thread_safe', '~> 0.3.4'
   s.add_development_dependency 'activerecord', '~> 4.1.0'
-  s.add_development_dependency 'activerecord-bogacs', '~> 0.2.0'
   if defined?(JRUBY_VERSION)
+    s.add_development_dependency 'activerecord-bogacs', '~> 0.2.0'
     s.add_development_dependency 'activerecord-jdbc-adapter', '~> 1.3.12'
   end
   s.add_development_dependency 'actionpack', '~> 4.1.0'
