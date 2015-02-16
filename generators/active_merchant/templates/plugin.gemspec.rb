@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 2.12.0'
   if defined?(JRUBY_VERSION)
     s.add_development_dependency 'jdbc-sqlite3', '~> 3.7'
+    s.add_development_dependency 'jdbc-mariadb', '~> 1.1'
   else
     s.add_development_dependency 'sqlite3', '~> 1.3.7'
   end
