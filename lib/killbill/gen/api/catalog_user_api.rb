@@ -47,10 +47,43 @@ module Killbill
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_catalog(catalogName, context)
-          # conversion for res [type = org.killbill.billing.catalog.api.Catalog]
-          res = Killbill::Plugin::Model::Catalog.new.to_ruby(res) unless res.nil?
-          return res
+          begin
+            res = @real_java_api.get_catalog(catalogName, context)
+            # conversion for res [type = org.killbill.billing.catalog.api.Catalog]
+            res = Killbill::Plugin::Model::Catalog.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.catalog.api.CatalogApiException => e
+            raise Killbill::Plugin::Model::CatalogApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.catalog.api.StaticCatalog getCurrentCatalog(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_current_catalog(catalogName, context)
+
+          # conversion for catalogName [type = java.lang.String]
+          catalogName = catalogName.to_s unless catalogName.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_current_catalog(catalogName, context)
+            # conversion for res [type = org.killbill.billing.catalog.api.StaticCatalog]
+            res = Killbill::Plugin::Model::StaticCatalog.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.catalog.api.CatalogApiException => e
+            raise Killbill::Plugin::Model::CatalogApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::void uploadCatalog(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def upload_catalog(catalogXML, context)
+
+          # conversion for catalogXML [type = java.lang.String]
+          catalogXML = catalogXML.to_s unless catalogXML.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.upload_catalog(catalogXML, context)
         end
       end
     end

@@ -34,18 +34,20 @@ module Killbill
 
         include org.killbill.billing.catalog.api.PriceListSet
 
+        attr_accessor 
+
         def initialize()
         end
 
         def to_java()
-          self
-        end
-
-        def to_ruby(j_obj)
-          self
-        end
-
+        self
       end
+
+      def to_ruby(j_obj)
+      self
     end
+
   end
+end
+end
 end

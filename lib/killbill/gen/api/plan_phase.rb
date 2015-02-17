@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.PlanPhase
 
-        attr_accessor :fixed, :recurring, :usages, :name, :plan, :duration, :phase_type
+        attr_accessor :fixed, :recurring, :usages, :name, :duration, :phase_type
 
         def initialize()
         end
@@ -57,9 +57,6 @@ module Killbill
 
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
-
-          # conversion for plan [type = org.killbill.billing.catalog.api.Plan]
-          @plan = @plan.to_java unless @plan.nil?
 
           # conversion for duration [type = org.killbill.billing.catalog.api.Duration]
           @duration = @duration.to_java unless @duration.nil?
@@ -90,10 +87,6 @@ module Killbill
 
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
-
-          # conversion for plan [type = org.killbill.billing.catalog.api.Plan]
-          #@plan = j_obj.plan
-          #@plan = Killbill::Plugin::Model::Plan.new.to_ruby(@plan) unless @plan.nil?
 
           # conversion for duration [type = org.killbill.billing.catalog.api.Duration]
           @duration = j_obj.duration

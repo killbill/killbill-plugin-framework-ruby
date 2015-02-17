@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.api.Subscription
 
-        attr_accessor :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :last_active_product, :last_active_plan, :last_active_phase, :last_active_price_list, :last_active_product_category, :id, :created_date, :updated_date, :billing_start_date, :billing_end_date, :charged_through_date
+        attr_accessor :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :last_active_product, :last_active_plan, :last_active_phase, :last_active_price_list, :last_active_product_category, :id, :created_date, :updated_date, :billing_start_date, :billing_end_date, :charged_through_date, :subscription_events
 
         def initialize()
         end
@@ -112,6 +112,15 @@ module Killbill
           if !@charged_through_date.nil?
             @charged_through_date = Java::org.joda.time.LocalDate.parse(@charged_through_date.to_s)
           end
+
+          # conversion for subscription_events [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@subscription_events || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionEvent]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @subscription_events = tmp
           self
         end
 
@@ -208,6 +217,16 @@ module Killbill
           if !@charged_through_date.nil?
             @charged_through_date = @charged_through_date.to_s
           end
+
+          # conversion for subscription_events [type = java.util.List]
+          @subscription_events = j_obj.subscription_events
+          tmp = []
+          (@subscription_events || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionEvent]
+            m = Killbill::Plugin::Model::SubscriptionEvent.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @subscription_events = tmp
           self
         end
 
