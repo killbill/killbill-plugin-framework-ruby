@@ -31,6 +31,7 @@ module Killbill
 
       class PaymentPluginApiException
 
+        java_import org.killbill.billing.payment.plugin.api.PaymentPluginApiException
 
         attr_accessor :error_type, :error_message
 
@@ -43,7 +44,7 @@ module Killbill
 
           # conversion for error_message [type = java.lang.String]
           @error_message = @error_message.to_s unless @error_message.nil?
-          Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new(@error_type, @error_message)
+          PaymentPluginApiException.new(@error_type, @error_message)
         end
 
         def to_ruby(j_obj)
