@@ -13,18 +13,18 @@ module Killbill
             create_kb_account kb_account_id
           end
 
-          context       = @plugin.kb_apis.create_context(kb_tenant_id)
-          account       = @plugin.kb_apis.account_user_api.get_account_by_id(kb_account_id, context)
+          context = @plugin.kb_apis.create_context(kb_tenant_id)
+          account = @plugin.kb_apis.account_user_api.get_account_by_id(kb_account_id, context)
 
           # The rest is pure Ruby
-          context       = context.to_ruby(context)
+          context = context.to_ruby(context)
 
           # Generate a token
           pm_properties = build_pm_properties(account, options)
 
-          info            = Killbill::Plugin::Model::PaymentMethodPlugin.new
+          info = Killbill::Plugin::Model::PaymentMethodPlugin.new
           info.properties = pm_properties
-          payment_method  = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, properties, context)
+          payment_method = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, properties, context)
 
           pm = payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
           pm.should == payment_method
@@ -35,19 +35,19 @@ module Killbill
         end
 
         def build_pm_properties(account = nil, overrides = {})
-          cc_number             = (overrides.delete(:cc_number) || '4242424242424242')
-          cc_first_name         = (overrides.delete(:cc_first_name) || 'John')
-          cc_last_name          = (overrides.delete(:cc_last_name) || 'Doe')
-          cc_type               = (overrides.delete(:cc_type) || 'Visa')
-          cc_exp_month          = (overrides.delete(:cc_exp_month) || 12)
-          cc_exp_year           = (overrides.delete(:cc_exp_year) || 2017)
-          cc_last_4             = (overrides.delete(:cc_last_4) || 4242)
-          address1              = (overrides.delete(:address1) || '5, oakriu road')
-          address2              = (overrides.delete(:address2) || 'apt. 298')
-          city                  = (overrides.delete(:city) || 'Gdio Foia')
-          state                 = (overrides.delete(:state) || 'FL')
-          zip                   = (overrides.delete(:zip) || 49302)
-          country               = (overrides.delete(:country) || 'US')
+          cc_number = (overrides.delete(:cc_number) || '4242424242424242')
+          cc_first_name = (overrides.delete(:cc_first_name) || 'John')
+          cc_last_name = (overrides.delete(:cc_last_name) || 'Doe')
+          cc_type = (overrides.delete(:cc_type) || 'Visa')
+          cc_exp_month = (overrides.delete(:cc_exp_month) || 12)
+          cc_exp_year = (overrides.delete(:cc_exp_year) || 2017)
+          cc_last_4 = (overrides.delete(:cc_last_4) || 4242)
+          address1 = (overrides.delete(:address1) || '5, oakriu road')
+          address2 = (overrides.delete(:address2) || 'apt. 298')
+          city = (overrides.delete(:city) || 'Gdio Foia')
+          state = (overrides.delete(:state) || 'FL')
+          zip = (overrides.delete(:zip) || 49302)
+          country = (overrides.delete(:country) || 'US')
           cc_verification_value = (overrides.delete(:cc_verification_value) || 1234)
 
           properties = []
@@ -76,14 +76,14 @@ module Killbill
 
         def create_kb_account(kb_account_id)
           external_key = Time.now.to_i.to_s + '-test'
-          email        = external_key + '@tester.com'
+          email = external_key + '@tester.com'
 
-          account              = ::Killbill::Plugin::Model::Account.new
-          account.id           = kb_account_id
+          account = ::Killbill::Plugin::Model::Account.new
+          account.id = kb_account_id
           account.external_key = external_key
-          account.email        = email
-          account.name         = 'Integration spec'
-          account.currency     = :USD
+          account.email = email
+          account.name = 'Integration spec'
+          account.currency = :USD
 
           @account_api.accounts << account
 
@@ -91,8 +91,8 @@ module Killbill
         end
 
         def create_pm_kv_info(key, value)
-          prop       = ::Killbill::Plugin::Model::PluginProperty.new
-          prop.key   = key
+          prop = ::Killbill::Plugin::Model::PluginProperty.new
+          prop.key = key
           prop.value = value
           prop
         end
@@ -124,17 +124,17 @@ module Killbill
           def add_payment(kb_payment_id=SecureRandom.uuid, kb_payment_transaction_id=SecureRandom.uuid, kb_payment_transaction_external_key=SecureRandom.uuid, transaction_type=:PURCHASE)
             kb_payment = get_payment kb_payment_id
             if kb_payment.nil?
-              kb_payment              = ::Killbill::Plugin::Model::Payment.new
-              kb_payment.id           = kb_payment_id
+              kb_payment = ::Killbill::Plugin::Model::Payment.new
+              kb_payment.id = kb_payment_id
               kb_payment.transactions = []
               @payments << kb_payment
             end
 
-            kb_payment_transaction                  = ::Killbill::Plugin::Model::PaymentTransaction.new
-            kb_payment_transaction.id               = kb_payment_transaction_id
+            kb_payment_transaction = ::Killbill::Plugin::Model::PaymentTransaction.new
+            kb_payment_transaction.id = kb_payment_transaction_id
             kb_payment_transaction.transaction_type = transaction_type
-            kb_payment_transaction.external_key     = kb_payment_transaction_external_key
-            kb_payment_transaction.created_date     = Java::org.joda.time.DateTime.new(Java::org.joda.time.DateTimeZone::UTC)
+            kb_payment_transaction.external_key = kb_payment_transaction_external_key
+            kb_payment_transaction.created_date = Java::org.joda.time.DateTime.new(Java::org.joda.time.DateTimeZone::UTC)
             kb_payment.transactions << kb_payment_transaction
 
             kb_payment
@@ -142,6 +142,23 @@ module Killbill
 
           def get_payment(id, with_plugin_info=false, properties=[], context=nil)
             @payments.find { |payment| payment.id == id.to_s }
+          end
+        end
+
+        class FakeJavaTenantUserApi
+
+          attr_accessor :per_tenant_config
+
+          def initialize(per_tenant_config)
+            @per_tenant_config = per_tenant_config
+          end
+
+          def get_tenant_value_for_key(key, context)
+            result = @per_tenant_config[context.tenant_id.to_s]
+            if result
+              return [result]
+            end
+            nil
           end
         end
       end

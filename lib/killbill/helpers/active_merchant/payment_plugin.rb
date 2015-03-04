@@ -161,7 +161,7 @@ module Killbill
 
           # Go to the gateway
           payment_processor_account_id = options[:payment_processor_account_id] || :default
-          gateway                      = lookup_gateway(payment_processor_account_id)
+          gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
           gw_response                  = gateway.store(payment_source, options)
           response, transaction        = save_response_and_transaction(gw_response, :add_payment_method, kb_account_id, context.tenant_id, payment_processor_account_id)
 
@@ -189,7 +189,7 @@ module Killbill
 
           # Delete the card
           payment_processor_account_id = options[:payment_processor_account_id] || :default
-          gateway                      = lookup_gateway(payment_processor_account_id)
+          gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
           if options[:customer_id]
             gw_response = gateway.unstore(options[:customer_id], pm.token, options)
           else
@@ -395,7 +395,7 @@ module Killbill
           payment_processor_account_ids = options[:payment_processor_account_ids].nil? ? [options[:payment_processor_account_id] || :default] : options[:payment_processor_account_ids].split(',')
           payment_processor_account_ids.each do |payment_processor_account_id|
             # Find the gateway
-            gateway = lookup_gateway(payment_processor_account_id)
+            gateway = lookup_gateway(payment_processor_account_id, context.tenant_id)
 
             # Filter before each gateway call
             before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
@@ -523,9 +523,9 @@ module Killbill
           return response, transaction
         end
 
-        def lookup_gateway(payment_processor_account_id=:default)
-          gateway = ::Killbill::Plugin::ActiveMerchant.gateways[payment_processor_account_id.to_sym]
-          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways}" if gateway.nil?
+        def lookup_gateway(payment_processor_account_id=:default, kb_tenant_id)
+          gateway = ::Killbill::Plugin::ActiveMerchant.gateways(kb_tenant_id)[payment_processor_account_id.to_sym]
+          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways(kb_tenant_id)}" if gateway.nil?
           gateway
         end
 
