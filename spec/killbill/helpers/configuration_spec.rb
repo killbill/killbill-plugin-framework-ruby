@@ -5,6 +5,29 @@ describe Killbill::Plugin::ActiveMerchant do
   before(:all) do
     @logger       = Logger.new(STDOUT)
     @logger.level = Logger::INFO
+
+    @call_context           = Killbill::Plugin::Model::CallContext.new
+    @call_context.tenant_id = '00001011-a022-b033-0055-aa0000000066'
+    @call_context           = @call_context.to_ruby(@call_context)
+
+  end
+
+
+  it 'should support multi-tenancy configurations' do
+    do_initialize!(<<-eos)
+  :login: admin
+  :password: password
+  :test: true
+    eos
+
+    do_common_checks
+
+    gw = ::Killbill::Plugin::ActiveMerchant.gateways(@call_context.tenant_id)
+    gw.size.should == 1
+    gw[:default][:login].should == 'admin2'
+    gw[:default][:password].should == 'password2'
+
+    ::Killbill::Plugin::ActiveMerchant.plugin_name.should == 'plugin_name'
   end
 
   it 'should support a configuration for a single gateway' do
@@ -105,11 +128,24 @@ describe Killbill::Plugin::ActiveMerchant do
       eos
       file.close
 
-      ::Killbill::Plugin::ActiveMerchant.initialize! Proc.new { |config| config },
-                                                     :test,
-                                                     @logger,
-                                                     file.path,
-                                                     ::Killbill::Plugin::KillbillApi.new('test', {})
+      per_tenant_config =<<-oes
+:test:
+  :login: admin2
+  :password: password2
+:database:
+  :adapter: 'sqlite3'
+  :database: 'test.db'
+      oes
+
+      @tenant_api = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new({@call_context.tenant_id => per_tenant_config})
+    svcs = {:tenant_user_api => @tenant_api}
+
+     ::Killbill::Plugin::ActiveMerchant.initialize! Proc.new { |config| config },
+                                                   :test,
+                                                   @logger,
+                                                   '/foo/plugin_name/1.2.3',
+                                                   file.path,
+                                                   ::Killbill::Plugin::KillbillApi.new('test', svcs)
     end
   end
 end

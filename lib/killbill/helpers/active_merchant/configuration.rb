@@ -14,16 +14,19 @@ module Killbill
       mattr_reader :gateway_name
       mattr_reader :gateway_builder
       mattr_reader :logger
+      mattr_reader :plugin_name
+
 
       class << self
 
-        def initialize!(gateway_builder, gateway_name, logger, config_file, kb_apis)
+        def initialize!(gateway_builder, gateway_name, logger, root, config_file, kb_apis)
 
           @@logger = logger
           @@kb_apis = kb_apis
           @@gateway_name = gateway_name
           @@gateway_builder = gateway_builder
-          @@plugin_config_key = "PLUGIN_CONFIG_#{@@gateway_name}"
+          @@plugin_name = get_plugin_name(root)
+          @@plugin_config_key = "PLUGIN_CONFIG_#{@@plugin_name}"
 
           if defined?(JRUBY_VERSION)
             begin
@@ -129,6 +132,12 @@ module Killbill
           @@initialized = true
         end
 
+        # The plugin_name is computed by Kill Bill by looking at the file system when discovering the plugin
+        # The 'root' value points to '/.../plugin_name/plugin_version'
+        def get_plugin_name(root)
+          tmp = root.split("/")
+          tmp[tmp.size() - 2]
+        end
       end
     end
   end

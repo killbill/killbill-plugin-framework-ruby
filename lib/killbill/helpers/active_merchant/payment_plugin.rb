@@ -25,6 +25,7 @@ module Killbill
           ::Killbill::Plugin::ActiveMerchant.initialize! @gateway_builder,
                                                          @identifier.to_sym,
                                                          @logger,
+                                                         @root,
                                                          "#{@conf_dir}/#{@identifier.to_s}.yml",
                                                          @kb_apis
 
@@ -523,9 +524,9 @@ module Killbill
           return response, transaction
         end
 
-        def lookup_gateway(payment_processor_account_id=:default, kb_tenant_id)
+        def lookup_gateway(payment_processor_account_id=:default, kb_tenant_id=nil)
           gateway = ::Killbill::Plugin::ActiveMerchant.gateways(kb_tenant_id)[payment_processor_account_id.to_sym]
-          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways(kb_tenant_id)}" if gateway.nil?
+          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, kb_tenant_id = #{kb_tenant_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways(kb_tenant_id)}" if gateway.nil?
           gateway
         end
 
