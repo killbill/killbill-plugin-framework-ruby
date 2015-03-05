@@ -41,7 +41,7 @@ module Killbill
 
         def to_java()
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, @currency.to_s ) unless @currency.nil?
 
           # conversion for value [type = java.math.BigDecimal]
           if @value.nil?

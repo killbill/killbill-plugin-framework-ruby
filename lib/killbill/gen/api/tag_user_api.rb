@@ -131,7 +131,7 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for tagDefinitionIds [type = java.util.Collection]
           tmp = java.util.ArrayList.new
@@ -154,7 +154,7 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for tagDefinitionId [type = java.util.UUID]
           tagDefinitionId = java.util.UUID.fromString(tagDefinitionId.to_s) unless tagDefinitionId.nil?
@@ -171,7 +171,7 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for tagDefinitions [type = java.util.Collection]
           tmp = java.util.ArrayList.new
@@ -194,7 +194,7 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for tagDefinitionId [type = java.util.UUID]
           tagDefinitionId = java.util.UUID.fromString(tagDefinitionId.to_s) unless tagDefinitionId.nil?
@@ -248,7 +248,7 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for includedDeleted [type = boolean]
           includedDeleted = includedDeleted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includedDeleted)
@@ -274,7 +274,7 @@ module Killbill
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for includedDeleted [type = boolean]
           includedDeleted = includedDeleted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includedDeleted)

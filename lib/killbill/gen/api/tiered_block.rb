@@ -41,7 +41,7 @@ module Killbill
 
         def to_java()
           # conversion for type [type = org.killbill.billing.catalog.api.BlockType]
-          @type = Java::org.killbill.billing.catalog.api.BlockType.value_of("#{@type.to_s}") unless @type.nil?
+          @type = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.BlockType.java_class, @type.to_s ) unless @type.nil?
 
           # conversion for unit [type = org.killbill.billing.catalog.api.Unit]
           @unit = @unit.to_java unless @unit.nil?

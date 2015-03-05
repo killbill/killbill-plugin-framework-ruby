@@ -61,7 +61,7 @@ module Killbill
       def get_current_currency_conversion(baseCurrency)
 
         # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
-        baseCurrency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{baseCurrency.to_s}") unless baseCurrency.nil?
+        baseCurrency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, baseCurrency.to_s ) unless baseCurrency.nil?
         begin
           res = @real_java_api.get_current_currency_conversion(baseCurrency)
           # conversion for res [type = org.killbill.billing.currency.api.CurrencyConversion]
@@ -76,7 +76,7 @@ module Killbill
       def get_currency_conversion(baseCurrency, dateConversion)
 
         # conversion for baseCurrency [type = org.killbill.billing.catalog.api.Currency]
-        baseCurrency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{baseCurrency.to_s}") unless baseCurrency.nil?
+        baseCurrency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, baseCurrency.to_s ) unless baseCurrency.nil?
 
         # conversion for dateConversion [type = org.joda.time.DateTime]
         if !dateConversion.nil?
