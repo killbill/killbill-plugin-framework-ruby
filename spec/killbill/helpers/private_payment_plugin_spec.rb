@@ -54,18 +54,7 @@ Pay!
   private
 
   def setup_public_plugin
-    Dir.mktmpdir do |dir|
-      file = File.new(File.join(dir, 'test.yml'), 'w+')
-      file.write(<<-eos)
-:test:
-  :test: true
-# As defined by spec_helper.rb
-:database:
-  :adapter: 'sqlite3'
-  :database: 'test.db'
-      eos
-      file.close
-
+    with_plugin_yaml_config('test.yml', :test => { :test => true }) do |file|
       plugin          = ::Killbill::Plugin::ActiveMerchant::PaymentPlugin.new(Proc.new { |config| nil },
                                                                               :test,
                                                                               ::Killbill::Test::TestPaymentMethod,
@@ -73,7 +62,7 @@ Pay!
                                                                               ::Killbill::Test::TestResponse)
       payment_api     = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaPaymentApi.new
       plugin.kb_apis  = ::Killbill::Plugin::KillbillApi.new('test', {:payment_api => payment_api})
-      plugin.logger   = Logger.new(STDOUT)
+      plugin.logger   = Logger.new(STDOUT); plugin.logger.level = ActiveRecord::Base.logger.level
       plugin.conf_dir = File.dirname(file)
 
       # Start the plugin here - since the config file will be deleted

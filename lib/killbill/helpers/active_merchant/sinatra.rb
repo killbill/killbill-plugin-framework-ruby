@@ -24,9 +24,7 @@ module Killbill
           # return DB connections to the Pool if required
           pool = ::ActiveRecord::Base.connection_pool
           if pool.active_connection?
-            connection = ::ActiveRecord::Base.connection
-            pool.remove(connection)
-            connection.disconnect!
+            ::ActiveRecord::Base.connection.close # check-in to pool
           end
         end
       end

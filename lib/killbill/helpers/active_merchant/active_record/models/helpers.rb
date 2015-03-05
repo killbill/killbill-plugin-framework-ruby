@@ -34,6 +34,14 @@ module Killbill
           }
         end
 
+        def with_connection(&block)
+          self.connection_pool.with_connection(&block)
+        end
+
+        def with_connection_and_transaction(&block)
+          with_connection { self.transaction(&block) }
+        end
+
         # Useful helper to extract params from AM response objects, e.g. extract(response, 'card', 'address_country')
         def extract(response, key1, key2=nil, key3=nil)
           return nil if response.nil? || response.params.nil?
