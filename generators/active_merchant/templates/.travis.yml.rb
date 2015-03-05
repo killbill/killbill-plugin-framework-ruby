@@ -17,3 +17,6 @@ jdk:
 matrix:
   allow_failures:
     - rvm: jruby-head
+  exclude:
+    - rvm: jruby-head
+      jdk: openjdk6
