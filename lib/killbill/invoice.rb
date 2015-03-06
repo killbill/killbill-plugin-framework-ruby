@@ -9,6 +9,12 @@ module Killbill
         []
       end
 
+      # Override this method in your plugin to act upon received events
+      def on_event(event)
+        # No-op by default
+      end
+
+
       # Helper method to build a new item from an existing one
       def build_item(item_model, amount, description = nil, type = :EXTERNAL_CHARGE)
         item = Model::InvoiceItem.new

@@ -39,11 +39,14 @@ module Killbill
         end
 
 
-        java_signature 'Java::org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor buildFormDescriptor(Java::org.killbill.billing.account.api.Account, Java::java.lang.Iterable, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def build_form_descriptor(account, customFields, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor buildFormDescriptor(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.Iterable, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def build_form_descriptor(account, paymentMethodId, customFields, properties, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
+
+          # conversion for paymentMethodId [type = java.util.UUID]
+          paymentMethodId = java.util.UUID.fromString(paymentMethodId.to_s) unless paymentMethodId.nil?
 
           # conversion for customFields [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -66,7 +69,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.build_form_descriptor(account, customFields, properties, context)
+            res = @real_java_api.build_form_descriptor(account, paymentMethodId, customFields, properties, context)
             # conversion for res [type = org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor]
             res = Killbill::Plugin::Model::HostedPaymentPageFormDescriptor.new.to_ruby(res) unless res.nil?
             return res

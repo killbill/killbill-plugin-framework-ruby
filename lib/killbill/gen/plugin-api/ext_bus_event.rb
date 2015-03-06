@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.notification.plugin.api.ExtBusEvent
 
-        attr_accessor :event_type, :object_type, :object_id, :account_id, :tenant_id
+        attr_accessor :event_type, :object_type, :object_id, :meta_data, :account_id, :tenant_id
 
         def initialize()
         end
@@ -48,6 +48,9 @@ module Killbill
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
+
+          # conversion for meta_data [type = java.lang.String]
+          @meta_data = @meta_data.to_s unless @meta_data.nil?
 
           # conversion for account_id [type = java.util.UUID]
           @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
@@ -69,6 +72,9 @@ module Killbill
           # conversion for object_id [type = java.util.UUID]
           @object_id = j_obj.object_id
           @object_id = @object_id.nil? ? nil : @object_id.to_s
+
+          # conversion for meta_data [type = java.lang.String]
+          @meta_data = j_obj.meta_data
 
           # conversion for account_id [type = java.util.UUID]
           @account_id = j_obj.account_id

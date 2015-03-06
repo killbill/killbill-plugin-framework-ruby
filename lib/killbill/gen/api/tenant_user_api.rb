@@ -87,8 +87,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.List getTenantValueForKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_tenant_value_for_key(key, context)
+        java_signature 'Java::java.util.List getTenantValuesForKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_tenant_values_for_key(key, context)
 
           # conversion for key [type = java.lang.String]
           key = key.to_s unless key.nil?
@@ -96,7 +96,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.get_tenant_value_for_key(key, context)
+            res = @real_java_api.get_tenant_values_for_key(key, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|

@@ -101,7 +101,7 @@ module Killbill
 
         def get_tenant_config(kb_tenant_id)
           context = @@kb_apis.create_context(kb_tenant_id) if kb_tenant_id
-          values = @@kb_apis.tenant_user_api.get_tenant_value_for_key(@@plugin_config_key, context) if context
+          values = @@kb_apis.tenant_user_api.get_tenant_values_for_key(@@plugin_config_key, context) if context
           return YAML.load(values[0]) if values && values[0]
           nil
         end
