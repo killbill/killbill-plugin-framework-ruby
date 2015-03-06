@@ -153,7 +153,7 @@ module Killbill
             @per_tenant_config = per_tenant_config
           end
 
-          def get_tenant_value_for_key(key, context)
+          def get_tenant_values_for_key(key, context)
             result = @per_tenant_config[context.tenant_id.to_s]
             if result
               return [result]
