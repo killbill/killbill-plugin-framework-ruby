@@ -22,6 +22,7 @@ module Killbill
 
       # Extra services
       attr_accessor :root,
+                    :plugin_name,
                     :logger,
                     :conf_dir,
                     :kb_apis
@@ -45,7 +46,6 @@ module Killbill
       # Will be called by each thread before returning to Killbill
       def after_request
       end
-
     end
   end
 end

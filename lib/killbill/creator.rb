@@ -1,4 +1,5 @@
 require 'java'
+require 'pathname'
 
 require 'killbill/killbill_api'
 
@@ -19,6 +20,7 @@ module Killbill
 
         plugin_delegate = real_class.new
         plugin_delegate.root = services.delete("root")
+        plugin_delegate.plugin_name = extract_plugin_name(plugin_delegate.root)
         plugin_delegate.logger = services.delete("logger")
         plugin_delegate.conf_dir = services.delete("conf_dir")
         # At this point we removed everything from the map which is not API, so we can build the APIs
@@ -27,6 +29,13 @@ module Killbill
         plugin_delegate
       end
 
+
+      private
+
+      def extract_plugin_name(root)
+        p = Pathname.new(root)
+        p.split[0].split[-1].to_s
+      end
 
     end
   end

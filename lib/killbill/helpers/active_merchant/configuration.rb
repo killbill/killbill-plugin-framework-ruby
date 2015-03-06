@@ -1,5 +1,5 @@
 require 'logger'
-require 'pathname'
+require 'thread_safe'
 
 module Killbill
   module Plugin
@@ -7,27 +7,26 @@ module Killbill
 
       mattr_reader :glob_config
       mattr_reader :glob_currency_conversions
-      mattr_reader :glob_gateways
 
       mattr_reader :initialized
       mattr_reader :kb_apis
-      mattr_reader :plugin_config_key
       mattr_reader :gateway_name
       mattr_reader :gateway_builder
       mattr_reader :logger
-      mattr_reader :plugin_name
+      mattr_reader :config_key_name
+      mattr_reader :per_tenant_config_cache
 
 
       class << self
 
-        def initialize!(gateway_builder, gateway_name, logger, root, config_file, kb_apis)
+        def initialize!(gateway_builder, gateway_name, logger, config_key_name, config_file, kb_apis)
 
           @@logger = logger
           @@kb_apis = kb_apis
           @@gateway_name = gateway_name
           @@gateway_builder = gateway_builder
-          @@plugin_name = get_plugin_name(root)
-          @@plugin_config_key = "PLUGIN_CONFIG_#{@@plugin_name}"
+          @@config_key_name = config_key_name
+          @@per_tenant_config_cache = ThreadSafe::Cache.new
 
           if defined?(JRUBY_VERSION)
             begin
@@ -45,11 +44,7 @@ module Killbill
 
         def gateways(kb_tenant_id=nil)
           tenant_config = get_tenant_config(kb_tenant_id)
-          if tenant_config
-            extract_gateway_config(tenant_config)
-          else
-            @@glob_gateways
-          end
+          extract_gateway_config(tenant_config)
         end
 
         def currency_conversions(kb_tenant_id=nil)
@@ -62,18 +57,18 @@ module Killbill
         end
 
         def config(kb_tenant_id=nil)
-          tenant_config = get_tenant_config(kb_tenant_id)
-          if tenant_config
-            tenant_config
-          else
-            @@glob_config
-          end
+          get_tenant_config(kb_tenant_id)
         end
 
         def converted_currency(currency, kb_tenant_id=nil)
           currency_sym = currency.to_s.upcase.to_sym
           tmp = currency_conversions(kb_tenant_id)
           tmp && tmp[currency_sym]
+        end
+
+        def invalidate_tenant_config!(kb_tenant_id)
+          @@logger.info("Invalidate plugin key #{@@config_key_name}, tenant = #{kb_tenant_id}")
+          @@per_tenant_config_cache[kb_tenant_id] = nil
         end
 
         private
@@ -100,10 +95,22 @@ module Killbill
         end
 
         def get_tenant_config(kb_tenant_id)
-          context = @@kb_apis.create_context(kb_tenant_id) if kb_tenant_id
-          values = @@kb_apis.tenant_user_api.get_tenant_values_for_key(@@plugin_config_key, context) if context
-          return YAML.load(values[0]) if values && values[0]
-          nil
+
+          if @@per_tenant_config_cache[kb_tenant_id].nil?
+            # Make the api api to verify if there is a per tenant value
+            context = @@kb_apis.create_context(kb_tenant_id) if kb_tenant_id
+            values = @@kb_apis.tenant_user_api.get_tenant_values_for_key(@@config_key_name, context) if context
+            # If we have a per tenant value, insert it into the cache
+            if values && values[0]
+              parsed_config = YAML.load(values[0])
+              @@per_tenant_config_cache[kb_tenant_id] = parsed_config
+              # Otherwise, add global config so we don't have to make the tenant call on each operation
+            else
+              @@per_tenant_config_cache[kb_tenant_id] = @@glob_config
+            end
+          end
+          # Return value from cache in any case
+          @@per_tenant_config_cache[kb_tenant_id]
         end
 
         def initialize_from_global_config!(gateway_builder, gateway_name, logger, config_file)
@@ -114,7 +121,6 @@ module Killbill
           @@logger.log_level = Logger::DEBUG if (@@glob_config[:logger] || {})[:debug]
 
           @@glob_currency_conversions = @@glob_config[:currency_conversions]
-          @@glob_gateways = extract_gateway_config(@@glob_config)
 
           begin
             require 'active_record'
@@ -131,13 +137,6 @@ module Killbill
           end
 
           @@initialized = true
-        end
-
-        # The plugin_name is computed by Kill Bill by looking at the file system when discovering the plugin
-        # The 'root' value points to '/.../plugin_name/plugin_version'
-        def get_plugin_name(root)
-          p = Pathname.new(root)
-          p.split[0].split[-1].to_s
         end
       end
     end

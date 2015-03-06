@@ -17,15 +17,18 @@ module Killbill
           @payment_method_model = payment_method_model
           @transaction_model    = transaction_model
           @response_model       = response_model
+
         end
 
         def start_plugin
+
           @logger.progname = "#{@identifier.to_s}-plugin"
 
+          @config_key_name = "PLUGIN_CONFIG_#{@plugin_name}".to_sym
           ::Killbill::Plugin::ActiveMerchant.initialize! @gateway_builder,
                                                          @identifier.to_sym,
                                                          @logger,
-                                                         @root,
+                                                         @config_key_name,
                                                          "#{@conf_dir}/#{@identifier.to_s}.yml",
                                                          @kb_apis
 
@@ -44,6 +47,14 @@ module Killbill
           connection.disconnect!
 
           @logger.debug { "after_request: pool.active_connection? = #{pool.active_connection?}, connection.active? = #{connection.active?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}" }
+        end
+
+
+        def on_event(event)
+          return if (event.event_type != :TENANT_CONFIG_CHANGE && event.event_type != :TENANT_CONFIG_DELETION) ||
+              event.meta_data.to_sym != @config_key_name
+
+          ::Killbill::Plugin::ActiveMerchant.invalidate_tenant_config!(event.tenant_id)
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)

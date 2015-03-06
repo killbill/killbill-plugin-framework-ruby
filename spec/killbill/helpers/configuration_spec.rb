@@ -27,7 +27,7 @@ describe Killbill::Plugin::ActiveMerchant do
     gw[:default][:login].should == 'admin2'
     gw[:default][:password].should == 'password2'
 
-    ::Killbill::Plugin::ActiveMerchant.plugin_name.should == 'plugin_name'
+    ::Killbill::Plugin::ActiveMerchant.config_key_name.should == :KEY
   end
 
   it 'should support a configuration for a single gateway' do
@@ -143,7 +143,7 @@ describe Killbill::Plugin::ActiveMerchant do
      ::Killbill::Plugin::ActiveMerchant.initialize! Proc.new { |config| config },
                                                    :test,
                                                    @logger,
-                                                   '/foo/plugin_name/1.2.3',
+                                                   :KEY,
                                                    file.path,
                                                    ::Killbill::Plugin::KillbillApi.new('test', svcs)
     end

@@ -6,7 +6,7 @@ describe Killbill::Plugin::Api::PaymentPluginApi do
   before(:all) do
     @call_context          = Killbill::Plugin::Model::CallContext.new
     logger                 = ::Logger.new(STDOUT)
-    @paymentPluginApi      = Killbill::Plugin::Api::PaymentPluginApi.new("Killbill::Plugin::PaymentTest", {"logger" => logger})
+    @paymentPluginApi      = Killbill::Plugin::Api::PaymentPluginApi.new("Killbill::Plugin::PaymentTest", {"logger" => logger, "root" => "/a/b/plugin_name/1.2.3"})
     @kb_account_id         = java.util.UUID.fromString("aa5c926e-3d9d-4435-b44b-719d7b583256")
     @kb_payment_id         = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
     @kb_payment_method_id  = java.util.UUID.fromString("bf5c926e-3d9c-470e-b34b-719d7b58323a")
