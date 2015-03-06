@@ -1,4 +1,5 @@
 require 'logger'
+require 'pathname'
 
 module Killbill
   module Plugin
@@ -135,8 +136,8 @@ module Killbill
         # The plugin_name is computed by Kill Bill by looking at the file system when discovering the plugin
         # The 'root' value points to '/.../plugin_name/plugin_version'
         def get_plugin_name(root)
-          tmp = root.split("/")
-          tmp[tmp.size() - 2]
+          p = Pathname.new(root)
+          p.split[0].split[1].to_s
         end
       end
     end
