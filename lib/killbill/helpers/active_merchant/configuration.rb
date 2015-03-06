@@ -137,7 +137,7 @@ module Killbill
         # The 'root' value points to '/.../plugin_name/plugin_version'
         def get_plugin_name(root)
           p = Pathname.new(root)
-          p.split[0].split[1].to_s
+          p.split[0].split[-1].to_s
         end
       end
     end

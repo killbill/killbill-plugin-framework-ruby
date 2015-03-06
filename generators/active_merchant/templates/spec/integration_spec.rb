@@ -23,7 +23,7 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
     @plugin.logger       = Logger.new(STDOUT)
     @plugin.logger.level = Logger::INFO
     @plugin.conf_dir     = File.expand_path(File.dirname(__FILE__) + '../../../../')
-    @plugin.root         = '/something/plugin_name/version'
+    @plugin.root         = '/killbill-<%= identifier %>/0.0.1'
 
     @plugin.start_plugin
 
