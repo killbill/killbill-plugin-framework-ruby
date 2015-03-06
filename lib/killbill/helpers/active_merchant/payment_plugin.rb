@@ -51,10 +51,10 @@ module Killbill
 
 
         def on_event(event)
-          return if (event.event_type != :TENANT_CONFIG_CHANGE && event.event_type != :TENANT_CONFIG_DELETION) ||
-              event.meta_data.to_sym != @config_key_name
-
-          ::Killbill::Plugin::ActiveMerchant.invalidate_tenant_config!(event.tenant_id)
+          if (event.event_type == :TENANT_CONFIG_CHANGE || event.event_type == :TENANT_CONFIG_DELETION) &&
+              event.meta_data.to_sym == @config_key_name
+            ::Killbill::Plugin::ActiveMerchant.invalidate_tenant_config!(event.tenant_id)
+          end
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
