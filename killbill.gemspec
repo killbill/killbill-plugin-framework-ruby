@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'tzinfo', '~> 1.1.0'
   s.add_dependency 'thread_safe', '~> 0.3.4'
 
-  s.add_development_dependency 'thread_safe', '~> 0.3.4'
   s.add_development_dependency 'activerecord', '~> 4.1.0'
   if defined?(JRUBY_VERSION)
     s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3.7'
