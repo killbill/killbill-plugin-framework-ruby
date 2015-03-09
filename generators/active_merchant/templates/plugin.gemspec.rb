@@ -37,8 +37,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'actionview', '~> 4.1.0'
   s.add_dependency 'activemerchant', '~> 1.44.1'
   s.add_dependency 'offsite_payments', '~> 2.0.1'
-  s.add_dependency 'monetize', '~> 0.3.0'
-  s.add_dependency 'money', '~> 6.1.1'
+  s.add_dependency 'monetize', '~> 1.1.0'
+  s.add_dependency 'money', '~> 6.5.1'
 
   s.add_development_dependency 'jbundler', '~> 0.4.1'
   s.add_development_dependency 'rake', '>= 10.0.0'
