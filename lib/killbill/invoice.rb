@@ -3,15 +3,10 @@ require 'securerandom'
 
 module Killbill
   module Plugin
-    class Invoice < PluginBase
+    class Invoice < Notification
 
       def get_additional_invoice_items(invoice, properties, context)
         []
-      end
-
-      # Override this method in your plugin to act upon received events
-      def on_event(event)
-        # No-op by default
       end
 
 
