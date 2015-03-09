@@ -38,9 +38,45 @@ module Killbill
           @gateway = am_gateway
         end
 
+        #
+        # Materialize the most common operations - this is for performance reasons
+        #
+
+        def store(*args, &block)
+          method_missing(:store, *args, &block)
+        end
+
+        def unstore(*args, &block)
+          method_missing(:unstore, *args, &block)
+        end
+
+        def authorize(*args, &block)
+          method_missing(:authorize, *args, &block)
+        end
+
         # Unfortunate name...
-        def capture(money, authorization, options = {})
-          method_missing(:capture, money, authorization, options)
+        def capture(*args, &block)
+          method_missing(:capture, *args, &block)
+        end
+
+        def purchase(*args, &block)
+          method_missing(:purchase, *args, &block)
+        end
+
+        def void(*args, &block)
+          method_missing(:void, *args, &block)
+        end
+
+        def auth_reversal(*args, &block)
+          method_missing(:auth_reversal, *args, &block)
+        end
+
+        def credit(*args, &block)
+          method_missing(:credit, *args, &block)
+        end
+
+        def refund(*args, &block)
+          method_missing(:refund, *args, &block)
         end
 
         def method_missing(m, *args, &block)
