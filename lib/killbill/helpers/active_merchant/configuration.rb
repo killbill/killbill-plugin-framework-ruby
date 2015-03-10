@@ -42,6 +42,20 @@ module Killbill
           require 'active_record'
           require 'arjdbc' if defined?(JRUBY_VERSION)
           db_config = @@config[:database]
+
+          if db_config.nil?
+            # Sane defaults for running as a Kill Bill plugin
+            db_config = {
+                :adapter              => :mysql,
+                # See KillbillActivator#KILLBILL_OSGI_JDBC_JNDI_NAME
+                :jndi                 => 'killbill/osgi/jdbc',
+                # See https://github.com/kares/activerecord-bogacs
+                :pool                 => false,
+                # Since AR-JDBC 1.4, to disable session configuration
+                :configure_connection => false
+            }
+          end
+
           if defined?(JRUBY_VERSION) && db_config.is_a?(Hash)
             # we accept a **pool: false** configuration in which case we
             # the built-in pool is replaced with a false one (under JNDI) :
