@@ -57,6 +57,16 @@ module Killbill
           end
 
           if defined?(JRUBY_VERSION) && db_config.is_a?(Hash)
+            if db_config[:jndi]
+              # Lookup the DataSource object once, for performance reasons
+              begin
+                db_config[:data_source] = Java::JavaxNaming::InitialContext.new.lookup(db_config[:jndi].to_s)
+                db_config.delete(:jndi)
+              rescue Java::javax.naming.NamingException => e
+                @@logger.warn "Unable to lookup JNDI DataSource (yet?): #{e}"
+              end
+            end
+
             # we accept a **pool: false** configuration in which case we
             # the built-in pool is replaced with a false one (under JNDI) :
             if db_config[:pool] == false && ( db_config[:jndi] || db_config[:data_source] )
