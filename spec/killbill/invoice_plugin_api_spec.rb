@@ -4,7 +4,7 @@ describe Killbill::Plugin::Api::InvoicePluginApi do
 
   before(:all) do
     logger            = ::Logger.new(STDOUT)
-    @invoicePluginApi = Killbill::Plugin::Api::InvoicePluginApi.new('Killbill::Plugin::InvoiceTest', {'logger' => logger})
+    @invoicePluginApi = Killbill::Plugin::Api::InvoicePluginApi.new('Killbill::Plugin::InvoiceTest', {'logger' => logger, "root" => "/a/b/plugin_name/1.2.3"})
   end
 
   it 'should add items' do

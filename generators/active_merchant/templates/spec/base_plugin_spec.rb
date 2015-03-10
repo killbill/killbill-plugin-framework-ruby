@@ -19,6 +19,7 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
       @plugin.logger.level = Logger::INFO
       @plugin.conf_dir     = File.dirname(file)
       @plugin.kb_apis      = Killbill::Plugin::KillbillApi.new('<%= identifier %>', {})
+      @plugin.root         = '/foo/killbill-<%= identifier %>/0.0.1'
 
       # Start the plugin here - since the config file will be deleted
       @plugin.start_plugin

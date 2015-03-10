@@ -15,6 +15,14 @@ module Killbill #:nodoc:
               ::Killbill::<%= class_name %>::<%= class_name %>Response)
       end
 
+      def on_event(event)
+        # Require to deal with per tenant configuration invalidation
+        super(event)
+        #
+        # Custom event logic could be added below...
+        #
+      end
+
       def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
         # Pass extra parameters for the gateway here
         options = {}

@@ -5,7 +5,7 @@ describe Killbill::Plugin::Api::NotificationPluginApi do
 
   before(:all) do
     logger = ::Logger.new(STDOUT)
-    @notificationPluginApi =  Killbill::Plugin::Api::NotificationPluginApi.new("Killbill::Plugin::NotificationTest", { "logger" => logger })
+    @notificationPluginApi =  Killbill::Plugin::Api::NotificationPluginApi.new("Killbill::Plugin::NotificationTest", { "logger" => logger, "root" => "/a/b/plugin_name/1.2.3" })
   end
 
 

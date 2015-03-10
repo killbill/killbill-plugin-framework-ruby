@@ -3,11 +3,12 @@ require 'securerandom'
 
 module Killbill
   module Plugin
-    class Invoice < PluginBase
+    class Invoice < Notification
 
       def get_additional_invoice_items(invoice, properties, context)
         []
       end
+
 
       # Helper method to build a new item from an existing one
       def build_item(item_model, amount, description = nil, type = :EXTERNAL_CHARGE)

@@ -2,7 +2,7 @@ require 'killbill/plugin'
 
 module Killbill
   module Plugin
-    class Payment < PluginBase
+    class Payment < Notification
 
       class OperationUnsupportedByGatewayError < NotImplementedError
       end
@@ -74,6 +74,7 @@ module Killbill
       def process_notification(notification, properties, context)
         raise OperationUnsupportedByGatewayError
       end
+
     end
   end
 end

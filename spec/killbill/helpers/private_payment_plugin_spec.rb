@@ -61,10 +61,13 @@ Pay!
                                                                               ::Killbill::Test::TestTransaction,
                                                                               ::Killbill::Test::TestResponse)
       payment_api     = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaPaymentApi.new
-      plugin.kb_apis  = ::Killbill::Plugin::KillbillApi.new('test', {:payment_api => payment_api})
-      plugin.logger   = Logger.new(STDOUT); plugin.logger.level = ActiveRecord::Base.logger.level
-      plugin.conf_dir = File.dirname(file)
+      tenant_api      = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new({})
 
+      plugin.kb_apis  = ::Killbill::Plugin::KillbillApi.new('test', {:payment_api => payment_api, :tenant_user_api => tenant_api})
+      plugin.logger   = Logger.new(STDOUT)
+      plugin.logger.level = ActiveRecord::Base.logger.level
+      plugin.conf_dir = File.dirname(file)
+      plugin.root     = File.dirname(file)
       # Start the plugin here - since the config file will be deleted
       plugin.start_plugin
     end

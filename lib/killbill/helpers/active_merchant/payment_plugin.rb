@@ -17,14 +17,18 @@ module Killbill
           @payment_method_model = payment_method_model
           @transaction_model    = transaction_model
           @response_model       = response_model
+
         end
 
         def start_plugin
+
           @logger.progname = "#{@identifier.to_s}-plugin"
 
+          @config_key_name = "PLUGIN_CONFIG_#{@plugin_name}".to_sym
           ::Killbill::Plugin::ActiveMerchant.initialize! @gateway_builder,
                                                          @identifier.to_sym,
                                                          @logger,
+                                                         @config_key_name,
                                                          "#{@conf_dir}/#{@identifier.to_s}.yml",
                                                          @kb_apis
 
@@ -38,6 +42,14 @@ module Killbill
           pool = ::ActiveRecord::Base.connection_pool
           @logger.debug { "after_request: pool.active_connection? = #{pool.active_connection?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}" }
           ::ActiveRecord::Base.connection.close if pool.active_connection? # check-in to pool
+        end
+
+
+        def on_event(event)
+          if (event.event_type == :TENANT_CONFIG_CHANGE || event.event_type == :TENANT_CONFIG_DELETION) &&
+              event.meta_data.to_sym == @config_key_name
+            ::Killbill::Plugin::ActiveMerchant.invalidate_tenant_config!(event.tenant_id)
+          end
         end
 
         def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
@@ -156,7 +168,7 @@ module Killbill
 
           # Go to the gateway
           payment_processor_account_id = options[:payment_processor_account_id] || :default
-          gateway                      = lookup_gateway(payment_processor_account_id)
+          gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
           gw_response                  = gateway.store(payment_source, options)
           response, transaction        = save_response_and_transaction(gw_response, :add_payment_method, kb_account_id, context.tenant_id, payment_processor_account_id)
 
@@ -184,7 +196,7 @@ module Killbill
 
           # Delete the card
           payment_processor_account_id = options[:payment_processor_account_id] || :default
-          gateway                      = lookup_gateway(payment_processor_account_id)
+          gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
           if options[:customer_id]
             gw_response = gateway.unstore(options[:customer_id], pm.token, options)
           else
@@ -390,7 +402,7 @@ module Killbill
           payment_processor_account_ids = options[:payment_processor_account_ids].nil? ? [options[:payment_processor_account_id] || :default] : options[:payment_processor_account_ids].split(',')
           payment_processor_account_ids.each do |payment_processor_account_id|
             # Find the gateway
-            gateway = lookup_gateway(payment_processor_account_id)
+            gateway = lookup_gateway(payment_processor_account_id, context.tenant_id)
 
             # Filter before each gateway call
             before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
@@ -518,9 +530,9 @@ module Killbill
           return response, transaction
         end
 
-        def lookup_gateway(payment_processor_account_id=:default)
-          gateway = ::Killbill::Plugin::ActiveMerchant.gateways[payment_processor_account_id.to_sym]
-          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways}" if gateway.nil?
+        def lookup_gateway(payment_processor_account_id=:default, kb_tenant_id=nil)
+          gateway = ::Killbill::Plugin::ActiveMerchant.gateways(kb_tenant_id)[payment_processor_account_id.to_sym]
+          raise "Unable to lookup gateway for payment_processor_account_id #{payment_processor_account_id}, kb_tenant_id = #{kb_tenant_id}, gateways: #{::Killbill::Plugin::ActiveMerchant.gateways(kb_tenant_id)}" if gateway.nil?
           gateway
         end
 

@@ -2,7 +2,7 @@ require 'killbill/plugin'
 
 module Killbill
   module Plugin
-    class Currency < PluginBase
+    class Currency < Notification
 
       class OperationUnsupportedError < NotImplementedError
       end
@@ -26,6 +26,7 @@ module Killbill
       def get_rates(base_currency, conversion_date, options = {})
         raise OperationUnsupportedError
       end
+
 
     end
   end
