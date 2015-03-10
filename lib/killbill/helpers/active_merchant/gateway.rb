@@ -67,10 +67,6 @@ module Killbill
           method_missing(:void, *args, &block)
         end
 
-        def auth_reversal(*args, &block)
-          method_missing(:auth_reversal, *args, &block)
-        end
-
         def credit(*args, &block)
           method_missing(:credit, *args, &block)
         end
