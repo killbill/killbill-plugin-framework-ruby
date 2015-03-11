@@ -16,7 +16,6 @@ module Killbill
       mattr_reader :config_key_name
       mattr_reader :per_tenant_config_cache
 
-
       class << self
 
         def initialize!(gateway_builder, gateway_name, logger, config_key_name, config_file, kb_apis)
@@ -26,13 +25,17 @@ module Killbill
           @@gateway_builder = gateway_builder
           @@config_key_name = config_key_name
           @@per_tenant_config_cache = ThreadSafe::Cache.new
+          @@per_tenant_gateways_cache = ThreadSafe::Cache.new
 
           initialize_from_global_config!(gateway_builder, gateway_name, logger, config_file)
         end
 
         def gateways(kb_tenant_id=nil)
-          tenant_config = get_tenant_config(kb_tenant_id)
-          extract_gateway_config(tenant_config)
+          if @@per_tenant_gateways_cache[kb_tenant_id].nil?
+            tenant_config = get_tenant_config(kb_tenant_id)
+            @@per_tenant_gateways_cache[kb_tenant_id] = extract_gateway_config(tenant_config)
+          end
+          @@per_tenant_gateways_cache[kb_tenant_id]
         end
 
         def currency_conversions(kb_tenant_id=nil)
@@ -57,6 +60,7 @@ module Killbill
         def invalidate_tenant_config!(kb_tenant_id)
           @@logger.info("Invalidate plugin key #{@@config_key_name}, tenant = #{kb_tenant_id}")
           @@per_tenant_config_cache[kb_tenant_id] = nil
+          @@per_tenant_gateways_cache[kb_tenant_id] = nil
         end
 
         private
