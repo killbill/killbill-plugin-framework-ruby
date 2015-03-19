@@ -158,8 +158,10 @@ module Killbill
           options[:set_default] ||= set_default
           options[:order_id]    ||= kb_payment_method_id
 
+          should_skip_gw = Utils.normalized(options, :skip_gw)
+
           # Registering a card or a token
-          if options[:skip_gw]
+          if should_skip_gw
             # If nothing is passed, that's fine -  we probably just want a placeholder row in the plugin
             payment_source = get_payment_source(nil, all_properties, options, context) rescue nil
           else
@@ -174,7 +176,7 @@ module Killbill
 
           if response.success
             # If we have skipped the call to the gateway, we still need to store the payment method (either a token or the full credit card)
-            if options[:skip_gw]
+            if should_skip_gw
               cc_or_token = payment_source
             else
               # response.authorization may be a String combination separated by ; - don't split it! Some plugins expect it as-is (they split it themselves)
@@ -399,7 +401,13 @@ module Killbill
           gw_responses                  = []
           responses                     = []
           transactions                  = []
-          payment_processor_account_ids = options[:payment_processor_account_ids].nil? ? [options[:payment_processor_account_id] || :default] : options[:payment_processor_account_ids].split(',')
+
+          payment_processor_account_ids = Utils.normalized(options, :payment_processor_account_ids)
+          if !payment_processor_account_ids
+            payment_processor_account_ids = [Utils.normalized(options, :payment_processor_account_id) || :default]
+          else
+            payment_processor_account_ids = payment_processor_account_ids.split(',')
+          end
           payment_processor_account_ids.each do |payment_processor_account_id|
             # Find the gateway
             gateway = lookup_gateway(payment_processor_account_id, context.tenant_id)

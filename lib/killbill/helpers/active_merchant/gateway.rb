@@ -55,7 +55,7 @@ module Killbill
         def method_missing(m, *args, &block)
           # The options hash should be the last argument, iterate through all to be safe
           args.reverse.each do |arg|
-            if arg.respond_to?(:has_key?) && arg.has_key?(:skip_gw)
+            if arg.respond_to?(:has_key?) && Utils.normalized(arg, :skip_gw)
               return ::ActiveMerchant::Billing::Response.new(true, 'Skipped Gateway call')
             end
           end
