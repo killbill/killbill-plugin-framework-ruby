@@ -48,4 +48,4 @@ org.slf4j:jcl-over-slf4j:jar:1.7.7
 org.slf4j:slf4j-api:jar:1.7.7
 org.weakref:jmxutils:jar:1.12
 org.mockito:mockito-all:jar:1.9.0
-javax.servlet:javax.servlet-api:jar:3.0.1
+javax.servlet:javax.servlet-api:jar:3.1.0
