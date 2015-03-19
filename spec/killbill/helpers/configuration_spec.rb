@@ -106,6 +106,21 @@ describe Killbill::Plugin::ActiveMerchant do
     gw[:default][:password].should == 'password_1'
   end
 
+  it 'should honor ActiveMerchant configuration options' do
+    do_initialize!
+    do_common_checks
+    verify_active_merchant_config
+
+    do_initialize!(<<-eos)
+  :retry_safe: true
+  :open_timeout: 12
+  :ssl_version: 5
+  :ssl_strict: false
+    eos
+    do_common_checks
+    verify_active_merchant_config(:retry_safe => true, :open_timeout => 12, :ssl_version => 5, :ssl_strict => false)
+  end
+
   it 'sets up false pool with jndi database configuration' do
     db_config = { :adapter => 'mysql2', :jndi => 'jdbc/MyDB', :pool => false }
 
@@ -131,6 +146,17 @@ describe Killbill::Plugin::ActiveMerchant do
     ::Killbill::Plugin::ActiveMerchant.initialized.should be_true
     ::Killbill::Plugin::ActiveMerchant.kb_apis.should_not be_nil
     ::Killbill::Plugin::ActiveMerchant.logger.should == logger
+  end
+
+  def verify_active_merchant_config(config = {})
+    ::ActiveMerchant::Billing::Gateway.open_timeout.should == (config.has_key?(:open_timeout) ? config[:open_timeout] : 60)
+    ::ActiveMerchant::Billing::Gateway.read_timeout.should == (config.has_key?(:read_timeout) ? config[:read_timeout] : 60)
+    ::ActiveMerchant::Billing::Gateway.retry_safe.should == (config.has_key?(:retry_safe) ? config[:retry_safe] : false)
+    ::ActiveMerchant::Billing::Gateway.ssl_strict.should == (config.has_key?(:ssl_strict) ? config[:ssl_strict] : true)
+    ::ActiveMerchant::Billing::Gateway.ssl_version.should == (config.has_key?(:ssl_version) ? config[:ssl_version] : nil)
+    ::ActiveMerchant::Billing::Gateway.max_retries.should == (config.has_key?(:max_retries) ? config[:max_retries] : 3)
+    ::ActiveMerchant::Billing::Gateway.proxy_address.should == (config.has_key?(:proxy_address) ? config[:proxy_address] : nil)
+    ::ActiveMerchant::Billing::Gateway.proxy_port.should == (config.has_key?(:proxy_port) ? config[:proxy_port] : nil)
   end
 
   def do_initialize!(extra_config = '', db_config = database_config)

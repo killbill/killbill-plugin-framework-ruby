@@ -75,13 +75,13 @@ module Killbill
               if gateway_account_id.nil?
                 @@logger.warn "Skipping config #{gateway_config} -- missing :account_id"
               else
-                gateways_config[gateway_account_id.to_sym] = Gateway.wrap(gateway_builder, logger, gateway_config)
+                gateways_config[gateway_account_id.to_sym] = Gateway.wrap(gateway_builder, gateway_config)
                 default_gateway = gateways_config[gateway_account_id.to_sym] if idx == 0
               end
             end
             gateways_config[:default] = default_gateway if gateways_config[:default].nil?
           else
-            gateways_config[:default] = Gateway.wrap(@@gateway_builder, logger, gateway_configs)
+            gateways_config[:default] = Gateway.wrap(@@gateway_builder, gateway_configs)
           end
           gateways_config
         end
@@ -113,6 +113,14 @@ module Killbill
 
           @@glob_currency_conversions = @@glob_config[:currency_conversions]
 
+          initialize_active_record
+
+          initialize_active_merchant
+
+          @@initialized = true
+        end
+
+        def initialize_active_record
           begin
             require 'active_record'
             require 'arjdbc' if defined?(JRUBY_VERSION)
@@ -159,14 +167,56 @@ module Killbill
           rescue => e
             @@logger.warn "Unable to establish a database connection: #{e}"
           end
+        end
+
+        # Configure global properties
+        # It would be nice to fix ActiveMerchant to make these configurable on a per instance basis
+        def initialize_active_merchant
+          require 'active_merchant'
+
+          ::ActiveMerchant::Billing::Gateway.logger = @@logger
+
+          am_config = @@glob_config[@@gateway_name.to_sym]
+          if am_config.is_a?(Array)
+            default_gateway_config = {}
+            am_config.each_with_index do |gateway_config, idx|
+              gateway_account_id = gateway_config[:account_id]
+              if gateway_account_id.nil?
+                @@logger.warn "Skipping config #{gateway_config} -- missing :account_id"
+              else
+                default_gateway_config = gateway_config if idx == 0 || gateway_account_id == :default
+              end
+            end
+            am_config = default_gateway_config
+          end
+          am_config ||= {}
+
+          if am_config[:test]
+            ::ActiveMerchant::Billing::Base.mode = :test
+          end
+
+          if am_config[:log_file]
+            ::ActiveMerchant::Billing::Gateway.wiredump_device = File.open(am_config[:log_file], 'w')
+          else
+            log_method = am_config[:quiet] ? :debug : :info
+            ::ActiveMerchant::Billing::Gateway.wiredump_device = ::Killbill::Plugin::ActiveMerchant::Utils::KBWiredumpDevice.new(@@logger, log_method)
+          end
+          ::ActiveMerchant::Billing::Gateway.wiredump_device.sync = true
+
+          ::ActiveMerchant::Billing::Gateway.open_timeout  = am_config[:open_timeout] unless am_config[:open_timeout].nil?
+          ::ActiveMerchant::Billing::Gateway.read_timeout  = am_config[:read_timeout] unless am_config[:read_timeout].nil?
+          ::ActiveMerchant::Billing::Gateway.retry_safe    = am_config[:retry_safe] unless am_config[:retry_safe].nil?
+          ::ActiveMerchant::Billing::Gateway.ssl_strict    = am_config[:ssl_strict] unless am_config[:ssl_strict].nil?
+          ::ActiveMerchant::Billing::Gateway.ssl_version   = am_config[:ssl_version] unless am_config[:ssl_version].nil?
+          ::ActiveMerchant::Billing::Gateway.max_retries   = am_config[:max_retries] unless am_config[:max_retries].nil?
+          ::ActiveMerchant::Billing::Gateway.proxy_address = am_config[:proxy_address] unless am_config[:proxy_address].nil?
+          ::ActiveMerchant::Billing::Gateway.proxy_port    = am_config[:proxy_port] unless am_config[:proxy_port].nil?
 
           # Configure the ActiveMerchant HTTP backend
-          connection_type = (@@glob_config[:active_merchant] || {})[:connection_type]
+          connection_type = (@@glob_config[:active_merchant] || am_config)[:connection_type]
           if connection_type == :typhoeus
             require 'killbill/ext/active_merchant/typhoeus_connection'
           end
-
-          @@initialized = true
         end
       end
     end
