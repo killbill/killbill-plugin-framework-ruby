@@ -142,8 +142,8 @@ module Killbill
 
         def get_payment_info(kb_account_id, kb_payment_id, properties, context)
           # We assume the payment is immutable in the Gateway and only look at our tables
-          @transaction_model.transactions_from_kb_payment_id(kb_payment_id, context.tenant_id).collect do |transaction|
-            transaction.send("#{@identifier}_response").to_transaction_info_plugin(transaction)
+          @response_model.from_kb_payment_id(@transaction_model, kb_payment_id, context.tenant_id).collect do |response|
+            response.to_transaction_info_plugin(response.send("#{@identifier}_transaction"))
           end
         end
 

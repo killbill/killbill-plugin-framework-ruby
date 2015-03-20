@@ -87,6 +87,14 @@ module Killbill
             return response, transaction
           end
 
+          def self.from_kb_payment_id(transaction_model, kb_payment_id, kb_tenant_id)
+            association = transaction_model.table_name.singularize.to_sym
+            # Use eager_load to force Rails to issue a single query (see https://github.com/killbill/killbill-plugin-framework-ruby/issues/32)
+            eager_load(association)
+                .where(:kb_payment_id => kb_payment_id, :kb_tenant_id => kb_tenant_id)
+                .order(:created_at)
+          end
+
           def to_transaction_info_plugin(transaction=nil)
             if transaction.nil?
               amount_in_cents = nil

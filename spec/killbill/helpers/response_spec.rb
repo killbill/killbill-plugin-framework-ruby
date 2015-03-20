@@ -72,10 +72,13 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     api_call                     = 'for debugging only'
     kb_account_id                = SecureRandom.uuid
     kb_payment_id                = SecureRandom.uuid
+    kb_payment_id2               = SecureRandom.uuid
+    kb_payment_id3               = SecureRandom.uuid
     kb_payment_transaction_id    = SecureRandom.uuid
     transaction_type             = :PURCHASE
     payment_processor_account_id = 'petit_poucet'
     kb_tenant_id                 = SecureRandom.uuid
+    kb_tenant_id2                = SecureRandom.uuid
     success_response             = ::ActiveMerchant::Billing::Response.new(true, 'Message', {}, {
         :authorization => SecureRandom.uuid,
         :avs_result    => ::ActiveMerchant::Billing::AVSResult.new(:code => 'P')
@@ -85,6 +88,7 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
         :avs_result    => ::ActiveMerchant::Billing::AVSResult.new(:code => 'P')
     })
 
+    # Successful response
     response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
     found_response        = ::Killbill::Test::TestResponse.find(response.id)
     found_response.should == response
@@ -93,17 +97,36 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     found_transaction.should == transaction
     found_transaction.test_response.should == response
 
+    successful_responses = ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id, kb_tenant_id)
+    successful_responses.size.should == 1
+    successful_responses[0].should == response
+
+    # Unsuccessful response
     response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, failure_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
     transaction.should be_nil
     found_response = ::Killbill::Test::TestResponse.find(response.id)
     found_response.should == response
     found_response.test_transaction.should be_nil
 
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id, kb_tenant_id).size == 2
+
+    # Another successful response for the same payment (different transaction)
+    ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, SecureRandom.uuid, transaction_type, payment_processor_account_id, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id, kb_tenant_id).size == 3
+
+    # Add other successful responses
+    ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id2, SecureRandom.uuid, transaction_type, payment_processor_account_id, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+    ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id3, SecureRandom.uuid, transaction_type, payment_processor_account_id, kb_tenant_id2, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id, kb_tenant_id).size == 3
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id2, kb_tenant_id).size == 1
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id3, kb_tenant_id2).size == 1
+
     # Lookup responses for kb_payment_id
     responses = ::Killbill::Test::TestResponse.responses_from_kb_payment_id(transaction_type, kb_payment_id, kb_tenant_id)
-    responses.size.should == 2
+    responses.size.should == 3
     responses[0].success.should be_true
     responses[1].success.should be_false
+    responses[2].success.should be_true
 
     # Lookup responses for kb_payment_transaction_id
     responses = ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(transaction_type, kb_payment_transaction_id, kb_tenant_id)
@@ -118,6 +141,11 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(:foo, kb_payment_transaction_id, kb_tenant_id).size.should == 0
     ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(transaction_type, SecureRandom.uuid, kb_tenant_id).size.should == 0
     ::Killbill::Test::TestResponse.responses_from_kb_payment_transaction_id(transaction_type, kb_payment_transaction_id, SecureRandom.uuid).size.should == 0
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, SecureRandom.uuid, kb_tenant_id).size.should == 0
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id, SecureRandom.uuid).size.should == 0
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id, kb_tenant_id2).size == 0
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id2, kb_tenant_id2).size == 0
+    ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id3, kb_tenant_id).size == 0
   end
 
   it 'should generate the right SQL query' do
