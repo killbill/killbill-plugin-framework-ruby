@@ -13,11 +13,14 @@ module Killbill
           extend ::Killbill::Plugin::ActiveMerchant::Helpers
 
           self.abstract_class = true
+          self.record_timestamps = false
 
           @@quotes_cache = build_quotes_cache
 
           def self.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, response, extra_params = {}, model = Response)
             # Under high load, Rails sometimes fails to set timestamps. Unclear why...
+            # But regardless, for performance reasons, we want to set these timestamps ourselves
+            # See ActiveRecord::Timestamp
             current_time = Time.now.utc
             model.new({
                           :api_call                     => api_call,

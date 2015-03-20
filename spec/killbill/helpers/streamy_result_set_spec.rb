@@ -11,7 +11,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord do
       ::Killbill::Test::TestPaymentMethod.create(:kb_account_id        => SecureRandom.uuid,
                                                  :kb_payment_method_id => SecureRandom.uuid,
                                                  :kb_tenant_id         => SecureRandom.uuid,
-                                                 :token                => SecureRandom.uuid)
+                                                 :token                => SecureRandom.uuid,
+                                                 :created_at           => Time.now.utc,
+                                                 :updated_at           => Time.now.utc)
     end
     ::Killbill::Test::TestPaymentMethod.count.should == 35
 

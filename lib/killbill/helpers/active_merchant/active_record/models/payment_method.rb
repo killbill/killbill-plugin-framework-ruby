@@ -12,6 +12,8 @@ module Killbill
           extend ::Killbill::Plugin::ActiveMerchant::Helpers
 
           self.abstract_class = true
+          # See Response#from_response
+          self.record_timestamps = false
 
           @@quotes_cache = build_quotes_cache
 

@@ -162,14 +162,18 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
                                                      :kb_account_id => '55-66-77-88',
                                                      :kb_payment_id => '11-22-33-44',
                                                      :kb_tenant_id  => '11-22-33',
-                                                     :success       => true
+                                                     :success       => true,
+                                                     :created_at    => Time.now.utc,
+                                                     :updated_at    => Time.now.utc
 
     # Not successful
     ignored2 = ::Killbill::Test::TestResponse.create :api_call      => 'charge',
                                                      :kb_account_id => '55-66-77-88',
                                                      :kb_payment_id => pm.kb_payment_id,
                                                      :kb_tenant_id  => '11-22-33',
-                                                     :success       => false
+                                                     :success       => false,
+                                                     :created_at    => Time.now.utc,
+                                                     :updated_at    => Time.now.utc
 
     do_search(pm.kb_payment_id).size.should == 1
 
@@ -177,9 +181,52 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
                                                 :kb_account_id => '55-66-77-88',
                                                 :kb_payment_id => pm.kb_payment_id,
                                                 :kb_tenant_id  => '11-22-33',
-                                                :success       => true
+                                                :success       => true,
+                                                :created_at    => Time.now.utc,
+                                                :updated_at    => Time.now.utc
 
     do_search(pm.kb_payment_id).size.should == 2
+  end
+
+  context 'performance' do
+    require 'benchmark'
+
+    it 'creates the transaction association fast' do
+      api_call = 'for debugging only'
+      kb_account_id = SecureRandom.uuid
+      kb_payment_id = SecureRandom.uuid
+      kb_payment_transaction_id = SecureRandom.uuid
+      transaction_type = :PURCHASE
+      payment_processor_account_id = SecureRandom.uuid
+      kb_tenant_id = SecureRandom.uuid
+      success_response = ::ActiveMerchant::Billing::Response.new(true, 'Message')
+
+      # Warm-up the stack
+      response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+
+      runs = (ENV['NB_RUNS'] || 2).to_i
+
+      time = Benchmark::Tms.new
+      Benchmark.bm do |x|
+        runs.times do |n|
+          time += x.report("run ##{n}:") do
+            response, transaction = ::Killbill::Test::TestResponse.create_response_and_transaction('test', ::Killbill::Test::TestTransaction, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, success_response, 120, 'USD', {}, ::Killbill::Test::TestResponse)
+
+            response.id.should_not be_nil
+            response.created_at.should_not be_nil
+            response.updated_at.should_not be_nil
+
+            transaction.id.should_not be_nil
+            transaction.created_at.should_not be_nil
+            transaction.updated_at.should_not be_nil
+            transaction.test_response_id.should == response.id
+          end
+        end
+      end
+
+      puts " total:#{time.to_s}"
+      puts "   avg:#{(time/runs).to_s}"
+    end
   end
 
   private

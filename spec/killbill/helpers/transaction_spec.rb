@@ -119,6 +119,8 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Transaction do
                                              :currency                  => currency,
                                              :kb_account_id             => kb_account_id,
                                              :kb_tenant_id              => kb_tenant_id,
-                                             :test_response_id          => 0)
+                                             :test_response_id          => 0,
+                                             :created_at                => Time.now.utc,
+                                             :updated_at                => Time.now.utc)
   end
 end

@@ -166,7 +166,12 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
                                                     :city                 => 'city',
                                                     :state                => 'state',
                                                     :zip                  => 'zip',
-                                                    :country              => 'country'
+                                                    :country              => 'country',
+                                                    :created_at           => Time.now.utc,
+                                                    :updated_at           => Time.now.utc
+
+    pm.created_at.should_not be_nil
+    pm.updated_at.should_not be_nil
 
     pm = ::Killbill::Test::TestPaymentMethod.from_kb_payment_method_id(pm.kb_payment_method_id, pm.kb_tenant_id)
     pm.cc_exp_month.should == '07'
@@ -212,7 +217,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
                                                     :city                 => 'city',
                                                     :state                => 'state',
                                                     :zip                  => 'zip',
-                                                    :country              => 'country'
+                                                    :country              => 'country',
+                                                    :created_at           => Time.now.utc,
+                                                    :updated_at           => Time.now.utc
 
     do_search('foo').size.should == 0
     do_search('ccType').size.should == 1
@@ -237,7 +244,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
                                                      :city                 => 'city',
                                                      :state                => 'state',
                                                      :zip                  => 'zip',
-                                                     :country              => 'country'
+                                                     :country              => 'country',
+                                                     :created_at           => Time.now.utc,
+                                                     :updated_at           => Time.now.utc
 
     do_search('foo').size.should == 0
     do_search('ccType').size.should == 2
