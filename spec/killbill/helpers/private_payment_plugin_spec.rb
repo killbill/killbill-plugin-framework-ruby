@@ -1,7 +1,4 @@
 require 'spec_helper'
-require 'spec/killbill/helpers/payment_method_spec'
-require 'spec/killbill/helpers/response_spec'
-require 'spec/killbill/helpers/transaction_spec'
 
 describe Killbill::Plugin::ActiveMerchant::PrivatePaymentPlugin do
 

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'spec/killbill/helpers/payment_method_spec'
 
 describe Killbill::Plugin::ActiveMerchant::ActiveRecord do
 

@@ -18,6 +18,10 @@ require 'killbill/helpers/active_merchant/killbill_spec_helper'
 
 require 'killbill/ext/active_merchant/typhoeus_connection'
 
+require 'spec/killbill/helpers/test_payment_method'
+require 'spec/killbill/helpers/test_response'
+require 'spec/killbill/helpers/test_transaction'
+
 if defined? JRUBY_VERSION
   require 'java'
   %w(

@@ -1,15 +1,5 @@
 require 'spec_helper'
 
-module Killbill #:nodoc:
-  module Test #:nodoc:
-    class TestPaymentMethod < ::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod
-
-      self.table_name = 'test_payment_methods'
-
-    end
-  end
-end
-
 describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
 
   before :each do
