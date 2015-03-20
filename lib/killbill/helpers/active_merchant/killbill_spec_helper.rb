@@ -149,7 +149,7 @@ module Killbill
 
           attr_accessor :per_tenant_config
 
-          def initialize(per_tenant_config)
+          def initialize(per_tenant_config = {})
             @per_tenant_config = per_tenant_config
           end
 

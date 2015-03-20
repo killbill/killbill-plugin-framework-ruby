@@ -367,12 +367,12 @@ module Killbill
         # * payment_source should probably be retrieved per gateway
         # * amount per gateway should be retrieved from the options
         def dispatch_to_gateways(operation, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc=nil)
-          kb_transaction        = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
+          kb_transaction        = Utils::LazyEvaluator.new { get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id) }
           amount_in_cents       = amount.nil? ? nil : to_cents(amount, currency)
 
           # Setup options for ActiveMerchant
           options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
+          options[:order_id]    ||= (Utils.normalized(options, :external_key_as_order_id) ? kb_transaction.external_key : kb_payment_transaction_id)
           options[:currency]    ||= currency.to_s.upcase unless currency.nil?
           options[:description] ||= "Kill Bill #{operation.to_s} for #{kb_payment_transaction_id}"
 
@@ -385,7 +385,7 @@ module Killbill
           end
 
           # Retrieve the previous transaction for the same operation and payment id - this is useful to detect dups for example
-          last_transaction = @transaction_model.send("#{operation.to_s}s_from_kb_payment_id", kb_payment_id, context.tenant_id).last
+          last_transaction = Utils::LazyEvaluator.new { @transaction_model.send("#{operation.to_s}s_from_kb_payment_id", kb_payment_id, context.tenant_id).last }
 
           # Retrieve the linked transaction (authorization to capture, purchase to refund, etc.)
           linked_transaction = nil

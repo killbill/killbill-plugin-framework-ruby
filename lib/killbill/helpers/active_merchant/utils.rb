@@ -75,6 +75,23 @@ module Killbill
           end
         end
 
+        class LazyEvaluator
+
+          def initialize(&instantiator)
+            @instantiator = instantiator
+          end
+
+          def method_missing(method, *args)
+            __instance_object__.send(method, *args)
+          end
+
+          private
+
+          def __instance_object__
+            @__instance_object__ ||= @instantiator.call
+          end
+        end
+
         class BoundedLRUCache
           include ThreadSafe::Util::CheapLockable
 

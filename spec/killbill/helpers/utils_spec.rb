@@ -69,6 +69,22 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
     end
   end
 
+  context 'LazyEvaluator' do
+    it 'defers evaluation until called' do
+      argument = {:int => 12}
+
+      double_argument = ::Killbill::Plugin::ActiveMerchant::Utils::LazyEvaluator.new { argument[:int] *= 2 }
+      argument[:int].should == 12
+
+      double_argument.to_i.should == 24
+      argument[:int].should == 24
+
+      # The block should be invoked exactly once
+      double_argument.to_i.should == 24
+      argument[:int].should == 24
+    end
+  end
+
   context 'BoundedLRUCache' do
     it 'should implement a thread-safe LRU cache' do
       require 'benchmark'
