@@ -10,7 +10,6 @@ rvm:
   - jruby-head
 
 jdk:
-  - openjdk6
   - openjdk7
   - oraclejdk7
 
