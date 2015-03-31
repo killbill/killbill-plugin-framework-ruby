@@ -35,8 +35,8 @@ Gem::Specification.new do |s|
   end
   s.add_dependency 'actionpack', '~> 4.1.0'
   s.add_dependency 'actionview', '~> 4.1.0'
-  s.add_dependency 'activemerchant', '~> 1.44.1'
-  s.add_dependency 'offsite_payments', '~> 2.0.1'
+  s.add_dependency 'activemerchant', '~> 1.47.0'
+  s.add_dependency 'offsite_payments', '~> 2.1.0'
   s.add_dependency 'monetize', '~> 1.1.0'
   s.add_dependency 'money', '~> 6.5.1'
 

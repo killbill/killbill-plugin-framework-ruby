@@ -1,6 +1,6 @@
 require 'benchmark'
 require 'openssl' # active_utils internals assume OpenSSL loaded
-require 'active_utils'
+require 'active_merchant'
 require 'typhoeus'
 
 module ActiveMerchant
