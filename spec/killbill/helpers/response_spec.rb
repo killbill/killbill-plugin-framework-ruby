@@ -137,21 +137,21 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
 
   it 'should generate the right SQL query' do
     # Check count query (search query numeric)
-    expected_query = "SELECT COUNT(DISTINCT \"test_responses\".\"id\") FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = '1234' OR \"test_responses\".\"kb_payment_transaction_id\" = '1234') OR \"test_responses\".\"message\" = '1234') OR \"test_responses\".\"authorization\" = '1234') OR \"test_responses\".\"fraud_review\" = '1234') AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\""
+    expected_query = "SELECT COUNT(DISTINCT #{q('test_responses')}.#{q('id')}) FROM #{q('test_responses')}  WHERE ((((#{q('test_responses')}.#{q('kb_payment_id')} = '1234' OR #{q('test_responses')}.#{q('kb_payment_transaction_id')} = '1234') OR #{q('test_responses')}.#{q('message')} = '1234') OR #{q('test_responses')}.#{q('authorization')} = '1234') OR #{q('test_responses')}.#{q('fraud_review')} = '1234') AND #{q('test_responses')}.#{q('success')} = #{qtrue} AND #{q('test_responses')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_responses')}.#{q('id')}"
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestResponse.search_query('1234', '11-22-33').to_sql.should == expected_query
 
     # Check query with results (search query numeric)
-    expected_query = "SELECT  DISTINCT \"test_responses\".* FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = '1234' OR \"test_responses\".\"kb_payment_transaction_id\" = '1234') OR \"test_responses\".\"message\" = '1234') OR \"test_responses\".\"authorization\" = '1234') OR \"test_responses\".\"fraud_review\" = '1234') AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\" LIMIT 10 OFFSET 0"
+    expected_query = "SELECT  DISTINCT #{q('test_responses')}.* FROM #{q('test_responses')}  WHERE ((((#{q('test_responses')}.#{q('kb_payment_id')} = '1234' OR #{q('test_responses')}.#{q('kb_payment_transaction_id')} = '1234') OR #{q('test_responses')}.#{q('message')} = '1234') OR #{q('test_responses')}.#{q('authorization')} = '1234') OR #{q('test_responses')}.#{q('fraud_review')} = '1234') AND #{q('test_responses')}.#{q('success')} = #{qtrue} AND #{q('test_responses')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_responses')}.#{q('id')} LIMIT 10 OFFSET 0"
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestResponse.search_query('1234', '11-22-33', 0, 10).to_sql.should == expected_query
 
     # Check count query (search query string)
-    expected_query = "SELECT COUNT(DISTINCT \"test_responses\".\"id\") FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = 'XXX' OR \"test_responses\".\"kb_payment_transaction_id\" = 'XXX') OR \"test_responses\".\"message\" = 'XXX') OR \"test_responses\".\"authorization\" = 'XXX') OR \"test_responses\".\"fraud_review\" = 'XXX') AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\""
+    expected_query = "SELECT COUNT(DISTINCT #{q('test_responses')}.#{q('id')}) FROM #{q('test_responses')}  WHERE ((((#{q('test_responses')}.#{q('kb_payment_id')} = 'XXX' OR #{q('test_responses')}.#{q('kb_payment_transaction_id')} = 'XXX') OR #{q('test_responses')}.#{q('message')} = 'XXX') OR #{q('test_responses')}.#{q('authorization')} = 'XXX') OR #{q('test_responses')}.#{q('fraud_review')} = 'XXX') AND #{q('test_responses')}.#{q('success')} = #{qtrue} AND #{q('test_responses')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_responses')}.#{q('id')}"
     ::Killbill::Test::TestResponse.search_query('XXX', '11-22-33').to_sql.should == expected_query
 
     # Check query with results (search query string)
-    expected_query = "SELECT  DISTINCT \"test_responses\".* FROM \"test_responses\"  WHERE ((((\"test_responses\".\"kb_payment_id\" = 'XXX' OR \"test_responses\".\"kb_payment_transaction_id\" = 'XXX') OR \"test_responses\".\"message\" = 'XXX') OR \"test_responses\".\"authorization\" = 'XXX') OR \"test_responses\".\"fraud_review\" = 'XXX') AND \"test_responses\".\"success\" = 't' AND \"test_responses\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_responses\".\"id\" LIMIT 10 OFFSET 0"
+    expected_query = "SELECT  DISTINCT #{q('test_responses')}.* FROM #{q('test_responses')}  WHERE ((((#{q('test_responses')}.#{q('kb_payment_id')} = 'XXX' OR #{q('test_responses')}.#{q('kb_payment_transaction_id')} = 'XXX') OR #{q('test_responses')}.#{q('message')} = 'XXX') OR #{q('test_responses')}.#{q('authorization')} = 'XXX') OR #{q('test_responses')}.#{q('fraud_review')} = 'XXX') AND #{q('test_responses')}.#{q('success')} = #{qtrue} AND #{q('test_responses')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_responses')}.#{q('id')} LIMIT 10 OFFSET 0"
     ::Killbill::Test::TestResponse.search_query('XXX', '11-22-33', 0, 10).to_sql.should == expected_query
   end
 
@@ -237,5 +237,13 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     results = pagination.iterator.to_a
     pagination.total_nb_records.should == results.size
     results
+  end
+
+  def q(arg)
+    ::ActiveRecord::Base.connection.quote_column_name(arg)
+  end
+
+  def qtrue
+    ::ActiveRecord::Base.connection.quoted_true
   end
 end

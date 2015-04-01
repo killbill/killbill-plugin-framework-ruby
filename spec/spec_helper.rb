@@ -57,6 +57,9 @@ ActiveRecord::Base.logger.level =
 # Create the schema
 require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
 
+# Required to have MySQL store milliseconds
+Time::DATE_FORMATS.merge!({ db: '%Y-%m-%d %H:%M:%S.%3N' })
+
 module Killbill
   module Plugin
     module SpecHelper

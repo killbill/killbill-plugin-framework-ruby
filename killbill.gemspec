@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   if defined?(JRUBY_VERSION)
     s.add_development_dependency 'activerecord-bogacs', '~> 0.3'
     s.add_development_dependency 'activerecord-jdbc-adapter', '~> 1.3.12'
+    s.add_development_dependency 'jdbc-mariadb', '~> 1.1.8'
   end
   s.add_development_dependency 'actionpack', '~> 4.1.0'
   s.add_development_dependency 'actionview', '~> 4.1.0'
