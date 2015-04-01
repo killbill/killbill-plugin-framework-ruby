@@ -49,6 +49,13 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
       ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:skipGw => 'true'}, :skip_gw).should be_true
       ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:skipGw => 'false'}, :skip_gw).should be_false
     end
+
+    it 'normalizes non-boolean attributes' do
+      ::Killbill::Plugin::ActiveMerchant::Utils.normalized({}, :cc_first_name).should be_nil
+      ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:cc_first_name => ''}, :cc_first_name).should be_nil
+      ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:cc_first_name => 'Paul'}, :cc_first_name).should == 'Paul'
+      ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:ccFirstName => 'Paul'}, :cc_first_name).should == 'Paul'
+    end
   end
 
   context 'KBWiredumpDevice' do

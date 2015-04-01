@@ -36,7 +36,7 @@ module Killbill
           if !options.has_key?(key)
             # Be friendly with Java-style conventions
             camelized_key = key.to_s.camelize(false).to_sym
-            options.has_key?(camelized_key) && normalize(options[camelized_key])
+            options.has_key?(camelized_key) ? normalize(options[camelized_key]) : nil
           else
             normalize(options[key])
           end

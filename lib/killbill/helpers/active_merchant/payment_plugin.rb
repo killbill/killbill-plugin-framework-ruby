@@ -462,59 +462,91 @@ module Killbill
         end
 
         def get_payment_source(kb_payment_method_id, properties, options, context)
+          attributes = properties_to_hash(properties, options)
+
           # Use ccNumber for the real number (if stored locally) or an in-house token (proxy tokenization). It is assumed the rest
           # of the card details are filled (expiration dates, etc.).
-          cc_number   = find_value_from_properties(properties, 'ccNumber')
+          cc_number = Utils.normalized(attributes, :cc_number)
           # Use token for the token stored in an external vault. The token itself should be enough to process payments.
-          cc_or_token = find_value_from_properties(properties, 'token') || find_value_from_properties(properties, 'cardId')
+          cc_or_token = Utils.normalized(attributes, :token) || Utils.normalized(attributes, :card_id) || Utils.normalized(attributes, :payment_data)
 
           if cc_number.blank? and cc_or_token.blank?
             # Lookup existing token
             pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
             if pm.token.nil?
               # Real credit card
-              cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
-                  :number             => pm.cc_number,
-                  :brand              => pm.cc_type,
-                  :month              => pm.cc_exp_month,
-                  :year               => pm.cc_exp_year,
-                  :verification_value => pm.cc_verification_value,
-                  :first_name         => pm.cc_first_name,
-                  :last_name          => pm.cc_last_name
-              )
+              cc_or_token = build_am_credit_card(pm.cc_number, attributes, pm)
             else
               # Tokenized card
               cc_or_token = pm.token
             end
           elsif !cc_number.blank? and cc_or_token.blank?
             # Real credit card
-            cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
-                :number             => cc_number,
-                :brand              => find_value_from_properties(properties, 'ccType'),
-                :month              => find_value_from_properties(properties, 'ccExpirationMonth'),
-                :year               => find_value_from_properties(properties, 'ccExpirationYear'),
-                :verification_value => find_value_from_properties(properties, 'ccVerificationValue'),
-                :first_name         => find_value_from_properties(properties, 'ccFirstName'),
-                :last_name          => find_value_from_properties(properties, 'ccLastName')
-            )
+            cc_or_token = build_am_credit_card(cc_number, attributes)
           else
             # Use specified token
+            cc_or_token = build_am_token(cc_or_token, attributes)
           end
 
           options[:billing_address] ||= {
-              :email    => find_value_from_properties(properties, 'email'),
-              :address1 => find_value_from_properties(properties, 'address1'),
-              :address2 => find_value_from_properties(properties, 'address2'),
-              :city     => find_value_from_properties(properties, 'city'),
-              :zip      => find_value_from_properties(properties, 'zip'),
-              :state    => find_value_from_properties(properties, 'state'),
-              :country  => find_value_from_properties(properties, 'country')
+              :email => Utils.normalized(attributes, :email),
+              :address1 => Utils.normalized(attributes, :address1),
+              :address2 => Utils.normalized(attributes, :address2),
+              :city => Utils.normalized(attributes, :city),
+              :zip => Utils.normalized(attributes, :zip),
+              :state => Utils.normalized(attributes, :state),
+              :country => Utils.normalized(attributes, :country)
           }
 
           # To make various gateway implementations happy...
           options[:billing_address].each { |k, v| options[k] ||= v }
 
           cc_or_token
+        end
+
+        def build_am_credit_card(cc_number, attributes, pm=nil)
+          card_attributes = {
+              :number => cc_number,
+              :brand => Utils.normalized(attributes, :cc_type) || (pm.nil? ? nil : pm.cc_type),
+              :month => Utils.normalized(attributes, :cc_expiration_month) || (pm.nil? ? nil : pm.cc_exp_month),
+              :year => Utils.normalized(attributes, :cc_expiration_year) || (pm.nil? ? nil : pm.cc_exp_year),
+              :verification_value => Utils.normalized(attributes, :cc_verification_value) || (pm.nil? ? nil : pm.cc_verification_value),
+              :first_name => Utils.normalized(attributes, :cc_first_name) || (pm.nil? ? nil : pm.cc_first_name),
+              :last_name => Utils.normalized(attributes, :cc_last_name) || (pm.nil? ? nil : pm.cc_last_name)
+          }
+          tokenization_attributes = {
+              :eci => Utils.normalized(attributes, :eci),
+              :payment_cryptogram => Utils.normalized(attributes, :payment_cryptogram),
+              :transaction_id => Utils.normalized(attributes, :transaction_id)
+          }
+
+          if tokenization_attributes[:eci].nil? &&
+              tokenization_attributes[:payment_cryptogram].nil? &&
+              tokenization_attributes[:transaction_id].nil?
+            ::ActiveMerchant::Billing::CreditCard.new(card_attributes)
+          else
+            # NetworkTokenizationCreditCard is exactly like a credit card but with EMV/3DS standard payment network tokenization data
+            ::ActiveMerchant::Billing::NetworkTokenizationCreditCard.new(card_attributes.merge(tokenization_attributes))
+          end
+        end
+
+        def build_am_token(token, attributes)
+          token_attributes = {
+              :payment_instrument_name => Utils.normalized(attributes, :payment_instrument_name),
+              :payment_network => Utils.normalized(attributes, :payment_network),
+              :transaction_identifier => Utils.normalized(attributes, :transaction_identifier)
+          }
+
+          if token_attributes[:payment_instrument_name].nil? &&
+              token_attributes[:payment_network].nil? &&
+              token_attributes[:transaction_identifier].nil?
+            token
+          else
+            # Use ActiveSupport since ActiveMerchant does the same
+            payment_data = ::ActiveSupport::JSON.decode(token) rescue token
+            # PaymentToken is meant for modeling proprietary payment token structures (like stripe and apple_pay)
+            ::ActiveMerchant::Billing::ApplePayPaymentToken.new(payment_data, token_attributes)
+          end
         end
 
         def find_value_from_properties(properties, key)
