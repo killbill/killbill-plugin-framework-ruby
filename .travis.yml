@@ -1,5 +1,8 @@
 language: ruby
 
+sudo: false
+cache: bundler
+
 notifications:
   email:
     - kill-bill-commits@googlegroups.com
