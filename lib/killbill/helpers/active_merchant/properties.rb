@@ -1,3 +1,4 @@
+require 'erb'
 require 'yaml'
 
 module Killbill
@@ -10,7 +11,7 @@ module Killbill
 
         def parse!
           raise "#{@config_file} is not a valid file" unless @config_file.file?
-          @config = YAML.load_file(@config_file.to_s)
+          @config = YAML.load(ERB.new(File.read(@config_file.to_s)).result)
         end
 
         def [](key)

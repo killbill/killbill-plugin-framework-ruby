@@ -131,6 +131,12 @@ describe Killbill::Plugin::ActiveMerchant do
     expect( pool_class ).to be ActiveRecord::Bogacs::FalsePool
   end
 
+  it 'interprets the config file through ERB' do
+    value = '<%= 12 %>'
+    do_initialize!({ :key => value })
+    ::Killbill::Plugin::ActiveMerchant.config[:test][:key].should == 12
+  end
+
   after do
     if ::ActiveRecord::ConnectionAdapters::ConnectionHandler.respond_to?(:connection_pool_class=)
       pool_class = ::ActiveRecord::ConnectionAdapters::ConnectionPool # restore if Bogacs loaded
