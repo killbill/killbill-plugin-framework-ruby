@@ -1,0 +1,5 @@
+source "https://rubygems.org"
+
+gemspec
+
+gem 'active_merchant', :github => 'Shopify/active_merchant'

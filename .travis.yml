@@ -12,13 +12,17 @@ rvm:
   - jruby-20mode # latest 1.7.x
   - jruby-head
 
+gemfile:
+  - Gemfile
+  - Gemfile.head
+
 jdk:
   - openjdk7
   - oraclejdk7
+  - oraclejdk8
 
 matrix:
   allow_failures:
     - rvm: jruby-head
-  exclude:
-    - rvm: jruby-head
-      jdk: openjdk6
+    - jdk: oraclejdk8
+    - gemfile: Gemfile.head
