@@ -2,4 +2,4 @@ source "https://rubygems.org"
 
 gemspec
 
-gem 'active_merchant', :github => 'Shopify/active_merchant'
+gem 'activemerchant', :github => 'Shopify/active_merchant', :ref => 'HEAD'
