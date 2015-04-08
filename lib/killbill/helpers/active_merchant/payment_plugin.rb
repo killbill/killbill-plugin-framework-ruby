@@ -263,10 +263,12 @@ module Killbill
 
           # The remaining elements in payment_methods are not in our table (this should never happen?!)
           payment_methods.each do |payment_method_info_plugin|
-            pm = @payment_method_model.create :kb_account_id        => kb_account_id,
+            pm = @payment_method_model.create(:kb_account_id        => kb_account_id,
                                               :kb_payment_method_id => payment_method_info_plugin.payment_method_id,
                                               :kb_tenant_id         => context.tenant_id,
-                                              :token                => payment_method_info_plugin.external_payment_method_id
+                                              :token                => payment_method_info_plugin.external_payment_method_id,
+                                              :created_at           => Time.now.utc,
+                                              :updated_at           => Time.now.utc)
           end
         end
 
