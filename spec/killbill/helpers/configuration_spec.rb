@@ -121,6 +121,26 @@ describe Killbill::Plugin::ActiveMerchant do
     verify_active_merchant_config(:retry_safe => true, :open_timeout => 12, :ssl_version => 5, :ssl_strict => false)
   end
 
+  it 'overrides ActiveMerchant urls' do
+    # Verify we don't override the defaults
+    do_initialize!
+    ::ActiveMerchant::Billing::WorldpayGateway.test_url.should == 'https://secure-test.worldpay.com/jsp/merchant/xml/paymentService.jsp'
+    ::ActiveMerchant::Billing::WorldpayGateway.live_url.should == 'https://secure.worldpay.com/jsp/merchant/xml/paymentService.jsp'
+
+    # Override both the test and live urls
+    do_initialize!({:test_url => 'https://test.killbill.io', :live_url => 'https://live.killbill.io'},
+                   database_config,
+                   Proc.new { ::ActiveMerchant::Billing::WorldpayGateway.new :login => 'login', :password => 'password' })
+
+    gw = ::Killbill::Plugin::ActiveMerchant.gateways
+    gw.size.should == 1
+    # Verify the attributes have been updated on both the gateway instance and on the class (implementations may use both)
+    gw[:default].test_url.should == 'https://test.killbill.io'
+    gw[:default].live_url.should == 'https://live.killbill.io'
+    ::ActiveMerchant::Billing::WorldpayGateway.test_url.should == 'https://test.killbill.io'
+    ::ActiveMerchant::Billing::WorldpayGateway.live_url.should == 'https://live.killbill.io'
+  end
+
   it 'sets up false pool with jndi database configuration' do
     db_config = { :adapter => 'mysql2', :jndi => 'jdbc/MyDB', :pool => false }
 
@@ -165,7 +185,7 @@ describe Killbill::Plugin::ActiveMerchant do
     ::ActiveMerchant::Billing::Gateway.proxy_port.should == (config.has_key?(:proxy_port) ? config[:proxy_port] : nil)
   end
 
-  def do_initialize!(extra_config = '', db_config = database_config)
+  def do_initialize!(extra_config = '', db_config = database_config, gw_builder = Proc.new { |config| config })
     extra_config_yaml = ''; db_config_yaml = ''
 
     [[extra_config, extra_config_yaml],
@@ -193,7 +213,7 @@ describe Killbill::Plugin::ActiveMerchant do
         @tenant_api = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new({call_context.tenant_id => per_tenant_config})
         svcs = {:tenant_user_api => @tenant_api}
 
-        ::Killbill::Plugin::ActiveMerchant.initialize! Proc.new { |config| config },
+        ::Killbill::Plugin::ActiveMerchant.initialize! gw_builder,
                                                        :test,
                                                        logger,
                                                        :KEY,

@@ -13,6 +13,10 @@ module Killbill
         def initialize(config, am_gateway)
           @config = config
           @gateway = am_gateway
+
+          # Override urls if needed (there is no easy way to do it earlier, because AM uses class_attribute)
+          @gateway.class.test_url = @config[:test_url] unless @config[:test_url].nil?
+          @gateway.class.live_url = @config[:live_url] unless @config[:live_url].nil?
         end
 
         #
