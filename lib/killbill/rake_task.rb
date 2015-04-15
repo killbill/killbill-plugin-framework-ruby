@@ -11,11 +11,12 @@ module Killbill
 
     class << self
       def install_tasks(opts = {})
-        new(opts[:base_name] || Dir.pwd,                # Path to the plugin root directory (where the gempec and/or Gemfile should be)
-            opts[:plugin_name],                         # Plugin name, e.g. 'klogger'
-            opts[:gem_name],                            # Gem file name, e.g. 'klogger-1.0.0.gem'
-            opts[:gemfile_name] || "Gemfile",           # Gemfile name
-            opts[:gemfile_lock_name] || "Gemfile.lock", # Gemfile.lock name
+        gemfile_name = ENV['BUNDLE_GEMFILE'] || 'Gemfile'
+        new(opts[:base_name] || Dir.pwd,                        # Path to the plugin root directory (where the gempec and/or Gemfile should be)
+            opts[:plugin_name],                                 # Plugin name, e.g. 'klogger'
+            opts[:gem_name],                                    # Gem file name, e.g. 'klogger-1.0.0.gem'
+            opts[:gemfile_name] || gemfile_name,                # Gemfile name
+            opts[:gemfile_lock_name] || "#{gemfile_name}.lock", # Gemfile.lock name
             opts[:verbose] || false)
         .install
       end
