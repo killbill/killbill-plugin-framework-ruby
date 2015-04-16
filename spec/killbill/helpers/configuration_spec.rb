@@ -14,6 +14,11 @@ describe Killbill::Plugin::ActiveMerchant do
     call_context.to_ruby(call_context)
   end
 
+  it 'supports deployments without global configuration' do
+    do_initialize_with_config_path!('')
+    do_initialize_with_config_path!(nil)
+  end
+
   it 'should support multi-tenancy configurations' do
     do_initialize!(<<-eos)
   :login: admin
@@ -201,25 +206,30 @@ describe Killbill::Plugin::ActiveMerchant do
       File.open(path = File.join(dir, 'test.yml'), 'w+') do |file|
         file.write(":test:\n#{extra_config_yaml}:database:\n#{db_config_yaml}")
         file.close
+        do_initialize_with_config_path!(file.path, gw_builder)
+      end
+    end
+  end
 
-        per_tenant_config =<<-oes
+  def do_initialize_with_config_path!(path = nil, gw_builder = Proc.new { |config| config })
+    ::Killbill::Plugin::ActiveMerchant.initialize!(gw_builder,
+                                                   :test,
+                                                   logger,
+                                                   :KEY,
+                                                   path,
+                                                   ::Killbill::Plugin::KillbillApi.new('test', svcs_with_per_tenant_config))
+  end
+
+  def svcs_with_per_tenant_config
+    per_tenant_config =<<-oes
 :test:
   :login: admin2
   :password: password2
 :database:
   :adapter: 'sqlite3'
   :database: 'test.db'
-        oes
-        @tenant_api = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new({call_context.tenant_id => per_tenant_config})
-        svcs = {:tenant_user_api => @tenant_api}
-
-        ::Killbill::Plugin::ActiveMerchant.initialize! gw_builder,
-                                                       :test,
-                                                       logger,
-                                                       :KEY,
-                                                       file.path,
-                                                       ::Killbill::Plugin::KillbillApi.new('test', svcs)
-      end
-    end
+    oes
+    @tenant_api = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new({call_context.tenant_id => per_tenant_config})
+    {:tenant_user_api => @tenant_api}
   end
 end

@@ -37,29 +37,6 @@ end
 
 require 'rspec'
 
-require defined?(JRUBY_VERSION) ? 'arjdbc' : 'active_record'
-db_config = {
-  :adapter => ENV['AR_ADAPTER'] || 'sqlite3',
-  :database => ENV['AR_DATABASE'] || 'test.db',
-}
-db_config[:username] = ENV['AR_USERNAME'] if ENV['AR_USERNAME']
-db_config[:password] = ENV['AR_PASSWORD'] if ENV['AR_PASSWORD']
-ActiveRecord::Base.establish_connection(db_config)
-
-# For debugging
-ActiveRecord::Base.logger = Logger.new(STDOUT)
-ActiveRecord::Base.logger.level =
-  if level = ENV['LOG_LEVEL']
-    level.to_i.to_s == level ? level.to_i : Logger.const_get(level.upcase)
-  else
-    Logger::INFO
-  end
-# Create the schema
-require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
-
-# Required to have MySQL store milliseconds
-Time::DATE_FORMATS.merge!({ db: '%Y-%m-%d %H:%M:%S.%3N' })
-
 module Killbill
   module Plugin
     module SpecHelper
@@ -80,6 +57,31 @@ module Killbill
           [ :adapter, :database, :username, :password ].include? key
         end
       end
+
+      def reinitialize_active_record
+        require defined?(JRUBY_VERSION) ? 'arjdbc' : 'active_record'
+        db_config = {
+            :adapter => ENV['AR_ADAPTER'] || 'sqlite3',
+            :database => ENV['AR_DATABASE'] || 'test.db',
+        }
+        db_config[:username] = ENV['AR_USERNAME'] if ENV['AR_USERNAME']
+        db_config[:password] = ENV['AR_PASSWORD'] if ENV['AR_PASSWORD']
+        ActiveRecord::Base.establish_connection(db_config)
+
+        # For debugging
+        ActiveRecord::Base.logger = Logger.new(STDOUT)
+        ActiveRecord::Base.logger.level =
+            if level = ENV['LOG_LEVEL']
+              level.to_i.to_s == level ? level.to_i : Logger.const_get(level.upcase)
+            else
+              Logger::INFO
+            end
+        # Create the schema
+        require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
+
+        # Required to have MySQL store milliseconds
+        Time::DATE_FORMATS.merge!({ db: '%Y-%m-%d %H:%M:%S.%3N' })
+      end
     end
   end
 end
@@ -89,6 +91,9 @@ RSpec.configure do |config|
   config.tty = true
   config.formatter = 'documentation'
   config.include Killbill::Plugin::SpecHelper
+  config.before :each do
+    reinitialize_active_record
+  end
 end
 
 begin

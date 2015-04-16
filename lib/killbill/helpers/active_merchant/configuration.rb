@@ -1,4 +1,5 @@
 require 'logger'
+require 'pathname'
 require 'thread_safe'
 
 module Killbill
@@ -27,7 +28,7 @@ module Killbill
           @@per_tenant_config_cache = ThreadSafe::Cache.new
           @@per_tenant_gateways_cache = ThreadSafe::Cache.new
 
-          initialize_from_global_config!(gateway_builder, gateway_name, logger, config_file)
+          initialize_from_global_config!(config_file)
         end
 
         def gateways(kb_tenant_id=nil)
@@ -104,10 +105,14 @@ module Killbill
           @@per_tenant_config_cache[kb_tenant_id]
         end
 
-        def initialize_from_global_config!(gateway_builder, gateway_name, logger, config_file)
+        def initialize_from_global_config!(config_file)
           # Look for global config
-          @@glob_config = Properties.new(config_file)
-          @@glob_config.parse!
+          if !config_file.blank? && Pathname.new(config_file).file?
+            @@glob_config = Properties.new(config_file)
+            @@glob_config.parse!
+          else
+            @@glob_config = {}
+          end
 
           @@logger.log_level = Logger::DEBUG if (@@glob_config[:logger] || {})[:debug]
 
@@ -189,7 +194,10 @@ module Killbill
             end
             am_config = default_gateway_config
           end
-          am_config ||= {}
+          am_config ||= {
+              # Sane defaults
+              :test => true
+          }
 
           if am_config[:test]
             ::ActiveMerchant::Billing::Base.mode = :test
