@@ -21,7 +21,6 @@ module Killbill
         end
 
         def start_plugin
-
           @logger.progname = "#{@identifier.to_s}-plugin"
 
           @config_key_name = "PLUGIN_CONFIG_#{@plugin_name}".to_sym
@@ -43,7 +42,6 @@ module Killbill
           @logger.debug { "after_request: pool.active_connection? = #{pool.active_connection?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}" }
           ::ActiveRecord::Base.connection.close if pool.active_connection? # check-in to pool
         end
-
 
         def on_event(event)
           if (event.event_type == :TENANT_CONFIG_CHANGE || event.event_type == :TENANT_CONFIG_DELETION) &&
