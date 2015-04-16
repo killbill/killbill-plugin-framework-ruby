@@ -164,8 +164,8 @@ module Killbill
       gemspecs = @plugin_name ? [File.join(@base, "#{@plugin_name}.gemspec")] : Dir[File.join(@base, "{,*}.gemspec")]
       raise "Unable to find your plugin gemspec in #{@base}" unless gemspecs.size == 1
       spec_path = gemspecs.first
-      @logger.debug "Parsing #{spec_path}"
-      Bundler.load_gemspec(spec_path)
+      @logger.debug "Loading #{spec_path}"
+      Gem::Specification.load(spec_path)
     end
 
     def find_plugin_gem(spec)
