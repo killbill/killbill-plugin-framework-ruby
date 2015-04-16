@@ -26,6 +26,14 @@ module Killbill
       @verbose = verbose
 
       @logger = Logger.new(STDOUT)
+      @logger.formatter = proc do |severity, datetime, _, msg|
+        date_format = datetime.strftime('%Y-%m-%d %H:%M:%S.%L')
+        if severity == "INFO" || severity == "WARN"
+          "KillBill [#{date_format}] #{severity}  : #{msg}\n"
+        else
+          "KillBill [#{date_format}] #{severity} : #{msg}\n"
+        end
+      end
       @logger.level = @verbose ? Logger::DEBUG : Logger::INFO
 
       @base_name = base_name
