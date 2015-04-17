@@ -43,7 +43,7 @@ module Killbill
                           :success                      => response.success?,
                           :created_at                   => current_time,
                           :updated_at                   => current_time
-                      }.merge!(extra_params))
+                      }.merge!(extra_params.compact)) # Don't override with nil values
           end
 
           def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, extra_params = {}, model = Response)

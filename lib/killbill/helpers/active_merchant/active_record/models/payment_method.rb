@@ -40,7 +40,7 @@ module Killbill
                           :country              => (options[:billing_address] || {})[:country],
                           :created_at           => current_time,
                           :updated_at           => current_time
-                      }.merge!(extra_params))
+                      }.merge!(extra_params.compact)) # Don't override with nil values
           end
 
           def self.from_kb_account_id(kb_account_id, kb_tenant_id)
