@@ -295,9 +295,13 @@ module Killbill
 
       if spec.groups.include?(:killbill_excluded)
         Dir.glob("#{path}/**/#{spec.name}.gemspec").each do |file|
+          gem_target_file = File.join(target_dir, File.basename(file))
+          FileUtils.rm(gem_target_file) if File.exist?(gem_target_file)
           FileUtils.cp(file, target_dir) # gemspec only to avert Bundler error
         end
       else
+        gem_target_dir = File.join(target_dir, File.basename(path))
+        FileUtils.rm_r(gem_target_dir) if File.exist?(gem_target_dir)
         FileUtils.cp_r(path, target_dir)
       end
     rescue => e
