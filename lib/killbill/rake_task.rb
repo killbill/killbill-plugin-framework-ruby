@@ -307,14 +307,19 @@ module Killbill
 
     def do_install_gem(path, spec)
       name, version = spec.name, spec.version
-      gem_installer = Gem::Installer.new(path.to_s, {
+      options = {
           :force       => true,
           :install_dir => @target_dir,
           #:only_install_dir => true,
           # Should be redundant with the tweaks below
           :development => false,
           :wrappers    => true
-      })
+      }
+      if Gem::Installer.respond_to?(:at)
+        gem_installer = Gem::Installer.at(path.to_s, options)
+      else # constructing an Installer object with a string is deprecated
+        gem_installer = Gem::Installer.new(path.to_s, options)
+      end
 
       # Tweak the spec file as there are a lot of things we don't care about
       gem_installer.spec.executables      = nil
