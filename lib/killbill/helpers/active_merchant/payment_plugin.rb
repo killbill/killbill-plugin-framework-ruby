@@ -470,9 +470,16 @@ module Killbill
           # Use token for the token stored in an external vault. The token itself should be enough to process payments.
           cc_or_token = Utils.normalized(attributes, :token) || Utils.normalized(attributes, :card_id) || Utils.normalized(attributes, :payment_data)
 
-          if cc_number.blank? and cc_or_token.blank?
-            # Lookup existing token
+          pm = nil
+          retrieve_from_pm = cc_number.blank? && cc_or_token.blank? && !kb_payment_method_id.nil?
+          begin
             pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
+          rescue => e
+            raise e if retrieve_from_pm
+          end unless kb_payment_method_id.nil? # add_payment_method call
+
+          if retrieve_from_pm
+            # Lookup existing token
             if pm.token.nil?
               # Real credit card
               cc_or_token = build_am_credit_card(pm.cc_number, attributes, pm)
@@ -480,7 +487,7 @@ module Killbill
               # Tokenized card
               cc_or_token = pm.token
             end
-          elsif !cc_number.blank? and cc_or_token.blank?
+          elsif !cc_number.blank? && cc_or_token.blank?
             # Real credit card
             cc_or_token = build_am_credit_card(cc_number, attributes)
           else
@@ -490,12 +497,12 @@ module Killbill
 
           options[:billing_address] ||= {
               :email => Utils.normalized(attributes, :email),
-              :address1 => Utils.normalized(attributes, :address1),
-              :address2 => Utils.normalized(attributes, :address2),
-              :city => Utils.normalized(attributes, :city),
-              :zip => Utils.normalized(attributes, :zip),
-              :state => Utils.normalized(attributes, :state),
-              :country => Utils.normalized(attributes, :country)
+              :address1 => Utils.normalized(attributes, :address1) || (pm.nil? ? nil : pm.address1),
+              :address2 => Utils.normalized(attributes, :address2) || (pm.nil? ? nil : pm.address2),
+              :city => Utils.normalized(attributes, :city) || (pm.nil? ? nil : pm.city),
+              :zip => Utils.normalized(attributes, :zip) || (pm.nil? ? nil : pm.zip),
+              :state => Utils.normalized(attributes, :state) || (pm.nil? ? nil : pm.state),
+              :country => Utils.normalized(attributes, :country) || (pm.nil? ? nil : pm.country)
           }
 
           # To make various gateway implementations happy...
