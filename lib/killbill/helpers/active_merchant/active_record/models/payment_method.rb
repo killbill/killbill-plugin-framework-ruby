@@ -61,7 +61,7 @@ module Killbill
             else
               payment_methods = where("kb_payment_method_id = #{@@quotes_cache[kb_payment_method_id]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND is_deleted = #{@@quotes_cache[false]}")
             end
-            raise "No payment method found for payment method #{kb_payment_method_id}" if payment_methods.empty?
+            raise "No payment method found for payment method #{kb_payment_method_id} and tenant #{kb_tenant_id}" if payment_methods.empty?
             raise "Kill Bill payment method #{kb_payment_method_id} mapping to multiple active plugin payment methods" if payment_methods.size > 1
             payment_methods[0]
           end
