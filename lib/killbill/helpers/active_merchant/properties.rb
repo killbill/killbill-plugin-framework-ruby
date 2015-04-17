@@ -17,6 +17,10 @@ module Killbill
         def [](key)
           @config[key]
         end
+
+        def to_hash
+          @config.dup
+        end
       end
     end
   end

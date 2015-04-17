@@ -13,6 +13,7 @@ module Killbill
       mattr_reader :kb_apis
       mattr_reader :gateway_name
       mattr_reader :gateway_builder
+      # To be kept in sync with sinatra.rb
       mattr_reader :logger
       mattr_reader :config_key_name
       mattr_reader :per_tenant_config_cache
@@ -48,8 +49,9 @@ module Killbill
           end
         end
 
+        # To be kept in sync with sinatra.rb
         def config(kb_tenant_id=nil)
-          get_tenant_config(kb_tenant_id)
+          @@glob_config.merge(get_tenant_config(kb_tenant_id) || {})
         end
 
         def converted_currency(currency, kb_tenant_id=nil)
@@ -110,6 +112,7 @@ module Killbill
           if !config_file.blank? && Pathname.new(config_file).file?
             @@glob_config = Properties.new(config_file)
             @@glob_config.parse!
+            @@glob_config = @@glob_config.to_hash
           else
             @@glob_config = {}
           end

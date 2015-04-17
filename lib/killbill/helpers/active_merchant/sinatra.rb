@@ -7,8 +7,8 @@ module Killbill
         include ::ActionView::Helpers::FormTagHelper
 
         helpers do
-          def config
-            ::Killbill::Plugin::ActiveMerchant.config
+          def config(kb_tenant_id=nil)
+            ::Killbill::Plugin::ActiveMerchant.config(kb_tenant_id)
           end
 
           def logger
