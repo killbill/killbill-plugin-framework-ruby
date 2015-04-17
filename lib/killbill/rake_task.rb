@@ -303,6 +303,9 @@ module Killbill
         gem_target_dir = File.join(target_dir, File.basename(path))
         FileUtils.rm_r(gem_target_dir) if File.exist?(gem_target_dir)
         FileUtils.cp_r(path, target_dir)
+        # the copied .git directory is not needed (might be large) :
+        git_target_dir = File.join(gem_target_dir, '.git')
+        FileUtils.rm_r(git_target_dir) if File.exist?(git_target_dir)
       end
     rescue => e
       @logger.warn "Unable to stage #{spec.name} from #{path}: #{e}"
