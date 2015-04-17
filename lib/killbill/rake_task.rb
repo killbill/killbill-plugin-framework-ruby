@@ -164,7 +164,8 @@ module Killbill
     # Parse the <plugin_name>.gemspec file
     def find_plugin_gemspec
       gemspecs = @plugin_name ? [File.join(@base, "#{@plugin_name}.gemspec")] : Dir[File.join(@base, "{,*}.gemspec")]
-      raise "Unable to find your plugin gemspec in #{@base}" unless gemspecs.size == 1
+      raise "Unable to find your plugin gemspec in #{@base}" if gemspecs.size == 0
+      raise "Found multiple plugin gemspec in #{@base} : #{gemspecs.inspect}" if gemspecs.size > 1
       spec_path = gemspecs.first
       @logger.debug "Loading #{spec_path}"
       Gem::Specification.load(spec_path)
@@ -309,6 +310,7 @@ module Killbill
       gem_installer = Gem::Installer.new(path.to_s, {
           :force       => true,
           :install_dir => @target_dir,
+          #:only_install_dir => true,
           # Should be redundant with the tweaks below
           :development => false,
           :wrappers    => true
