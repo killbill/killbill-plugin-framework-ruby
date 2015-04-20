@@ -59,7 +59,7 @@ module Killbill
         attributes = {}
         servlet_request.attribute_names.each do |name|
           value = servlet_request.get_attribute(name)
-          attributes[name] = value || ''
+          attributes[name] = value
         end
 
         response_status, response_headers, response_body = rack_service(request_uri, method, query_string, input, scheme, server_name, server_port, content_type, content_length, headers, attributes)
