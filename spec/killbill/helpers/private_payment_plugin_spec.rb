@@ -58,7 +58,7 @@ Pay!
                                                                               ::Killbill::Test::TestTransaction,
                                                                               ::Killbill::Test::TestResponse)
       payment_api     = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaPaymentApi.new
-      tenant_api      = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new({})
+      tenant_api      = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new
 
       plugin.kb_apis  = ::Killbill::Plugin::KillbillApi.new('test', {:payment_api => payment_api, :tenant_user_api => tenant_api})
       plugin.logger   = Logger.new(STDOUT)
