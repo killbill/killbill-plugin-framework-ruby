@@ -140,7 +140,7 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       properties << create_pm_kv_info('ccNumber', '41111111111111111')
       properties << create_pm_kv_info('ccFirstName', 'Paul')
       properties << create_pm_kv_info('ccLastName', 'Dupond')
-      properties << create_pm_kv_info('ccType', 'VISA')
+      properties << create_pm_kv_info('ccType', 'visa')
       properties << create_pm_kv_info('ccExpirationMonth', '12')
       properties << create_pm_kv_info('ccExpirationYear', '17')
       payment_method_props = ::Killbill::Plugin::Model::PaymentMethodPlugin.new
@@ -270,6 +270,44 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
           },
           'signature' => 'MIIDQgYJKoZIhvcNAQcCoIIDMzCCAy8CAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3DQEHAaCCAiswggInMIIBlKADAgECAhBcl+Pf3+U4pk13nVD9nwQQMAkGBSsOAwIdBQAwJzElMCMGA1UEAx4cAGMAaABtAGEAaQBAAHYAaQBzAGEALgBjAG8AbTAeFw0xNDAxMDEwNjAwMDBaFw0yNDAxMDEwNjAwMDBaMCcxJTAjBgNVBAMeHABjAGgAbQBhAGkAQAB2AGkAcwBhAC4AYwBvAG0wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANC8+kgtgmvWF1OzjgDNrjTEBRuo/5MKvlM146pAf7Gx41blE9w4fIXJAD7FfO7QKjIXYNt39rLyy7xDwb/5IkZM60TZ2iI1pj55Uc8fd4fzOpk3ftZaQGXNLYptG1d9V7IS82Oup9MMo1BPVrXTPHNcsM99EPUnPqdbeGc87m0rAgMBAAGjXDBaMFgGA1UdAQRRME+AEHZWPrWtJd7YZ431hCg7YFShKTAnMSUwIwYDVQQDHhwAYwBoAG0AYQBpAEAAdgBpAHMAYQAuAGMAbwBtghBcl+Pf3+U4pk13nVD9nwQQMAkGBSsOAwIdBQADgYEAbUKYCkuIKS9QQ2mFcMYREIm2l+Xg8/JXv+GBVQJkOKoscY4iNDFA/bQlogf9LLU84THwNRnsvV3Prv7RTY81gq0dtC8zYcAaAkCHII3yqMnJ4AOu6EOW9kJk232gSE7WlCtHbfLSKfuSgQX8KXQYuZLk2Rr63N8ApXsXwBL3cJ0xgeAwgd0CAQEwOzAnMSUwIwYDVQQDHhwAYwBoAG0AYQBpAEAAdgBpAHMAYQAuAGMAbwBtAhBcl+Pf3+U4pk13nVD9nwQQMAkGBSsOAwIaBQAwDQYJKoZIhvcNAQEBBQAEgYBaK3ElOstbH8WooseDABf+Jg/129JcIawm7c6Vxn7ZasNbAq3tAt8Pty+uQCgssXqZkLA7kz2GzMolNtv9wYmu9Ujwar1PHYS+B/oGnoz591wjagXWRz0nMo5y3O1KzX0d8CRHAVa88SrV1a5JIiRev3oStIqwv5xuZldag6Tr8w=='
       }
+    end
+
+    # Apple Pay integration with CyberSource for example
+    it 'merges tokenized cards with payment method information' do
+      # Create a payment method with just a first and last name
+      cc_first_name = ::Killbill::Plugin::Model::PluginProperty.new
+      cc_first_name.key = 'cc_first_name'
+      cc_first_name.value = 'John'
+      cc_last_name = ::Killbill::Plugin::Model::PluginProperty.new
+      cc_last_name.key = 'cc_last_name'
+      cc_last_name.value = 'Doe'
+      skip_gw = ::Killbill::Plugin::Model::PluginProperty.new
+      skip_gw.key = 'skip_gw'
+      skip_gw.value = 'true'
+      pm_properties = ::Killbill::Plugin::Model::PaymentMethodPlugin.new
+      plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, pm_properties, true, [skip_gw, cc_first_name, cc_last_name], @call_context)
+
+      # Build the NetworkTokenizationCreditCard
+      options = {
+          :cc_number => '4242424242424242',
+          :cc_type => 'visa',
+          :cc_expiration_month => 12,
+          :cc_expiration_year => 2019,
+          :payment_cryptogram => 'EHuWW9PiBkWvqE5juRwDzAUFBAk=',
+          :eci => '05'
+      }
+      source = plugin.get_payment_source(@kb_payment_method_id, [], options, @call_context)
+      source.is_a?(::ActiveMerchant::Billing::NetworkTokenizationCreditCard).should be_true
+      source.type.should == 'network_tokenization'
+      source.number.should == '4242424242424242'
+      source.brand.should == 'visa'
+      source.month.should == 12
+      source.year.should == 2019
+      source.payment_cryptogram.should == 'EHuWW9PiBkWvqE5juRwDzAUFBAk='
+      source.eci.should == '05'
+      # The first and last name should have been populated from the payment method
+      source.first_name.should == 'John'
+      source.last_name.should == 'Doe'
     end
   end
 

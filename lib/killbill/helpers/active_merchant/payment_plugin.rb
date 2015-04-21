@@ -181,7 +181,17 @@ module Killbill
               cc_or_token = response.authorization
             end
 
-            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, cc_or_token, gw_response, options, {}, @payment_method_model)
+            attributes = properties_to_hash(all_properties)
+            # Note: keep the same keys as in build_am_credit_card below
+            extra_params = {
+                :cc_first_name => Utils.normalized(attributes, :cc_first_name),
+                :cc_last_name => Utils.normalized(attributes, :cc_last_name),
+                :cc_type => Utils.normalized(attributes, :cc_type),
+                :cc_exp_month => Utils.normalized(attributes, :cc_expiration_month),
+                :cc_exp_year => Utils.normalized(attributes, :cc_expiration_year),
+                :cc_last_4 => Utils.normalized(attributes, :cc_last_4)
+            }
+            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, cc_or_token, gw_response, options, extra_params, @payment_method_model)
             payment_method.save!
             payment_method
           else
@@ -464,35 +474,39 @@ module Killbill
         def get_payment_source(kb_payment_method_id, properties, options, context)
           attributes = properties_to_hash(properties, options)
 
-          # Use ccNumber for the real number (if stored locally) or an in-house token (proxy tokenization). It is assumed the rest
-          # of the card details are filled (expiration dates, etc.).
+          # Use ccNumber for:
+          # * the real number
+          # * in-house token (e.g. proxy tokenization)
+          # * token from a token service provider (e.g. ApplePay)
+          # If not specified, the rest of the card details will be retrieved from the locally stored payment method (if available)
           cc_number = Utils.normalized(attributes, :cc_number)
           # Use token for the token stored in an external vault. The token itself should be enough to process payments.
-          cc_or_token = Utils.normalized(attributes, :token) || Utils.normalized(attributes, :card_id) || Utils.normalized(attributes, :payment_data)
+          token = Utils.normalized(attributes, :token) || Utils.normalized(attributes, :card_id) || Utils.normalized(attributes, :payment_data)
 
-          pm = nil
-          retrieve_from_pm = cc_number.blank? && cc_or_token.blank? && !kb_payment_method_id.nil?
-          begin
-            pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
-          rescue => e
-            raise e if retrieve_from_pm
-          end unless kb_payment_method_id.nil? # add_payment_method call
+          if token.blank?
+            pm = nil
+            begin
+              pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
+            rescue => e
+              raise e if cc_number.blank?
+            end unless kb_payment_method_id.nil?
 
-          if retrieve_from_pm
-            # Lookup existing token
-            if pm.token.nil?
-              # Real credit card
-              cc_or_token = build_am_credit_card(pm.cc_number, attributes, pm)
+            if cc_number.blank? && !pm.nil?
+              # Lookup existing token
+              if pm.token.nil?
+                # Real credit card
+                cc_or_token = build_am_credit_card(pm.cc_number, attributes, pm)
+              else
+                # Tokenized card
+                cc_or_token = pm.token
+              end
             else
-              # Tokenized card
-              cc_or_token = pm.token
+              # Real credit card or network tokenization
+              cc_or_token = build_am_credit_card(cc_number, attributes, pm)
             end
-          elsif !cc_number.blank? && cc_or_token.blank?
-            # Real credit card
-            cc_or_token = build_am_credit_card(cc_number, attributes)
           else
             # Use specified token
-            cc_or_token = build_am_token(cc_or_token, attributes)
+            cc_or_token = build_am_token(token, attributes)
           end
 
           options[:billing_address] ||= {
