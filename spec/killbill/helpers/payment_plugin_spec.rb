@@ -235,8 +235,7 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       }
       source = plugin.get_payment_source(nil, [], options, @call_context)
       source.is_a?(::ActiveMerchant::Billing::NetworkTokenizationCreditCard).should be_true
-      # In ActiveMerchant master only
-      #source.type.should == 'network_tokenization'
+      source.type.should == 'network_tokenization'
       source.number.should == '4242424242424242'
       source.brand.should == 'visa'
       source.month.should == 12
