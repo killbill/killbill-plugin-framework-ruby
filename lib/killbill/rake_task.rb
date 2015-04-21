@@ -53,12 +53,12 @@ module Killbill
       # hard link all files from @package_dir to pkg to avoid tar'ing up symbolic links
       @package_dir = Pathname.new(name).expand_path
 
-      # Staging area to install gem dependencies
-      # Note the Killbill friendly structure (which we will keep in the tarball)
-      @target_dir = @package_dir.join("#{version}/gems").expand_path
-
       # Staging area to install the killbill.properties and config.ru files
       @plugin_root_target_dir = @package_dir.join("#{version}").expand_path
+
+      # Staging area to install gem dependencies
+      # Note the Killbill friendly structure (which we will keep in the tarball)
+      @plugin_gem_target_dir = @package_dir.join("#{version}/gems").expand_path
     end
 
     def specs
@@ -217,32 +217,48 @@ module Killbill
 
     # Parse the existing Gemfile and Gemfile.lock files
     def find_gemfile
-      gemfile = @base.join(@gemfile_name).expand_path
+      gemfile = gemfile_path
       # Don't make the Gemfile a requirement, a gemspec should be enough
       return nil unless gemfile.file?
 
       # Make sure the developer ran `bundle install' first. We could probably run
-      #   Bundler::Installer::install(@target_dir, @definition, {})
+      #   Bundler::Installer::install(@plugin_gem_target_dir, @definition, {})
       # but it may be better to make sure all dependencies are resolved first,
       # before attempting to build the plugin
-      gemfile_lock = @base.join(@gemfile_lock_name).expand_path
+      gemfile_lock = gemfile_lock_path
       raise "Unable to find the Gemfile.lock at #{gemfile_lock} for your plugin. Please run `bundle install' first" unless gemfile_lock.file?
 
       @logger.debug "Parsing #{gemfile} and #{gemfile_lock}"
       Bundler::Definition.build(gemfile, gemfile_lock, nil)
     end
 
+    def gemfile_path
+      @base.join(@gemfile_name).expand_path
+    end
+
+    def gemfile_lock_path
+      @base.join(@gemfile_lock_name).expand_path
+    end
+
     def stage_dependencies
       # Create the target directory
-      mkdir_p @target_dir.to_s, :verbose => @verbose
+      mkdir_p @plugin_gem_target_dir.to_s, :verbose => @verbose
 
-      @logger.debug "Installing all gem dependencies to #{@target_dir}"
+      @logger.debug "Installing all gem dependencies to #{@plugin_gem_target_dir}"
       # We can't simply use Bundler::Installer unfortunately, because we can't tell it to copy the gems for cached ones
       # (it will default to using Bundler::Source::Path references to the gemspecs on "install").
+
+      # part of copying the dependencies is getting Gemfile/Gemfile.lock in
+      # otherwise :git => gem dependencies would need work-arounds to work
+      if bundler?
+        copy_gemfile
+        generate_boot_rb if boot_rb_file.nil?
+        # else user-suplied boot.rb will be copied into the package
+      end
+
       specs.each do |spec|
         gem_path = valid_gem_path(spec)
         if gem_path.nil?
-          gem_path = find_plugin_gem(spec)
           @logger.info "Staging #{spec.full_name} from #{gem_path}"
           do_install_gem(gem_path, spec)
         elsif gem_path.file?
@@ -291,7 +307,7 @@ module Killbill
       #  exclude_gems = false
       #end
 
-      FileUtils.mkdir_p target_dir = File.join(@target_dir, "bundler/gems")
+      FileUtils.mkdir_p target_dir = File.join(@plugin_gem_target_dir, "bundler/gems")
 
       if spec.groups.include?(:killbill_excluded)
         Dir.glob("#{path}/**/#{spec.name}.gemspec").each do |file|
@@ -316,7 +332,7 @@ module Killbill
       name, version = spec.name, spec.version
       options = {
           :force       => true,
-          :install_dir => @target_dir,
+          :install_dir => @plugin_gem_target_dir,
           #:only_install_dir => true,
           # Should be redundant with the tweaks below
           :development => false,
@@ -340,7 +356,37 @@ module Killbill
       raise e
     end
 
+    def generate_boot_rb
+      @logger.debug "Generating boot.rb into #{@plugin_root_target_dir}"
+      File.open(File.join(@plugin_root_target_dir, 'boot.rb'), 'w') do |file|
+        # NOTE: currently only used when Bundler is needed but ...
+        file.puts <<-END
+ENV["GEM_HOME"] = File.expand_path('gems', File.dirname(__FILE__))
+ENV["GEM_PATH"] = ENV["GEM_HOME"]
+# environment is set statically, as soon as Sinatra is loaded
+ENV["RACK_ENV"] = 'production'
+# prepare to boot using Bundler :
+ENV["BUNDLE_WITHOUT"] ||= "#{ENV["BUNDLE_WITHOUT"] || 'development:test'}"
+ENV["BUNDLE_GEMFILE"] ||= File.expand_path('Gemfile', File.dirname(__FILE__))
+ENV["JBUNDLE_SKIP"] = 'true' # we only use JBundler for development/testing
+
+require 'bundler/setup' if File.exists?(ENV["BUNDLE_GEMFILE"])
+END
+      end
+    end
+
+    def copy_gemfile
+      target_gemfile = File.join(@plugin_root_target_dir, 'Gemfile')
+      cp gemfile_path, target_gemfile, :verbose => @verbose
+      target_gemfile_lock = File.join(@plugin_root_target_dir, 'Gemfile.lock')
+      cp gemfile_lock_path, target_gemfile_lock, :verbose => @verbose
+    end
+
     def stage_extra_files
+      unless boot_rb_file.nil?
+        @logger.debug "Staging (user-suplied) #{boot_rb_file} to #{@plugin_root_target_dir}"
+        cp boot_rb_file, @plugin_root_target_dir, :verbose => @verbose
+      end
       unless killbill_properties_file.nil?
         @logger.debug "Staging #{killbill_properties_file} to #{@plugin_root_target_dir}"
         cp killbill_properties_file, @plugin_root_target_dir, :verbose => @verbose
@@ -349,6 +395,10 @@ module Killbill
         @logger.debug "Staging #{config_ru_file} to #{@plugin_root_target_dir}"
         cp config_ru_file, @plugin_root_target_dir, :verbose => @verbose
       end
+    end
+
+    def boot_rb_file
+      path_to_string @base.join("boot.rb").expand_path
     end
 
     def killbill_properties_file
