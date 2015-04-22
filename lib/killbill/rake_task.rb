@@ -374,6 +374,8 @@ ENV["GEM_HOME"] = File.expand_path('gems', File.dirname(__FILE__))
 ENV["GEM_PATH"] = ENV["GEM_HOME"]
 # environment is set statically, as soon as Sinatra is loaded
 ENV["RACK_ENV"] = 'production'
+# previously the same WD was used dependent on server startup
+Dir.chdir(File.dirname(__FILE__))
 # prepare to boot using Bundler :
 ENV["BUNDLE_WITHOUT"] ||= "#{ENV["BUNDLE_WITHOUT"] || 'development:test'}"
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path('Gemfile', File.dirname(__FILE__))
