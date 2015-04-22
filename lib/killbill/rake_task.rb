@@ -259,6 +259,17 @@ module Killbill
       specs.each do |spec|
         gem_path = valid_gem_path(spec)
         if gem_path.nil?
+          gem_path = find_plugin_gem(spec)
+          if bundler?
+            # Gemfile very likely declares gemspec ... so we need to get that in
+            # yet the current way (the plugin gem must be built first) we can
+            # not simply copy spec.loaded_from into the package's root directory
+            # (the actual [PLUGIN_ROOT]/killbill-plugin.gemspec) as that depends
+            # on `git' on PATH as well as other files such as VERSION
+            gemspec_name = File.basename(spec.loaded_from)
+            plugin_gem = Gem::Package.new(gem_path.to_s)
+            puts_to_root plugin_gem.spec.to_ruby, gemspec_name
+          end
           @logger.info "Staging #{spec.full_name} from #{gem_path}"
           do_install_gem(gem_path, spec)
         elsif gem_path.file?
@@ -358,9 +369,7 @@ module Killbill
 
     def generate_boot_rb
       @logger.debug "Generating boot.rb into #{@plugin_root_target_dir}"
-      File.open(File.join(@plugin_root_target_dir, 'boot.rb'), 'w') do |file|
-        # NOTE: currently only used when Bundler is needed but ...
-        file.puts <<-END
+      puts_to_root <<-END, 'boot.rb'
 ENV["GEM_HOME"] = File.expand_path('gems', File.dirname(__FILE__))
 ENV["GEM_PATH"] = ENV["GEM_HOME"]
 # environment is set statically, as soon as Sinatra is loaded
@@ -372,29 +381,36 @@ ENV["JBUNDLE_SKIP"] = 'true' # we only use JBundler for development/testing
 
 require 'bundler/setup' if File.exists?(ENV["BUNDLE_GEMFILE"])
 END
-      end
     end
 
     def copy_gemfile
-      target_gemfile = File.join(@plugin_root_target_dir, 'Gemfile')
-      cp gemfile_path, target_gemfile, :verbose => @verbose
-      target_gemfile_lock = File.join(@plugin_root_target_dir, 'Gemfile.lock')
-      cp gemfile_lock_path, target_gemfile_lock, :verbose => @verbose
+      copy_to_root gemfile_path, 'Gemfile'
+      copy_to_root gemfile_lock_path, 'Gemfile.lock'
     end
 
     def stage_extra_files
       unless boot_rb_file.nil?
         @logger.debug "Staging (user-suplied) #{boot_rb_file} to #{@plugin_root_target_dir}"
-        cp boot_rb_file, @plugin_root_target_dir, :verbose => @verbose
+        copy_to_root boot_rb_file
       end
       unless killbill_properties_file.nil?
         @logger.debug "Staging #{killbill_properties_file} to #{@plugin_root_target_dir}"
-        cp killbill_properties_file, @plugin_root_target_dir, :verbose => @verbose
+        copy_to_root killbill_properties_file
       end
       unless config_ru_file.nil?
         @logger.debug "Staging #{config_ru_file} to #{@plugin_root_target_dir}"
-        cp config_ru_file, @plugin_root_target_dir, :verbose => @verbose
+        copy_to_root config_ru_file
       end
+    end
+
+    def copy_to_root(file_path, base_name = File.basename(file_path))
+      target_file = File.join(@plugin_root_target_dir, base_name)
+      cp file_path, target_file, :verbose => @verbose
+    end
+
+    def puts_to_root(content, base_name)
+      target_file = File.join(@plugin_root_target_dir, base_name)
+      File.open(target_file, 'w') { |file| file << content }
     end
 
     def boot_rb_file
