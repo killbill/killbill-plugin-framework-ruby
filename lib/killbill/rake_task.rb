@@ -269,6 +269,13 @@ module Killbill
             gemspec_name = File.basename(spec.loaded_from)
             plugin_gem = Gem::Package.new(gem_path.to_s)
             puts_to_root plugin_gem.spec.to_ruby, gemspec_name
+            # NOTE: further the unpacked gemspec will be read by Bundler and assumes
+            # the unpacked gem structure to be found on the file-system, extract :
+            # TODO as of now we basically forced the user to pack and we than unpack
+            # the _plugin_ gem - this can be avoided although by doing so we preserved
+            # the previous feature of only packing commited files (due `git ls-files`)
+            # TODO shall we filter out some?
+            plugin_gem.extract_files @plugin_root_target_dir
           end
           @logger.info "Staging #{spec.full_name} from #{gem_path}"
           do_install_gem(gem_path, spec)
