@@ -388,7 +388,10 @@ ENV["BUNDLE_WITHOUT"] ||= "#{ENV["BUNDLE_WITHOUT"] || 'development:test'}"
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path('Gemfile', File.dirname(__FILE__))
 ENV["JBUNDLE_SKIP"] = 'true' # we only use JBundler for development/testing
 
-require 'bundler/setup' if File.exists?(ENV["BUNDLE_GEMFILE"])
+require 'rubygems' unless defined? Gem
+if File.exists?(ENV["BUNDLE_GEMFILE"])
+  require 'bundler'; Bundler.setup
+end
 END
     end
 
