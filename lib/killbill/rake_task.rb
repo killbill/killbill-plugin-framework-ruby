@@ -251,7 +251,7 @@ module Killbill
       # part of copying the dependencies is getting Gemfile/Gemfile.lock in
       # otherwise :git => gem dependencies would need work-arounds to work
       if bundler?
-        copy_gemfile
+        copy_gemfile # plugin gem build might re-copy, that's fine!
         generate_boot_rb if boot_rb_file.nil?
         # else user-suplied boot.rb will be copied into the package
       end
@@ -259,26 +259,28 @@ module Killbill
       specs.each do |spec|
         gem_path = valid_gem_path(spec)
         if gem_path.nil?
-          gem_path = find_plugin_gem(spec)
           if bundler?
+            # first validate it's actually the plugin spec we're dealing with :
+            raise "missing gem path for spec: #{spec.inspect}" if spec.name != name
             # Gemfile very likely declares gemspec ... so we need to get that in
             # yet the current way (the plugin gem must be built first) we can
             # not simply copy spec.loaded_from into the package's root directory
             # (the actual [PLUGIN_ROOT]/killbill-plugin.gemspec) as that depends
-            # on `git' on PATH as well as other files such as VERSION
+            # on `git' binary on PATH (to get the actual gem.files)
+            @logger.info "Building #{spec.name} gem from #{spec.loaded_from}"
+            plugin_gem = Gem::Package.new(spec.file_name)
+            plugin_gem.spec = spec
+            plugin_gem.build(true) # skip_validation
             gemspec_name = File.basename(spec.loaded_from)
-            plugin_gem = Gem::Package.new(gem_path.to_s)
             puts_to_root plugin_gem.spec.to_ruby, gemspec_name
             # NOTE: further the unpacked gemspec will be read by Bundler and assumes
             # the unpacked gem structure to be found on the file-system, extract :
-            # TODO as of now we basically forced the user to pack and we than unpack
-            # the _plugin_ gem - this can be avoided although by doing so we preserved
-            # the previous feature of only packing commited files (due `git ls-files`)
-            # TODO shall we filter out some?
             plugin_gem.extract_files @plugin_root_target_dir
+          else # mostly Bunder-less backwards-compatibility
+            gem_path = find_plugin_gem(spec)
+            @logger.info "Staging #{spec.full_name} from #{gem_path}"
+            do_install_gem(gem_path, spec)
           end
-          @logger.info "Staging #{spec.full_name} from #{gem_path}"
-          do_install_gem(gem_path, spec)
         elsif gem_path.file?
           @logger.debug "Staging #{spec.name} (#{spec.version}) from #{gem_path}"
           do_install_gem(gem_path, spec)
