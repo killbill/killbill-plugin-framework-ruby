@@ -369,6 +369,8 @@ module Killbill
       gem_installer.spec.extensions       = nil
       gem_installer.spec.extra_rdoc_files = nil
       gem_installer.spec.test_files       = nil
+      # avoid the annoying post_install_message from money gem (and others)
+      gem_installer.spec.post_install_message = nil
 
       gem_installer.install
     rescue => e
@@ -404,15 +406,15 @@ END
 
     def stage_extra_files
       unless boot_rb_file.nil?
-        @logger.debug "Staging (user-suplied) #{boot_rb_file} to #{@plugin_root_target_dir}"
+        @logger.info "Staging (user-suplied) #{boot_rb_file}"
         copy_to_root boot_rb_file
       end
       unless killbill_properties_file.nil?
-        @logger.debug "Staging #{killbill_properties_file} to #{@plugin_root_target_dir}"
+        @logger.debug "Staging #{killbill_properties_file}"
         copy_to_root killbill_properties_file
       end
       unless config_ru_file.nil?
-        @logger.debug "Staging #{config_ru_file} to #{@plugin_root_target_dir}"
+        @logger.debug "Staging #{config_ru_file}"
         copy_to_root config_ru_file
       end
     end
