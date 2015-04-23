@@ -78,14 +78,18 @@ module Killbill
           validate
         end
 
-        # Build the .tar.gz and .zip packages
-        task :package, [:verbose] => :stage
-        package_task = Rake::PackageTask.new(name, version) do |p|
-          p.need_tar_gz = true
-          p.need_zip = true
+        # desc added after tasks are defined by Rake::PackageTask see bellow
+        task :package, [:verbose] => :stage # builds .tar.gz & .zip packages
+
+        package_task = Rake::PackageTask.new(name, version) do |pkg|
+          pkg.need_tar_gz = true
+          pkg.need_zip = true
         end
 
-        desc "Stage all dependencies"
+        Rake::Task['package'].add_description "Package #{name} plugin #{version}"
+        Rake::Task['repackage'].add_description "Re-package #{name} plugin #{version}"
+
+        desc "Stage dependencies for #{name} plugin #{version}"
         task :stage, [:verbose] => :validate do |t, args|
           set_verbosity(args)
 
@@ -96,7 +100,7 @@ module Killbill
           package_task.package_files = Rake::FileList.new("#{@package_dir.basename}/**/*")
         end
 
-        desc "Deploy the plugin to Kill Bill"
+        desc "Deploy #{name} plugin #{version} to Kill Bill"
         task :deploy, [:force, :plugin_dir, :verbose] => :stage do |t, args|
           set_verbosity(args)
 
@@ -149,7 +153,7 @@ module Killbill
     def bundler?; !! @gemfile_definition end
 
     def print_dependencies
-      puts "Gems to be staged:"
+      # NOTE: can be improved to include :git info and warn on gem :path
       specs.each { |spec| puts "  #{spec.name} (#{spec.version})" }
     end
 
