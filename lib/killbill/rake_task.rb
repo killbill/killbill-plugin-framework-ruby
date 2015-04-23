@@ -127,9 +127,10 @@ module Killbill
         end
 
         desc "List all dependencies"
-        task :dependency => :validate do
+        task :dependencies => :validate do
           print_dependencies
         end
+        task :dependency => :dependencies
 
         desc "Delete #{@package_dir}"
         task :clean => :clobber_package do
@@ -370,7 +371,6 @@ module Killbill
 
       # Tweak the spec file as there are a lot of things we don't care about
       gem_installer.spec.executables      = nil
-      gem_installer.spec.extensions       = nil
       gem_installer.spec.extra_rdoc_files = nil
       gem_installer.spec.test_files       = nil
       # avoid the annoying post_install_message from money gem (and others)
