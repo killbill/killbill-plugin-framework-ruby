@@ -178,6 +178,23 @@ module Killbill
 
     def find_plugin_gem(spec)
       gem_name = spec.file_name
+
+      # Try in the base directory first
+      plugin_gem_file = Pathname.new(gem_name).expand_path
+      unless plugin_gem_file.file? # `rake build` (./pkg)
+        plugin_gem_file = Pathname.new(File.join('pkg', gem_name))
+      end
+
+      unless plugin_gem_file.file?
+        raise "Unable to find #{gem_name}. Did you build it? (`rake build')"
+      end
+
+      @logger.debug "Found #{plugin_gem_file}"
+      plugin_gem_file.expand_path
+    end
+
+    def find_missing_gem(spec, silent = nil)
+      gem_name = spec.file_name
       # spec.loaded_from is the path to the gemspec file
       if spec.loaded_from # will likely be nil for the plugin's gemspec
         base = Pathname.new(File.dirname(spec.loaded_from)).expand_path
@@ -185,39 +202,31 @@ module Killbill
         base = nil
       end
 
-      # Try in the base directory first
-      plugin_gem_file = Pathname.new(gem_name).expand_path
-      if base && ! plugin_gem_file.file?
-        plugin_gem_file = base.join(gem_name).expand_path
-      end
-      unless plugin_gem_file.file? # `rake build` (./pkg)
-        plugin_gem_file = Pathname.new(File.join('pkg', gem_name))
-      end
-
-      unless plugin_gem_file.file?
-        gem_paths = Gem.paths.path.dup; gem_paths.unshift(base) if base
-        # NOTE: in case it's the plugin.gem not sure if this makes sense
-        gem_paths.each do |gem_path| # e.g. /opt/rvm/gems/jruby-1.7.16@global
-          if File.directory? cache_dir = File.join(gem_path, 'cache')
-            if File.file? gem_file = File.join(cache_dir, gem_name)
-              plugin_gem_file = Pathname.new(gem_file); break
-            end
+      gem_file = nil
+      gem_paths = Gem.paths.path.dup; gem_paths.unshift(base) if base
+      gem_paths.each do |gem_path| # e.g. /opt/rvm/gems/jruby-1.7.16@global
+        if File.directory? cache_dir = File.join(gem_path, 'cache')
+          if File.file? gem_file = File.join(cache_dir, gem_name)
+            gem_file = Pathname.new(gem_file); break
           else
-            gem_files = Dir[File.join(gem_path, "**/#{gem_name}")]
-            unless gem_files.empty?
-              @logger.debug "Gem candidates found: #{gem_files.inspect}"
-              plugin_gem_file = Pathname.new(gem_files.first); break
-            end
+            gem_file = nil
+          end
+        else
+          gem_files = Dir[File.join(gem_path, "**/#{gem_name}")]
+          unless gem_files.empty?
+            @logger.debug "Gem candidates found: #{gem_files.inspect}"
+            gem_file = Pathname.new(gem_files.first); break
           end
         end
       end
 
-      unless plugin_gem_file.file?
-        raise "Unable to find #{gem_name} in #{base}. Did you build it? (`rake build')"
+      if gem_file.nil? || ! gem_file.file?
+        return nil if silent
+        raise "Unable to find #{gem_name} under #{gem_paths.inspect}"
       end
 
-      @logger.debug "Found #{plugin_gem_file}"
-      plugin_gem_file.expand_path
+      @logger.debug "Found #{gem_file}"
+      gem_file.expand_path
     end
 
     # Parse the existing Gemfile and Gemfile.lock files
@@ -262,27 +271,30 @@ module Killbill
       end
 
       specs.each do |spec|
-        gem_path = valid_gem_path(spec)
-        if gem_path.nil?
+        if ! gem_path = valid_gem_path(spec)
           if bundler?
-            # first validate it's actually the plugin spec we're dealing with :
-            raise "missing gem path for spec: #{spec.inspect}" if spec.name != name
-            # Gemfile very likely declares gemspec ... so we need to get that in
-            # yet the current way (the plugin gem must be built first) we can
-            # not simply copy spec.loaded_from into the package's root directory
-            # (the actual [PLUGIN_ROOT]/killbill-plugin.gemspec) as that depends
-            # on `git' binary on PATH (to get the actual gem.files)
-            @logger.info "Building #{spec.name} gem from #{spec.loaded_from}"
-            plugin_gem = Gem::Package.new(spec.file_name)
-            plugin_gem.spec = spec
-            plugin_gem.build(true) # skip_validation
-            gemspec_name = File.basename(spec.loaded_from)
-            puts_to_root plugin_gem.spec.to_ruby, gemspec_name
-            # NOTE: further the unpacked gemspec will be read by Bundler and assumes
-            # the unpacked gem structure to be found on the file-system, extract :
-            plugin_gem.extract_files @plugin_root_target_dir
+            if gem_path == false # spec.name == name
+              # Gemfile very likely declares gemspec ... so we need to get that in
+              # yet the current way (the plugin gem must be built first) we can
+              # not simply copy spec.loaded_from into the package's root directory
+              # (the actual [PLUGIN_ROOT]/killbill-plugin.gemspec) as that depends
+              # on `git' binary on PATH (to get the actual gem.files)
+              @logger.info "Building #{spec.name} gem from #{spec.loaded_from}"
+              plugin_gem = Gem::Package.new(spec.file_name)
+              plugin_gem.spec = spec
+              plugin_gem.build(true) # skip_validation
+              gemspec_name = File.basename(spec.loaded_from)
+              puts_to_root plugin_gem.spec.to_ruby, gemspec_name
+              # NOTE: further the unpacked gemspec will be read by Bundler and assumes
+              # the unpacked gem structure to be found on the file-system, extract :
+              plugin_gem.extract_files @plugin_root_target_dir
+            else # gem not under gem cache_dir (default gem or multiple gem paths)
+              gem_path = find_missing_gem(spec)
+              @logger.debug "Staging #{spec.name} (#{spec.version}) from #{gem_path}"
+              do_install_gem(gem_path, spec)
+            end
           else # mostly Bunder-less backwards-compatibility
-            gem_path = find_plugin_gem(spec)
+            gem_path = find_missing_gem(spec, :silent) || find_plugin_gem(spec)
             @logger.info "Staging #{spec.full_name} from #{gem_path}"
             do_install_gem(gem_path, spec)
           end
@@ -313,7 +325,7 @@ module Killbill
           #  e.g. [RVM]/gems/jruby-1.7.19@kb/bundler/gems/killbill-plugin-framework-ruby-ce5e19f45bc9
           return spec.source.install_path
         when Bundler::Source::Path
-          return nil if spec.name == name # it's the plugin gem itself
+          return false if spec.name == name # it's the plugin gem itself
           raise "gem #{spec.name}, :path => ... is not supported"
         end
       end
