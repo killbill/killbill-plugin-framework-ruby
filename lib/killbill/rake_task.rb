@@ -194,15 +194,28 @@ module Killbill
     end
 
     def find_missing_gem(spec, silent = nil)
-      gem_name = spec.file_name
-      # spec.loaded_from is the path to the gemspec file
-      if spec.loaded_from # will likely be nil for the plugin's gemspec
+      base = nil
+      if spec.loaded_from
+        # spec.loaded_from is (usually) the path to the gemspec file
         base = Pathname.new(File.dirname(spec.loaded_from)).expand_path
-      else
-        base = nil
+        if ! base.file?
+          base = nil unless base.directory?
+        end
+      end
+      unless base
+        base = spec.gems_dir if spec.respond_to?(:gems_dir)
+        base = spec.base_dir if spec.respond_to?(:base_dir)
+      end
+      # might end-up with a slightly incorrect resolution (due Bundler) :
+      # e.g. .../rvm/gems/jruby-1.7.19@global/gems/bundler-1.7.9/lib/bundler/gems
+      if base
+        parent = base
+        parent = parent.parent while ! parent.join('cache').directory?
+        base = parent if parent && parent.join('gems').directory? # RGs layout
       end
 
       gem_file = nil
+      gem_name = spec.file_name
       gem_paths = Gem.paths.path.dup; gem_paths.unshift(base) if base
       gem_paths.each do |gem_path| # e.g. /opt/rvm/gems/jruby-1.7.16@global
         if File.directory? cache_dir = File.join(gem_path, 'cache')
