@@ -61,6 +61,14 @@ module Killbill
       @plugin_gem_target_dir = @package_dir.join("#{version}/gems").expand_path
     end
 
+    def name
+      @plugin_gemspec.name
+    end
+
+    def version
+      @plugin_gemspec.version
+    end
+
     def specs
       # Rely on the Gemfile definition, if it exists, to get all dependencies
       # (we assume the Gemfile includes the plugin gemspec, as it should).
@@ -156,14 +164,6 @@ module Killbill
     def print_dependencies
       # NOTE: can be improved to include :git info and warn on gem :path
       specs.each { |spec| puts "  #{spec.name} (#{spec.version})" }
-    end
-
-    def name
-      @plugin_gemspec.name
-    end
-
-    def version
-      @plugin_gemspec.version
     end
 
     # Parse the <plugin_name>.gemspec file
