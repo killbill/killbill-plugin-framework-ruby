@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord', '~> 4.1.0'
   if defined?(JRUBY_VERSION)
     s.add_dependency 'activerecord-bogacs', '~> 0.3'
-    s.add_dependency 'activerecord-jdbc-adapter', '~> 1.3.12'
+    s.add_dependency 'activerecord-jdbc-adapter', '~> 1.3'
     # Required to avoid errors like java.lang.NoClassDefFoundError: org/bouncycastle/asn1/DERBoolean
     s.add_dependency 'jruby-openssl', '~> 0.9.6'
   end

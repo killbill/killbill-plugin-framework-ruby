@@ -31,7 +31,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'activerecord', '~> 4.1.0'
   if defined?(JRUBY_VERSION)
     s.add_development_dependency 'activerecord-bogacs', '~> 0.3'
-    s.add_development_dependency 'activerecord-jdbc-adapter', '~> 1.3.12'
+    # See https://github.com/killbill/killbill-plugin-framework-ruby/issues/33
+    s.add_development_dependency 'activerecord-jdbc-adapter', '~> 1.3'
     s.add_development_dependency 'jdbc-mariadb', '~> 1.1.8'
   end
   s.add_development_dependency 'actionpack', '~> 4.1.0'
