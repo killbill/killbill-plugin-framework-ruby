@@ -1,6 +1,7 @@
 require 'bundler'
 require 'logger'
 require 'pathname'
+require 'tmpdir'
 require 'rake'
 require 'rake/packagetask'
 require 'rubygems/installer'
@@ -293,14 +294,16 @@ module Killbill
               # (the actual [PLUGIN_ROOT]/killbill-plugin.gemspec) as that depends
               # on `git' binary on PATH (to get the actual gem.files)
               @logger.info "Building #{spec.name} gem from #{spec.loaded_from}"
-              plugin_gem = Gem::Package.new(spec.file_name)
-              plugin_gem.spec = spec
-              plugin_gem.build(true) # skip_validation
-              gemspec_name = File.basename(spec.loaded_from)
-              puts_to_root plugin_gem.spec.to_ruby, gemspec_name
-              # NOTE: further the unpacked gemspec will be read by Bundler and assumes
-              # the unpacked gem structure to be found on the file-system, extract :
-              plugin_gem.extract_files @plugin_root_target_dir
+              Dir.mktmpdir do |dir|
+                plugin_gem = Gem::Package.new(File.join(dir, spec.file_name))
+                plugin_gem.spec = spec
+                plugin_gem.build(true) # skip_validation
+                gemspec_name = File.basename(spec.loaded_from)
+                puts_to_root plugin_gem.spec.to_ruby, gemspec_name
+                # NOTE: further the unpacked gemspec will be read by Bundler and assumes
+                # the unpacked gem structure to be found on the file-system, extract :
+                plugin_gem.extract_files @plugin_root_target_dir
+              end
             else # gem not under gem cache_dir (default gem or multiple gem paths)
               gem_path = find_missing_gem(spec)
               @logger.debug "Staging #{spec.name} (#{spec.version}) from #{gem_path}"
