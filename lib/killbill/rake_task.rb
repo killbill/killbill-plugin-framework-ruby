@@ -254,7 +254,7 @@ module Killbill
       # but it may be better to make sure all dependencies are resolved first,
       # before attempting to build the plugin
       gemfile_lock = gemfile_lock_path
-      raise "Unable to find the Gemfile.lock at #{gemfile_lock} for your plugin. Please run `bundle install' first" unless gemfile_lock.file?
+      raise "Unable to find the bundle .lock at #{gemfile_lock} for your plugin. Please run `bundle install' first" unless gemfile_lock.file?
 
       @logger.debug "Parsing #{gemfile} and #{gemfile_lock}"
       Bundler::Definition.build(gemfile, gemfile_lock, nil)
