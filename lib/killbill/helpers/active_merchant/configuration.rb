@@ -154,7 +154,8 @@ module Killbill
                   db_config[:data_source] = Java::JavaxNaming::InitialContext.new.lookup(db_config[:jndi].to_s)
                   db_config.delete(:jndi)
                 rescue Java::javax.naming.NamingException => e
-                  @@logger.warn "Unable to lookup JNDI DataSource (yet?): #{e}"
+                  # See https://github.com/killbill/killbill-plugin-framework-ruby/issues/39
+                  @@logger.warn "Unable to lookup JNDI DataSource (yet?): #{e}" unless defined?(JBUNDLER_CLASSPATH)
                 end
               end
 
