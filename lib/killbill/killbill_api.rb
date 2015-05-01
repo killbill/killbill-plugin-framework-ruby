@@ -8,10 +8,14 @@ module Killbill
     #
     class KillbillApi
 
-      def initialize(plugin_name, java_service_map)
+      # @VisibleForTesting
+      attr_reader :proxied_services
+
+      def initialize(plugin_name, proxied_services)
         @plugin_name = plugin_name
+        @proxied_services = proxied_services
         @services = {}
-        java_service_map.each do |k,v|
+        proxied_services.each do |k,v|
           @services[k.to_sym] = create_proxy_api(k, v)
         end
       end
@@ -23,7 +27,6 @@ module Killbill
         return @services[m.to_sym] if @services.include? m.to_sym
         raise NoMethodError.new("undefined method `#{m}' for #{self}")
       end
-
 
       def create_context(tenant_id=nil, user_token=nil, reason_code=nil, comments=nil)
         context = Killbill::Plugin::Model::CallContext.new
@@ -45,7 +48,6 @@ module Killbill
         proxy_class_name = "Killbill::Plugin::Api::#{api_name.to_s.split('_').map{|e| e.capitalize}.join}"
         proxy_class_name.to_class.new(java_api)
       end
-
     end
   end
 end
