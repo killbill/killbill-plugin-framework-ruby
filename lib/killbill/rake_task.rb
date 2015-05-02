@@ -428,7 +428,46 @@ require 'rubygems' unless defined? Gem
 if File.exists?(ENV["BUNDLE_GEMFILE"])
   require 'bundler'; Bundler.setup
 end
+
+# try loading gem killbill (in case plugin forgot the require)
+begin
+  require 'killbill'
+rescue LoadError => e # not fatal for un-usual cases where plugins vendor the gem
+  warn "WARN: failed to load killbill gem: \#\{e.inspect\}"
+end
+
+#{plugin_require_line}
+
 END
+    end
+
+    def plugin_require_line
+      files = @plugin_gemspec.files; require_path = "#{@plugin_gemspec.require_path}/"
+      files = files.select { |file| file.start_with?(require_path) && file[-3..-1] == '.rb' }
+      # [ "lib/stripe.rb", "lib/stripe/api.rb", "lib/stripe/application.rb", ... ]
+      files.map! { |file| file.sub(require_path, '') }
+      # [ "stripe.rb", "stripe/api.rb", "stripe/application.rb", ... ]
+
+      # 0. if killbill-stripe gem name has a killbill-stripe.rb use it
+      return "require '#{name}'" if files.include?("#{name}.rb")
+
+      # 1. RG convention: killbill-stripe -> require 'killbill/stripe'
+      filename = "#{name.sub('-', '/')}"
+      return "require '#{filename}'" if files.include?("#{filename}.rb")
+
+      # 2. killbill-paypal-express -> require 'paypal-express' (not used)
+      filename = "#{name.sub(/^killbill\-/, '')}"
+      return "require '#{filename}'" if files.include?("#{filename}.rb")
+
+      # 3. killbill-paypal-express -> require 'paypal_express'
+      filename = filename.sub('-', '_')
+      return "require '#{filename}'" if files.include?("#{filename}.rb")
+
+      # not likely to happen - fallback to root file (warn when multiple) :
+      files = files.select { |file| file.index('/').nil? }
+      return "require '#{files[0]}'" if files.size == 1
+
+      raise "could not resolve main require file from gemspec,\n please follow our naming convention for the bootstrap require e.g. \"#{name.sub('-', '/')}.rb\""
     end
 
     def copy_gemfile
