@@ -47,7 +47,7 @@ module Killbill
       @base = Pathname.new(@base_name).expand_path
 
       # Find the gemspec to determine name and version
-      @plugin_gemspec = find_plugin_gemspec
+      @plugin_gemspec = load_plugin_gemspec
 
       # Temporary build directory
       # Don't use 'pkg' as it is used by Rake::PackageTask already: it will
@@ -61,6 +61,8 @@ module Killbill
       # Note the Killbill friendly structure (which we will keep in the tarball)
       @plugin_gem_target_dir = @package_dir.join("#{version}/gems").expand_path
     end
+
+    attr_reader :base
 
     def name
       @plugin_gemspec.name
@@ -164,7 +166,7 @@ module Killbill
     end
 
     def validate
-      @gemfile_definition = find_gemfile
+      @gemfile_definition = build_gemfile
     end
 
     def bundler?; !! @gemfile_definition end
@@ -175,7 +177,7 @@ module Killbill
     end
 
     # Parse the <plugin_name>.gemspec file
-    def find_plugin_gemspec
+    def load_plugin_gemspec
       gemspecs = @plugin_name ? [File.join(@base, "#{@plugin_name}.gemspec")] : Dir[File.join(@base, "{,*}.gemspec")]
       raise "Unable to find your plugin gemspec in #{@base}" if gemspecs.size == 0
       raise "Found multiple plugin gemspec in #{@base} : #{gemspecs.inspect}" if gemspecs.size > 1
@@ -251,7 +253,7 @@ module Killbill
     end
 
     # Parse the existing Gemfile and Gemfile.lock files
-    def find_gemfile
+    def build_gemfile
       gemfile = gemfile_path
       # Don't make the Gemfile a requirement, a gemspec should be enough
       return nil unless gemfile.file?
