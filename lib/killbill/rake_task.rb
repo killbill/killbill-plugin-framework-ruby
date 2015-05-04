@@ -54,12 +54,15 @@ module Killbill
       # hard link all files from @package_dir to pkg to avoid tar'ing up symbolic links
       @package_dir = Pathname.new(name).expand_path
 
+      @root_dir_path = 'ROOT' # plugin's ROOT directory
+      @gems_dir_path = File.join(@root_dir_path, 'gems')
       # Staging area to install the killbill.properties and config.ru files
-      @plugin_root_target_dir = @package_dir.join("#{version}").expand_path
+      @plugin_target_dir = @package_dir.join("#{version}").expand_path
+      @plugin_root_target_dir = @plugin_target_dir.join(@root_dir_path)
 
       # Staging area to install gem dependencies
       # Note the Killbill friendly structure (which we will keep in the tarball)
-      @plugin_gem_target_dir = @package_dir.join("#{version}/gems").expand_path
+      @plugin_gem_target_dir = @plugin_target_dir.join(@gems_dir_path)
     end
 
     attr_reader :base
@@ -423,16 +426,17 @@ module Killbill
 
     def generate_boot_rb
       @logger.debug "Generating boot.rb into #{@plugin_root_target_dir}"
-      puts_to_root <<-END, 'boot.rb'
-ENV["GEM_HOME"] = File.expand_path('gems', File.dirname(__FILE__))
+      # NOTE: previously the same WD was used dependent on server startup
+      puts_to_base <<-END, 'boot.rb'
+Dir.chdir File.expand_path('#{@root_dir_path}', File.dirname(__FILE__))
+
+ENV["GEM_HOME"] = File.join(File.dirname(__FILE__), '#{@gems_dir_path}')
 ENV["GEM_PATH"] = ENV["GEM_HOME"]
 # environment is set statically, as soon as Sinatra is loaded
 ENV["RACK_ENV"] = 'production'
-# previously the same WD was used dependent on server startup
-Dir.chdir(File.dirname(__FILE__))
 # prepare to boot using Bundler :
 ENV["BUNDLE_WITHOUT"] = "#{ENV["BUNDLE_WITHOUT"] || 'development:test'}"
-ENV["BUNDLE_GEMFILE"] = File.expand_path('Gemfile', File.dirname(__FILE__))
+ENV["BUNDLE_GEMFILE"] = File.expand_path('Gemfile')
 ENV["JBUNDLE_SKIP"] = 'true' # we only use JBundler for development/testing
 
 require 'rubygems' unless defined? Gem
@@ -489,21 +493,31 @@ END
     def stage_extra_files
       unless boot_rb_file.nil?
         @logger.info "Staging (user-suplied) #{boot_rb_file}"
-        copy_to_root boot_rb_file
+        copy_to_base boot_rb_file
       end
       unless killbill_properties_file.nil?
         @logger.debug "Staging #{killbill_properties_file}"
-        copy_to_root killbill_properties_file
+        copy_to_base killbill_properties_file
       end
       unless config_ru_file.nil?
         @logger.debug "Staging #{config_ru_file}"
-        copy_to_root config_ru_file
+        copy_to_base config_ru_file
       end
+    end
+
+    def copy_to_base(file_path, base_name = File.basename(file_path))
+      target_file = File.join(@plugin_target_dir, base_name)
+      cp file_path, target_file, :verbose => @verbose
     end
 
     def copy_to_root(file_path, base_name = File.basename(file_path))
       target_file = File.join(@plugin_root_target_dir, base_name)
       cp file_path, target_file, :verbose => @verbose
+    end
+
+    def puts_to_base(content, base_name)
+      target_file = File.join(@plugin_target_dir, base_name)
+      File.open(target_file, 'w') { |file| file << content }
     end
 
     def puts_to_root(content, base_name)
