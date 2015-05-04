@@ -13,11 +13,11 @@ module Killbill
     class << self
       def install_tasks(opts = {})
         gemfile_name = ENV['BUNDLE_GEMFILE'] || 'Gemfile'
-        new(opts[:base_name] || Dir.pwd,                        # Path to the plugin root directory (where the gempec and/or Gemfile should be)
-            opts[:plugin_name],                                 # Plugin name, e.g. 'klogger'
-            opts[:gem_name],                                    # Gem file name, e.g. 'klogger-1.0.0.gem'
-            opts[:gemfile_name] || gemfile_name,                # Gemfile name
-            opts[:gemfile_lock_name] || "#{gemfile_name}.lock", # Gemfile.lock name
+        new(opts[:base_name] || Dir.pwd,          # Path to the plugin root directory (where the gempec and/or Gemfile should be)
+            opts[:plugin_name],                   # Plugin name, e.g. 'klogger'
+            opts[:gem_name],                      # Gem file name, e.g. 'klogger-1.0.0.gem'
+            opts[:gemfile_name] || gemfile_name,  # Gemfile name
+            opts[:gemfile_lock_name] || "#{gemfile_name}.lock",
             opts[:verbose] || false)
         .install
       end
@@ -98,8 +98,15 @@ module Killbill
         Rake::Task['package'].add_description "Package #{name} plugin #{version}"
         Rake::Task['repackage'].add_description "Re-package #{name} plugin #{version}"
 
+        task 'stage:init' do
+          # NOOP task for plugins to hook up if they need some sort of initialization
+          #  (task will be run in the context of the Killbill::PluginHelper instance)
+          # NOTE: no need for post (stage:done) hook since it's easy using Rake :
+          #  Rake::Task["killbill:package"].enhance { ... }
+        end
+
         desc "Stage dependencies for #{name} plugin #{version}"
-        task :stage, [:verbose] => :validate do |t, args|
+        task :stage, [:verbose] => [ :validate, 'stage:init' ] do |t, args|
           set_verbosity(args)
 
           stage_dependencies
