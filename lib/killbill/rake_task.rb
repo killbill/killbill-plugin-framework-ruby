@@ -431,8 +431,8 @@ ENV["RACK_ENV"] = 'production'
 # previously the same WD was used dependent on server startup
 Dir.chdir(File.dirname(__FILE__))
 # prepare to boot using Bundler :
-ENV["BUNDLE_WITHOUT"] ||= "#{ENV["BUNDLE_WITHOUT"] || 'development:test'}"
-ENV["BUNDLE_GEMFILE"] ||= File.expand_path('Gemfile', File.dirname(__FILE__))
+ENV["BUNDLE_WITHOUT"] = "#{ENV["BUNDLE_WITHOUT"] || 'development:test'}"
+ENV["BUNDLE_GEMFILE"] = File.expand_path('Gemfile', File.dirname(__FILE__))
 ENV["JBUNDLE_SKIP"] = 'true' # we only use JBundler for development/testing
 
 require 'rubygems' unless defined? Gem
