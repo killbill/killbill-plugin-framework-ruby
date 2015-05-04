@@ -349,7 +349,9 @@ module Killbill
           return spec.source.install_path
         when Bundler::Source::Path
           return false if spec.name == name # it's the plugin gem itself
-          raise "gem #{spec.name}, :path => ... is not supported"
+
+          @logger.warn "gem '#{spec.name}' declares :path => '#{spec.source.path}' packaging will only work locally (while the path exists) !"
+          return spec.source.path
         end
       end
       nil
