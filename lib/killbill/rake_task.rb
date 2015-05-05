@@ -3,7 +3,6 @@ require 'logger'
 require 'pathname'
 require 'tmpdir'
 require 'rake'
-require 'rake/packagetask'
 require 'rubygems/installer'
 
 module Killbill
@@ -49,15 +48,16 @@ module Killbill
       # Find the gemspec to determine name and version
       @plugin_gemspec = load_plugin_gemspec
 
+      @package_dir = Pathname.new('pkg').expand_path
       # Temporary build directory
-      # Don't use 'pkg' as it is used by Rake::PackageTask already: it will
-      # hard link all files from @package_dir to pkg to avoid tar'ing up symbolic links
-      @package_dir = Pathname.new(name).expand_path
+      # will hard link all files from @package_tmp_dir to pkg to avoid tar'ing
+      # up symbolic links (similar to how Rake::PackageTask does prepare files)
+      @package_tmp_dir = Pathname.new(File.join('tmp', name)).expand_path
 
       @root_dir_path = 'ROOT' # plugin's ROOT directory
       @gems_dir_path = File.join(@root_dir_path, 'gems')
       # Staging area to install the killbill.properties and config.ru files
-      @plugin_target_dir = @package_dir.join("#{version}").expand_path
+      @plugin_target_dir = @package_tmp_dir.join("#{version}").expand_path
       @plugin_root_target_dir = @plugin_target_dir.join(@root_dir_path)
 
       # Staging area to install gem dependencies
@@ -92,16 +92,64 @@ module Killbill
           validate
         end
 
-        # desc added after tasks are defined by Rake::PackageTask see bellow
+        desc "Build all package files for #{name} plugin #{version}"
         task :package, [:verbose] => :stage # builds .tar.gz & .zip packages
 
-        package_task = Rake::PackageTask.new(name, version) do |pkg|
-          pkg.need_tar_gz = true
-          pkg.need_zip = true
+        package_name = "#{name}-#{version}"
+        package_dir = @package_dir.realpath # pkg
+        package_dir_path = File.join(package_dir, package_name) # pkg/killbill-xxx-0.1.2
+
+        task :package => [ tar_gz_file = File.join(package_dir, "#{package_name}.tar.gz") ]
+        file tar_gz_file => [ package_dir_path, 'package:files' ] do
+          chdir(package_dir) do
+            tar_command = 'tar'
+            sh tar_command, "zcvf", tar_gz_file, package_name
+          end
         end
 
-        Rake::Task['package'].add_description "Package #{name} plugin #{version}"
-        Rake::Task['repackage'].add_description "Re-package #{name} plugin #{version}"
+        task :package => [ zip_file = File.join(package_dir, "#{package_name}.zip") ]
+        file zip_file => [ package_dir_path, 'package:files' ] do
+          chdir(package_dir) do
+            zip_command = 'zip'
+            sh zip_command, "-r", zip_file, package_name
+          end
+        end
+
+        directory package_dir_path
+        task 'package:files' do
+          # move files from tmp directory to pkg (based on how rake does)
+          basename = Regexp.escape(@package_tmp_dir.basename.to_s)
+          tmp_path = @package_tmp_dir.realpath.to_s
+          realpath_tmp_prefix = tmp_path.sub(/\/#{basename}$/, '')
+          package_files = Rake::FileList.new("#{tmp_path}/**/*")
+
+          package_files.each do |fn|
+            f = File.join(package_dir_path, fn.sub(realpath_tmp_prefix, ''))
+            fdir = File.dirname(f)
+            mkdir_p(fdir) unless File.exist?(fdir)
+            if File.directory?(fn)
+              mkdir_p(f)
+            else
+              rm_f f
+              safe_ln(fn, f)
+            end
+          end
+        end
+
+        desc "Force a rebuild of package files for #{name} plugin #{version}"
+        task :repackage => [:clobber_package, :package]
+
+        task :clobber_tmp do
+          rm_f @package_tmp_dir rescue nil
+        end
+
+        desc "Remove package files from #{@package_dir}"
+        task :clobber_package do
+          rm_f tar_gz_file if File.exist?(tar_gz_file)
+          rm_f zip_file if File.exist?(zip_file)
+          rm_r package_dir_path rescue nil
+        end
+        task :clobber => [:clobber_tmp, :clobber_package]
 
         task 'stage:init' do
           # NOOP task for plugins to hook up if they need some sort of initialization
@@ -114,11 +162,10 @@ module Killbill
         task :stage, [:verbose] => [ :validate, 'stage:init' ] do |t, args|
           set_verbosity(args)
 
+          mkdir_p @plugin_target_dir.to_s, :verbose => @verbose
+
           stage_dependencies
           stage_extra_files
-
-          # Small hack! Update the list of files to package (Rake::FileList is evaluated too early above)
-          package_task.package_files = Rake::FileList.new("#{@package_dir.basename}/**/*")
         end
 
         desc "Deploy #{name} plugin #{version} to Kill Bill"
@@ -138,7 +185,7 @@ module Killbill
             end
           end
 
-          cp_r @package_dir, plugins_dir, :verbose => @verbose
+          cp_r @package_tmp_dir, plugins_dir, :verbose => @verbose
 
           Rake::FileList.new("#{@base}/*.yml").each do |config_file|
             config_file_path = Pathname.new("#{plugin_path}/#{version}/#{File.basename(config_file)}").expand_path
@@ -154,8 +201,8 @@ module Killbill
         task :dependency => :dependencies
 
         desc "Delete #{@package_dir}"
-        task :clean => :clobber_package do
-          rm_rf @package_dir
+        task :clean => :clobber do
+          rm_r @package_dir if File.exist?(@package_dir)
         end
       end
     end
