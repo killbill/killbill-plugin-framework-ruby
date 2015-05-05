@@ -346,13 +346,12 @@ module Killbill
       # We can't simply use Bundler::Installer unfortunately, because we can't tell it to copy the gems for cached ones
       # (it will default to using Bundler::Source::Path references to the gemspecs on "install").
 
+      generate_boot_rb if boot_rb_file.nil?
+      # else user-suplied boot.rb will be copied into the package
+
       # part of copying the dependencies is getting Gemfile/Gemfile.lock in
       # otherwise :git => gem dependencies would need work-arounds to work
-      if bundler?
-        copy_gemfile # plugin gem build might re-copy, that's fine!
-        generate_boot_rb if boot_rb_file.nil?
-        # else user-suplied boot.rb will be copied into the package
-      end
+      copy_gemfile if bundler? # plugin gem build might re-copy, that's fine!
 
       specs.each do |spec|
         if ! gem_path = valid_gem_path(spec)
@@ -501,9 +500,11 @@ ENV["JBUNDLE_SKIP"] = 'true' # we only use JBundler for development/testing
 require 'rubygems' unless defined? Gem
 if File.exists?(ENV["BUNDLE_GEMFILE"])
   require 'bundler'; Bundler.setup
+else
+  #{adjust_plugin_load_path}
 end
 
-# try loading gem killbill (in case plugin forgot the require)
+# try loading killbill (Bunler-less deploys or in case plugin forgot to require)
 begin
   require 'killbill'
 rescue LoadError => e # not fatal for un-usual cases where plugins vendor the gem
@@ -542,6 +543,13 @@ END
       return "require '#{files[0]}'" if files.size == 1
 
       raise "could not resolve main require file from gemspec,\n please follow our naming convention for the bootstrap require e.g. \"#{name.sub('-', '/')}.rb\""
+    end
+
+    def adjust_plugin_load_path
+      # NOTE: assuming Dir.chdir [ROOT]
+      @plugin_gemspec.require_paths.map do |path|
+        "$LOAD_PATH << File.expand_path('#{path}')" # $LOAD_PATH << 'lib'
+      end.join('; ')
     end
 
     def copy_gemfile
