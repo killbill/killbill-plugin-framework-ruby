@@ -90,7 +90,22 @@ module Killbill
             deps.dup.each { |spec| deps += get_dependencies.call(spec) }
             deps.uniq
           end
-          [ @plugin_gemspec ] + get_dependencies.call(@plugin_gemspec)
+          all_dependencies = get_dependencies.call(@plugin_gemspec)
+          all_dependencies.dup.each do |spec|
+            next unless all_dependencies.include?(spec) # removed previously
+
+            # duplicate gemspec of same name might get included since we did
+            # not really do through the gem activation hustle, lowest version
+            # should win since those tend to be matched by strict requirements
+            if other_spec = all_dependencies.find { |s| s.name == spec.name && s != spec }
+              if other_spec.version > spec.version
+                all_dependencies.delete(other_spec)
+              else # other_spec.version < spec.version
+                all_dependencies.delete(spec)
+              end
+            end
+          end
+          [ @plugin_gemspec ] + all_dependencies
         end
     end
 
