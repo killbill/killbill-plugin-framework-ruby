@@ -78,9 +78,20 @@ module Killbill
     def specs
       # Rely on the Gemfile definition, if it exists, to get all dependencies
       # (we assume the Gemfile includes the plugin gemspec, as it should).
-      # Otherwise, use only the plugin gemspec.
-      # When using the Gemfile definition, don't include the :development group -- should this be configurable?
-      @specs ||= @gemfile_definition ? @gemfile_definition.specs_for([:default]) : [@plugin_gemspec]
+      # Otherwise, use recursively retrieve the plugin gemspec' runtime dependencies
+      # ... resolves all gems as they are currently installed with RubyGems
+      @specs ||=
+        if @gemfile_definition
+          # don't include the :development group
+          @gemfile_definition.specs_for([:default])
+        else
+          get_dependencies = lambda do |spec|
+            deps = ( spec.runtime_dependencies || [] ).map(&:to_spec)
+            deps.dup.each { |spec| deps += get_dependencies.call(spec) }
+            deps.uniq
+          end
+          [ @plugin_gemspec ] + get_dependencies.call(@plugin_gemspec)
+        end
     end
 
     def install
