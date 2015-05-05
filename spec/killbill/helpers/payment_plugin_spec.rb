@@ -137,12 +137,12 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       plugin.get_payment_methods(@kb_account_id, true, @properties, @call_context).size.should == 0
 
       properties = []
-      properties << create_pm_kv_info('ccNumber', '41111111111111111')
-      properties << create_pm_kv_info('ccFirstName', 'Paul')
-      properties << create_pm_kv_info('ccLastName', 'Dupond')
-      properties << create_pm_kv_info('ccType', 'visa')
-      properties << create_pm_kv_info('ccExpirationMonth', '12')
-      properties << create_pm_kv_info('ccExpirationYear', '17')
+      properties << build_property('ccNumber', '41111111111111111')
+      properties << build_property('ccFirstName', 'Paul')
+      properties << build_property('ccLastName', 'Dupond')
+      properties << build_property('ccType', 'visa')
+      properties << build_property('ccExpirationMonth', '12')
+      properties << build_property('ccExpirationYear', '17')
       payment_method_props = ::Killbill::Plugin::Model::PaymentMethodPlugin.new
       payment_method_props.properties = properties
       plugin.add_payment_method(@kb_account_id, SecureRandom.uuid, payment_method_props, true, @properties, @call_context)
@@ -174,7 +174,7 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       plugin.get_payment_methods(@kb_account_id, true, @properties, @call_context).size.should == 0
 
       properties = []
-      properties << create_pm_kv_info('token', 'ABCDEF')
+      properties << build_property('token', 'ABCDEF')
       payment_method_props = ::Killbill::Plugin::Model::PaymentMethodPlugin.new
       payment_method_props.properties = properties
       plugin.add_payment_method(@kb_account_id, SecureRandom.uuid, payment_method_props, true, @properties, @call_context)

@@ -8,6 +8,7 @@ module Killbill
       require 'offsite_payments'
 
       class PaymentPlugin < ::Killbill::Plugin::Payment
+        include ::Killbill::Plugin::PropertiesHelper
 
         def initialize(gateway_builder, identifier, payment_method_model, transaction_model, response_model)
           super()
@@ -17,7 +18,6 @@ module Killbill
           @payment_method_model = payment_method_model
           @transaction_model    = transaction_model
           @response_model       = response_model
-
         end
 
         def start_plugin
@@ -570,12 +570,6 @@ module Killbill
           end
         end
 
-        def find_value_from_properties(properties, key)
-          return nil if key.nil?
-          prop = (properties.find { |kv| kv.key.to_s == key.to_s })
-          prop.nil? ? nil : prop.value
-        end
-
         def account_currency(kb_account_id, kb_tenant_id)
           account = @kb_apis.account_user_api.get_account_by_id(kb_account_id, @kb_apis.create_context(kb_tenant_id))
           account.currency
@@ -599,31 +593,6 @@ module Killbill
 
         def config
           ::Killbill::Plugin::ActiveMerchant.config
-        end
-
-        def hash_to_properties(options)
-          merge_properties([], options)
-        end
-
-        def properties_to_hash(properties, options = {})
-          merged = {}
-          (properties || []).each do |p|
-            merged[p.key.to_sym] = p.value
-          end
-          merged.merge(options)
-        end
-
-        def merge_properties(properties, options)
-          merged = properties_to_hash(properties, options)
-
-          properties = []
-          merged.each do |k, v|
-            p       = ::Killbill::Plugin::Model::PluginProperty.new
-            p.key   = k
-            p.value = v
-            properties << p
-          end
-          properties
         end
 
         def get_active_merchant_module

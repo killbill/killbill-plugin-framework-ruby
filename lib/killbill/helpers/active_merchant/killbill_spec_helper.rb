@@ -2,6 +2,7 @@ module Killbill
   module Plugin
     module ActiveMerchant
       module RSpec
+        include ::Killbill::Plugin::PropertiesHelper
 
         def create_payment_method(payment_method_model=::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod, kb_account_id=nil, kb_tenant_id=nil, properties = [], options = {}, set_default = true, plugin = @plugin)
           kb_payment_method_id = SecureRandom.uuid
@@ -89,16 +90,6 @@ module Killbill
 
           return external_key, kb_account_id
         end
-
-        def build_property(key, value)
-          prop = ::Killbill::Plugin::Model::PluginProperty.new
-          prop.key = key
-          prop.value = value
-          prop
-        end
-
-        # Legacy
-        alias_method :create_pm_kv_info, :build_property
 
         def build_call_context(tenant_id = '00000011-0022-0033-0044-000000000055')
           call_context = ::Killbill::Plugin::Model::CallContext.new
