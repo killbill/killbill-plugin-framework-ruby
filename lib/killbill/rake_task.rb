@@ -345,29 +345,30 @@ module Killbill
 
       specs.each do |spec|
         if ! gem_path = valid_gem_path(spec)
-          if bundler?
-            if gem_path == false # spec.name == name
-              # Gemfile very likely declares gemspec ... so we need to get that in
-              # yet the current way (the plugin gem must be built first) we can
-              # not simply copy spec.loaded_from into the package's root directory
-              # (the actual [PLUGIN_ROOT]/killbill-plugin.gemspec) as that depends
-              # on `git' binary on PATH (to get the actual gem.files)
-              @logger.info "Building #{spec.name} gem from #{spec.loaded_from}"
-              Dir.mktmpdir do |dir|
-                plugin_gem = Gem::Package.new(File.join(dir, spec.file_name))
-                plugin_gem.spec = spec
-                plugin_gem.build(true) # skip_validation
-                gemspec_name = File.basename(spec.loaded_from)
-                puts_to_root plugin_gem.spec.to_ruby, gemspec_name
-                # NOTE: further the unpacked gemspec will be read by Bundler and assumes
-                # the unpacked gem structure to be found on the file-system, extract :
-                plugin_gem.extract_files @plugin_root_target_dir
-              end
-            else # gem not under gem cache_dir (default gem or multiple gem paths)
-              gem_path = find_missing_gem(spec)
-              @logger.debug "Staging #{spec.name} (#{spec.version}) from #{gem_path}"
-              do_install_gem(gem_path, spec)
+          if gem_path == false # spec.name == name
+            # Gemfile very likely declares gemspec ... so we need to get that in
+            # yet the current way (the plugin gem must be built first) we can
+            # not simply copy spec.loaded_from into the package's root directory
+            # (the actual [PLUGIN_ROOT]/killbill-plugin.gemspec) as that depends
+            # on `git' binary on PATH (to get the actual gem.files)
+            @logger.info "Building #{spec.name} gem from #{spec.loaded_from}"
+            Dir.mktmpdir do |dir|
+              plugin_gem = Gem::Package.new(File.join(dir, spec.file_name))
+              plugin_gem.spec = spec
+              plugin_gem.build(true) # skip_validation
+              gemspec_name = File.basename(spec.loaded_from)
+              puts_to_root plugin_gem.spec.to_ruby, gemspec_name
+              # NOTE: further the unpacked gemspec will be read by Bundler and assumes
+              # the unpacked gem structure to be found on the file-system, extract :
+              plugin_gem.extract_files @plugin_root_target_dir
             end
+            next
+          end
+          if bundler?
+            # gem not under gem cache_dir (default gem or multiple gem paths)
+            gem_path = find_missing_gem(spec)
+            @logger.debug "Staging #{spec.name} (#{spec.version}) from #{gem_path}"
+            do_install_gem(gem_path, spec)
           else # mostly Bunder-less backwards-compatibility
             gem_path = find_missing_gem(spec, :silent) || find_plugin_gem(spec)
             @logger.info "Staging #{spec.full_name} from #{gem_path}"
@@ -389,6 +390,8 @@ module Killbill
       cache_file = File.join(spec.cache_dir, "#{spec.full_name}.gem")
       cache_path = Pathname.new(cache_file).expand_path
       return cache_path if cache_path.file?
+      return false if spec.name == name # it's the plugin gem itself
+
       if spec.source && bundler? && spec.source.is_a?(Bundler::Source)
         # Path < Source and Git < Path :
         case spec.source
@@ -400,8 +403,6 @@ module Killbill
           #  e.g. [RVM]/gems/jruby-1.7.19@kb/bundler/gems/killbill-plugin-framework-ruby-ce5e19f45bc9
           return spec.source.install_path
         when Bundler::Source::Path
-          return false if spec.name == name # it's the plugin gem itself
-
           @logger.warn "gem '#{spec.name}' declares :path => '#{spec.source.path}' packaging will only work locally (while the path exists) !"
           return spec.source.path
         end
