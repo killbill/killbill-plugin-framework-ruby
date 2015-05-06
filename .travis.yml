@@ -22,7 +22,7 @@ env:
     - AR_ADAPTER='sqlite3' AR_DATABASE='test.db'
 
 rvm:
-  - jruby-1.7.16
+  - jruby-1.7.20
   - jruby-20mode # latest 1.7.x
   - jruby-head
 
