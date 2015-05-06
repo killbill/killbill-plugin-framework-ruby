@@ -196,30 +196,13 @@ module Killbill
           stage_extra_files
         end
 
-        desc "Deploy #{name} plugin #{version} to Kill Bill"
+        desc "Deploy #{name} plugin #{version} to KillBill server"
         task :deploy, [:force, :plugin_dir, :verbose] => :stage do |t, args|
-          set_verbosity(args)
-
-          plugins_dir = Pathname.new("#{args.plugin_dir || '/var/tmp/bundles/plugins/ruby'}").expand_path
-          mkdir_p plugins_dir, :verbose => @verbose
-
-          plugin_path = Pathname.new("#{plugins_dir}/#{name}")
-          if plugin_path.exist?
-            if args.force == "true"
-              @logger.info "Deleting previous plugin deployment #{plugin_path}"
-              rm_rf plugin_path, :verbose => @verbose
-            else
-              raise "Cowardly not deleting previous plugin deployment #{plugin_path} - override with rake killbill:deploy[true]"
-            end
-          end
+          plugins_dir = prepare_deploy(t, args)
 
           cp_r @package_tmp_dir, plugins_dir, :verbose => @verbose
 
-          Rake::FileList.new("#{@base}/*.yml").each do |config_file|
-            config_file_path = Pathname.new("#{plugin_path}/#{version}/#{File.basename(config_file)}").expand_path
-            @logger.info "Deploying #{config_file} to #{config_file_path}"
-            cp config_file, config_file_path, :verbose => @verbose
-          end
+          deploy_config_files plugin_path(plugins_dir) # .../[name]/[version]
         end
 
         desc "List all dependencies"
@@ -236,6 +219,40 @@ module Killbill
     end
 
     private
+
+    def plugin_path(plugins_dir, versioned = true)
+      plugin_path = plugins_dir.join(name)
+      versioned ? plugin_path.join(version.to_s) : plugin_path
+    end
+
+    # (shared) deploy task(s) helper
+    # @return _plugins_ directory
+    def prepare_deploy(t, args)
+      set_verbosity(args)
+
+      plugins_dir = Pathname.new("#{args.plugin_dir || '/var/tmp/bundles/plugins/ruby'}").expand_path
+      mkdir_p plugins_dir, :verbose => @verbose
+
+      plugin_path = plugin_path(plugins_dir, false) # "#{plugins_dir}/#{name}"
+      if plugin_path.exist?
+        if args.force == "true"
+          @logger.info "Deleting previous plugin deployment #{plugin_path}"
+          rm_rf plugin_path, :verbose => @verbose
+        else
+          raise "Cowardly not deleting previous plugin deployment #{plugin_path} - override with rake #{t.name}[true]"
+        end
+      end
+      plugins_dir
+    end
+
+    # (shared) deploy task(s) helper
+    def deploy_config_files(path, config_files = Rake::FileList.new("#{@base}/*.yml"))
+      config_files.each do |config_file|
+        config_file_path = File.join(path, File.basename(config_file))
+        @logger.info "Deploying #{config_file} to #{config_file_path}"
+        cp config_file, config_file_path, :verbose => @verbose
+      end
+    end
 
     def set_verbosity(args)
       return unless args.verbose == 'true'
