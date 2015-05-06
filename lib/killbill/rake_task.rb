@@ -99,8 +99,10 @@ module Killbill
             # should win since those tend to be matched by strict requirements
             if other_spec = all_dependencies.find { |s| s.name == spec.name && s != spec }
               if other_spec.version > spec.version
+                @logger.debug "Discarding matched gem '#{spec.name}' version #{other_spec.version} in favor of #{spec.version}"
                 all_dependencies.delete(other_spec)
               else # other_spec.version < spec.version
+                @logger.debug "Discarding matched gem '#{spec.name}' version #{spec.version} in favor of #{other_spec.version}"
                 all_dependencies.delete(spec)
               end
             end
