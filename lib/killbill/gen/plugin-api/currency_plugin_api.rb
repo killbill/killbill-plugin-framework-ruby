@@ -48,7 +48,7 @@ module Killbill
           tmp = java.util.TreeSet.new
           (res || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Currency]
-            m = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, m.to_s ) unless m.nil?
+            m = Java::org.killbill.billing.catalog.api.Currency.value_of("#{m.to_s}") unless m.nil?
             tmp.add(m)
           end
           res = tmp

@@ -50,10 +50,10 @@ module Killbill
           @user_name = @user_name.to_s unless @user_name.nil?
 
           # conversion for call_origin [type = org.killbill.billing.util.callcontext.CallOrigin]
-          @call_origin = Java::JavaLang::Enum.value_of( org.killbill.billing.util.callcontext.CallOrigin.java_class, @call_origin.to_s ) unless @call_origin.nil?
+          @call_origin = Java::org.killbill.billing.util.callcontext.CallOrigin.value_of("#{@call_origin.to_s}") unless @call_origin.nil?
 
           # conversion for user_type [type = org.killbill.billing.util.callcontext.UserType]
-          @user_type = Java::JavaLang::Enum.value_of( org.killbill.billing.util.callcontext.UserType.java_class, @user_type.to_s ) unless @user_type.nil?
+          @user_type = Java::org.killbill.billing.util.callcontext.UserType.value_of("#{@user_type.to_s}") unless @user_type.nil?
 
           # conversion for reason_code [type = java.lang.String]
           @reason_code = @reason_code.to_s unless @reason_code.nil?

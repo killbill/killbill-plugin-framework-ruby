@@ -62,7 +62,7 @@ module Killbill
           @external_key = @external_key.to_s unless @external_key.nil?
 
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
-          @transaction_type = Java::JavaLang::Enum.value_of( org.killbill.billing.payment.api.TransactionType.java_class, @transaction_type.to_s ) unless @transaction_type.nil?
+          @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of("#{@transaction_type.to_s}") unless @transaction_type.nil?
 
           # conversion for effective_date [type = org.joda.time.DateTime]
           if !@effective_date.nil?
@@ -78,7 +78,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, @currency.to_s ) unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for processed_amount [type = java.math.BigDecimal]
           if @processed_amount.nil?
@@ -88,7 +88,7 @@ module Killbill
           end
 
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
-          @processed_currency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, @processed_currency.to_s ) unless @processed_currency.nil?
+          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
 
           # conversion for gateway_error_code [type = java.lang.String]
           @gateway_error_code = @gateway_error_code.to_s unless @gateway_error_code.nil?
@@ -97,7 +97,7 @@ module Killbill
           @gateway_error_msg = @gateway_error_msg.to_s unless @gateway_error_msg.nil?
 
           # conversion for transaction_status [type = org.killbill.billing.payment.api.TransactionStatus]
-          @transaction_status = Java::JavaLang::Enum.value_of( org.killbill.billing.payment.api.TransactionStatus.java_class, @transaction_status.to_s ) unless @transaction_status.nil?
+          @transaction_status = Java::org.killbill.billing.payment.api.TransactionStatus.value_of("#{@transaction_status.to_s}") unless @transaction_status.nil?
 
           # conversion for payment_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
           @payment_info_plugin = @payment_info_plugin.to_java unless @payment_info_plugin.nil?

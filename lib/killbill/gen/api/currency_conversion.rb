@@ -41,7 +41,7 @@ module Killbill
 
         def to_java()
           # conversion for base_currency [type = org.killbill.billing.catalog.api.Currency]
-          @base_currency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, @base_currency.to_s ) unless @base_currency.nil?
+          @base_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@base_currency.to_s}") unless @base_currency.nil?
 
           # conversion for rates [type = java.util.Set]
           tmp = java.util.TreeSet.new

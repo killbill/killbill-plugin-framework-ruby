@@ -44,7 +44,7 @@ module Killbill
           @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
 
           # conversion for action [type = org.killbill.billing.entitlement.api.SubscriptionEventType]
-          @action = Java::JavaLang::Enum.value_of( org.killbill.billing.entitlement.api.SubscriptionEventType.java_class, @action.to_s ) unless @action.nil?
+          @action = Java::org.killbill.billing.entitlement.api.SubscriptionEventType.value_of("#{@action.to_s}") unless @action.nil?
 
           # conversion for subscription_id [type = java.util.UUID]
           @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?

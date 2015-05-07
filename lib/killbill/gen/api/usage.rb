@@ -44,13 +44,13 @@ module Killbill
           @name = @name.to_s unless @name.nil?
 
           # conversion for billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
-          @billing_mode = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.BillingMode.java_class, @billing_mode.to_s ) unless @billing_mode.nil?
+          @billing_mode = Java::org.killbill.billing.catalog.api.BillingMode.value_of("#{@billing_mode.to_s}") unless @billing_mode.nil?
 
           # conversion for usage_type [type = org.killbill.billing.catalog.api.UsageType]
-          @usage_type = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.UsageType.java_class, @usage_type.to_s ) unless @usage_type.nil?
+          @usage_type = Java::org.killbill.billing.catalog.api.UsageType.value_of("#{@usage_type.to_s}") unless @usage_type.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.BillingPeriod.java_class, @billing_period.to_s ) unless @billing_period.nil?
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
           tmp = java.util.ArrayList.new

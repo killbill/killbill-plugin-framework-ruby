@@ -56,7 +56,7 @@ module Killbill
           @bill_cycle_day_local = @bill_cycle_day_local
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, @currency.to_s ) unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?

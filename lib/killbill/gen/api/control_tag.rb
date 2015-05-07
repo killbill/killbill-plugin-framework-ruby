@@ -44,7 +44,7 @@ module Killbill
           @tag_definition_id = java.util.UUID.fromString(@tag_definition_id.to_s) unless @tag_definition_id.nil?
 
           # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, @object_type.to_s ) unless @object_type.nil?
+          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?
@@ -65,7 +65,7 @@ module Killbill
           end
 
           # conversion for control_tag_type [type = org.killbill.billing.util.tag.ControlTagType]
-          @control_tag_type = Java::JavaLang::Enum.value_of( org.killbill.billing.util.tag.ControlTagType.java_class, @control_tag_type.to_s ) unless @control_tag_type.nil?
+          @control_tag_type = Java::org.killbill.billing.util.tag.ControlTagType.value_of("#{@control_tag_type.to_s}") unless @control_tag_type.nil?
           self
         end
 

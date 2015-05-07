@@ -68,7 +68,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@applicable_object_types || []).each do |m|
             # conversion for m [type = org.killbill.billing.ObjectType]
-            m = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, m.to_s ) unless m.nil?
+            m = Java::org.killbill.billing.ObjectType.value_of("#{m.to_s}") unless m.nil?
             tmp.add(m)
           end
           @applicable_object_types = tmp
