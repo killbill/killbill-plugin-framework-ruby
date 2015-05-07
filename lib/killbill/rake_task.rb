@@ -49,6 +49,7 @@ module Killbill
       @plugin_gemspec = load_plugin_gemspec
 
       @package_dir = Pathname.new('pkg').expand_path
+      FileUtils.mkdir_p @package_dir
       # Temporary build directory
       # will hard link all files from @package_tmp_dir to pkg to avoid tar'ing
       # up symbolic links (similar to how Rake::PackageTask does prepare files)
