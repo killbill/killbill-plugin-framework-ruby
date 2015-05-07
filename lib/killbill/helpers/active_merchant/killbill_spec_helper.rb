@@ -2,29 +2,30 @@ module Killbill
   module Plugin
     module ActiveMerchant
       module RSpec
+        include ::Killbill::Plugin::PropertiesHelper
 
-        def create_payment_method(payment_method_model=::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod, kb_account_id=nil, kb_tenant_id=nil, properties = [], options = {})
+        def create_payment_method(payment_method_model=::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod, kb_account_id=nil, kb_tenant_id=nil, properties = [], options = {}, set_default = true, plugin = @plugin)
           kb_payment_method_id = SecureRandom.uuid
 
           if kb_account_id.nil?
             kb_account_id = SecureRandom.uuid
 
             # Create a new account
-            create_kb_account kb_account_id
+            create_kb_account(kb_account_id, plugin.kb_apis.proxied_services[:account_user_api])
           end
 
-          context = @plugin.kb_apis.create_context(kb_tenant_id)
-          account = @plugin.kb_apis.account_user_api.get_account_by_id(kb_account_id, context)
+          context = plugin.kb_apis.create_context(kb_tenant_id)
+          account = plugin.kb_apis.account_user_api.get_account_by_id(kb_account_id, context)
 
           # The rest is pure Ruby
           context = context.to_ruby(context)
 
           # Generate a token
-          pm_properties = build_pm_properties(account, options)
+          pm_properties = build_pm_properties(account, options, set_default)
 
           info = Killbill::Plugin::Model::PaymentMethodPlugin.new
           info.properties = pm_properties
-          payment_method = @plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, properties, context)
+          payment_method = plugin.add_payment_method(kb_account_id, kb_payment_method_id, info, true, properties, context)
 
           pm = payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
           pm.should == payment_method
@@ -34,47 +35,47 @@ module Killbill
           pm
         end
 
-        def build_pm_properties(account = nil, overrides = {})
-          cc_number = (overrides.delete(:cc_number) || '4242424242424242')
-          cc_first_name = (overrides.delete(:cc_first_name) || 'John')
-          cc_last_name = (overrides.delete(:cc_last_name) || 'Doe')
-          cc_type = (overrides.delete(:cc_type) || 'Visa')
-          cc_exp_month = (overrides.delete(:cc_exp_month) || 12)
-          cc_exp_year = (overrides.delete(:cc_exp_year) || 2017)
-          cc_last_4 = (overrides.delete(:cc_last_4) || 4242)
-          address1 = (overrides.delete(:address1) || '5, oakriu road')
-          address2 = (overrides.delete(:address2) || 'apt. 298')
-          city = (overrides.delete(:city) || 'Gdio Foia')
-          state = (overrides.delete(:state) || 'FL')
-          zip = (overrides.delete(:zip) || 49302)
-          country = (overrides.delete(:country) || 'US')
-          cc_verification_value = (overrides.delete(:cc_verification_value) || 1234)
+        def build_pm_properties(account = nil, overrides = {}, set_defaults = true)
+          cc_number = (overrides.delete(:cc_number) || (set_defaults ? '4242424242424242' : nil))
+          cc_first_name = (overrides.delete(:cc_first_name) || (set_defaults ? 'John' : nil))
+          cc_last_name = (overrides.delete(:cc_last_name) || (set_defaults ? 'Doe' : nil))
+          cc_type = (overrides.delete(:cc_type) || (set_defaults ? 'Visa' : nil))
+          cc_exp_month = (overrides.delete(:cc_exp_month) || (set_defaults ? 12 : nil))
+          cc_exp_year = (overrides.delete(:cc_exp_year) || (set_defaults ? 2017 : nil))
+          cc_last_4 = (overrides.delete(:cc_last_4) || (set_defaults ? 4242 : nil))
+          address1 = (overrides.delete(:address1) || (set_defaults ? '5, oakriu road' : nil))
+          address2 = (overrides.delete(:address2) || (set_defaults ? 'apt. 298' : nil))
+          city = (overrides.delete(:city) || (set_defaults ? 'Gdio Foia' : nil))
+          state = (overrides.delete(:state) || (set_defaults ? 'FL' : nil))
+          zip = (overrides.delete(:zip) || (set_defaults ? 49302 : nil))
+          country = (overrides.delete(:country) || (set_defaults ? 'US' : nil))
+          cc_verification_value = (overrides.delete(:cc_verification_value) || (set_defaults ? 1234 : nil))
 
           properties = []
-          properties << create_pm_kv_info('ccNumber', cc_number)
-          properties << create_pm_kv_info('ccFirstName', cc_first_name)
-          properties << create_pm_kv_info('ccLastName', cc_last_name)
-          properties << create_pm_kv_info('ccType', cc_type)
-          properties << create_pm_kv_info('ccExpirationMonth', cc_exp_month)
-          properties << create_pm_kv_info('ccExpirationYear', cc_exp_year)
-          properties << create_pm_kv_info('ccLast4', cc_last_4)
-          properties << create_pm_kv_info('email', account.nil? ? Time.now.to_i.to_s + '-test@tester.com' : account.email) # Required by e.g. CyberSource
-          properties << create_pm_kv_info('address1', address1)
-          properties << create_pm_kv_info('address2', address2)
-          properties << create_pm_kv_info('city', city)
-          properties << create_pm_kv_info('state', state)
-          properties << create_pm_kv_info('zip', zip)
-          properties << create_pm_kv_info('country', country)
-          properties << create_pm_kv_info('ccVerificationValue', cc_verification_value)
+          properties << build_property('ccNumber', cc_number)
+          properties << build_property('ccFirstName', cc_first_name)
+          properties << build_property('ccLastName', cc_last_name)
+          properties << build_property('ccType', cc_type)
+          properties << build_property('ccExpirationMonth', cc_exp_month)
+          properties << build_property('ccExpirationYear', cc_exp_year)
+          properties << build_property('ccLast4', cc_last_4)
+          properties << build_property('email', account.nil? ? Time.now.to_i.to_s + '-test@tester.com' : account.email) # Required by e.g. CyberSource
+          properties << build_property('address1', address1)
+          properties << build_property('address2', address2)
+          properties << build_property('city', city)
+          properties << build_property('state', state)
+          properties << build_property('zip', zip)
+          properties << build_property('country', country)
+          properties << build_property('ccVerificationValue', cc_verification_value)
 
           overrides.each do |key, value|
-            properties << create_pm_kv_info(key, value)
+            properties << build_property(key, value)
           end
 
           properties
         end
 
-        def create_kb_account(kb_account_id)
+        def create_kb_account(kb_account_id, account_api = @account_api)
           external_key = Time.now.to_i.to_s + '-test'
           email = external_key + '@tester.com'
 
@@ -85,16 +86,33 @@ module Killbill
           account.name = 'Integration spec'
           account.currency = :USD
 
-          @account_api.accounts << account
+          account_api.accounts << account
 
           return external_key, kb_account_id
         end
 
-        def create_pm_kv_info(key, value)
-          prop = ::Killbill::Plugin::Model::PluginProperty.new
-          prop.key = key
-          prop.value = value
-          prop
+        def build_call_context(tenant_id = '00000011-0022-0033-0044-000000000055')
+          call_context = ::Killbill::Plugin::Model::CallContext.new
+          call_context.tenant_id = tenant_id
+          call_context.to_ruby(call_context)
+        end
+
+        def build_plugin(model, name, conf_dir = '.')
+          plugin = model.new
+
+          svcs = {
+              :account_user_api => ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaUserAccountApi.new,
+              :payment_api => ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaPaymentApi.new,
+              :tenant_user_api => ::Killbill::Plugin::ActiveMerchant::RSpec::FakeJavaTenantUserApi.new
+          }
+          plugin.kb_apis = ::Killbill::Plugin::KillbillApi.new(name, svcs)
+
+          plugin.logger = ::Logger.new(STDOUT)
+          plugin.logger.level = ::Logger::INFO
+          plugin.conf_dir = File.expand_path(conf_dir)
+          plugin.root = "/foo/killbill-#{name}/0.0.1"
+
+          plugin
         end
 
         class FakeJavaUserAccountApi
@@ -149,7 +167,7 @@ module Killbill
 
           attr_accessor :per_tenant_config
 
-          def initialize(per_tenant_config)
+          def initialize(per_tenant_config = {})
             @per_tenant_config = per_tenant_config
           end
 

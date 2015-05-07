@@ -22,4 +22,3 @@ require '<%= identifier %>/private_api'
 require '<%= identifier %>/models/payment_method'
 require '<%= identifier %>/models/response'
 require '<%= identifier %>/models/transaction'
-

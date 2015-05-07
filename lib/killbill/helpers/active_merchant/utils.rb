@@ -31,6 +31,33 @@ module Killbill
           Socket.ip_address_list.detect { |intf| intf.ipv4? and !intf.ipv4_loopback? and !intf.ipv4_multicast? and !intf.ipv4_private? }
         end
 
+        # Note: we assume options only contains keys as symbols
+        def self.normalized(options, key)
+          if !options.has_key?(key)
+            # Be friendly with Java-style conventions
+            camelized_key = key.to_s.camelize(false).to_sym
+            options.has_key?(camelized_key) ? normalize(options[camelized_key]) : nil
+          else
+            normalize(options[key])
+          end
+        end
+
+        def self.normalize(value)
+          case value.respond_to?(:strip) ? value.strip : value
+            when 'true' then true
+            when :true then true
+            when 'yes' then true
+            when :yes then true
+            when 'false' then false
+            when :false then false
+            when 'no' then false
+            when :no then false
+            when '' then nil
+            when 'null' then nil
+            else value
+          end
+        end
+
         class KBWiredumpDevice < IO
 
           # Required for compatibility, but unused
@@ -45,6 +72,23 @@ module Killbill
           def write(string)
             sanitized_string = string.to_s.chomp("\n")
             @logger.send(@method, sanitized_string) if sanitized_string.size > 0
+          end
+        end
+
+        class LazyEvaluator
+
+          def initialize(&instantiator)
+            @instantiator = instantiator
+          end
+
+          def method_missing(method, *args)
+            __instance_object__.send(method, *args)
+          end
+
+          private
+
+          def __instance_object__
+            @__instance_object__ ||= @instantiator.call
           end
         end
 

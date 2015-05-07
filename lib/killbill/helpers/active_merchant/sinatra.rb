@@ -7,8 +7,8 @@ module Killbill
         include ::ActionView::Helpers::FormTagHelper
 
         helpers do
-          def config
-            ::Killbill::Plugin::ActiveMerchant.config
+          def config(kb_tenant_id=nil)
+            ::Killbill::Plugin::ActiveMerchant.config(kb_tenant_id)
           end
 
           def logger
@@ -22,12 +22,7 @@ module Killbill
 
         after do
           # return DB connections to the Pool if required
-          pool = ::ActiveRecord::Base.connection_pool
-          if pool.active_connection?
-            connection = ::ActiveRecord::Base.connection
-            pool.remove(connection)
-            connection.disconnect!
-          end
+          close_connection(logger)
         end
       end
     end

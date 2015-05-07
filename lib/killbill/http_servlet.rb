@@ -55,7 +55,14 @@ module Killbill
           headers[name] = servlet_request.get_headers(name).to_a
         end
 
-        response_status, response_headers, response_body = rack_service(request_uri, method, query_string, input, scheme, server_name, server_port, content_type, content_length, headers)
+        # Pass original attributes (e.g. to get access to killbill_tenant)
+        attributes = {}
+        servlet_request.attribute_names.each do |name|
+          value = servlet_request.get_attribute(name)
+          attributes[name] = value
+        end
+
+        response_status, response_headers, response_body = rack_service(request_uri, method, query_string, input, scheme, server_name, server_port, content_type, content_length, headers, attributes)
 
         # Set status
         servlet_response.status = response_status
@@ -80,10 +87,10 @@ module Killbill
         response_body.close if response_body.respond_to? :close
       end
 
-      def rack_service(request_uri = '/', method = 'GET', query_string = '', input = '', scheme = 'http', server_name = 'localhost', server_port = 4567, content_type = 'text/plain', content_length = 0, headers = {})
+      def rack_service(request_uri = '/', method = 'GET', query_string = '', input = '', scheme = 'http', server_name = 'localhost', server_port = 4567, content_type = 'text/plain', content_length = 0, headers = {}, attributes = {})
         return 503, {}, [] if @app.nil?
 
-        rack_env = {
+        rack_env = attributes.merge({
                 'rack.version' => Rack::VERSION,
                 'rack.multithread' => true,
                 'rack.multiprocess' => false,
@@ -99,7 +106,7 @@ module Killbill
                 'QUERY_STRING' => (query_string || ""),
                 'SERVER_NAME' => server_name,
                 'SERVER_PORT' => server_port.to_s
-        }
+        })
 
         rack_env['CONTENT_TYPE'] = content_type unless content_type.nil?
         rack_env['CONTENT_LENGTH']  = content_length unless content_length.nil?

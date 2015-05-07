@@ -1,15 +1,5 @@
 require 'spec_helper'
 
-module Killbill #:nodoc:
-  module Test #:nodoc:
-    class TestPaymentMethod < ::Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod
-
-      self.table_name = 'test_payment_methods'
-
-    end
-  end
-end
-
 describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
 
   before :each do
@@ -176,7 +166,12 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
                                                     :city                 => 'city',
                                                     :state                => 'state',
                                                     :zip                  => 'zip',
-                                                    :country              => 'country'
+                                                    :country              => 'country',
+                                                    :created_at           => Time.now.utc,
+                                                    :updated_at           => Time.now.utc
+
+    pm.created_at.should_not be_nil
+    pm.updated_at.should_not be_nil
 
     pm = ::Killbill::Test::TestPaymentMethod.from_kb_payment_method_id(pm.kb_payment_method_id, pm.kb_tenant_id)
     pm.cc_exp_month.should == '07'
@@ -187,21 +182,21 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
 
   it 'should generate the right SQL query' do
     # Check count query (search query numeric)
-    expected_query = "SELECT COUNT(DISTINCT \"test_payment_methods\".\"id\") FROM \"test_payment_methods\"  WHERE ((((((((((((((\"test_payment_methods\".\"kb_account_id\" = '1234' OR \"test_payment_methods\".\"kb_payment_method_id\" = '1234') OR \"test_payment_methods\".\"token\" = '1234') OR \"test_payment_methods\".\"cc_type\" = '1234') OR \"test_payment_methods\".\"state\" = '1234') OR \"test_payment_methods\".\"zip\" = '1234') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%1234%') OR \"test_payment_methods\".\"address1\" LIKE '%1234%') OR \"test_payment_methods\".\"address2\" LIKE '%1234%') OR \"test_payment_methods\".\"city\" LIKE '%1234%') OR \"test_payment_methods\".\"country\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_exp_month\" = '1234') OR \"test_payment_methods\".\"cc_exp_year\" = '1234') OR \"test_payment_methods\".\"cc_last_4\" = '1234') AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\""
+    expected_query = "SELECT COUNT(DISTINCT #{q('test_payment_methods')}.#{q('id')}) FROM #{q('test_payment_methods')}  WHERE ((((((((((((((#{q('test_payment_methods')}.#{q('kb_account_id')} = '1234' OR #{q('test_payment_methods')}.#{q('kb_payment_method_id')} = '1234') OR #{q('test_payment_methods')}.#{q('token')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_type')} = '1234') OR #{q('test_payment_methods')}.#{q('state')} = '1234') OR #{q('test_payment_methods')}.#{q('zip')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_first_name')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('cc_last_name')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('address1')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('address2')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('city')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('country')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('cc_exp_month')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_exp_year')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_last_4')} = '1234') AND #{q('test_payment_methods')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_payment_methods')}.#{q('id')}"
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestPaymentMethod.search_query('1234', '11-22-33').to_sql.should == expected_query
 
     # Check query with results (search query numeric)
-    expected_query = "SELECT  DISTINCT \"test_payment_methods\".* FROM \"test_payment_methods\"  WHERE ((((((((((((((\"test_payment_methods\".\"kb_account_id\" = '1234' OR \"test_payment_methods\".\"kb_payment_method_id\" = '1234') OR \"test_payment_methods\".\"token\" = '1234') OR \"test_payment_methods\".\"cc_type\" = '1234') OR \"test_payment_methods\".\"state\" = '1234') OR \"test_payment_methods\".\"zip\" = '1234') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%1234%') OR \"test_payment_methods\".\"address1\" LIKE '%1234%') OR \"test_payment_methods\".\"address2\" LIKE '%1234%') OR \"test_payment_methods\".\"city\" LIKE '%1234%') OR \"test_payment_methods\".\"country\" LIKE '%1234%') OR \"test_payment_methods\".\"cc_exp_month\" = '1234') OR \"test_payment_methods\".\"cc_exp_year\" = '1234') OR \"test_payment_methods\".\"cc_last_4\" = '1234') AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\" LIMIT 10 OFFSET 0"
+    expected_query = "SELECT  DISTINCT #{q('test_payment_methods')}.* FROM #{q('test_payment_methods')}  WHERE ((((((((((((((#{q('test_payment_methods')}.#{q('kb_account_id')} = '1234' OR #{q('test_payment_methods')}.#{q('kb_payment_method_id')} = '1234') OR #{q('test_payment_methods')}.#{q('token')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_type')} = '1234') OR #{q('test_payment_methods')}.#{q('state')} = '1234') OR #{q('test_payment_methods')}.#{q('zip')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_first_name')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('cc_last_name')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('address1')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('address2')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('city')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('country')} LIKE '%1234%') OR #{q('test_payment_methods')}.#{q('cc_exp_month')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_exp_year')} = '1234') OR #{q('test_payment_methods')}.#{q('cc_last_4')} = '1234') AND #{q('test_payment_methods')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_payment_methods')}.#{q('id')} LIMIT 10 OFFSET 0"
     # Note that Kill Bill will pass a String, even for numeric types
     ::Killbill::Test::TestPaymentMethod.search_query('1234', '11-22-33', 0, 10).to_sql.should == expected_query
 
     # Check count query (search query string)
-    expected_query = "SELECT COUNT(DISTINCT \"test_payment_methods\".\"id\") FROM \"test_payment_methods\"  WHERE (((((((((((\"test_payment_methods\".\"kb_account_id\" = 'XXX' OR \"test_payment_methods\".\"kb_payment_method_id\" = 'XXX') OR \"test_payment_methods\".\"token\" = 'XXX') OR \"test_payment_methods\".\"cc_type\" = 'XXX') OR \"test_payment_methods\".\"state\" = 'XXX') OR \"test_payment_methods\".\"zip\" = 'XXX') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%XXX%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%XXX%') OR \"test_payment_methods\".\"address1\" LIKE '%XXX%') OR \"test_payment_methods\".\"address2\" LIKE '%XXX%') OR \"test_payment_methods\".\"city\" LIKE '%XXX%') OR \"test_payment_methods\".\"country\" LIKE '%XXX%') AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\""
+    expected_query = "SELECT COUNT(DISTINCT #{q('test_payment_methods')}.#{q('id')}) FROM #{q('test_payment_methods')}  WHERE (((((((((((#{q('test_payment_methods')}.#{q('kb_account_id')} = 'XXX' OR #{q('test_payment_methods')}.#{q('kb_payment_method_id')} = 'XXX') OR #{q('test_payment_methods')}.#{q('token')} = 'XXX') OR #{q('test_payment_methods')}.#{q('cc_type')} = 'XXX') OR #{q('test_payment_methods')}.#{q('state')} = 'XXX') OR #{q('test_payment_methods')}.#{q('zip')} = 'XXX') OR #{q('test_payment_methods')}.#{q('cc_first_name')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('cc_last_name')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('address1')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('address2')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('city')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('country')} LIKE '%XXX%') AND #{q('test_payment_methods')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_payment_methods')}.#{q('id')}"
     ::Killbill::Test::TestPaymentMethod.search_query('XXX', '11-22-33').to_sql.should == expected_query
 
     # Check query with results (search query string)
-    expected_query = "SELECT  DISTINCT \"test_payment_methods\".* FROM \"test_payment_methods\"  WHERE (((((((((((\"test_payment_methods\".\"kb_account_id\" = 'XXX' OR \"test_payment_methods\".\"kb_payment_method_id\" = 'XXX') OR \"test_payment_methods\".\"token\" = 'XXX') OR \"test_payment_methods\".\"cc_type\" = 'XXX') OR \"test_payment_methods\".\"state\" = 'XXX') OR \"test_payment_methods\".\"zip\" = 'XXX') OR \"test_payment_methods\".\"cc_first_name\" LIKE '%XXX%') OR \"test_payment_methods\".\"cc_last_name\" LIKE '%XXX%') OR \"test_payment_methods\".\"address1\" LIKE '%XXX%') OR \"test_payment_methods\".\"address2\" LIKE '%XXX%') OR \"test_payment_methods\".\"city\" LIKE '%XXX%') OR \"test_payment_methods\".\"country\" LIKE '%XXX%') AND \"test_payment_methods\".\"kb_tenant_id\" = '11-22-33'  ORDER BY \"test_payment_methods\".\"id\" LIMIT 10 OFFSET 0"
+    expected_query = "SELECT  DISTINCT #{q('test_payment_methods')}.* FROM #{q('test_payment_methods')}  WHERE (((((((((((#{q('test_payment_methods')}.#{q('kb_account_id')} = 'XXX' OR #{q('test_payment_methods')}.#{q('kb_payment_method_id')} = 'XXX') OR #{q('test_payment_methods')}.#{q('token')} = 'XXX') OR #{q('test_payment_methods')}.#{q('cc_type')} = 'XXX') OR #{q('test_payment_methods')}.#{q('state')} = 'XXX') OR #{q('test_payment_methods')}.#{q('zip')} = 'XXX') OR #{q('test_payment_methods')}.#{q('cc_first_name')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('cc_last_name')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('address1')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('address2')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('city')} LIKE '%XXX%') OR #{q('test_payment_methods')}.#{q('country')} LIKE '%XXX%') AND #{q('test_payment_methods')}.#{q('kb_tenant_id')} = '11-22-33'  ORDER BY #{q('test_payment_methods')}.#{q('id')} LIMIT 10 OFFSET 0"
     ::Killbill::Test::TestPaymentMethod.search_query('XXX', '11-22-33', 0, 10).to_sql.should == expected_query
   end
 
@@ -222,7 +217,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
                                                     :city                 => 'city',
                                                     :state                => 'state',
                                                     :zip                  => 'zip',
-                                                    :country              => 'country'
+                                                    :country              => 'country',
+                                                    :created_at           => Time.now.utc,
+                                                    :updated_at           => Time.now.utc
 
     do_search('foo').size.should == 0
     do_search('ccType').size.should == 1
@@ -247,7 +244,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
                                                      :city                 => 'city',
                                                      :state                => 'state',
                                                      :zip                  => 'zip',
-                                                     :country              => 'country'
+                                                     :country              => 'country',
+                                                     :created_at           => Time.now.utc,
+                                                     :updated_at           => Time.now.utc
 
     do_search('foo').size.should == 0
     do_search('ccType').size.should == 2
@@ -282,5 +281,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::PaymentMethod do
     pmip.account_id.should == kb_account_id
     pmip.payment_method_id.should == kb_payment_method_id
     pmip.external_payment_method_id.should == external_payment_method_id
+  end
+
+  def q(arg)
+    ::ActiveRecord::Base.connection.quote_column_name(arg)
   end
 end

@@ -59,7 +59,7 @@ module Killbill
           @payment_id = java.util.UUID.fromString(@payment_id.to_s) unless @payment_id.nil?
 
           # conversion for type [type = org.killbill.billing.invoice.api.InvoicePaymentType]
-          @type = Java::org.killbill.billing.invoice.api.InvoicePaymentType.value_of("#{@type.to_s}") unless @type.nil?
+          @type = Java::JavaLang::Enum.value_of( org.killbill.billing.invoice.api.InvoicePaymentType.java_class, @type.to_s ) unless @type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
           @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
@@ -78,7 +78,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, @currency.to_s ) unless @currency.nil?
 
           # conversion for linked_invoice_payment_id [type = java.util.UUID]
           @linked_invoice_payment_id = java.util.UUID.fromString(@linked_invoice_payment_id.to_s) unless @linked_invoice_payment_id.nil?
@@ -87,7 +87,7 @@ module Killbill
           @payment_cookie_id = @payment_cookie_id.to_s unless @payment_cookie_id.nil?
 
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
-          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
+          @processed_currency = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.Currency.java_class, @processed_currency.to_s ) unless @processed_currency.nil?
           self
         end
 

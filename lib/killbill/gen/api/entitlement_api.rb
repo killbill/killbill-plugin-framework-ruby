@@ -316,7 +316,7 @@ module Killbill
           end
 
           # conversion for billingPolicy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
-          billingPolicy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of("#{billingPolicy.to_s}") unless billingPolicy.nil?
+          billingPolicy = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.BillingActionPolicy.java_class, billingPolicy.to_s ) unless billingPolicy.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?

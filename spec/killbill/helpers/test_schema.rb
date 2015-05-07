@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
     t.string   "zip"
     t.string   "country"
     t.boolean  "is_deleted",             :null => false, :default => false
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.datetime "created_at",             :null => false, :limit => 3
+    t.datetime "updated_at",             :null => false, :limit => 3
     t.string   "kb_account_id",          :null => false
     t.string   "kb_tenant_id",           :null => false
   end
@@ -42,8 +42,8 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
     t.string   "txn_id"
     t.integer  "amount_in_cents"
     t.string   "currency"
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
+    t.datetime "created_at",                :null => false, :limit => 3
+    t.datetime "updated_at",                :null => false, :limit => 3
     t.string   "kb_account_id",             :null => false
     t.string   "kb_tenant_id",              :null => false
   end
@@ -67,8 +67,8 @@ ActiveRecord::Schema.define(:version => 20140410153635) do
     t.string   "cvv_result_code"
     t.string   "cvv_result_message"
     t.boolean  "success"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",        :null => false, :limit => 3
+    t.datetime "updated_at",        :null => false, :limit => 3
     t.string   "kb_account_id",     :null => false
     t.string   "kb_tenant_id",      :null => false
   end

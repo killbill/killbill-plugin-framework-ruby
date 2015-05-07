@@ -117,7 +117,7 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
@@ -140,7 +140,7 @@ module Killbill
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::JavaLang::Enum.value_of( org.killbill.billing.ObjectType.java_class, objectType.to_s ) unless objectType.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?

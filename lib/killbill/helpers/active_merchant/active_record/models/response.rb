@@ -13,11 +13,14 @@ module Killbill
           extend ::Killbill::Plugin::ActiveMerchant::Helpers
 
           self.abstract_class = true
+          self.record_timestamps = false
 
           @@quotes_cache = build_quotes_cache
 
           def self.from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, response, extra_params = {}, model = Response)
             # Under high load, Rails sometimes fails to set timestamps. Unclear why...
+            # But regardless, for performance reasons, we want to set these timestamps ourselves
+            # See ActiveRecord::Timestamp
             current_time = Time.now.utc
             model.new({
                           :api_call                     => api_call,
@@ -40,7 +43,7 @@ module Killbill
                           :success                      => response.success?,
                           :created_at                   => current_time,
                           :updated_at                   => current_time
-                      }.merge!(extra_params))
+                      }.merge!(extra_params.compact)) # Don't override with nil values
           end
 
           def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, extra_params = {}, model = Response)
@@ -48,7 +51,7 @@ module Killbill
 
             # Rails wraps all create/save calls in a transaction. To speed things up, create a single transaction for both rows.
             # This has a small gotcha in the unhappy path though (see below).
-            transaction do
+            with_connection_and_transaction do
               # Save the response to our logs
               response = from_response(api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, extra_params, model)
               response.save!(shared_activerecord_options)
@@ -87,15 +90,25 @@ module Killbill
             return response, transaction
           end
 
+          def self.from_kb_payment_id(transaction_model, kb_payment_id, kb_tenant_id)
+            association = transaction_model.table_name.singularize.to_sym
+            # Use eager_load to force Rails to issue a single query (see https://github.com/killbill/killbill-plugin-framework-ruby/issues/32)
+            eager_load(association)
+                .where(:kb_payment_id => kb_payment_id, :kb_tenant_id => kb_tenant_id)
+                .order(:created_at)
+          end
+
           def to_transaction_info_plugin(transaction=nil)
             if transaction.nil?
               amount_in_cents = nil
               currency        = nil
               created_date    = created_at
+              status          = :UNDEFINED # Likely pending
             else
               amount_in_cents = transaction.amount_in_cents
               currency        = transaction.currency
               created_date    = transaction.created_at
+              status          = success ? :PROCESSED : :ERROR
             end
 
             t_info_plugin                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
@@ -106,7 +119,7 @@ module Killbill
             t_info_plugin.currency                    = currency
             t_info_plugin.created_date                = created_date
             t_info_plugin.effective_date              = effective_date
-            t_info_plugin.status                      = (success ? :PROCESSED : :ERROR)
+            t_info_plugin.status                      = status
             t_info_plugin.gateway_error               = gateway_error
             t_info_plugin.gateway_error_code          = gateway_error_code
             t_info_plugin.first_payment_reference_id  = first_reference_id

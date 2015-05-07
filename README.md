@@ -208,3 +208,16 @@ For quick testing of your plugin, you can use the `deploy` task:
 To debug packaging issues, pass `true` as the third (optional) parameter:
 
     rake killbill:deploy[false,/path/to/bundles,true]
+
+
+Development
+-----------
+
+To run unit and remote tests:
+
+    rake
+    rake test:remote:spec
+
+To change the database driver:
+
+    AR_ADAPTER=mariadb AR_USERNAME=root AR_PASSWORD=root AR_DATABASE=kbtest rake

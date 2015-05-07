@@ -57,7 +57,7 @@ module Killbill
           end
 
           # conversion for subscription_event_type [type = org.killbill.billing.entitlement.api.SubscriptionEventType]
-          @subscription_event_type = Java::org.killbill.billing.entitlement.api.SubscriptionEventType.value_of("#{@subscription_event_type.to_s}") unless @subscription_event_type.nil?
+          @subscription_event_type = Java::JavaLang::Enum.value_of( org.killbill.billing.entitlement.api.SubscriptionEventType.java_class, @subscription_event_type.to_s ) unless @subscription_event_type.nil?
 
           # conversion for is_blocked_billing [type = boolean]
           @is_blocked_billing = @is_blocked_billing.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_blocked_billing)
@@ -84,7 +84,7 @@ module Killbill
           @prev_price_list = @prev_price_list.to_java unless @prev_price_list.nil?
 
           # conversion for prev_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @prev_billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@prev_billing_period.to_s}") unless @prev_billing_period.nil?
+          @prev_billing_period = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.BillingPeriod.java_class, @prev_billing_period.to_s ) unless @prev_billing_period.nil?
 
           # conversion for next_product [type = org.killbill.billing.catalog.api.Product]
           @next_product = @next_product.to_java unless @next_product.nil?
@@ -99,7 +99,7 @@ module Killbill
           @next_price_list = @next_price_list.to_java unless @next_price_list.nil?
 
           # conversion for next_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @next_billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@next_billing_period.to_s}") unless @next_billing_period.nil?
+          @next_billing_period = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.BillingPeriod.java_class, @next_billing_period.to_s ) unless @next_billing_period.nil?
           self
         end
 

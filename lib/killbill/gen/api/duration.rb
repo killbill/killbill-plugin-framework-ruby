@@ -41,7 +41,7 @@ module Killbill
 
         def to_java()
           # conversion for unit [type = org.killbill.billing.catalog.api.TimeUnit]
-          @unit = Java::org.killbill.billing.catalog.api.TimeUnit.value_of("#{@unit.to_s}") unless @unit.nil?
+          @unit = Java::JavaLang::Enum.value_of( org.killbill.billing.catalog.api.TimeUnit.java_class, @unit.to_s ) unless @unit.nil?
 
           # conversion for number [type = int]
           @number = @number

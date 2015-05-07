@@ -12,6 +12,8 @@ module Killbill
           extend ::Killbill::Plugin::ActiveMerchant::Helpers
 
           self.abstract_class = true
+          # See Response#from_response
+          self.record_timestamps = false
 
           @@quotes_cache = build_quotes_cache
 
@@ -23,12 +25,12 @@ module Killbill
                           :kb_payment_method_id => kb_payment_method_id,
                           :kb_tenant_id         => kb_tenant_id,
                           :token                => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? response.authorization : (cc_or_token || response.authorization),
-                          :cc_first_name        => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.first_name : nil,
-                          :cc_last_name         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_name : nil,
-                          :cc_type              => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.brand : nil,
-                          :cc_exp_month         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.month : nil,
-                          :cc_exp_year          => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.year : nil,
-                          :cc_last_4            => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_digits : nil,
+                          :cc_first_name        => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.first_name : extra_params[:cc_first_name],
+                          :cc_last_name         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_name : extra_params[:cc_last_name],
+                          :cc_type              => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.brand : extra_params[:cc_type],
+                          :cc_exp_month         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.month : extra_params[:cc_exp_month],
+                          :cc_exp_year          => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.year : extra_params[:cc_exp_year],
+                          :cc_last_4            => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_digits : extra_params[:cc_last_4],
                           :cc_number            => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.number : nil,
                           :address1             => (options[:billing_address] || {})[:address1],
                           :address2             => (options[:billing_address] || {})[:address2],
@@ -38,7 +40,7 @@ module Killbill
                           :country              => (options[:billing_address] || {})[:country],
                           :created_at           => current_time,
                           :updated_at           => current_time
-                      }.merge!(extra_params))
+                      }.merge!(extra_params.compact)) # Don't override with nil values
           end
 
           def self.from_kb_account_id(kb_account_id, kb_tenant_id)
@@ -59,7 +61,7 @@ module Killbill
             else
               payment_methods = where("kb_payment_method_id = #{@@quotes_cache[kb_payment_method_id]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND is_deleted = #{@@quotes_cache[false]}")
             end
-            raise "No payment method found for payment method #{kb_payment_method_id}" if payment_methods.empty?
+            raise "No payment method found for payment method #{kb_payment_method_id} and tenant #{kb_tenant_id}" if payment_methods.empty?
             raise "Kill Bill payment method #{kb_payment_method_id} mapping to multiple active plugin payment methods" if payment_methods.size > 1
             payment_methods[0]
           end

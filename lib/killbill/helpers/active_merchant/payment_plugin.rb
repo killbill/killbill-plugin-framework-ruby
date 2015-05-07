@@ -8,6 +8,8 @@ module Killbill
       require 'offsite_payments'
 
       class PaymentPlugin < ::Killbill::Plugin::Payment
+        include ::Killbill::Plugin::ActiveMerchant::ActiveRecordHelper
+        include ::Killbill::Plugin::PropertiesHelper
 
         def initialize(gateway_builder, identifier, payment_method_model, transaction_model, response_model)
           super()
@@ -17,11 +19,9 @@ module Killbill
           @payment_method_model = payment_method_model
           @transaction_model    = transaction_model
           @response_model       = response_model
-
         end
 
         def start_plugin
-
           @logger.progname = "#{@identifier.to_s}-plugin"
 
           @config_key_name = "PLUGIN_CONFIG_#{@plugin_name}".to_sym
@@ -37,18 +37,10 @@ module Killbill
           @logger.info "#{@identifier} payment plugin started"
         end
 
-        # return DB connections to the Pool if required
         def after_request
-          pool = ::ActiveRecord::Base.connection_pool
-          return unless pool.active_connection?
-
-          connection = ::ActiveRecord::Base.connection
-          pool.remove(connection)
-          connection.disconnect!
-
-          @logger.debug { "after_request: pool.active_connection? = #{pool.active_connection?}, connection.active? = #{connection.active?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}" }
+          # return DB connections to the Pool if required
+          close_connection(@logger)
         end
-
 
         def on_event(event)
           if (event.event_type == :TENANT_CONFIG_CHANGE || event.event_type == :TENANT_CONFIG_DELETION) &&
@@ -147,8 +139,8 @@ module Killbill
 
         def get_payment_info(kb_account_id, kb_payment_id, properties, context)
           # We assume the payment is immutable in the Gateway and only look at our tables
-          @transaction_model.transactions_from_kb_payment_id(kb_payment_id, context.tenant_id).collect do |transaction|
-            transaction.send("#{@identifier}_response").to_transaction_info_plugin(transaction)
+          @response_model.from_kb_payment_id(@transaction_model, kb_payment_id, context.tenant_id).collect do |response|
+            response.to_transaction_info_plugin(response.send("#{@identifier}_transaction"))
           end
         end
 
@@ -163,8 +155,10 @@ module Killbill
           options[:set_default] ||= set_default
           options[:order_id]    ||= kb_payment_method_id
 
+          should_skip_gw = Utils.normalized(options, :skip_gw)
+
           # Registering a card or a token
-          if options[:skip_gw]
+          if should_skip_gw
             # If nothing is passed, that's fine -  we probably just want a placeholder row in the plugin
             payment_source = get_payment_source(nil, all_properties, options, context) rescue nil
           else
@@ -172,21 +166,31 @@ module Killbill
           end
 
           # Go to the gateway
-          payment_processor_account_id = options[:payment_processor_account_id] || :default
+          payment_processor_account_id = Utils.normalized(options, :payment_processor_account_id) || :default
           gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
           gw_response                  = gateway.store(payment_source, options)
           response, transaction        = save_response_and_transaction(gw_response, :add_payment_method, kb_account_id, context.tenant_id, payment_processor_account_id)
 
           if response.success
             # If we have skipped the call to the gateway, we still need to store the payment method (either a token or the full credit card)
-            if options[:skip_gw]
+            if should_skip_gw
               cc_or_token = payment_source
             else
               # response.authorization may be a String combination separated by ; - don't split it! Some plugins expect it as-is (they split it themselves)
               cc_or_token = response.authorization
             end
 
-            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, cc_or_token, gw_response, options, {}, @payment_method_model)
+            attributes = properties_to_hash(all_properties)
+            # Note: keep the same keys as in build_am_credit_card below
+            extra_params = {
+                :cc_first_name => Utils.normalized(attributes, :cc_first_name),
+                :cc_last_name => Utils.normalized(attributes, :cc_last_name),
+                :cc_type => Utils.normalized(attributes, :cc_type),
+                :cc_exp_month => Utils.normalized(attributes, :cc_expiration_month),
+                :cc_exp_year => Utils.normalized(attributes, :cc_expiration_year),
+                :cc_last_4 => Utils.normalized(attributes, :cc_last_4)
+            }
+            payment_method = @payment_method_model.from_response(kb_account_id, kb_payment_method_id, context.tenant_id, cc_or_token, gw_response, options, extra_params, @payment_method_model)
             payment_method.save!
             payment_method
           else
@@ -200,10 +204,12 @@ module Killbill
           pm      = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
 
           # Delete the card
-          payment_processor_account_id = options[:payment_processor_account_id] || :default
+          payment_processor_account_id = Utils.normalized(options, :payment_processor_account_id) || :default
           gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
-          if options[:customer_id]
-            gw_response = gateway.unstore(options[:customer_id], pm.token, options)
+
+          customer_id = Utils.normalized(options, :customer_id)
+          if customer_id
+            gw_response = gateway.unstore(customer_id, pm.token, options)
           else
             gw_response = gateway.unstore(pm.token, options)
           end
@@ -266,10 +272,12 @@ module Killbill
 
           # The remaining elements in payment_methods are not in our table (this should never happen?!)
           payment_methods.each do |payment_method_info_plugin|
-            pm = @payment_method_model.create :kb_account_id        => kb_account_id,
+            pm = @payment_method_model.create(:kb_account_id        => kb_account_id,
                                               :kb_payment_method_id => payment_method_info_plugin.payment_method_id,
                                               :kb_tenant_id         => context.tenant_id,
-                                              :token                => payment_method_info_plugin.external_payment_method_id
+                                              :token                => payment_method_info_plugin.external_payment_method_id,
+                                              :created_at           => Time.now.utc,
+                                              :updated_at           => Time.now.utc)
           end
         end
 
@@ -370,12 +378,12 @@ module Killbill
         # * payment_source should probably be retrieved per gateway
         # * amount per gateway should be retrieved from the options
         def dispatch_to_gateways(operation, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc=nil)
-          kb_transaction        = get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id)
+          kb_transaction        = Utils::LazyEvaluator.new { get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id) }
           amount_in_cents       = amount.nil? ? nil : to_cents(amount, currency)
 
           # Setup options for ActiveMerchant
           options               = properties_to_hash(properties)
-          options[:order_id]    ||= kb_transaction.external_key
+          options[:order_id]    ||= (Utils.normalized(options, :external_key_as_order_id) ? kb_transaction.external_key : kb_payment_transaction_id)
           options[:currency]    ||= currency.to_s.upcase unless currency.nil?
           options[:description] ||= "Kill Bill #{operation.to_s} for #{kb_payment_transaction_id}"
 
@@ -388,7 +396,7 @@ module Killbill
           end
 
           # Retrieve the previous transaction for the same operation and payment id - this is useful to detect dups for example
-          last_transaction = @transaction_model.send("#{operation.to_s}s_from_kb_payment_id", kb_payment_id, context.tenant_id).last
+          last_transaction = Utils::LazyEvaluator.new { @transaction_model.send("#{operation.to_s}s_from_kb_payment_id", kb_payment_id, context.tenant_id).last }
 
           # Retrieve the linked transaction (authorization to capture, purchase to refund, etc.)
           linked_transaction = nil
@@ -404,7 +412,13 @@ module Killbill
           gw_responses                  = []
           responses                     = []
           transactions                  = []
-          payment_processor_account_ids = options[:payment_processor_account_ids].nil? ? [options[:payment_processor_account_id] || :default] : options[:payment_processor_account_ids].split(',')
+
+          payment_processor_account_ids = Utils.normalized(options, :payment_processor_account_ids)
+          if !payment_processor_account_ids
+            payment_processor_account_ids = [Utils.normalized(options, :payment_processor_account_id) || :default]
+          else
+            payment_processor_account_ids = payment_processor_account_ids.split(',')
+          end
           payment_processor_account_ids.each do |payment_processor_account_id|
             # Find the gateway
             gateway = lookup_gateway(payment_processor_account_id, context.tenant_id)
@@ -459,53 +473,51 @@ module Killbill
         end
 
         def get_payment_source(kb_payment_method_id, properties, options, context)
-          # Use ccNumber for the real number (if stored locally) or an in-house token (proxy tokenization). It is assumed the rest
-          # of the card details are filled (expiration dates, etc.).
-          cc_number   = find_value_from_properties(properties, 'ccNumber')
-          # Use token for the token stored in an external vault. The token itself should be enough to process payments.
-          cc_or_token = find_value_from_properties(properties, 'token') || find_value_from_properties(properties, 'cardId')
+          attributes = properties_to_hash(properties, options)
 
-          if cc_number.blank? and cc_or_token.blank?
-            # Lookup existing token
-            pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
-            if pm.token.nil?
-              # Real credit card
-              cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
-                  :number             => pm.cc_number,
-                  :brand              => pm.cc_type,
-                  :month              => pm.cc_exp_month,
-                  :year               => pm.cc_exp_year,
-                  :verification_value => pm.cc_verification_value,
-                  :first_name         => pm.cc_first_name,
-                  :last_name          => pm.cc_last_name
-              )
+          # Use ccNumber for:
+          # * the real number
+          # * in-house token (e.g. proxy tokenization)
+          # * token from a token service provider (e.g. ApplePay)
+          # If not specified, the rest of the card details will be retrieved from the locally stored payment method (if available)
+          cc_number = Utils.normalized(attributes, :cc_number)
+          # Use token for the token stored in an external vault. The token itself should be enough to process payments.
+          token = Utils.normalized(attributes, :token) || Utils.normalized(attributes, :card_id) || Utils.normalized(attributes, :payment_data)
+
+          if token.blank?
+            pm = nil
+            begin
+              pm = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
+            rescue => e
+              raise e if cc_number.blank?
+            end unless kb_payment_method_id.nil?
+
+            if cc_number.blank? && !pm.nil?
+              # Lookup existing token
+              if pm.token.nil?
+                # Real credit card
+                cc_or_token = build_am_credit_card(pm.cc_number, attributes, pm)
+              else
+                # Tokenized card
+                cc_or_token = pm.token
+              end
             else
-              # Tokenized card
-              cc_or_token = pm.token
+              # Real credit card or network tokenization
+              cc_or_token = build_am_credit_card(cc_number, attributes, pm)
             end
-          elsif !cc_number.blank? and cc_or_token.blank?
-            # Real credit card
-            cc_or_token = ::ActiveMerchant::Billing::CreditCard.new(
-                :number             => cc_number,
-                :brand              => find_value_from_properties(properties, 'ccType'),
-                :month              => find_value_from_properties(properties, 'ccExpirationMonth'),
-                :year               => find_value_from_properties(properties, 'ccExpirationYear'),
-                :verification_value => find_value_from_properties(properties, 'ccVerificationValue'),
-                :first_name         => find_value_from_properties(properties, 'ccFirstName'),
-                :last_name          => find_value_from_properties(properties, 'ccLastName')
-            )
           else
             # Use specified token
+            cc_or_token = build_am_token(token, attributes)
           end
 
           options[:billing_address] ||= {
-              :email    => find_value_from_properties(properties, 'email'),
-              :address1 => find_value_from_properties(properties, 'address1'),
-              :address2 => find_value_from_properties(properties, 'address2'),
-              :city     => find_value_from_properties(properties, 'city'),
-              :zip      => find_value_from_properties(properties, 'zip'),
-              :state    => find_value_from_properties(properties, 'state'),
-              :country  => find_value_from_properties(properties, 'country')
+              :email => Utils.normalized(attributes, :email),
+              :address1 => Utils.normalized(attributes, :address1) || (pm.nil? ? nil : pm.address1),
+              :address2 => Utils.normalized(attributes, :address2) || (pm.nil? ? nil : pm.address2),
+              :city => Utils.normalized(attributes, :city) || (pm.nil? ? nil : pm.city),
+              :zip => Utils.normalized(attributes, :zip) || (pm.nil? ? nil : pm.zip),
+              :state => Utils.normalized(attributes, :state) || (pm.nil? ? nil : pm.state),
+              :country => Utils.normalized(attributes, :country) || (pm.nil? ? nil : pm.country)
           }
 
           # To make various gateway implementations happy...
@@ -514,10 +526,49 @@ module Killbill
           cc_or_token
         end
 
-        def find_value_from_properties(properties, key)
-          return nil if key.nil?
-          prop = (properties.find { |kv| kv.key.to_s == key.to_s })
-          prop.nil? ? nil : prop.value
+        def build_am_credit_card(cc_number, attributes, pm=nil)
+          card_attributes = {
+              :number => cc_number,
+              :brand => Utils.normalized(attributes, :cc_type) || (pm.nil? ? nil : pm.cc_type),
+              :month => Utils.normalized(attributes, :cc_expiration_month) || (pm.nil? ? nil : pm.cc_exp_month),
+              :year => Utils.normalized(attributes, :cc_expiration_year) || (pm.nil? ? nil : pm.cc_exp_year),
+              :verification_value => Utils.normalized(attributes, :cc_verification_value) || (pm.nil? ? nil : pm.cc_verification_value),
+              :first_name => Utils.normalized(attributes, :cc_first_name) || (pm.nil? ? nil : pm.cc_first_name),
+              :last_name => Utils.normalized(attributes, :cc_last_name) || (pm.nil? ? nil : pm.cc_last_name)
+          }
+          tokenization_attributes = {
+              :eci => Utils.normalized(attributes, :eci),
+              :payment_cryptogram => Utils.normalized(attributes, :payment_cryptogram),
+              :transaction_id => Utils.normalized(attributes, :transaction_id)
+          }
+
+          if tokenization_attributes[:eci].nil? &&
+              tokenization_attributes[:payment_cryptogram].nil? &&
+              tokenization_attributes[:transaction_id].nil?
+            ::ActiveMerchant::Billing::CreditCard.new(card_attributes)
+          else
+            # NetworkTokenizationCreditCard is exactly like a credit card but with EMV/3DS standard payment network tokenization data
+            ::ActiveMerchant::Billing::NetworkTokenizationCreditCard.new(card_attributes.merge(tokenization_attributes))
+          end
+        end
+
+        def build_am_token(token, attributes)
+          token_attributes = {
+              :payment_instrument_name => Utils.normalized(attributes, :payment_instrument_name),
+              :payment_network => Utils.normalized(attributes, :payment_network),
+              :transaction_identifier => Utils.normalized(attributes, :transaction_identifier)
+          }
+
+          if token_attributes[:payment_instrument_name].nil? &&
+              token_attributes[:payment_network].nil? &&
+              token_attributes[:transaction_identifier].nil?
+            token
+          else
+            # Use ActiveSupport since ActiveMerchant does the same
+            payment_data = ::ActiveSupport::JSON.decode(token) rescue token
+            # PaymentToken is meant for modeling proprietary payment token structures (like stripe and apple_pay)
+            ::ActiveMerchant::Billing::ApplePayPaymentToken.new(payment_data, token_attributes)
+          end
         end
 
         def account_currency(kb_account_id, kb_tenant_id)
@@ -543,31 +594,6 @@ module Killbill
 
         def config
           ::Killbill::Plugin::ActiveMerchant.config
-        end
-
-        def hash_to_properties(options)
-          merge_properties([], options)
-        end
-
-        def properties_to_hash(properties, options = {})
-          merged = {}
-          (properties || []).each do |p|
-            merged[p.key.to_sym] = p.value
-          end
-          merged.merge(options)
-        end
-
-        def merge_properties(properties, options)
-          merged = properties_to_hash(properties, options)
-
-          properties = []
-          merged.each do |k, v|
-            p       = ::Killbill::Plugin::Model::PluginProperty.new
-            p.key   = k
-            p.value = v
-            properties << p
-          end
-          properties
         end
 
         def get_active_merchant_module
