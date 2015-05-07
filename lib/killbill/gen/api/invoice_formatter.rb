@@ -81,7 +81,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
 
           # conversion for paid_amount [type = java.math.BigDecimal]
           if @paid_amount.nil?
@@ -156,7 +156,7 @@ module Killbill
           @formatted_balance = @formatted_balance.to_s unless @formatted_balance.nil?
 
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
-          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
+          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @processed_currency.to_s ) unless @processed_currency.nil?
 
           # conversion for processed_payment_rate [type = java.lang.String]
           @processed_payment_rate = @processed_payment_rate.to_s unless @processed_payment_rate.nil?

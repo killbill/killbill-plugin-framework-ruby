@@ -96,7 +96,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
 
           # conversion for paid_amount [type = java.math.BigDecimal]
           if @paid_amount.nil?

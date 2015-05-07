@@ -41,7 +41,7 @@ module Killbill
 
         def to_java()
           # conversion for type [type = org.killbill.billing.catalog.api.FixedType]
-          @type = Java::org.killbill.billing.catalog.api.FixedType.value_of("#{@type.to_s}") unless @type.nil?
+          @type = Java::org.killbill.billing.catalog.api.FixedType.value_of( @type.to_s ) unless @type.nil?
 
           # conversion for price [type = org.killbill.billing.catalog.api.InternationalPrice]
           @price = @price.to_java unless @price.nil?

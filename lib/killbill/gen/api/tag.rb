@@ -59,7 +59,7 @@ module Killbill
           @tag_definition_id = java.util.UUID.fromString(@tag_definition_id.to_s) unless @tag_definition_id.nil?
 
           # conversion for object_type [type = org.killbill.billing.ObjectType]
-          @object_type = Java::org.killbill.billing.ObjectType.value_of("#{@object_type.to_s}") unless @object_type.nil?
+          @object_type = Java::org.killbill.billing.ObjectType.value_of( @object_type.to_s ) unless @object_type.nil?
 
           # conversion for object_id [type = java.util.UUID]
           @object_id = java.util.UUID.fromString(@object_id.to_s) unless @object_id.nil?

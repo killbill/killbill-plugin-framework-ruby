@@ -59,10 +59,10 @@ module Killbill
           @audited_entity_id = java.util.UUID.fromString(@audited_entity_id.to_s) unless @audited_entity_id.nil?
 
           # conversion for audited_object_type [type = org.killbill.billing.ObjectType]
-          @audited_object_type = Java::org.killbill.billing.ObjectType.value_of("#{@audited_object_type.to_s}") unless @audited_object_type.nil?
+          @audited_object_type = Java::org.killbill.billing.ObjectType.value_of( @audited_object_type.to_s ) unless @audited_object_type.nil?
 
           # conversion for change_type [type = org.killbill.billing.util.audit.ChangeType]
-          @change_type = Java::org.killbill.billing.util.audit.ChangeType.value_of("#{@change_type.to_s}") unless @change_type.nil?
+          @change_type = Java::org.killbill.billing.util.audit.ChangeType.value_of( @change_type.to_s ) unless @change_type.nil?
 
           # conversion for user_name [type = java.lang.String]
           @user_name = @user_name.to_s unless @user_name.nil?

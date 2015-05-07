@@ -46,7 +46,7 @@ module Killbill
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
           # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
-          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
@@ -63,10 +63,10 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::org.killbill.billing.ObjectType.value_of( objectType.to_s ) unless objectType.nil?
 
           # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
-          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of("#{auditLevel.to_s}") unless auditLevel.nil?
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?

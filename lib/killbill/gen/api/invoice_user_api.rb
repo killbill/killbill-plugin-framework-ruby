@@ -344,7 +344,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
@@ -380,7 +380,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?

@@ -42,16 +42,16 @@ module Killbill
           @product_name = @product_name.to_s unless @product_name.nil?
 
           # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
-          @product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@product_category.to_s}") unless @product_category.nil?
+          @product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @product_category.to_s ) unless @product_category.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
 
           # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
-          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
+          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of( @phase_type.to_s ) unless @phase_type.nil?
           Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier.new(@product_name, @product_category, @billing_period, @price_list_name, @phase_type)
         end
 
