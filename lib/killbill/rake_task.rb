@@ -205,6 +205,32 @@ module Killbill
           deploy_config_files plugin_path(plugins_dir) # .../[name]/[version]
         end
 
+        desc "Deploy plugin in development mode (without staging)"
+        task 'deploy:dev', [:force, :plugin_dir, :verbose] => :validate do |t, args|
+          raise 'development deployment only works with Bundler' unless bundler?
+
+          plugins_dir = prepare_deploy(t, args)
+
+          # prepare "temporary" deployment at tmp/deploy:dev
+          package_tmp_dir = Pathname.new(File.join('tmp', 'deploy:dev')).expand_path
+          rm_r package_tmp_dir if File.exist?(package_tmp_dir)
+          mkdir_p package_tmp_dir.to_s, :verbose => @verbose
+
+          mkdir target_dir = package_tmp_dir.join(version.to_s)
+
+          # NOTE: although same _boot.rb_ as with regular deploys might not work
+          stage_extra_files target_dir
+          generate_dev_boot_rb target_dir if boot_rb_file.nil?
+
+          # here we assume Gemfile declares gemspec and we link ROOT to base :
+          ln_s @base, target_dir.join(@root_dir_path), :verbose => @verbose
+
+          # ln -s /var/tmp/bundles/plugins/ruby/killbill-xxx -> tmp/deploy:dev
+          ln_s package_tmp_dir, plugins_dir.join(name), :verbose => @verbose
+
+          deploy_config_files target_dir
+        end
+
         desc "List all dependencies"
         task :dependencies => :validate do
           print_dependencies
@@ -236,8 +262,13 @@ module Killbill
       plugin_path = plugin_path(plugins_dir, false) # "#{plugins_dir}/#{name}"
       if plugin_path.exist?
         if args.force == "true"
-          @logger.info "Deleting previous plugin deployment #{plugin_path}"
-          rm_rf plugin_path, :verbose => @verbose
+          safe_unlink plugin_path # if link (deploy:dev) just remove the link
+          if plugin_path.exist?
+            @logger.info "Deleting previous plugin deployment #{plugin_path}"
+            rm_rf plugin_path, :verbose => @verbose if plugin_path.exist?
+          else
+            @logger.info "Unlinked previous plugin deployment #{plugin_path}"
+          end
         else
           raise "Cowardly not deleting previous plugin deployment #{plugin_path} - override with rake #{t.name}[true]"
         end
@@ -516,10 +547,10 @@ module Killbill
       raise e
     end
 
-    def generate_boot_rb
-      @logger.debug "Generating boot.rb into #{@plugin_root_target_dir}"
+    def generate_boot_rb(target_dir = @plugin_target_dir)
+      @logger.debug "Generating boot.rb into #{target_dir}"
       # NOTE: previously the same WD was used dependent on server startup
-      puts_to_base <<-END, 'boot.rb'
+      puts_to target_dir, <<-END, 'boot.rb'
 Dir.chdir File.expand_path('#{@root_dir_path}', File.dirname(__FILE__))
 
 ENV["GEM_HOME"] = File.join(File.dirname(__FILE__), '#{@gems_dir_path}')
@@ -544,6 +575,29 @@ begin
 rescue LoadError => e # not fatal for un-usual cases where plugins vendor the gem
   warn "WARN: failed to load killbill gem: \#\{e.inspect\}"
 end
+
+#{plugin_require_line}
+
+END
+    end
+
+    def generate_dev_boot_rb(target_dir, env = 'production')
+      @logger.debug "Generating (dev) boot.rb into #{target_dir}"
+      puts_to target_dir, <<-END, 'boot.rb'
+Dir.chdir File.expand_path('#{@root_dir_path}', File.dirname(__FILE__))
+
+ENV["GEM_HOME"] = '#{Gem.paths.home}'
+ENV["GEM_PATH"] = '#{Gem.paths.path.join(':')}'
+# environment is set statically, as soon as Sinatra is loaded
+ENV["RACK_ENV"] = '#{env}'
+# prepare to boot using Bundler :
+ENV["BUNDLE_WITHOUT"] = "#{ENV["BUNDLE_WITHOUT"] || ''}"
+ENV["BUNDLE_GEMFILE"] = File.expand_path('Gemfile')
+
+require 'rubygems' unless defined? Gem
+require 'bundler'; Bundler.setup
+
+# require 'killbill'
 
 #{plugin_require_line}
 
@@ -586,34 +640,34 @@ END
       end.join('; ')
     end
 
-    def copy_gemfile
-      copy_to_root gemfile_path, 'Gemfile'
-      copy_to_root gemfile_lock_path, 'Gemfile.lock'
+    def copy_gemfile(target_dir = @plugin_root_target_dir)
+      copy_to target_dir, gemfile_path, 'Gemfile'
+      copy_to target_dir, gemfile_lock_path, 'Gemfile.lock'
     end
 
-    def stage_extra_files
+    def stage_extra_files(target_dir = @plugin_target_dir)
       unless boot_rb_file.nil?
         @logger.info "Staging (user-suplied) #{boot_rb_file}"
-        copy_to_base boot_rb_file
+        copy_to target_dir, boot_rb_file
       end
       unless killbill_properties_file.nil?
         @logger.debug "Staging #{killbill_properties_file}"
-        copy_to_base killbill_properties_file
+        copy_to target_dir, killbill_properties_file
       end
       unless config_ru_file.nil?
         @logger.debug "Staging #{config_ru_file}"
-        copy_to_base config_ru_file
+        copy_to target_dir, config_ru_file
       end
     end
 
-    def copy_to_base(file_path, base_name = File.basename(file_path))
-      target_file = File.join(@plugin_target_dir, base_name)
+    def copy_to(target_dir, file_path, base_name = File.basename(file_path))
+      target_file = File.join(target_dir, base_name)
       cp file_path, target_file, :verbose => @verbose
     end
 
-    def copy_to_root(file_path, base_name = File.basename(file_path))
-      target_file = File.join(@plugin_root_target_dir, base_name)
-      cp file_path, target_file, :verbose => @verbose
+    def puts_to(target_dir, content, base_name)
+      target_file = File.join(target_dir, base_name)
+      File.open(target_file, 'w') { |file| file << content }
     end
 
     def puts_to_base(content, base_name)
