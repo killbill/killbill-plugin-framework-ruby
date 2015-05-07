@@ -5,6 +5,7 @@ module Killbill
         enable :sessions
 
         include ::ActionView::Helpers::FormTagHelper
+        include ::Killbill::Plugin::ActiveMerchant::ActiveRecordHelper
 
         helpers do
           def config(kb_tenant_id=nil)
