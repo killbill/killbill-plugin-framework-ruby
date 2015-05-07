@@ -2,6 +2,9 @@ module Killbill
   module Plugin
     module ActiveMerchant
       module ActiveRecord
+
+        require File.dirname(__FILE__) + '/active_record/active_record_helper.rb'
+
         Dir[File.dirname(__FILE__) + '/active_record/models/*.rb'].each do |f|
           # Get camelized class name
           filename = File.basename(f, '.rb')

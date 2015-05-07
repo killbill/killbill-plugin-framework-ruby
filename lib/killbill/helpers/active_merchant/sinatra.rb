@@ -22,10 +22,7 @@ module Killbill
 
         after do
           # return DB connections to the Pool if required
-          pool = ::ActiveRecord::Base.connection_pool
-          if pool.active_connection?
-            ::ActiveRecord::Base.connection.close # check-in to pool
-          end
+          close_connection(logger)
         end
       end
     end

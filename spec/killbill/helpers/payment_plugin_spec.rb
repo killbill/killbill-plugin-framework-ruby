@@ -394,6 +394,15 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       sent_options[:description].should == "Kill Bill purchase for #{kb_payment_transaction_id}"
       sent_options[:order_id].should == kb_payment_transaction_external_key
     end
+
+    it 'closes the connection after each request' do
+      ::ActiveRecord::Base.retrieve_connection
+      ::ActiveRecord::Base.connection_pool.active_connection?.should == true
+
+      plugin.after_request
+
+      ::ActiveRecord::Base.connection_pool.active_connection?.should == false
+    end
   end
 
   private

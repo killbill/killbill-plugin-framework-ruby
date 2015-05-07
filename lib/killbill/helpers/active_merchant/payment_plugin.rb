@@ -8,6 +8,7 @@ module Killbill
       require 'offsite_payments'
 
       class PaymentPlugin < ::Killbill::Plugin::Payment
+        include ::Killbill::Plugin::ActiveMerchant::ActiveRecordHelper
         include ::Killbill::Plugin::PropertiesHelper
 
         def initialize(gateway_builder, identifier, payment_method_model, transaction_model, response_model)
@@ -36,11 +37,9 @@ module Killbill
           @logger.info "#{@identifier} payment plugin started"
         end
 
-        # return DB connections to the Pool if required
         def after_request
-          pool = ::ActiveRecord::Base.connection_pool
-          @logger.debug { "after_request: pool.active_connection? = #{pool.active_connection?}, pool.connections.size = #{pool.connections.size}, connections = #{pool.connections.inspect}" }
-          ::ActiveRecord::Base.connection.close if pool.active_connection? # check-in to pool
+          # return DB connections to the Pool if required
+          close_connection(@logger)
         end
 
         def on_event(event)
