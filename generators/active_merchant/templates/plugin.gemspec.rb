@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
 
   s.author   = 'Kill Bill core team'
   s.email    = 'killbilling-users@googlegroups.com'
-  s.homepage = 'http://kill-bill.org'
+  s.homepage = 'http://killbill.io'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
