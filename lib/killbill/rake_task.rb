@@ -220,7 +220,11 @@ module Killbill
 
           # NOTE: although same _boot.rb_ as with regular deploys might not work
           stage_extra_files target_dir
-          generate_dev_boot_rb target_dir if boot_rb_file.nil?
+          if boot_rb_file.nil?
+            generate_dev_boot_rb target_dir
+          else
+            @logger.info "Make sure the suplied #{boot_rb_file} is removed/adjusted before doing a regular killbill:deploy (same boot.rb won't likely work)"
+          end
 
           # here we assume Gemfile declares gemspec and we link ROOT to base :
           ln_s @base, target_dir.join(@root_dir_path), :verbose => @verbose
