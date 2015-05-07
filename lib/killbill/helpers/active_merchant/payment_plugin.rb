@@ -167,7 +167,7 @@ module Killbill
           end
 
           # Go to the gateway
-          payment_processor_account_id = options[:payment_processor_account_id] || :default
+          payment_processor_account_id = Utils.normalized(options, :payment_processor_account_id) || :default
           gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
           gw_response                  = gateway.store(payment_source, options)
           response, transaction        = save_response_and_transaction(gw_response, :add_payment_method, kb_account_id, context.tenant_id, payment_processor_account_id)
@@ -205,10 +205,12 @@ module Killbill
           pm      = @payment_method_model.from_kb_payment_method_id(kb_payment_method_id, context.tenant_id)
 
           # Delete the card
-          payment_processor_account_id = options[:payment_processor_account_id] || :default
+          payment_processor_account_id = Utils.normalized(options, :payment_processor_account_id) || :default
           gateway                      = lookup_gateway(payment_processor_account_id, context.tenant_id)
-          if options[:customer_id]
-            gw_response = gateway.unstore(options[:customer_id], pm.token, options)
+
+          customer_id = Utils.normalized(options, :customer_id)
+          if customer_id
+            gw_response = gateway.unstore(customer_id, pm.token, options)
           else
             gw_response = gateway.unstore(pm.token, options)
           end
