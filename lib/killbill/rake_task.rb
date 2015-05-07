@@ -292,7 +292,10 @@ module Killbill
     end
 
     def validate
-      @gemfile_definition = build_gemfile
+      if @gemfile_definition = build_gemfile
+        @gemfile_definition.resolve
+      end
+      true
     end
 
     def bundler?; !! @gemfile_definition end
