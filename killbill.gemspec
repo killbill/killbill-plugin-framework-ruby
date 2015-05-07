@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.bindir        = 'bin'
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  s.require_paths = ['lib']
 
   s.rdoc_options << '--exclude' << '.'
 
@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'money', '~> 6.5.1'
   # testing/development :
   s.add_development_dependency 'jbundler', '~> 0.4.3'
-  s.add_development_dependency 'rake', '>= 0.8.7'
+  s.add_development_dependency 'rake', '>= 10.0.0'
   s.add_development_dependency 'rspec', '~> 2.12.0'
   s.add_development_dependency 'thor', '~> 0.19.1'
   if defined?(JRUBY_VERSION)
