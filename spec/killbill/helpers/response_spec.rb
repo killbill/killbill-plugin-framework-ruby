@@ -47,7 +47,7 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     # No associated transaction
     ptip.amount.should be_nil
     ptip.currency.should be_nil
-    ptip.status.should == :PROCESSED
+    ptip.status.should == :UNDEFINED
     ptip.gateway_error.should == 'Message'
     ptip.gateway_error_code.should be_nil
     ptip.first_payment_reference_id.should be_nil

@@ -103,10 +103,12 @@ module Killbill
               amount_in_cents = nil
               currency        = nil
               created_date    = created_at
+              status          = :UNDEFINED # Likely pending
             else
               amount_in_cents = transaction.amount_in_cents
               currency        = transaction.currency
               created_date    = transaction.created_at
+              status          = success ? :PROCESSED : :ERROR
             end
 
             t_info_plugin                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
@@ -117,7 +119,7 @@ module Killbill
             t_info_plugin.currency                    = currency
             t_info_plugin.created_date                = created_date
             t_info_plugin.effective_date              = effective_date
-            t_info_plugin.status                      = (success ? :PROCESSED : :ERROR)
+            t_info_plugin.status                      = status
             t_info_plugin.gateway_error               = gateway_error
             t_info_plugin.gateway_error_code          = gateway_error_code
             t_info_plugin.first_payment_reference_id  = first_reference_id
