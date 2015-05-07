@@ -1,9 +1,12 @@
 require 'spec_helper'
 
 describe Killbill::<%= class_name %>::PaymentPlugin do
+
+  include ::Killbill::Plugin::ActiveMerchant::RSpec
+
   before(:each) do
     Dir.mktmpdir do |dir|
-      file = File.new(File.join(dir, '<%= identifier %>.yml'), "w+")
+      file = File.new(File.join(dir, '<%= identifier %>.yml'), 'w+')
       file.write(<<-eos)
 :<%= identifier %>:
   :test: true
@@ -14,12 +17,7 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
       eos
       file.close
 
-      @plugin              = Killbill::<%= class_name %>::PaymentPlugin.new
-      @plugin.logger       = Logger.new(STDOUT)
-      @plugin.logger.level = Logger::INFO
-      @plugin.conf_dir     = File.dirname(file)
-      @plugin.kb_apis      = Killbill::Plugin::KillbillApi.new('<%= identifier %>', {})
-      @plugin.root         = '/foo/killbill-<%= identifier %>/0.0.1'
+      @plugin = build_plugin(::Killbill::<%= class_name %>::PaymentPlugin, '<%= identifier %>', File.dirname(file))
 
       # Start the plugin here - since the config file will be deleted
       @plugin.start_plugin
