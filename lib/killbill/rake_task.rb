@@ -17,7 +17,7 @@ module Killbill
             opts[:gem_name],                      # Gem file name, e.g. 'klogger-1.0.0.gem'
             opts[:gemfile_name] || gemfile_name,  # Gemfile name
             opts[:gemfile_lock_name] || "#{gemfile_name}.lock",
-            opts[:verbose] || false)
+            opts.key?(:verbose) ? opts[:verbose] : ENV['VERBOSE'] == 'true')
         .install
       end
     end
