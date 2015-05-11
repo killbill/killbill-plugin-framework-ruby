@@ -3,14 +3,14 @@ module Killbill
     module ActiveMerchant
       require 'killbill'
 
-      require File.dirname(__FILE__) + '/properties_helper.rb'
-      require File.dirname(__FILE__) + '/active_merchant/active_record/active_record_helper.rb'
+      require 'killbill/helpers/properties_helper'
+      require 'killbill/helpers/active_merchant/active_record/active_record_helper.rb'
 
       require 'active_support'
 
       require 'active_support/core_ext'
-      require File.dirname(__FILE__) + '/active_merchant/core_ext.rb'
-      require File.dirname(__FILE__) + '/active_merchant/configuration.rb'
+      require 'killbill/helpers/active_merchant/core_ext'
+      require 'killbill/helpers/active_merchant/configuration'
 
       Dir[File.dirname(__FILE__) + '/active_merchant/*.rb'].each do |f|
         # Get camelized class name
