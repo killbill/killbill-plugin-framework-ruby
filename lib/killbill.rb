@@ -67,3 +67,4 @@ module Killbill
   require 'killbill/invoice'
   require 'killbill/currency'
 end
+KillBill = Killbill
