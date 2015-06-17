@@ -99,16 +99,28 @@ module Killbill
           end
 
           def to_transaction_info_plugin(transaction=nil)
+            error_details = {}
+
             if transaction.nil?
               amount_in_cents = nil
               currency        = nil
               created_date    = created_at
-              status          = :UNDEFINED # Likely pending
+              # See Killbill::Plugin::ActiveMerchant::Gateway
+              error_details   = JSON.parse(message) rescue {}
             else
               amount_in_cents = transaction.amount_in_cents
               currency        = transaction.currency
               created_date    = transaction.created_at
-              status          = success ? :PROCESSED : :ERROR
+            end
+
+            # See https://github.com/killbill/killbill-plugin-framework-ruby/issues/43
+            # Note: status could also be :PENDING, but it would be handled only in the plugins which need it
+            if !error_details['kb_transaction_status'].blank?
+              status = error_details['kb_transaction_status'].to_sym
+            else
+              # Note: (success && transaction.nil?) _could_ happen (see above), but it would be an issue on our side
+              # (the payment did go through in the gateway).
+              status = success ? :PROCESSED : :ERROR
             end
 
             t_info_plugin                             = Killbill::Plugin::Model::PaymentTransactionInfoPlugin.new
@@ -120,8 +132,8 @@ module Killbill
             t_info_plugin.created_date                = created_date
             t_info_plugin.effective_date              = effective_date
             t_info_plugin.status                      = status
-            t_info_plugin.gateway_error               = gateway_error
-            t_info_plugin.gateway_error_code          = gateway_error_code
+            t_info_plugin.gateway_error               = error_details['exception_message'] || gateway_error
+            t_info_plugin.gateway_error_code          = error_details['exception_class'] || gateway_error_code
             t_info_plugin.first_payment_reference_id  = first_reference_id
             t_info_plugin.second_payment_reference_id = second_reference_id
 

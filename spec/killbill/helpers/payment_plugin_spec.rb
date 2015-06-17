@@ -402,20 +402,92 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
 
       ::ActiveRecord::Base.connection_pool.active_connection?.should == false
     end
+
+    # Regression tests for the Kill Bill API conventions
+    # TODO Go through Java generated code
+
+    it 'returns ERROR if the payment transaction went through but failed' do
+      gateway.next_success = false
+
+      # Verify the purchase call for the Kill Bill payment state machine and the get_payment_info call for the Janitor
+      ptip = trigger_purchase
+      verify_purchase_status(ptip, :ERROR)
+
+      # Check debugging fields
+      ptip.gateway_error.should == 'false'
+    end
+
+    it 'returns UNDEFINED for plugin bugs' do
+      gateway.next_exception = NoMethodError.new("undefined method `split' for 12:Fixnum")
+
+      # Verify the purchase call for the Kill Bill payment state machine and the get_payment_info call for the Janitor
+      ptip = trigger_purchase
+      verify_purchase_status(ptip, :UNDEFINED)
+
+      # Check debugging fields
+      ptip.gateway_error.should == "undefined method `split' for 12:Fixnum"
+    end
+
+    # Specific ActiveMerchant errors handling
+    # See https://github.com/Shopify/active_merchant/blob/2e7eebe38020db4d262b91778797910ede2f31be/lib/active_merchant/network_connection_retries.rb#L21-L34
+
+    it 'returns ABORT if the payment was not attempted' do
+      {
+          Errno::ECONNREFUSED => 'The remote server refused the connection',
+          SocketError => 'The connection to the remote server could not be established',
+          Errno::EHOSTUNREACH => 'The connection to the remote server could not be established',
+          OpenSSL::SSL::SSLError => 'The SSL connection to the remote server could not be established',
+          ::ActiveMerchant::ClientCertificateError => 'The remote server did not accept the provided SSL certificate'
+      }.each do |ek, msg|
+        gateway.next_exception = ::ActiveMerchant::ConnectionError.new(msg, ek.new(msg))
+
+        # Verify the purchase call for the Kill Bill payment state machine and the get_payment_info call for the Janitor
+        ptip = trigger_purchase
+        verify_purchase_status(ptip, :ABORT)
+
+        # Check debugging fields
+        ptip.gateway_error.ends_with?(msg).should be_true
+        ptip.gateway_error_code.should == ek.to_s
+      end
+    end
+
+    it 'returns UNDEFINED if we are not sure' do
+      {
+          EOFError => 'The remote server dropped the connection',
+          Errno::ECONNRESET => 'The remote server reset the connection',
+          Timeout::Error => 'The connection to the remote server timed out',
+          Errno::ETIMEDOUT => 'The connection to the remote server timed out',
+          ::ActiveMerchant::InvalidResponseError => 'The remote server replied with an invalid response'
+      }.each do |ek, msg|
+        gateway.next_exception = ::ActiveMerchant::ConnectionError.new(msg, ek.new(msg))
+
+        # Verify the purchase call for the Kill Bill payment state machine and the get_payment_info call for the Janitor
+        ptip = trigger_purchase
+        verify_purchase_status(ptip, :UNDEFINED)
+
+        # Check debugging fields
+        ptip.gateway_error.ends_with?(msg).should be_true
+        ptip.gateway_error_code.should == ek.to_s
+      end
+    end
   end
 
   private
 
   def trigger_purchase(purchase_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
-    plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, [], @call_context)
+    plugin.get_payment_method_detail(@kb_account_id, @kb_payment_method_id, [], @call_context) rescue plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, [], @call_context)
     plugin.purchase_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, purchase_properties, @call_context)
+  end
+
+  def verify_purchase_status(t_info_plugin, status)
+    verify_transaction_info_plugin(t_info_plugin, t_info_plugin.kb_transaction_payment_id, :PURCHASE, nil, 'default', status)
   end
 
   def verify_transaction_info_plugin(t_info_plugin, kb_transaction_id, type, transaction_nb, payment_processor_account_id='default', status=:PROCESSED)
     t_info_plugin.kb_payment_id.should == @kb_payment_id
     t_info_plugin.kb_transaction_payment_id.should == kb_transaction_id
     t_info_plugin.transaction_type.should == type
-    if type == :VOID
+    if type == :VOID || status != :PROCESSED
       t_info_plugin.amount.should be_nil
       t_info_plugin.currency.should be_nil
     else
@@ -428,8 +500,8 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     (t_info_plugin.properties.find { |kv| kv.key.to_s == 'payment_processor_account_id' }).value.to_s.should == payment_processor_account_id
 
     transactions = plugin.get_payment_info(@kb_account_id, @kb_payment_id, [], @call_context)
-    transactions.size.should == transaction_nb
-    transactions[transaction_nb - 1].to_json.should == t_info_plugin.to_json
+    transactions.size.should == transaction_nb unless transaction_nb.nil?
+    transactions[-1].to_json.should == t_info_plugin.to_json
   end
 
   class DummyRecordingGatewayPlugin < ::Killbill::Plugin::ActiveMerchant::PaymentPlugin
@@ -457,12 +529,12 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     def purchase(money, paysource, options = {})
       success = before_purchase
       @call_stack << {:money => money, :source => paysource, :options => options}
-      ::ActiveMerchant::Billing::Response.new(success, success.to_s, {:authorized_amount => money}, :test => true, :authorization => 12345)
+      ::ActiveMerchant::Billing::Response.new(success, success.to_s, {:authorized_amount => money}, :test => true, :authorization => '12345')
     end
 
     def store(paysource, options = {})
       @call_stack << {:source => paysource, :options => options}
-      ::ActiveMerchant::Billing::Response.new(true, 'Success!', {:billingid => '1'}, :test => true, :authorization => 12345)
+      ::ActiveMerchant::Billing::Response.new(true, 'Success!', {:billingid => '1'}, :test => true, :authorization => '12345')
     end
 
     # Testing helpers

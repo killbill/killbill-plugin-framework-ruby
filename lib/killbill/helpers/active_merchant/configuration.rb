@@ -78,13 +78,13 @@ module Killbill
               if gateway_account_id.nil?
                 @@logger.warn "Skipping config #{gateway_config} -- missing :account_id"
               else
-                gateways_config[gateway_account_id.to_sym] = Gateway.wrap(gateway_builder, gateway_config)
+                gateways_config[gateway_account_id.to_sym] = Gateway.wrap(gateway_builder, gateway_config, @@logger)
                 default_gateway = gateways_config[gateway_account_id.to_sym] if idx == 0
               end
             end
             gateways_config[:default] = default_gateway if gateways_config[:default].nil?
           else
-            gateways_config[:default] = Gateway.wrap(@@gateway_builder, gateway_configs)
+            gateways_config[:default] = Gateway.wrap(@@gateway_builder, gateway_configs, @@logger)
           end
           gateways_config
         end
