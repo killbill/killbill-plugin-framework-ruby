@@ -311,16 +311,14 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
   end
 
   context 'with a dummy gateway' do
-    let(:gateway) { DummyRecordingGateway.new }
+    let(:gateway) { plugin.lookup_gateway(:default, @call_context.tenant_id) }
 
     let(:plugin) do
-      plugin = ::Killbill::Plugin::ActiveMerchant::PaymentPlugin.new(Proc.new { |config| gateway },
-                                                                     :test,
-                                                                     ::Killbill::Test::TestPaymentMethod,
-                                                                     ::Killbill::Test::TestTransaction,
-                                                                     ::Killbill::Test::TestResponse)
-      plugin.kb_apis = kb_apis
-      plugin.logger = logger
+      jplugin.delegate_plugin
+    end
+
+    let(:jplugin) do
+      ze_jplugin = nil
 
       plugin_config = {
           :test => [
@@ -328,14 +326,20 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
           ]
       }
       with_plugin_yaml_config('test.yml', plugin_config) do |file|
-        plugin.conf_dir = File.dirname(file)
-        plugin.root = File.dirname(file)
+        ze_jplugin = ::Killbill::Plugin::Api::PaymentPluginApi.new('DummyRecordingGatewayPlugin',
+                                                                   {
+                                                                       'payment_api' => payment_api,
+                                                                       'tenant_user_api' => tenant_api,
+                                                                       'logger' => logger,
+                                                                       'conf_dir' => File.dirname(file),
+                                                                       'root' => File.dirname(file)
+                                                                   })
 
         # Start the plugin here - since the config file will be deleted
-        plugin.start_plugin
+        ze_jplugin.start_plugin
       end
 
-      plugin
+      ze_jplugin
     end
 
     after(:each) do
@@ -347,51 +351,46 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     end
 
     it 'sets the kb_payment_transaction_id as order_id by default' do
-      plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, [], @call_context)
-
-      kb_payment_transaction_id = SecureRandom.uuid
-      plugin.purchase_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, [], @call_context)
+      ptip = trigger_purchase
 
       sent_options = gateway.call_stack[-1][:options]
       sent_options.size.should == 11
       sent_options[:currency].should == @currency
-      sent_options[:description].should == "Kill Bill purchase for #{kb_payment_transaction_id}"
-      sent_options[:order_id].should == kb_payment_transaction_id
+      sent_options[:description].should == "Kill Bill purchase for #{ptip.kb_transaction_payment_id}"
+      sent_options[:order_id].should == ptip.kb_transaction_payment_id
     end
 
     it 'sets the kb_payment_transaction_id as order_id if specified' do
-      plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, [], @call_context)
-
       property = ::Killbill::Plugin::Model::PluginProperty.new
       property.key = 'external_key_as_order_id'
       property.value = 'false'
+      properties = [property]
 
-      kb_payment_transaction_id = SecureRandom.uuid
-      plugin.purchase_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, [property], @call_context)
+      ptip = trigger_purchase(properties)
 
       sent_options = gateway.call_stack[-1][:options]
       sent_options.size.should == 12
       sent_options[:currency].should == @currency
-      sent_options[:description].should == "Kill Bill purchase for #{kb_payment_transaction_id}"
-      sent_options[:order_id].should == kb_payment_transaction_id
+      sent_options[:description].should == "Kill Bill purchase for #{ptip.kb_transaction_payment_id}"
+      sent_options[:order_id].should == ptip.kb_transaction_payment_id
     end
 
     it 'sets the payment transaction external key as order_id if specified' do
-      plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, [], @call_context)
-
       property = ::Killbill::Plugin::Model::PluginProperty.new
       property.key = 'external_key_as_order_id'
       property.value = 'true'
+      properties = [property]
 
       kb_payment_transaction_id = SecureRandom.uuid
       kb_payment_transaction_external_key = SecureRandom.uuid
-      payment_api.add_payment(@kb_payment_id,  kb_payment_transaction_id, kb_payment_transaction_external_key, :PURCHASE)
-      plugin.purchase_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, [property], @call_context)
+      payment_api.add_payment(@kb_payment_id, kb_payment_transaction_id, kb_payment_transaction_external_key, :PURCHASE)
+
+      ptip = trigger_purchase(properties, kb_payment_transaction_id)
 
       sent_options = gateway.call_stack[-1][:options]
       sent_options.size.should == 12
       sent_options[:currency].should == @currency
-      sent_options[:description].should == "Kill Bill purchase for #{kb_payment_transaction_id}"
+      sent_options[:description].should == "Kill Bill purchase for #{ptip.kb_transaction_payment_id}"
       sent_options[:order_id].should == kb_payment_transaction_external_key
     end
 
@@ -407,7 +406,12 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
 
   private
 
-  def verify_transaction_info_plugin(t_info_plugin, kb_transaction_id, type, transaction_nb, payment_processor_account_id='default')
+  def trigger_purchase(purchase_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
+    plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, [], @call_context)
+    plugin.purchase_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, purchase_properties, @call_context)
+  end
+
+  def verify_transaction_info_plugin(t_info_plugin, kb_transaction_id, type, transaction_nb, payment_processor_account_id='default', status=:PROCESSED)
     t_info_plugin.kb_payment_id.should == @kb_payment_id
     t_info_plugin.kb_transaction_payment_id.should == kb_transaction_id
     t_info_plugin.transaction_type.should == type
@@ -418,7 +422,7 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       t_info_plugin.amount.should == @amount_in_cents
       t_info_plugin.currency.should == @currency
     end
-    t_info_plugin.status.should == :PROCESSED
+    t_info_plugin.status.should == status
 
     # Verify we routed to the right gateway
     (t_info_plugin.properties.find { |kv| kv.key.to_s == 'payment_processor_account_id' }).value.to_s.should == payment_processor_account_id
@@ -428,22 +432,50 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     transactions[transaction_nb - 1].to_json.should == t_info_plugin.to_json
   end
 
+  class DummyRecordingGatewayPlugin < ::Killbill::Plugin::ActiveMerchant::PaymentPlugin
+
+    def initialize
+      super(Proc.new { |config| DummyRecordingGateway.new },
+            :test,
+            ::Killbill::Test::TestPaymentMethod,
+            ::Killbill::Test::TestTransaction,
+            ::Killbill::Test::TestResponse)
+    end
+  end
+
   class DummyRecordingGateway < ::ActiveMerchant::Billing::Gateway
 
     attr_reader :call_stack
+    attr_writer :next_success, :next_exception
 
     def initialize
       @call_stack = []
+      @next_success = true
+      @next_exception = nil
     end
 
     def purchase(money, paysource, options = {})
+      success = before_purchase
       @call_stack << {:money => money, :source => paysource, :options => options}
-      ::ActiveMerchant::Billing::Response.new(true, 'Success!', {:authorized_amount => money}, :test => true, :authorization => 12345)
+      ::ActiveMerchant::Billing::Response.new(success, success.to_s, {:authorized_amount => money}, :test => true, :authorization => 12345)
     end
 
     def store(paysource, options = {})
       @call_stack << {:source => paysource, :options => options}
       ::ActiveMerchant::Billing::Response.new(true, 'Success!', {:billingid => '1'}, :test => true, :authorization => 12345)
+    end
+
+    # Testing helpers
+
+    def before_purchase
+      unless @next_exception.nil?
+        e = @next_exception
+        @next_exception = nil
+        raise e
+      end
+      s = @next_success
+      @next_success = true
+      s
     end
   end
 end
