@@ -69,7 +69,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for effective_date [type = org.joda.time.DateTime]
           if !@effective_date.nil?
@@ -78,7 +78,7 @@ module Killbill
           end
 
           # conversion for refund_status [type = org.killbill.billing.payment.api.RefundStatus]
-          @refund_status = Java::org.killbill.billing.payment.api.RefundStatus.value_of( @refund_status.to_s ) unless @refund_status.nil?
+          @refund_status = Java::org.killbill.billing.payment.api.RefundStatus.value_of("#{@refund_status.to_s}") unless @refund_status.nil?
 
           # conversion for refund_info_plugin [type = org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin]
           @refund_info_plugin = @refund_info_plugin.to_java unless @refund_info_plugin.nil?

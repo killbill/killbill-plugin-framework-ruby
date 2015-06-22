@@ -41,7 +41,7 @@ module Killbill
 
         def to_java()
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for recurring_price [type = org.killbill.billing.catalog.api.InternationalPrice]
           @recurring_price = @recurring_price.to_java unless @recurring_price.nil?

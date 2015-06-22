@@ -42,10 +42,10 @@ module Killbill
           @product_name = @product_name.to_s unless @product_name.nil?
 
           # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
-          @product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @product_category.to_s ) unless @product_category.nil?
+          @product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@product_category.to_s}") unless @product_category.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = @price_list_name.to_s unless @price_list_name.nil?

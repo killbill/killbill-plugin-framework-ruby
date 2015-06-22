@@ -47,7 +47,7 @@ module Killbill
           @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for fixed_price [type = java.math.BigDecimal]
           if @fixed_price.nil?
