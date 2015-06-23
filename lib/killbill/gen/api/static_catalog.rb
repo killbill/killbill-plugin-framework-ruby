@@ -44,7 +44,7 @@ module Killbill
           @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
 
           # conversion for recurring_billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
-          @recurring_billing_mode = Java::org.killbill.billing.catalog.api.BillingMode.value_of( @recurring_billing_mode.to_s ) unless @recurring_billing_mode.nil?
+          @recurring_billing_mode = Java::org.killbill.billing.catalog.api.BillingMode.value_of("#{@recurring_billing_mode.to_s}") unless @recurring_billing_mode.nil?
 
           # conversion for effective_date [type = java.util.Date]
           if !@effective_date.nil?
@@ -57,7 +57,7 @@ module Killbill
           tmp = java.util.ArrayList.new
           (@current_supported_currencies || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Currency]
-            m = Java::org.killbill.billing.catalog.api.Currency.value_of( m.to_s ) unless m.nil?
+            m = Java::org.killbill.billing.catalog.api.Currency.value_of("#{m.to_s}") unless m.nil?
             tmp.add(m)
           end
           @current_supported_currencies = tmp.toArray

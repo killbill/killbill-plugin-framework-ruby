@@ -62,7 +62,7 @@ module Killbill
           @duration = @duration.to_java unless @duration.nil?
 
           # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
-          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of( @phase_type.to_s ) unless @phase_type.nil?
+          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
           self
         end
 

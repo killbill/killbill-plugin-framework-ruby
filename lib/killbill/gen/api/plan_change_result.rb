@@ -42,10 +42,10 @@ module Killbill
           @new_price_list = @new_price_list.to_java unless @new_price_list.nil?
 
           # conversion for policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
-          @policy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of( @policy.to_s ) unless @policy.nil?
+          @policy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of("#{@policy.to_s}") unless @policy.nil?
 
           # conversion for alignment [type = org.killbill.billing.catalog.api.PlanAlignmentChange]
-          @alignment = Java::org.killbill.billing.catalog.api.PlanAlignmentChange.value_of( @alignment.to_s ) unless @alignment.nil?
+          @alignment = Java::org.killbill.billing.catalog.api.PlanAlignmentChange.value_of("#{@alignment.to_s}") unless @alignment.nil?
           Java::org.killbill.billing.catalog.api.PlanChangeResult.new(@new_price_list, @policy, @alignment)
         end
 

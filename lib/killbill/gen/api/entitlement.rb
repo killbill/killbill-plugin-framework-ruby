@@ -68,10 +68,10 @@ module Killbill
           @external_key = @external_key.to_s unless @external_key.nil?
 
           # conversion for state [type = org.killbill.billing.entitlement.api.EntitlementState]
-          @state = Java::org.killbill.billing.entitlement.api.EntitlementState.value_of( @state.to_s ) unless @state.nil?
+          @state = Java::org.killbill.billing.entitlement.api.EntitlementState.value_of("#{@state.to_s}") unless @state.nil?
 
           # conversion for source_type [type = org.killbill.billing.entitlement.api.EntitlementSourceType]
-          @source_type = Java::org.killbill.billing.entitlement.api.EntitlementSourceType.value_of( @source_type.to_s ) unless @source_type.nil?
+          @source_type = Java::org.killbill.billing.entitlement.api.EntitlementSourceType.value_of("#{@source_type.to_s}") unless @source_type.nil?
 
           # conversion for effective_start_date [type = org.joda.time.LocalDate]
           if !@effective_start_date.nil?
@@ -96,7 +96,7 @@ module Killbill
           @last_active_price_list = @last_active_price_list.to_java unless @last_active_price_list.nil?
 
           # conversion for last_active_product_category [type = org.killbill.billing.catalog.api.ProductCategory]
-          @last_active_product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @last_active_product_category.to_s ) unless @last_active_product_category.nil?
+          @last_active_product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@last_active_product_category.to_s}") unless @last_active_product_category.nil?
           self
         end
 

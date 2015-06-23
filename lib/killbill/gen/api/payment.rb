@@ -106,7 +106,7 @@ module Killbill
           @is_auth_voided = @is_auth_voided.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_auth_voided)
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for transactions [type = java.util.List]
           tmp = java.util.ArrayList.new

@@ -29,56 +29,23 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.api'
-      class Block
+      class PaymentRoutingApiException
 
-        include org.killbill.billing.catalog.api.Block
 
-        attr_accessor :type, :unit, :size, :price, :min_top_up_credit
+        attr_accessor 
 
         def initialize()
         end
 
         def to_java()
-          # conversion for type [type = org.killbill.billing.catalog.api.BlockType]
-          @type = Java::org.killbill.billing.catalog.api.BlockType.value_of("#{@type.to_s}") unless @type.nil?
-
-          # conversion for unit [type = org.killbill.billing.catalog.api.Unit]
-          @unit = @unit.to_java unless @unit.nil?
-
-          # conversion for size [type = java.lang.Double]
-          @size = @size
-
-          # conversion for price [type = org.killbill.billing.catalog.api.InternationalPrice]
-          @price = @price.to_java unless @price.nil?
-
-          # conversion for min_top_up_credit [type = java.lang.Double]
-          @min_top_up_credit = @min_top_up_credit
-          self
-        end
-
-        def to_ruby(j_obj)
-          # conversion for type [type = org.killbill.billing.catalog.api.BlockType]
-          @type = j_obj.type
-          @type = @type.to_s.to_sym unless @type.nil?
-
-          # conversion for unit [type = org.killbill.billing.catalog.api.Unit]
-          @unit = j_obj.unit
-          @unit = Killbill::Plugin::Model::Unit.new.to_ruby(@unit) unless @unit.nil?
-
-          # conversion for size [type = java.lang.Double]
-          @size = j_obj.size
-
-          # conversion for price [type = org.killbill.billing.catalog.api.InternationalPrice]
-          @price = j_obj.price
-          @price = Killbill::Plugin::Model::InternationalPrice.new.to_ruby(@price) unless @price.nil?
-
-          # conversion for min_top_up_credit [type = java.lang.Double]
-          @min_top_up_credit = j_obj.min_top_up_credit
-          self
-        end
-
+        Java::org.killbill.billing.routing.plugin.api.PaymentRoutingApiException.new()
       end
+
+      def to_ruby(j_obj)
+      self
     end
+
   end
+end
+end
 end

@@ -78,6 +78,48 @@ module Killbill
           end
         end
 
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor buildFormDescriptorWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.Iterable, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def build_form_descriptor_with_payment_control(account, paymentMethodId, customFields, properties, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentMethodId [type = java.util.UUID]
+          paymentMethodId = java.util.UUID.fromString(paymentMethodId.to_s) unless paymentMethodId.nil?
+
+          # conversion for customFields [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (customFields || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          customFields = tmp
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.build_form_descriptor_with_payment_control(account, paymentMethodId, customFields, properties, paymentOptions, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.HostedPaymentPageFormDescriptor]
+            res = Killbill::Plugin::Model::HostedPaymentPageFormDescriptor.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
         java_signature 'Java::org.killbill.billing.payment.plugin.api.GatewayNotification processNotification(Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
         def process_notification(notification, pluginName, properties, context)
 
@@ -100,6 +142,39 @@ module Killbill
           context = context.to_java unless context.nil?
           begin
             res = @real_java_api.process_notification(notification, pluginName, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.plugin.api.GatewayNotification]
+            res = Killbill::Plugin::Model::GatewayNotification.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.plugin.api.GatewayNotification processNotificationWithPaymentControl(Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def process_notification_with_payment_control(notification, pluginName, properties, paymentOptions, context)
+
+          # conversion for notification [type = java.lang.String]
+          notification = notification.to_s unless notification.nil?
+
+          # conversion for pluginName [type = java.lang.String]
+          pluginName = pluginName.to_s unless pluginName.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.process_notification_with_payment_control(notification, pluginName, properties, paymentOptions, context)
             # conversion for res [type = org.killbill.billing.payment.plugin.api.GatewayNotification]
             res = Killbill::Plugin::Model::GatewayNotification.new.to_ruby(res) unless res.nil?
             return res

@@ -29,54 +29,46 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'org.killbill.billing.invoice.plugin.api'
-      class InvoicePluginApi < JPlugin
+      java_package 'org.killbill.billing.payment.api'
+      class AdminPaymentApi
 
-        include org.killbill.billing.invoice.plugin.api.InvoicePluginApi
+        include org.killbill.billing.payment.api.AdminPaymentApi
 
-        def initialize(real_class_name, services = {})
-          super(real_class_name, services)
+        def initialize(real_java_api)
+          @real_java_api = real_java_api
         end
 
 
-        java_signature 'Java::java.util.List getAdditionalInvoiceItems(Java::org.killbill.billing.invoice.api.Invoice, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def get_additional_invoice_items(invoice, properties, context)
+        java_signature 'Java::void fixPaymentTransactionState(Java::org.killbill.billing.payment.api.Payment, Java::org.killbill.billing.payment.api.PaymentTransaction, Java::org.killbill.billing.payment.api.TransactionStatus, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def fix_payment_transaction_state(payment, paymentTransaction, transactionStatus, lastSuccessPaymentState, currentPaymentStateName, properties, context)
 
-          # conversion for invoice [type = org.killbill.billing.invoice.api.Invoice]
-          invoice = Killbill::Plugin::Model::Invoice.new.to_ruby(invoice) unless invoice.nil?
+          # conversion for payment [type = org.killbill.billing.payment.api.Payment]
+          payment = payment.to_java unless payment.nil?
+
+          # conversion for paymentTransaction [type = org.killbill.billing.payment.api.PaymentTransaction]
+          paymentTransaction = paymentTransaction.to_java unless paymentTransaction.nil?
+
+          # conversion for transactionStatus [type = org.killbill.billing.payment.api.TransactionStatus]
+          transactionStatus = Java::org.killbill.billing.payment.api.TransactionStatus.value_of("#{transactionStatus.to_s}") unless transactionStatus.nil?
+
+          # conversion for lastSuccessPaymentState [type = java.lang.String]
+          lastSuccessPaymentState = lastSuccessPaymentState.to_s unless lastSuccessPaymentState.nil?
+
+          # conversion for currentPaymentStateName [type = java.lang.String]
+          currentPaymentStateName = currentPaymentStateName.to_s unless currentPaymentStateName.nil?
 
           # conversion for properties [type = java.lang.Iterable]
-          tmp = []
-          (properties.nil? ? [] : properties.iterator).each do |m|
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
             # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
+            m = m.to_java unless m.nil?
+            tmp.add(m)
           end
           properties = tmp
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
-          begin
-            res = @delegate_plugin.get_additional_invoice_items(invoice, properties, context)
-            # conversion for res [type = java.util.List]
-            tmp = java.util.ArrayList.new
-            (res || []).each do |m|
-              # conversion for m [type = org.killbill.billing.invoice.api.InvoiceItem]
-              m = m.to_java unless m.nil?
-              tmp.add(m)
-            end
-            res = tmp
-            return res
-          rescue Exception => e
-            message = "Failure in get_additional_invoice_items: #{e}"
-            unless e.backtrace.nil?
-              message = "#{message}\n#{e.backtrace.join("\n")}"
-            end
-            logger.warn message
-            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_additional_invoice_items failure", e.message)
-          ensure
-            @delegate_plugin.after_request
-          end
+          context = context.to_java unless context.nil?
+          @real_java_api.fix_payment_transaction_state(payment, paymentTransaction, transactionStatus, lastSuccessPaymentState, currentPaymentStateName, properties, context)
         end
       end
     end

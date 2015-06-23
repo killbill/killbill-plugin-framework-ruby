@@ -41,10 +41,10 @@ module Killbill
 
         def to_java()
           # conversion for base_currency [type = org.killbill.billing.catalog.api.Currency]
-          @base_currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @base_currency.to_s ) unless @base_currency.nil?
+          @base_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@base_currency.to_s}") unless @base_currency.nil?
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
 
           # conversion for value [type = java.math.BigDecimal]
           if @value.nil?

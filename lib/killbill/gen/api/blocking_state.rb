@@ -62,7 +62,7 @@ module Killbill
           @state_name = @state_name.to_s unless @state_name.nil?
 
           # conversion for type [type = org.killbill.billing.entitlement.api.BlockingStateType]
-          @type = Java::org.killbill.billing.entitlement.api.BlockingStateType.value_of( @type.to_s ) unless @type.nil?
+          @type = Java::org.killbill.billing.entitlement.api.BlockingStateType.value_of("#{@type.to_s}") unless @type.nil?
 
           # conversion for effective_date [type = org.joda.time.DateTime]
           if !@effective_date.nil?

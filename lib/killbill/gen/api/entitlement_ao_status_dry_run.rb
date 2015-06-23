@@ -47,16 +47,16 @@ module Killbill
           @product_name = @product_name.to_s unless @product_name.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
+          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@billing_period.to_s}") unless @billing_period.nil?
 
           # conversion for price_list [type = java.lang.String]
           @price_list = @price_list.to_s unless @price_list.nil?
 
           # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
-          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of( @phase_type.to_s ) unless @phase_type.nil?
+          @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of("#{@phase_type.to_s}") unless @phase_type.nil?
 
           # conversion for reason [type = org.killbill.billing.entitlement.api.DryRunChangeReason]
-          @reason = Java::org.killbill.billing.entitlement.api.DryRunChangeReason.value_of( @reason.to_s ) unless @reason.nil?
+          @reason = Java::org.killbill.billing.entitlement.api.DryRunChangeReason.value_of("#{@reason.to_s}") unless @reason.nil?
           self
         end
 
