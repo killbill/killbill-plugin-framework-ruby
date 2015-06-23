@@ -71,7 +71,11 @@ module Killbill
           @gateway.send(m, *args, &block)
         rescue ::ActiveMerchant::ConnectionError => e
           # Need to unwrap it
-          handle_exception(e.triggering_exception, options)
+          until e.triggering_exception.nil?
+            e = e.triggering_exception
+            break unless e.is_a?(::ActiveMerchant::ConnectionError)
+          end
+          handle_exception(e, options)
         rescue => e
           handle_exception(e, options)
         end
