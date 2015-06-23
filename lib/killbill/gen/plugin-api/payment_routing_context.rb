@@ -47,10 +47,10 @@ module Killbill
           @user_name = @user_name.to_s unless @user_name.nil?
 
           # conversion for call_origin [type = org.killbill.billing.util.callcontext.CallOrigin]
-          @call_origin = Java::org.killbill.billing.util.callcontext.CallOrigin.value_of("#{@call_origin.to_s}") unless @call_origin.nil?
+          @call_origin = Java::org.killbill.billing.util.callcontext.CallOrigin.value_of( @call_origin.to_s ) unless @call_origin.nil?
 
           # conversion for user_type [type = org.killbill.billing.util.callcontext.UserType]
-          @user_type = Java::org.killbill.billing.util.callcontext.UserType.value_of("#{@user_type.to_s}") unless @user_type.nil?
+          @user_type = Java::org.killbill.billing.util.callcontext.UserType.value_of( @user_type.to_s ) unless @user_type.nil?
 
           # conversion for reason_code [type = java.lang.String]
           @reason_code = @reason_code.to_s unless @reason_code.nil?
@@ -92,7 +92,7 @@ module Killbill
           @transaction_external_key = @transaction_external_key.to_s unless @transaction_external_key.nil?
 
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
-          @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of("#{@transaction_type.to_s}") unless @transaction_type.nil?
+          @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of( @transaction_type.to_s ) unless @transaction_type.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           if @amount.nil?
@@ -102,7 +102,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
 
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
@@ -115,7 +115,7 @@ module Killbill
           end
 
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
-          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@processed_currency.to_s}") unless @processed_currency.nil?
+          @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @processed_currency.to_s ) unless @processed_currency.nil?
 
           # conversion for is_api_payment [type = boolean]
           @is_api_payment = @is_api_payment.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_api_payment)

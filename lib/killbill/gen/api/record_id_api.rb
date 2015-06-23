@@ -46,7 +46,7 @@ module Killbill
           objectId = java.util.UUID.fromString(objectId.to_s) unless objectId.nil?
 
           # conversion for objectType [type = org.killbill.billing.ObjectType]
-          objectType = Java::org.killbill.billing.ObjectType.value_of("#{objectType.to_s}") unless objectType.nil?
+          objectType = Java::org.killbill.billing.ObjectType.value_of( objectType.to_s ) unless objectType.nil?
 
           # conversion for tenantContext [type = org.killbill.billing.util.callcontext.TenantContext]
           tenantContext = tenantContext.to_java unless tenantContext.nil?

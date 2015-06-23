@@ -65,7 +65,7 @@ module Killbill
           @final_phase = @final_phase.to_java unless @final_phase.nil?
 
           # conversion for recurring_billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @recurring_billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of("#{@recurring_billing_period.to_s}") unless @recurring_billing_period.nil?
+          @recurring_billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @recurring_billing_period.to_s ) unless @recurring_billing_period.nil?
 
           # conversion for plans_allowed_in_bundle [type = int]
           @plans_allowed_in_bundle = @plans_allowed_in_bundle

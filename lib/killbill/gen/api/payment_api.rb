@@ -59,7 +59,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -108,7 +108,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -157,7 +157,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -200,7 +200,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -249,7 +249,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -298,7 +298,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -416,7 +416,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -459,7 +459,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -508,7 +508,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -557,7 +557,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -606,7 +606,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -640,7 +640,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{currency.to_s}") unless currency.nil?
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?

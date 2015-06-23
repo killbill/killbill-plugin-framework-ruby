@@ -51,7 +51,7 @@ module Killbill
           end
 
           # conversion for adjusted_currency [type = org.killbill.billing.catalog.api.Currency]
-          @adjusted_currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@adjusted_currency.to_s}") unless @adjusted_currency.nil?
+          @adjusted_currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @adjusted_currency.to_s ) unless @adjusted_currency.nil?
 
           # conversion for adjusted_payment_method_id [type = java.util.UUID]
           @adjusted_payment_method_id = java.util.UUID.fromString(@adjusted_payment_method_id.to_s) unless @adjusted_payment_method_id.nil?
