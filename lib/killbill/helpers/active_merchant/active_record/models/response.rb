@@ -115,8 +115,8 @@ module Killbill
 
             # See https://github.com/killbill/killbill-plugin-framework-ruby/issues/43
             # Note: status could also be :PENDING, but it would be handled only in the plugins which need it
-            if !error_details['kb_transaction_status'].blank?
-              status = error_details['kb_transaction_status'].to_sym
+            if !error_details['payment_plugin_status'].blank?
+              status = error_details['payment_plugin_status'].to_sym
             else
               # Note: (success && transaction.nil?) _could_ happen (see above), but it would be an issue on our side
               # (the payment did go through in the gateway).
