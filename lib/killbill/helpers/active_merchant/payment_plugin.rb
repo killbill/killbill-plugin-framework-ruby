@@ -406,7 +406,7 @@ module Killbill
           end
 
           # Filter before all gateways call
-          before_gateways(kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
+          before_gateways(kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options, context)
 
           # Dispatch to the gateways. In most cases (non split settlements), we only dispatch to a single gateway account
           gw_responses                  = []
@@ -424,14 +424,14 @@ module Killbill
             gateway = lookup_gateway(payment_processor_account_id, context.tenant_id)
 
             # Filter before each gateway call
-            before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
+            before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options, context)
 
             # Perform the operation in the gateway
             gw_response           = gateway_call_proc.call(gateway, linked_transaction, payment_source, amount_in_cents, options)
             response, transaction = save_response_and_transaction(gw_response, operation, kb_account_id, context.tenant_id, payment_processor_account_id, kb_payment_id, kb_payment_transaction_id, operation.upcase, amount_in_cents, currency)
 
             # Filter after each gateway call
-            after_gateway(response, transaction, gw_response)
+            after_gateway(response, transaction, gw_response, context)
 
             gw_responses << gw_response
             responses << response
@@ -439,7 +439,7 @@ module Killbill
           end
 
           # Filter after all gateways call
-          after_gateways(responses, transactions, gw_responses)
+          after_gateways(responses, transactions, gw_responses, context)
 
           # Merge data
           merge_transaction_info_plugins(payment_processor_account_ids, responses, transactions)
@@ -453,18 +453,22 @@ module Killbill
           kb_transaction
         end
 
-        def before_gateways(kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
+        # Default nil value for context only for backward compatibility (Kill Bill 0.14.0)
+        def before_gateways(kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options, context = nil)
         end
 
-        def after_gateways(response, transaction, gw_response)
+        # Default nil value for context only for backward compatibility (Kill Bill 0.14.0)
+        def after_gateways(response, transaction, gw_response, context = nil)
         end
 
-        def before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options)
+        # Default nil value for context only for backward compatibility (Kill Bill 0.14.0)
+        def before_gateway(gateway, kb_transaction, last_transaction, payment_source, amount_in_cents, currency, options, context = nil)
           # Can be used to implement idempotency for example: lookup the payment in the gateway
           # and pass options[:skip_gw] if the payment has already been through
         end
 
-        def after_gateway(response, transaction, gw_response)
+        # Default nil value for context only for backward compatibility (Kill Bill 0.14.0)
+        def after_gateway(response, transaction, gw_response, context = nil)
         end
 
         def to_cents(amount, currency)
