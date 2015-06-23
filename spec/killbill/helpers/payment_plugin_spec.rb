@@ -431,7 +431,7 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     # Specific ActiveMerchant errors handling
     # See https://github.com/Shopify/active_merchant/blob/2e7eebe38020db4d262b91778797910ede2f31be/lib/active_merchant/network_connection_retries.rb#L21-L34
 
-    it 'returns ABORT if the payment was not attempted' do
+    it 'returns CANCELED if the payment was not attempted' do
       {
           Errno::ECONNREFUSED => 'The remote server refused the connection',
           SocketError => 'The connection to the remote server could not be established',
@@ -443,7 +443,7 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
 
         # Verify the purchase call for the Kill Bill payment state machine and the get_payment_info call for the Janitor
         ptip = trigger_purchase
-        verify_purchase_status(ptip, :ABORT)
+        verify_purchase_status(ptip, :CANCELED)
 
         # Check debugging fields
         ptip.gateway_error.ends_with?(msg).should be_true

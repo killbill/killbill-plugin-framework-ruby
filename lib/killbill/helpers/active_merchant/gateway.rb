@@ -120,7 +120,7 @@ module Killbill
           if SAFE_CONNECTION_ERRORS.include?(e.class)
             # Easy case: we didn't attempt the payment
             @logger.warn("Connection error with the gateway: #{message}")
-            kb_transaction_status = :ABORT
+            kb_transaction_status = :CANCELED
           else
             # For anything else, tell Kill Bill we don't know. If the gateway supports retrieving a payment status,
             # the plugin should implement get_payment_info accordingly for the Janitor.
@@ -135,7 +135,7 @@ module Killbill
             end
 
             # Allow clients to force a PLUGIN_FAILURE instead of UNKNOWN (the default is a conservative behavior)
-            kb_transaction_status = Utils.normalized(options, :connection_errors_safe) ? :ABORT : :UNDEFINED
+            kb_transaction_status = Utils.normalized(options, :connection_errors_safe) ? :CANCELED : :UNDEFINED
           end
 
           response_message = { :exception_class => e.class.to_s, :exception_message => e.message, :kb_transaction_status => kb_transaction_status }.to_json
