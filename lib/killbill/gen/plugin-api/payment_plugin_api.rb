@@ -25,12 +25,13 @@
 #
 
 
+require 'killbill/gen/plugin-api/notification_plugin_api'
 module Killbill
   module Plugin
     module Api
 
       java_package 'org.killbill.billing.payment.plugin.api'
-      class PaymentPluginApi < JPlugin
+      class PaymentPluginApi < NotificationPluginApi
 
         include org.killbill.billing.payment.plugin.api.PaymentPluginApi
 

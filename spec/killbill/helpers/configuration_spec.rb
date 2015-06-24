@@ -19,6 +19,16 @@ describe Killbill::Plugin::ActiveMerchant do
     do_initialize_with_config_path!(nil)
   end
 
+  # See https://github.com/killbill/killbill-plugin-framework-ruby/issues/46
+  it 'handles gracefully mis-configurations' do
+    do_initialize_without_config(Proc.new { |config| config[:login] })
+
+    do_common_checks
+
+    gw = ::Killbill::Plugin::ActiveMerchant.gateways(call_context.tenant_id)
+    gw.should be_empty
+  end
+
   it 'should support multi-tenancy configurations' do
     do_initialize!(<<-eos)
   :login: admin
@@ -211,17 +221,21 @@ describe Killbill::Plugin::ActiveMerchant do
     end
   end
 
-  def do_initialize_with_config_path!(path = nil, gw_builder = Proc.new { |config| config })
+  def do_initialize_without_config(gw_builder = Proc.new { |config| config })
+    do_initialize_with_config_path!(nil, gw_builder, svcs_with_per_tenant_config(':nothing:'))
+  end
+
+  def do_initialize_with_config_path!(path = nil, gw_builder = Proc.new { |config| config }, per_tenant_config = svcs_with_per_tenant_config)
     ::Killbill::Plugin::ActiveMerchant.initialize!(gw_builder,
                                                    :test,
                                                    logger,
                                                    :KEY,
                                                    path,
-                                                   ::Killbill::Plugin::KillbillApi.new('test', svcs_with_per_tenant_config))
+                                                   ::Killbill::Plugin::KillbillApi.new('test', per_tenant_config))
   end
 
-  def svcs_with_per_tenant_config
-    per_tenant_config =<<-oes
+  def svcs_with_per_tenant_config(per_tenant_config = nil)
+    per_tenant_config ||=<<-oes
 :test:
   :login: admin2
   :password: password2

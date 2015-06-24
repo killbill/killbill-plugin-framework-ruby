@@ -49,7 +49,7 @@ module Killbill
           paymentTransaction = paymentTransaction.to_java unless paymentTransaction.nil?
 
           # conversion for transactionStatus [type = org.killbill.billing.payment.api.TransactionStatus]
-          transactionStatus = Java::org.killbill.billing.payment.api.TransactionStatus.value_of("#{transactionStatus.to_s}") unless transactionStatus.nil?
+          transactionStatus = Java::org.killbill.billing.payment.api.TransactionStatus.value_of( transactionStatus.to_s ) unless transactionStatus.nil?
 
           # conversion for lastSuccessPaymentState [type = java.lang.String]
           lastSuccessPaymentState = lastSuccessPaymentState.to_s unless lastSuccessPaymentState.nil?

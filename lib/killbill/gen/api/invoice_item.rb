@@ -56,7 +56,7 @@ module Killbill
           end
 
           # conversion for invoice_item_type [type = org.killbill.billing.invoice.api.InvoiceItemType]
-          @invoice_item_type = Java::org.killbill.billing.invoice.api.InvoiceItemType.value_of("#{@invoice_item_type.to_s}") unless @invoice_item_type.nil?
+          @invoice_item_type = Java::org.killbill.billing.invoice.api.InvoiceItemType.value_of( @invoice_item_type.to_s ) unless @invoice_item_type.nil?
 
           # conversion for invoice_id [type = java.util.UUID]
           @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
@@ -82,7 +82,7 @@ module Killbill
           end
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of("#{@currency.to_s}") unless @currency.nil?
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
 
           # conversion for description [type = java.lang.String]
           @description = @description.to_s unless @description.nil?

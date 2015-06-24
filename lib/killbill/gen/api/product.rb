@@ -65,7 +65,7 @@ module Killbill
           @included = tmp.toArray
 
           # conversion for category [type = org.killbill.billing.catalog.api.ProductCategory]
-          @category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of("#{@category.to_s}") unless @category.nil?
+          @category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @category.to_s ) unless @category.nil?
 
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = @catalog_name.to_s unless @catalog_name.nil?

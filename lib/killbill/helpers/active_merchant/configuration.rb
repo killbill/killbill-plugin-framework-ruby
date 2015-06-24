@@ -84,7 +84,12 @@ module Killbill
             end
             gateways_config[:default] = default_gateway if gateways_config[:default].nil?
           else
-            gateways_config[:default] = Gateway.wrap(@@gateway_builder, gateway_configs, @@logger)
+            # We assume the configuration should never be nil (if you really do have a use-case, just specify a dummy config)
+            if gateway_configs.nil?
+              @@logger.warn "Unable to configure gateway #{@@gateway_name}, invalid configuration: #{config}"
+            else
+              gateways_config[:default] = Gateway.wrap(@@gateway_builder, gateway_configs, @@logger)
+            end
           end
           gateways_config
         end
