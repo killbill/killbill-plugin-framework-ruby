@@ -1,8 +1,11 @@
-version = File.read(File.expand_path('../VERSION', __FILE__)).strip
+# coding: utf-8
 
 Gem::Specification.new do |s|
   s.name        = 'killbill'
-  s.version     = version
+
+  path = File.expand_path('lib/killbill/version.rb', File.dirname(__FILE__))
+  s.version = File.read(path).match( /.*VERSION\s*=\s*['"](.*)['"]/m )[1]
+
   s.summary     = 'Framework to write Kill Bill plugins in Ruby.'
   s.description = 'Base classes to write plugins.'
 

@@ -1,22 +1,21 @@
+# Add method snake_case to String as early as possible so all classes below can use it
+class String
+   def snake_case
+     return downcase if match(/\A[A-Z]+\z/)
+     gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
+     gsub(/([a-z])([A-Z])/, '\1_\2').
+     downcase
+   end
+
+   def to_class
+     self.split('::').inject(Kernel) do |mod, class_name|
+       mod.const_get(class_name)
+     end
+   end
+end
+
 begin
   require 'java'
-
-  # Add method snake_case to String as early as possible so all classes below can use it
-  class String
-     def snake_case
-       return downcase if match(/\A[A-Z]+\z/)
-       gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
-       gsub(/([a-z])([A-Z])/, '\1_\2').
-       downcase
-     end
-
-     def to_class
-       self.split('::').inject(Kernel) do |mod, class_name|
-         mod.const_get(class_name)
-       end
-     end
-  end
-
 
   #
   # The Killbill Java APIs imported into that jruby bridge
@@ -59,10 +58,14 @@ end
 
 require 'tzinfo'
 require 'bigdecimal'
-require 'killbill/gen/api/require_gen'
-require 'killbill/gen/plugin-api/require_gen'
-require 'killbill/notification'
-require 'killbill/payment'
-require 'killbill/payment_control'
-require 'killbill/invoice'
-require 'killbill/currency'
+
+module Killbill
+  require 'killbill/gen/api/require_gen'
+  require 'killbill/gen/plugin-api/require_gen'
+  require 'killbill/notification'
+  require 'killbill/payment'
+  require 'killbill/payment_control'
+  require 'killbill/invoice'
+  require 'killbill/currency'
+end
+KillBill = Killbill
