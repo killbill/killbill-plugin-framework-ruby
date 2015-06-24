@@ -25,22 +25,52 @@
 #
 
 
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/ext_bus_event'
 require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/invoice_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/on_failure_payment_routing_result'
-require 'killbill/gen/plugin-api/on_success_payment_routing_result'
-require 'killbill/gen/plugin-api/payment_routing_api_exception'
-require 'killbill/gen/plugin-api/payment_routing_context'
-require 'killbill/gen/plugin-api/payment_routing_plugin_api'
-require 'killbill/gen/plugin-api/prior_payment_routing_result'
-require 'killbill/gen/plugin-api/catalog_plugin_api'
-require 'killbill/gen/plugin-api/standalone_plugin_catalog'
-require 'killbill/gen/plugin-api/versioned_plugin_catalog'
-require 'killbill/gen/plugin-api/gateway_notification'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/payment_transaction_info_plugin'
+module Killbill
+  module Plugin
+    module Api
+
+      java_package 'org.killbill.billing.catalog.plugin.api'
+      class CatalogPluginApi < NotificationPluginApi
+
+        include org.killbill.billing.catalog.plugin.api.CatalogPluginApi
+
+        def initialize(real_class_name, services = {})
+          super(real_class_name, services)
+        end
+
+
+        java_signature 'Java::org.killbill.billing.catalog.plugin.api.VersionedPluginCatalog getVersionedPluginCatalog(Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_versioned_plugin_catalog(properties, context)
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = []
+          (properties.nil? ? [] : properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
+          begin
+            res = @delegate_plugin.get_versioned_plugin_catalog(properties, context)
+            # conversion for res [type = org.killbill.billing.catalog.plugin.api.VersionedPluginCatalog]
+            res = res.to_java unless res.nil?
+            return res
+          rescue Exception => e
+            message = "Failure in get_versioned_plugin_catalog: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_versioned_plugin_catalog failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+      end
+    end
+  end
+end
