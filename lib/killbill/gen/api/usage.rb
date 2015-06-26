@@ -53,31 +53,31 @@ module Killbill
           @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
 
           # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@limits || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Limit]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @limits = tmp.toArray
+          @limits = tmp.to_java Java::org.killbill.billing.catalog.api.Limit
 
           # conversion for tiers [type = org.killbill.billing.catalog.api.Tier[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@tiers || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Tier]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @tiers = tmp.toArray
+          @tiers = tmp.to_java Java::org.killbill.billing.catalog.api.Tier
 
           # conversion for blocks [type = org.killbill.billing.catalog.api.Block[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@blocks || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Block]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @blocks = tmp.toArray
+          @blocks = tmp.to_java Java::org.killbill.billing.catalog.api.Block
 
           # conversion for fixed_price [type = org.killbill.billing.catalog.api.InternationalPrice]
           @fixed_price = @fixed_price.to_java unless @fixed_price.nil?

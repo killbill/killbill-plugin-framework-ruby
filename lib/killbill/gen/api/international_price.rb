@@ -41,13 +41,13 @@ module Killbill
 
         def to_java()
           # conversion for prices [type = org.killbill.billing.catalog.api.Price[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@prices || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Price]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @prices = tmp.toArray
+          @prices = tmp.to_java Java::org.killbill.billing.catalog.api.Price
 
           # conversion for is_zero [type = boolean]
           @is_zero = @is_zero.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_zero)

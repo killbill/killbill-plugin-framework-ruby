@@ -41,22 +41,22 @@ module Killbill
 
         def to_java()
           # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@limits || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Limit]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @limits = tmp.toArray
+          @limits = tmp.to_java Java::org.killbill.billing.catalog.api.Limit
 
           # conversion for tiered_blocks [type = org.killbill.billing.catalog.api.TieredBlock[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@tiered_blocks || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.TieredBlock]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @tiered_blocks = tmp.toArray
+          @tiered_blocks = tmp.to_java Java::org.killbill.billing.catalog.api.TieredBlock
 
           # conversion for fixed_price [type = org.killbill.billing.catalog.api.InternationalPrice]
           @fixed_price = @fixed_price.to_java unless @fixed_price.nil?

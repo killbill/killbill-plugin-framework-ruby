@@ -47,13 +47,13 @@ module Killbill
           @recurring = @recurring.to_java unless @recurring.nil?
 
           # conversion for usages [type = org.killbill.billing.catalog.api.Usage[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@usages || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Usage]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @usages = tmp.toArray
+          @usages = tmp.to_java Java::org.killbill.billing.catalog.api.Usage
 
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?

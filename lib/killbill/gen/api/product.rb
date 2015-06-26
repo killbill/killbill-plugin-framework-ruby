@@ -47,22 +47,22 @@ module Killbill
           @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
           # conversion for available [type = org.killbill.billing.catalog.api.Product[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@available || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Product]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @available = tmp.toArray
+          @available = tmp.to_java Java::org.killbill.billing.catalog.api.Product
 
           # conversion for included [type = org.killbill.billing.catalog.api.Product[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@included || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Product]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @included = tmp.toArray
+          @included = tmp.to_java Java::org.killbill.billing.catalog.api.Product
 
           # conversion for category [type = org.killbill.billing.catalog.api.ProductCategory]
           @category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @category.to_s ) unless @category.nil?
@@ -71,13 +71,13 @@ module Killbill
           @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
 
           # conversion for limits [type = org.killbill.billing.catalog.api.Limit[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@limits || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Limit]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @limits = tmp.toArray
+          @limits = tmp.to_java Java::org.killbill.billing.catalog.api.Limit
           self
         end
 

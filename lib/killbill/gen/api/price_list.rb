@@ -47,13 +47,13 @@ module Killbill
           @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
           # conversion for plans [type = org.killbill.billing.catalog.api.Plan[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@plans || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Plan]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @plans = tmp.toArray
+          @plans = tmp.to_java Java::org.killbill.billing.catalog.api.Plan
           self
         end
 

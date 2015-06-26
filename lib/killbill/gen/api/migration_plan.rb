@@ -41,13 +41,13 @@ module Killbill
 
         def to_java()
           # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@initial_phases || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.PlanPhase]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @initial_phases = tmp.toArray
+          @initial_phases = tmp.to_java Java::org.killbill.billing.catalog.api.PlanPhase
 
           # conversion for product [type = org.killbill.billing.catalog.api.Product]
           @product = @product.to_java unless @product.nil?
@@ -71,13 +71,13 @@ module Killbill
           @plans_allowed_in_bundle = @plans_allowed_in_bundle
 
           # conversion for all_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@all_phases || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.PlanPhase]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @all_phases = tmp.toArray
+          @all_phases = tmp.to_java Java::org.killbill.billing.catalog.api.PlanPhase
 
           # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
           if !@effective_date_for_existing_subscriptons.nil?

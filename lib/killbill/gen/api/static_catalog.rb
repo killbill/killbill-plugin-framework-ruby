@@ -54,40 +54,40 @@ module Killbill
           end
 
           # conversion for current_supported_currencies [type = org.killbill.billing.catalog.api.Currency[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@current_supported_currencies || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Currency]
             m = Java::org.killbill.billing.catalog.api.Currency.value_of( m.to_s ) unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @current_supported_currencies = tmp.toArray
+          @current_supported_currencies = tmp.to_java Java::org.killbill.billing.catalog.api.Currency
 
           # conversion for current_products [type = org.killbill.billing.catalog.api.Product[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@current_products || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Product]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @current_products = tmp.toArray
+          @current_products = tmp.to_java Java::org.killbill.billing.catalog.api.Product
 
           # conversion for current_units [type = org.killbill.billing.catalog.api.Unit[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@current_units || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Unit]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @current_units = tmp.toArray
+          @current_units = tmp.to_java Java::org.killbill.billing.catalog.api.Unit
 
           # conversion for current_plans [type = org.killbill.billing.catalog.api.Plan[]]
-          tmp = java.util.ArrayList.new
+          tmp = []
           (@current_plans || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Plan]
             m = m.to_java unless m.nil?
-            tmp.add(m)
+            tmp << m
           end
-          @current_plans = tmp.toArray
+          @current_plans = tmp.to_java Java::org.killbill.billing.catalog.api.Plan
 
           # conversion for available_base_plan_listings [type = java.util.List]
           tmp = java.util.ArrayList.new
