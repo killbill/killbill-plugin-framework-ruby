@@ -176,16 +176,15 @@ module Killbill
 
             if kb_tenant_id.nil?
               query = t.where(search_where_clause(t, search_key))
-              .order(t[:id])
             else
               query = t.where(search_where_clause(t, search_key).and(t[:kb_tenant_id].eq(kb_tenant_id)))
-              .order(t[:id])
             end
 
             if offset.blank? and limit.blank?
               # true is for count distinct
               query.project(t[:id].count(true))
             else
+              query.order(t[:id])
               query.skip(offset) unless offset.blank?
               query.take(limit) unless limit.blank?
               query.project(t[Arel.star])
