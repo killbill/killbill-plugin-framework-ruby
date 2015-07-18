@@ -9,7 +9,7 @@
 #  :adapter: postgresql
 #  :database: 'killbill'
 # For MySQL
-#  :adapter: mysql
+#  :adapter: mariadb
 #  :username: 'killbill'
 #  :password: 'killbill'
 #  :database: 'killbill' # or set the URL :
