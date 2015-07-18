@@ -122,7 +122,7 @@ module Killbill
             @@glob_config = {}
           end
 
-          @@logger.log_level = Logger::DEBUG if (@@glob_config[:logger] || {})[:debug]
+          @@logger.level = Logger::DEBUG if (@@glob_config[:logger] || {})[:debug]
 
           @@glob_currency_conversions = @@glob_config[:currency_conversions]
 

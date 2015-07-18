@@ -8,6 +8,8 @@ describe Killbill::Plugin::KillbillLogger do
     logger.error "Argument #{@foo} mismatch."
     logger.info('initialize') { 'Initializing...' }
     logger.add(Logger::FATAL) { 'Fatal error!' }
+    logger.level = ::Logger::DEBUG
+    logger.log_level.should == ::Logger::DEBUG
     logger.close
   end
 

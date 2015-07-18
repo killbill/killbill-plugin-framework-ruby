@@ -30,6 +30,8 @@ module Killbill
         @logger.log(1, build_message(message, &block)) if error?
       end
 
+      alias_method :level=, :log_level=
+
       # Rack Error stream
       alias_method :puts, :warn
       alias_method :write, :warn
