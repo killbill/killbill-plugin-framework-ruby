@@ -45,14 +45,14 @@ module Killbill
 
           def self.from_kb_account_id(kb_account_id, kb_tenant_id)
             if kb_tenant_id.nil?
-              where("kb_account_id = #{@@quotes_cache[kb_account_id]} AND kb_tenant_id is NULL AND is_deleted = #{@@quotes_cache[false]}")
+              where("kb_account_id = #{@@quotes_cache[kb_account_id]} AND kb_tenant_id is NULL AND is_deleted = #{@@quotes_cache[false]}").order(:id)
             else
-              where("kb_account_id = #{@@quotes_cache[kb_account_id]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND is_deleted = #{@@quotes_cache[false]}")
+              where("kb_account_id = #{@@quotes_cache[kb_account_id]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND is_deleted = #{@@quotes_cache[false]}").order(:id)
             end
           end
 
           def self.from_kb_account_id_and_token(token, kb_account_id, kb_tenant_id)
-            from_kb_account_id(kb_account_id, kb_tenant_id).where("token = #{@@quotes_cache[token]}")
+            from_kb_account_id(kb_account_id, kb_tenant_id).where("token = #{@@quotes_cache[token]}").order(:id)
           end
 
           def self.from_kb_payment_method_id(kb_payment_method_id, kb_tenant_id)
