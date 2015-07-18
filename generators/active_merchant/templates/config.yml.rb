@@ -5,6 +5,9 @@
 # SQLite (development)
   :adapter: sqlite3
   :database: test.db
+# For PostgreSQL
+#  :adapter: postgresql
+#  :database: 'killbill'
 # For MySQL
 #  :adapter: mysql
 #  :username: 'killbill'

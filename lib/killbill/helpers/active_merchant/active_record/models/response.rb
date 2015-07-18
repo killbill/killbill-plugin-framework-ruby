@@ -238,6 +238,20 @@ module Killbill
             nil
           end
 
+          # authorization was the old name (reserved on PostgreSQL) - make sure we support both column names for backward compatibility
+
+          def authorization=(auth)
+            write_attribute(column_for_attribute('authorization').name, auth)
+          end
+
+          def authorization
+            read_attribute(column_for_attribute('authorization').name)
+          end
+
+          def column_for_attribute(name)
+            name == 'authorization' ? (super('authorisation') || super('authorization')) : super(name)
+          end
+
           private
 
           def create_plugin_property(key, value)

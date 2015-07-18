@@ -7,12 +7,13 @@ describe Killbill::<%= class_name %>::PaymentPlugin do
   include ::Killbill::Plugin::ActiveMerchant::RSpec
 
   before(:each) do
+    # Start the plugin early to configure ActiveRecord
+    @plugin = build_plugin(::Killbill::<%= class_name %>::PaymentPlugin, '<%= identifier %>')
+    @plugin.start_plugin
+
     ::Killbill::<%= class_name %>::<%= class_name %>PaymentMethod.delete_all
     ::Killbill::<%= class_name %>::<%= class_name %>Response.delete_all
     ::Killbill::<%= class_name %>::<%= class_name %>Transaction.delete_all
-
-    @plugin = build_plugin(::Killbill::<%= class_name %>::PaymentPlugin, '<%= identifier %>')
-    @plugin.start_plugin
 
     @call_context = build_call_context
 
