@@ -146,7 +146,7 @@ module Killbill
 
         def search_payments(search_key, offset = 0, limit = 100, properties, context)
           options = properties_to_hash(properties)
-          @response_model.search(search_key, context.tenant_id, offset, limit, :payment)
+          @response_model.search(search_key, context.tenant_id, offset, limit)
         end
 
         def add_payment_method(kb_account_id, kb_payment_method_id, payment_method_props, set_default, properties, context)
