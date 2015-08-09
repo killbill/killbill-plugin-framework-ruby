@@ -308,6 +308,17 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       source.first_name.should == 'John'
       source.last_name.should == 'Doe'
     end
+
+    it "should support search_payments" do
+      response = ::Killbill::Test::TestResponse.create(
+        :api_call => :purchase, :kb_payment_id => @kb_payment_id,
+        :kb_account_id => @kb_account_id, :kb_tenant_id => @call_context.tenant_id,
+        :success => true, :created_at => Time.now, :updated_at => Time.now
+      )
+      results = plugin.search_payments(@kb_payment_id, 0, 100, [], @call_context).iterator.to_a
+      results.count.should == 1
+      results.last.kb_payment_id.to_s.should == response.kb_payment_id
+    end
   end
 
   context 'with a dummy gateway' do
