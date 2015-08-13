@@ -65,6 +65,7 @@ module Killbill
   require 'killbill/notification'
   require 'killbill/payment'
   require 'killbill/payment_control'
+  require 'killbill/entitlement'
   require 'killbill/invoice'
   require 'killbill/currency'
   require 'killbill/catalog'
