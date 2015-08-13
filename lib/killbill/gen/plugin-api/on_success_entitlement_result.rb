@@ -25,29 +25,29 @@
 #
 
 
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/invoice_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/control_result'
-require 'killbill/gen/plugin-api/on_failure_payment_control_result'
-require 'killbill/gen/plugin-api/on_success_payment_control_result'
-require 'killbill/gen/plugin-api/payment_control_api_exception'
-require 'killbill/gen/plugin-api/payment_control_context'
-require 'killbill/gen/plugin-api/payment_control_plugin_api'
-require 'killbill/gen/plugin-api/prior_payment_control_result'
-require 'killbill/gen/plugin-api/catalog_plugin_api'
-require 'killbill/gen/plugin-api/standalone_plugin_catalog'
-require 'killbill/gen/plugin-api/versioned_plugin_catalog'
-require 'killbill/gen/plugin-api/entitlement_context'
-require 'killbill/gen/plugin-api/entitlement_plugin_api'
-require 'killbill/gen/plugin-api/entitlement_plugin_api_exception'
-require 'killbill/gen/plugin-api/on_failure_entitlement_result'
-require 'killbill/gen/plugin-api/on_success_entitlement_result'
-require 'killbill/gen/plugin-api/prior_entitlement_result'
-require 'killbill/gen/plugin-api/gateway_notification'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/payment_transaction_info_plugin'
+module Killbill
+  module Plugin
+    module Model
+
+      java_package 'org.killbill.billing.entitlement.plugin.api'
+      class OnSuccessEntitlementResult
+
+        include org.killbill.billing.entitlement.plugin.api.OnSuccessEntitlementResult
+
+        attr_accessor 
+
+        def initialize()
+        end
+
+        def to_java()
+        self
+      end
+
+      def to_ruby(j_obj)
+      self
+    end
+
+  end
+end
+end
+end
