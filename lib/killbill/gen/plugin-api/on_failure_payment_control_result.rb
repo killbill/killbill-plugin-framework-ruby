@@ -29,33 +29,17 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.routing.plugin.api'
-      class PriorPaymentRoutingResult
+      java_package 'org.killbill.billing.control.plugin.api'
+      class OnFailurePaymentControlResult
 
-        include org.killbill.billing.routing.plugin.api.PriorPaymentRoutingResult
+        include org.killbill.billing.control.plugin.api.OnFailurePaymentControlResult
 
-        attr_accessor :is_aborted, :adjusted_amount, :adjusted_currency, :adjusted_payment_method_id, :adjusted_plugin_properties
+        attr_accessor :adjusted_plugin_properties, :next_retry_date
 
         def initialize()
         end
 
         def to_java()
-          # conversion for is_aborted [type = boolean]
-          @is_aborted = @is_aborted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_aborted)
-
-          # conversion for adjusted_amount [type = java.math.BigDecimal]
-          if @adjusted_amount.nil?
-            @adjusted_amount = java.math.BigDecimal::ZERO
-          else
-            @adjusted_amount = java.math.BigDecimal.new(@adjusted_amount.to_s)
-          end
-
-          # conversion for adjusted_currency [type = org.killbill.billing.catalog.api.Currency]
-          @adjusted_currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @adjusted_currency.to_s ) unless @adjusted_currency.nil?
-
-          # conversion for adjusted_payment_method_id [type = java.util.UUID]
-          @adjusted_payment_method_id = java.util.UUID.fromString(@adjusted_payment_method_id.to_s) unless @adjusted_payment_method_id.nil?
-
           # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
           (@adjusted_plugin_properties || []).each do |m|
@@ -64,31 +48,16 @@ module Killbill
             tmp.add(m)
           end
           @adjusted_plugin_properties = tmp
+
+          # conversion for next_retry_date [type = org.joda.time.DateTime]
+          if !@next_retry_date.nil?
+            @next_retry_date =  (@next_retry_date.kind_of? Time) ? DateTime.parse(@next_retry_date.to_s) : @next_retry_date
+            @next_retry_date = Java::org.joda.time.DateTime.new(@next_retry_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for is_aborted [type = boolean]
-          @is_aborted = j_obj.is_aborted
-          if @is_aborted.nil?
-            @is_aborted = false
-          else
-            tmp_bool = (@is_aborted.java_kind_of? java.lang.Boolean) ? @is_aborted.boolean_value : @is_aborted
-            @is_aborted = tmp_bool ? true : false
-          end
-
-          # conversion for adjusted_amount [type = java.math.BigDecimal]
-          @adjusted_amount = j_obj.adjusted_amount
-          @adjusted_amount = @adjusted_amount.nil? ? 0 : BigDecimal.new(@adjusted_amount.to_s)
-
-          # conversion for adjusted_currency [type = org.killbill.billing.catalog.api.Currency]
-          @adjusted_currency = j_obj.adjusted_currency
-          @adjusted_currency = @adjusted_currency.to_s.to_sym unless @adjusted_currency.nil?
-
-          # conversion for adjusted_payment_method_id [type = java.util.UUID]
-          @adjusted_payment_method_id = j_obj.adjusted_payment_method_id
-          @adjusted_payment_method_id = @adjusted_payment_method_id.nil? ? nil : @adjusted_payment_method_id.to_s
-
           # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
           @adjusted_plugin_properties = j_obj.adjusted_plugin_properties
           tmp = []
@@ -98,6 +67,14 @@ module Killbill
             tmp << m
           end
           @adjusted_plugin_properties = tmp
+
+          # conversion for next_retry_date [type = org.joda.time.DateTime]
+          @next_retry_date = j_obj.next_retry_date
+          if !@next_retry_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@next_retry_date)
+            @next_retry_date = DateTime.iso8601(str)
+          end
           self
         end
 

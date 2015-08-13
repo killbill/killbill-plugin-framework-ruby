@@ -29,33 +29,38 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.routing.plugin.api'
-      class OnFailurePaymentRoutingResult
+      java_package 'org.killbill.billing.control.plugin.api'
+      class ControlResult
 
-        include org.killbill.billing.routing.plugin.api.OnFailurePaymentRoutingResult
+        include org.killbill.billing.control.plugin.api.ControlResult
 
-        attr_accessor :next_retry_date
+        attr_accessor :adjusted_plugin_properties
 
         def initialize()
         end
 
         def to_java()
-          # conversion for next_retry_date [type = org.joda.time.DateTime]
-          if !@next_retry_date.nil?
-            @next_retry_date =  (@next_retry_date.kind_of? Time) ? DateTime.parse(@next_retry_date.to_s) : @next_retry_date
-            @next_retry_date = Java::org.joda.time.DateTime.new(@next_retry_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (@adjusted_plugin_properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
           end
+          @adjusted_plugin_properties = tmp
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for next_retry_date [type = org.joda.time.DateTime]
-          @next_retry_date = j_obj.next_retry_date
-          if !@next_retry_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
-            str = fmt.print(@next_retry_date)
-            @next_retry_date = DateTime.iso8601(str)
+          # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
+          @adjusted_plugin_properties = j_obj.adjusted_plugin_properties
+          tmp = []
+          (@adjusted_plugin_properties.nil? ? [] : @adjusted_plugin_properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
           end
+          @adjusted_plugin_properties = tmp
           self
         end
 

@@ -29,25 +29,42 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.routing.plugin.api'
-      class OnSuccessPaymentRoutingResult
+      java_package 'org.killbill.billing.control.plugin.api'
+      class OnSuccessPaymentControlResult
 
-        include org.killbill.billing.routing.plugin.api.OnSuccessPaymentRoutingResult
+        include org.killbill.billing.control.plugin.api.OnSuccessPaymentControlResult
 
-        attr_accessor 
+        attr_accessor :adjusted_plugin_properties
 
         def initialize()
         end
 
         def to_java()
-        self
+          # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (@adjusted_plugin_properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @adjusted_plugin_properties = tmp
+          self
+        end
+
+        def to_ruby(j_obj)
+          # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
+          @adjusted_plugin_properties = j_obj.adjusted_plugin_properties
+          tmp = []
+          (@adjusted_plugin_properties.nil? ? [] : @adjusted_plugin_properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @adjusted_plugin_properties = tmp
+          self
+        end
+
       end
-
-      def to_ruby(j_obj)
-      self
     end
-
   end
-end
-end
 end

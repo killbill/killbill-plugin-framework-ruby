@@ -29,7 +29,7 @@ module Killbill
   module Plugin
     module Model
 
-      class PaymentRoutingApiException
+      class PaymentControlApiException
 
 
         attr_accessor 
@@ -38,7 +38,7 @@ module Killbill
         end
 
         def to_java()
-        Java::org.killbill.billing.routing.plugin.api.PaymentRoutingApiException.new()
+        Java::org.killbill.billing.control.plugin.api.PaymentControlApiException.new()
       end
 
       def to_ruby(j_obj)

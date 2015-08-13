@@ -39,8 +39,8 @@ module Killbill
         end
 
 
-        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement createBaseEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::java.lang.String, Java::java.util.List, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_base_entitlement(accountId, spec, externalKey, overrides, effectiveDate, context)
+        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement createBaseEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::java.lang.String, Java::java.util.List, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_base_entitlement(accountId, spec, externalKey, overrides, effectiveDate, properties, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -65,10 +65,19 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_base_entitlement(accountId, spec, externalKey, overrides, effectiveDate, context)
+            res = @real_java_api.create_base_entitlement(accountId, spec, externalKey, overrides, effectiveDate, properties, context)
             # conversion for res [type = org.killbill.billing.entitlement.api.Entitlement]
             res = Killbill::Plugin::Model::Entitlement.new.to_ruby(res) unless res.nil?
             return res
@@ -77,8 +86,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement addEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::java.util.List, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def add_entitlement(bundleId, spec, overrides, effectiveDate, context)
+        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement addEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::java.util.List, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def add_entitlement(bundleId, spec, overrides, effectiveDate, properties, context)
 
           # conversion for bundleId [type = java.util.UUID]
           bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
@@ -100,10 +109,19 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.add_entitlement(bundleId, spec, overrides, effectiveDate, context)
+            res = @real_java_api.add_entitlement(bundleId, spec, overrides, effectiveDate, properties, context)
             # conversion for res [type = org.killbill.billing.entitlement.api.Entitlement]
             res = Killbill::Plugin::Model::Entitlement.new.to_ruby(res) unless res.nil?
             return res
@@ -144,8 +162,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::void pause(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def pause(bundleId, effectiveDate, context)
+        java_signature 'Java::void pause(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def pause(bundleId, effectiveDate, properties, context)
 
           # conversion for bundleId [type = java.util.UUID]
           bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
@@ -155,13 +173,22 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
-          @real_java_api.pause(bundleId, effectiveDate, context)
+          @real_java_api.pause(bundleId, effectiveDate, properties, context)
         end
 
-        java_signature 'Java::void resume(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def resume(bundleId, effectiveDate, context)
+        java_signature 'Java::void resume(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def resume(bundleId, effectiveDate, properties, context)
 
           # conversion for bundleId [type = java.util.UUID]
           bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
@@ -171,9 +198,18 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
-          @real_java_api.resume(bundleId, effectiveDate, context)
+          @real_java_api.resume(bundleId, effectiveDate, properties, context)
         end
 
         java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement getEntitlementForId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
@@ -269,8 +305,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.UUID transferEntitlements(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def transfer_entitlements(sourceAccountId, destAccountId, externalKey, effectiveDate, context)
+        java_signature 'Java::java.util.UUID transferEntitlements(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def transfer_entitlements(sourceAccountId, destAccountId, externalKey, effectiveDate, properties, context)
 
           # conversion for sourceAccountId [type = java.util.UUID]
           sourceAccountId = java.util.UUID.fromString(sourceAccountId.to_s) unless sourceAccountId.nil?
@@ -286,10 +322,19 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.transfer_entitlements(sourceAccountId, destAccountId, externalKey, effectiveDate, context)
+            res = @real_java_api.transfer_entitlements(sourceAccountId, destAccountId, externalKey, effectiveDate, properties, context)
             # conversion for res [type = java.util.UUID]
             res = res.nil? ? nil : res.to_s
             return res
@@ -298,8 +343,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.UUID transferEntitlementsOverrideBillingPolicy(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.BillingActionPolicy, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def transfer_entitlements_override_billing_policy(sourceAccountId, destAccountId, externalKey, effectiveDate, billingPolicy, context)
+        java_signature 'Java::java.util.UUID transferEntitlementsOverrideBillingPolicy(Java::java.util.UUID, Java::java.util.UUID, Java::java.lang.String, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.BillingActionPolicy, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def transfer_entitlements_override_billing_policy(sourceAccountId, destAccountId, externalKey, effectiveDate, billingPolicy, properties, context)
 
           # conversion for sourceAccountId [type = java.util.UUID]
           sourceAccountId = java.util.UUID.fromString(sourceAccountId.to_s) unless sourceAccountId.nil?
@@ -318,10 +363,19 @@ module Killbill
           # conversion for billingPolicy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
           billingPolicy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of( billingPolicy.to_s ) unless billingPolicy.nil?
 
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.transfer_entitlements_override_billing_policy(sourceAccountId, destAccountId, externalKey, effectiveDate, billingPolicy, context)
+            res = @real_java_api.transfer_entitlements_override_billing_policy(sourceAccountId, destAccountId, externalKey, effectiveDate, billingPolicy, properties, context)
             # conversion for res [type = java.util.UUID]
             res = res.nil? ? nil : res.to_s
             return res

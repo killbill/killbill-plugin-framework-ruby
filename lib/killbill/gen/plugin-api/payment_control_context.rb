@@ -29,12 +29,12 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.routing.plugin.api'
-      class PaymentRoutingContext
+      java_package 'org.killbill.billing.control.plugin.api'
+      class PaymentControlContext
 
-        include org.killbill.billing.routing.plugin.api.PaymentRoutingContext
+        include org.killbill.billing.control.plugin.api.PaymentControlContext
 
-        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :account_id, :payment_id, :attempt_payment_id, :payment_external_key, :transaction_id, :transaction_external_key, :transaction_type, :amount, :currency, :payment_method_id, :processed_amount, :processed_currency, :is_api_payment, :plugin_properties
+        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :account_id, :payment_id, :attempt_payment_id, :payment_external_key, :transaction_id, :transaction_external_key, :payment_api_type, :transaction_type, :hpp_type, :amount, :currency, :payment_method_id, :processed_amount, :processed_currency, :is_api_payment
 
         def initialize()
         end
@@ -91,8 +91,14 @@ module Killbill
           # conversion for transaction_external_key [type = java.lang.String]
           @transaction_external_key = @transaction_external_key.to_s unless @transaction_external_key.nil?
 
+          # conversion for payment_api_type [type = org.killbill.billing.control.plugin.api.PaymentApiType]
+          @payment_api_type = Java::org.killbill.billing.control.plugin.api.PaymentApiType.value_of( @payment_api_type.to_s ) unless @payment_api_type.nil?
+
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
           @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of( @transaction_type.to_s ) unless @transaction_type.nil?
+
+          # conversion for hpp_type [type = org.killbill.billing.control.plugin.api.HPPType]
+          @hpp_type = Java::org.killbill.billing.control.plugin.api.HPPType.value_of( @hpp_type.to_s ) unless @hpp_type.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           if @amount.nil?
@@ -119,15 +125,6 @@ module Killbill
 
           # conversion for is_api_payment [type = boolean]
           @is_api_payment = @is_api_payment.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_api_payment)
-
-          # conversion for plugin_properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (@plugin_properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @plugin_properties = tmp
           self
         end
 
@@ -195,9 +192,17 @@ module Killbill
           # conversion for transaction_external_key [type = java.lang.String]
           @transaction_external_key = j_obj.transaction_external_key
 
+          # conversion for payment_api_type [type = org.killbill.billing.control.plugin.api.PaymentApiType]
+          @payment_api_type = j_obj.payment_api_type
+          @payment_api_type = @payment_api_type.to_s.to_sym unless @payment_api_type.nil?
+
           # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
           @transaction_type = j_obj.transaction_type
           @transaction_type = @transaction_type.to_s.to_sym unless @transaction_type.nil?
+
+          # conversion for hpp_type [type = org.killbill.billing.control.plugin.api.HPPType]
+          @hpp_type = j_obj.hpp_type
+          @hpp_type = @hpp_type.to_s.to_sym unless @hpp_type.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
@@ -227,16 +232,6 @@ module Killbill
             tmp_bool = (@is_api_payment.java_kind_of? java.lang.Boolean) ? @is_api_payment.boolean_value : @is_api_payment
             @is_api_payment = tmp_bool ? true : false
           end
-
-          # conversion for plugin_properties [type = java.lang.Iterable]
-          @plugin_properties = j_obj.plugin_properties
-          tmp = []
-          (@plugin_properties.nil? ? [] : @plugin_properties.iterator).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @plugin_properties = tmp
           self
         end
 

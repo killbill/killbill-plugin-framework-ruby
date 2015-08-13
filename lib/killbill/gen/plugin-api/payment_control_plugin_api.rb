@@ -30,21 +30,21 @@ module Killbill
   module Plugin
     module Api
 
-      java_package 'org.killbill.billing.routing.plugin.api'
-      class PaymentRoutingPluginApi < NotificationPluginApi
+      java_package 'org.killbill.billing.control.plugin.api'
+      class PaymentControlPluginApi < NotificationPluginApi
 
-        include org.killbill.billing.routing.plugin.api.PaymentRoutingPluginApi
+        include org.killbill.billing.control.plugin.api.PaymentControlPluginApi
 
         def initialize(real_class_name, services = {})
           super(real_class_name, services)
         end
 
 
-        java_signature 'Java::org.killbill.billing.routing.plugin.api.PriorPaymentRoutingResult priorCall(Java::org.killbill.billing.routing.plugin.api.PaymentRoutingContext, Java::java.lang.Iterable)'
+        java_signature 'Java::org.killbill.billing.control.plugin.api.PriorPaymentControlResult priorCall(Java::org.killbill.billing.control.plugin.api.PaymentControlContext, Java::java.lang.Iterable)'
         def prior_call(context, properties)
 
-          # conversion for context [type = org.killbill.billing.routing.plugin.api.PaymentRoutingContext]
-          context = Killbill::Plugin::Model::PaymentRoutingContext.new.to_ruby(context) unless context.nil?
+          # conversion for context [type = org.killbill.billing.control.plugin.api.PaymentControlContext]
+          context = Killbill::Plugin::Model::PaymentControlContext.new.to_ruby(context) unless context.nil?
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = []
@@ -56,7 +56,7 @@ module Killbill
           properties = tmp
           begin
             res = @delegate_plugin.prior_call(context, properties)
-            # conversion for res [type = org.killbill.billing.routing.plugin.api.PriorPaymentRoutingResult]
+            # conversion for res [type = org.killbill.billing.control.plugin.api.PriorPaymentControlResult]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e
@@ -71,11 +71,11 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.routing.plugin.api.OnSuccessPaymentRoutingResult onSuccessCall(Java::org.killbill.billing.routing.plugin.api.PaymentRoutingContext, Java::java.lang.Iterable)'
+        java_signature 'Java::org.killbill.billing.control.plugin.api.OnSuccessPaymentControlResult onSuccessCall(Java::org.killbill.billing.control.plugin.api.PaymentControlContext, Java::java.lang.Iterable)'
         def on_success_call(context, properties)
 
-          # conversion for context [type = org.killbill.billing.routing.plugin.api.PaymentRoutingContext]
-          context = Killbill::Plugin::Model::PaymentRoutingContext.new.to_ruby(context) unless context.nil?
+          # conversion for context [type = org.killbill.billing.control.plugin.api.PaymentControlContext]
+          context = Killbill::Plugin::Model::PaymentControlContext.new.to_ruby(context) unless context.nil?
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = []
@@ -87,7 +87,7 @@ module Killbill
           properties = tmp
           begin
             res = @delegate_plugin.on_success_call(context, properties)
-            # conversion for res [type = org.killbill.billing.routing.plugin.api.OnSuccessPaymentRoutingResult]
+            # conversion for res [type = org.killbill.billing.control.plugin.api.OnSuccessPaymentControlResult]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e
@@ -102,11 +102,11 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.routing.plugin.api.OnFailurePaymentRoutingResult onFailureCall(Java::org.killbill.billing.routing.plugin.api.PaymentRoutingContext, Java::java.lang.Iterable)'
+        java_signature 'Java::org.killbill.billing.control.plugin.api.OnFailurePaymentControlResult onFailureCall(Java::org.killbill.billing.control.plugin.api.PaymentControlContext, Java::java.lang.Iterable)'
         def on_failure_call(context, properties)
 
-          # conversion for context [type = org.killbill.billing.routing.plugin.api.PaymentRoutingContext]
-          context = Killbill::Plugin::Model::PaymentRoutingContext.new.to_ruby(context) unless context.nil?
+          # conversion for context [type = org.killbill.billing.control.plugin.api.PaymentControlContext]
+          context = Killbill::Plugin::Model::PaymentControlContext.new.to_ruby(context) unless context.nil?
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = []
@@ -118,7 +118,7 @@ module Killbill
           properties = tmp
           begin
             res = @delegate_plugin.on_failure_call(context, properties)
-            # conversion for res [type = org.killbill.billing.routing.plugin.api.OnFailurePaymentRoutingResult]
+            # conversion for res [type = org.killbill.billing.control.plugin.api.OnFailurePaymentControlResult]
             res = res.to_java unless res.nil?
             return res
           rescue Exception => e
