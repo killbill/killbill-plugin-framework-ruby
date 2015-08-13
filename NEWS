@@ -1,3 +1,7 @@
+5.0.0
+    Add entitlement plugin api
+    Rename payment routing plugin api to payment control plugin api
+
 4.0.0
     Initial release for Kill Bill 0.14.x
 
