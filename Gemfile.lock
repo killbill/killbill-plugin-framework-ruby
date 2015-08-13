@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    killbill (5.0.0)
+    killbill (5.1.0)
       rack (>= 1.5.2)
       sinatra (~> 1.3.4)
       typhoeus (~> 0.6.9)
@@ -50,7 +50,7 @@ GEM
     erubis (2.7.0)
     ethon (0.7.4)
       ffi (>= 1.3.0)
-    ffi (1.9.9-java)
+    ffi (1.9.10-java)
     i18n (0.7.0)
     jbundler (0.4.3)
       maven-tools (~> 0.32.1)

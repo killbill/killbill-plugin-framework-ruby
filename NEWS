@@ -1,3 +1,6 @@
+5.1.0
+    Fix missing require file
+
 5.0.0
     Add entitlement plugin api
     Rename payment routing plugin api to payment control plugin api
