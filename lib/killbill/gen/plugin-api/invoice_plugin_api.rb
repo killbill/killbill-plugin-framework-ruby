@@ -40,11 +40,19 @@ module Killbill
         end
 
 
-        java_signature 'Java::java.util.List getAdditionalInvoiceItems(Java::org.killbill.billing.invoice.api.Invoice, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def get_additional_invoice_items(invoice, properties, context)
+        java_signature 'Java::java.util.List getAdditionalInvoiceItems(Java::org.killbill.billing.invoice.api.Invoice, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def get_additional_invoice_items(invoice, dryRun, properties, context)
 
           # conversion for invoice [type = org.killbill.billing.invoice.api.Invoice]
           invoice = Killbill::Plugin::Model::Invoice.new.to_ruby(invoice) unless invoice.nil?
+
+          # conversion for dryRun [type = boolean]
+          if dryRun.nil?
+            dryRun = false
+          else
+            tmp_bool = (dryRun.java_kind_of? java.lang.Boolean) ? dryRun.boolean_value : dryRun
+            dryRun = tmp_bool ? true : false
+          end
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = []
@@ -58,7 +66,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = Killbill::Plugin::Model::CallContext.new.to_ruby(context) unless context.nil?
           begin
-            res = @delegate_plugin.get_additional_invoice_items(invoice, properties, context)
+            res = @delegate_plugin.get_additional_invoice_items(invoice, dryRun, properties, context)
             # conversion for res [type = java.util.List]
             tmp = java.util.ArrayList.new
             (res || []).each do |m|

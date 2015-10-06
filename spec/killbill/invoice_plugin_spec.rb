@@ -7,7 +7,7 @@ describe Killbill::Plugin::Invoice do
 
   it 'should not raise exceptions by default' do
     plugin = DummyInvoicePlugin.new
-    plugin.get_additional_invoice_items(nil, nil, nil).size.should == 0
+    plugin.get_additional_invoice_items(nil, false, nil, nil).size.should == 0
   end
 
   it 'should be able to build items' do

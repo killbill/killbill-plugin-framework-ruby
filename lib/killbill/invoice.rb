@@ -5,7 +5,7 @@ module Killbill
   module Plugin
     class Invoice < Notification
 
-      def get_additional_invoice_items(invoice, properties, context)
+      def get_additional_invoice_items(invoice, dry_run, properties, context)
         []
       end
 

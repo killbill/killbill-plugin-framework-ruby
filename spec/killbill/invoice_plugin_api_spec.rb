@@ -10,7 +10,7 @@ describe Killbill::Plugin::Api::InvoicePluginApi do
   it 'should add items' do
     invoice = create_invoice
 
-    items = @invoicePluginApi.get_additional_invoice_items(invoice, java.util.ArrayList.new, nil)
+    items = @invoicePluginApi.get_additional_invoice_items(invoice, java.lang.Boolean::FALSE, java.util.ArrayList.new, nil)
     items.size.should == 2
 
     items.get(0).invoice_id.should == invoice.id
