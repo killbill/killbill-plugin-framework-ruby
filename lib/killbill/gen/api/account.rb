@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.Account
 
-        attr_accessor :id, :created_date, :updated_date, :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
+        attr_accessor :id, :created_date, :updated_date, :external_key, :currency, :time_zone, :name, :first_name_length, :email, :bill_cycle_day_local, :payment_method_id, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
 
         def initialize()
         end
@@ -58,6 +58,14 @@ module Killbill
           # conversion for external_key [type = java.lang.String]
           @external_key = @external_key.to_s unless @external_key.nil?
 
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
+
+          # conversion for time_zone [type = org.joda.time.DateTimeZone]
+          if !@time_zone.nil?
+            @time_zone = Java::org.joda.time.DateTimeZone.forID((@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s))
+          end
+
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
 
@@ -70,16 +78,8 @@ module Killbill
           # conversion for bill_cycle_day_local [type = java.lang.Integer]
           @bill_cycle_day_local = @bill_cycle_day_local
 
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
-
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
-
-          # conversion for time_zone [type = org.joda.time.DateTimeZone]
-          if !@time_zone.nil?
-            @time_zone = Java::org.joda.time.DateTimeZone.forID((@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s))
-          end
 
           # conversion for locale [type = java.lang.String]
           @locale = @locale.to_s unless @locale.nil?
@@ -140,6 +140,16 @@ module Killbill
           # conversion for external_key [type = java.lang.String]
           @external_key = j_obj.external_key
 
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = j_obj.currency
+          @currency = @currency.to_s.to_sym unless @currency.nil?
+
+          # conversion for time_zone [type = org.joda.time.DateTimeZone]
+          @time_zone = j_obj.time_zone
+          if !@time_zone.nil?
+            @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
+          end
+
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
 
@@ -152,19 +162,9 @@ module Killbill
           # conversion for bill_cycle_day_local [type = java.lang.Integer]
           @bill_cycle_day_local = j_obj.bill_cycle_day_local
 
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          @currency = j_obj.currency
-          @currency = @currency.to_s.to_sym unless @currency.nil?
-
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = j_obj.payment_method_id
           @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
-
-          # conversion for time_zone [type = org.joda.time.DateTimeZone]
-          @time_zone = j_obj.time_zone
-          if !@time_zone.nil?
-            @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
-          end
 
           # conversion for locale [type = java.lang.String]
           @locale = j_obj.locale

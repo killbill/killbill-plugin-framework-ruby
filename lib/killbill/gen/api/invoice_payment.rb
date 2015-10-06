@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.invoice.api.InvoicePayment
 
-        attr_accessor :id, :created_date, :updated_date, :payment_id, :type, :invoice_id, :payment_date, :amount, :currency, :linked_invoice_payment_id, :payment_cookie_id, :processed_currency
+        attr_accessor :id, :created_date, :updated_date, :payment_id, :type, :invoice_id, :payment_date, :amount, :currency, :linked_invoice_payment_id, :payment_cookie_id, :processed_currency, :is_success
 
         def initialize()
         end
@@ -88,6 +88,9 @@ module Killbill
 
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
           @processed_currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @processed_currency.to_s ) unless @processed_currency.nil?
+
+          # conversion for is_success [type = java.lang.Boolean]
+          @is_success = @is_success.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_success)
           self
         end
 
@@ -150,6 +153,15 @@ module Killbill
           # conversion for processed_currency [type = org.killbill.billing.catalog.api.Currency]
           @processed_currency = j_obj.processed_currency
           @processed_currency = @processed_currency.to_s.to_sym unless @processed_currency.nil?
+
+          # conversion for is_success [type = java.lang.Boolean]
+          @is_success = j_obj.is_success
+          if @is_success.nil?
+            @is_success = false
+          else
+            tmp_bool = (@is_success.java_kind_of? java.lang.Boolean) ? @is_success.boolean_value : @is_success
+            @is_success = tmp_bool ? true : false
+          end
           self
         end
 

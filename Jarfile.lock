@@ -1,4 +1,4 @@
-org.kill-bill.billing:killbill-api:jar:0.20
+org.kill-bill.billing:killbill-api:jar:0.23
 com.fasterxml.jackson.core:jackson-annotations:jar:2.4.3
 joda-time:joda-time:jar:2.3
 org.kill-bill.billing.plugin:killbill-plugin-api-currency:jar:0.15

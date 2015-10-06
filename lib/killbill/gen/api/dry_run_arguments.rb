@@ -34,12 +34,15 @@ module Killbill
 
         include org.killbill.billing.invoice.api.DryRunArguments
 
-        attr_accessor :plan_phase_specifier, :action, :subscription_id, :effective_date, :bundle_id, :billing_action_policy, :plan_phase_priceoverrides
+        attr_accessor :dry_run_type, :plan_phase_specifier, :action, :subscription_id, :effective_date, :bundle_id, :billing_action_policy, :plan_phase_price_overrides
 
         def initialize()
         end
 
         def to_java()
+          # conversion for dry_run_type [type = org.killbill.billing.invoice.api.DryRunType]
+          @dry_run_type = Java::org.killbill.billing.invoice.api.DryRunType.value_of( @dry_run_type.to_s ) unless @dry_run_type.nil?
+
           # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
           @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
 
@@ -61,18 +64,22 @@ module Killbill
           # conversion for billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
           @billing_action_policy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of( @billing_action_policy.to_s ) unless @billing_action_policy.nil?
 
-          # conversion for plan_phase_priceoverrides [type = java.util.List]
+          # conversion for plan_phase_price_overrides [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (@plan_phase_priceoverrides || []).each do |m|
+          (@plan_phase_price_overrides || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @plan_phase_priceoverrides = tmp
+          @plan_phase_price_overrides = tmp
           self
         end
 
         def to_ruby(j_obj)
+          # conversion for dry_run_type [type = org.killbill.billing.invoice.api.DryRunType]
+          @dry_run_type = j_obj.dry_run_type
+          @dry_run_type = @dry_run_type.to_s.to_sym unless @dry_run_type.nil?
+
           # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
           @plan_phase_specifier = j_obj.plan_phase_specifier
           @plan_phase_specifier = Killbill::Plugin::Model::PlanPhaseSpecifier.new.to_ruby(@plan_phase_specifier) unless @plan_phase_specifier.nil?
@@ -101,15 +108,15 @@ module Killbill
           @billing_action_policy = j_obj.billing_action_policy
           @billing_action_policy = @billing_action_policy.to_s.to_sym unless @billing_action_policy.nil?
 
-          # conversion for plan_phase_priceoverrides [type = java.util.List]
-          @plan_phase_priceoverrides = j_obj.plan_phase_priceoverrides
+          # conversion for plan_phase_price_overrides [type = java.util.List]
+          @plan_phase_price_overrides = j_obj.plan_phase_price_overrides
           tmp = []
-          (@plan_phase_priceoverrides || []).each do |m|
+          (@plan_phase_price_overrides || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
             m = Killbill::Plugin::Model::PlanPhasePriceOverride.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @plan_phase_priceoverrides = tmp
+          @plan_phase_price_overrides = tmp
           self
         end
 
