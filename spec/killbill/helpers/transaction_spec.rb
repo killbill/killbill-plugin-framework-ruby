@@ -2,8 +2,30 @@ require 'spec_helper'
 
 describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Transaction do
 
-  before :all do
+  before :each do
     ::Killbill::Test::TestTransaction.delete_all
+  end
+
+  # https://github.com/killbill/killbill-plugin-framework-ruby/issues/51
+  it 'always finds a transaction for refund' do
+    api_call        = 'for debugging only'
+    amount_in_cents = 1242
+    currency        = :USD
+    kb_account_id   = SecureRandom.uuid
+    kb_tenant_id    = SecureRandom.uuid
+    kb_payment_id   = SecureRandom.uuid
+
+    auth_tx = create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :AUTHORIZE, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
+
+    create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :CAPTURE, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
+
+    create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :REFUND, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
+
+    create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :REFUND, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
   end
 
   it 'should store and retrieve transactions correctly' do

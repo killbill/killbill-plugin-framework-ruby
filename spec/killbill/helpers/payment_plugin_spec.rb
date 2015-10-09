@@ -114,6 +114,33 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       plugin.get_payment_methods(@kb_account_id, true, @properties, @call_context).size.should == 0
     end
 
+    # https://github.com/killbill/killbill-plugin-framework-ruby/issues/51
+    it 'supports multiple refunds regardless of the amount against auth' do
+      ptip = trigger_auth(@properties)
+      verify_auth_status(ptip, :PROCESSED)
+
+      ptip = trigger_capture(@properties)
+      verify_capture_status(ptip, :PROCESSED)
+
+      ptip = trigger_refund(@properties)
+      verify_refund_status(ptip, :PROCESSED)
+
+      ptip = trigger_refund(@properties)
+      verify_refund_status(ptip, :PROCESSED)
+    end
+
+    # https://github.com/killbill/killbill-plugin-framework-ruby/issues/51
+    it 'supports multiple refunds regardless of the amount against purchase' do
+      ptip = trigger_purchase(@properties)
+      verify_purchase_status(ptip, :PROCESSED)
+
+      ptip = trigger_refund(@properties)
+      verify_refund_status(ptip, :PROCESSED)
+
+      ptip = trigger_refund(@properties)
+      verify_refund_status(ptip, :PROCESSED)
+    end
+
     it 'should support different payment_processor_account_ids' do
       plugin.get_payment_methods(@kb_account_id, true, @properties, @call_context).size.should == 0
 
@@ -485,13 +512,46 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
 
   private
 
+  def add_payment_method_if_needed(pm_properties = [])
+    plugin.get_payment_method_detail(@kb_account_id, @kb_payment_method_id, pm_properties, @call_context) rescue plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, pm_properties, @call_context)
+  end
+
   def trigger_purchase(purchase_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
-    plugin.get_payment_method_detail(@kb_account_id, @kb_payment_method_id, [], @call_context) rescue plugin.add_payment_method(@kb_account_id, @kb_payment_method_id, @payment_method_props, true, [], @call_context)
+    add_payment_method_if_needed(purchase_properties)
     plugin.purchase_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, purchase_properties, @call_context)
   end
 
+  def trigger_auth(auth_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
+    add_payment_method_if_needed(auth_properties)
+    plugin.authorize_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, auth_properties, @call_context)
+  end
+
+  def trigger_capture(capture_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
+    plugin.capture_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, capture_properties, @call_context)
+  end
+
+  def trigger_refund(refund_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
+    plugin.refund_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, refund_properties, @call_context)
+  end
+
+  def verify_transaction_status(t_info_plugin, status, transaction_type)
+    verify_transaction_info_plugin(t_info_plugin, t_info_plugin.kb_transaction_payment_id, transaction_type, nil, 'default', status)
+  end
+
   def verify_purchase_status(t_info_plugin, status)
-    verify_transaction_info_plugin(t_info_plugin, t_info_plugin.kb_transaction_payment_id, :PURCHASE, nil, 'default', status)
+    verify_transaction_status(t_info_plugin, status, :PURCHASE)
+  end
+
+  def verify_auth_status(t_info_plugin, status)
+    verify_transaction_status(t_info_plugin, status, :AUTHORIZE)
+  end
+
+  def verify_capture_status(t_info_plugin, status)
+    verify_transaction_status(t_info_plugin, status, :CAPTURE)
+  end
+
+  def verify_refund_status(t_info_plugin, status)
+    verify_transaction_status(t_info_plugin, status, :REFUND)
   end
 
   def verify_transaction_info_plugin(t_info_plugin, kb_transaction_id, type, transaction_nb, payment_processor_account_id='default', status=:PROCESSED)

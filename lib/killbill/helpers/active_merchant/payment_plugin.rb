@@ -129,7 +129,8 @@ module Killbill
 
           linked_transaction_proc = Proc.new do |amount_in_cents, options|
             linked_transaction_type = find_value_from_properties(properties, :linked_transaction_type)
-            transaction             = @transaction_model.find_candidate_transaction_for_refund(kb_payment_id, context.tenant_id, amount_in_cents, linked_transaction_type)
+            transaction             = @transaction_model.find_candidate_transaction_for_refund(kb_payment_id, context.tenant_id, linked_transaction_type)
+            # This should never happen
             raise "Unable to retrieve transaction to refund for operation=refund, kb_payment_id=#{kb_payment_id}, kb_payment_transaction_id=#{kb_payment_transaction_id}, kb_payment_method_id=#{kb_payment_method_id}" if transaction.nil?
             transaction
           end

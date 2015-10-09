@@ -43,36 +43,25 @@ module Killbill
               transaction_from_kb_payment_transaction_id(nil, kb_payment_transaction_id, kb_tenant_id, :single)
             end
 
-            def find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, amount_in_cents, transaction_type = nil)
+            def find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, transaction_type = nil)
               if transaction_type.nil?
-                begin
-                  do_find_candidate_transaction_for_refund(:authorize, kb_payment_id, kb_tenant_id, amount_in_cents)
-                rescue
-                  do_find_candidate_transaction_for_refund(:purchase, kb_payment_id, kb_tenant_id, amount_in_cents)
-                end
+                find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, :AUTHORIZE) || find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, :PURCHASE)
               else
-                do_find_candidate_transaction_for_refund(transaction_type, kb_payment_id, kb_tenant_id, amount_in_cents)
+                do_find_candidate_transaction_for_refund(transaction_type, kb_payment_id, kb_tenant_id)
               end
             end
 
             private
 
-            def do_find_candidate_transaction_for_refund(api_call, kb_payment_id, kb_tenant_id, amount_in_cents)
-              # Find one successful charge which amount is at least the amount we are trying to refund
+            # Note: this does not check any amount, as the behavior is gateway specific (some allow to refund more than what was captured):
+            # we just want to find the reference transaction to pass the id to the gateway
+            def do_find_candidate_transaction_for_refund(transaction_type, kb_payment_id, kb_tenant_id)
+              # Assume the last one was successful
               if kb_tenant_id.nil?
-                transactions = where("amount_in_cents >= #{@@quotes_cache[amount_in_cents]} AND api_call = #{@@quotes_cache[api_call]} AND kb_tenant_id is NULL AND kb_payment_id = #{@@quotes_cache[kb_payment_id]}").order(:created_at)
+                transactions = where("transaction_type = #{@@quotes_cache[transaction_type]} AND kb_tenant_id is NULL AND kb_payment_id = #{@@quotes_cache[kb_payment_id]}").order(:created_at => :desc)
               else
-                transactions = where("amount_in_cents >= #{@@quotes_cache[amount_in_cents]} AND api_call = #{@@quotes_cache[api_call]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND kb_payment_id = #{@@quotes_cache[kb_payment_id]}").order(:created_at)
+                transactions = where("transaction_type = #{@@quotes_cache[transaction_type]} AND kb_tenant_id = #{@@quotes_cache[kb_tenant_id]} AND kb_payment_id = #{@@quotes_cache[kb_payment_id]}").order(:created_at => :desc)
               end
-              raise "Unable to find transaction for payment #{kb_payment_id} and api_call #{api_call}" if transactions.size == 0
-
-              # We have candidates, but we now need to make sure we didn't refund more than for the specified amount
-              amount_refunded_in_cents = where("api_call = #{@@quotes_cache['refund']} and kb_payment_id = #{@@quotes_cache[kb_payment_id]}").sum('amount_in_cents')
-
-              amount_left_to_refund_in_cents = -amount_refunded_in_cents
-              transactions.map { |transaction| amount_left_to_refund_in_cents += transaction.amount_in_cents }
-              raise "Amount #{amount_in_cents} too large to refund for payment #{kb_payment_id}" if amount_left_to_refund_in_cents < amount_in_cents
-
               transactions.first
             end
 
