@@ -1,4 +1,4 @@
-jar 'org.kill-bill.billing:killbill-api', '0.23'
+jar 'org.kill-bill.billing:killbill-api', '0.26'
 jar 'org.kill-bill.billing.plugin:killbill-plugin-api-currency', '0.16'
 jar 'org.kill-bill.billing.plugin:killbill-plugin-api-invoice', '0.16'
 jar 'org.kill-bill.billing.plugin:killbill-plugin-api-notification', '0.16'
