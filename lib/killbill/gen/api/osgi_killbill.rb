@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.osgi.api.OSGIKillbill
 
-        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api, :security_api
+        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api, :security_api, :plugins_info_api, :killbill_nodes_api
 
         def initialize()
         end
@@ -90,6 +90,12 @@ module Killbill
 
           # conversion for security_api [type = org.killbill.billing.security.api.SecurityApi]
           @security_api = @security_api.to_java unless @security_api.nil?
+
+          # conversion for plugins_info_api [type = org.killbill.billing.osgi.api.PluginsInfoApi]
+          @plugins_info_api = @plugins_info_api.to_java unless @plugins_info_api.nil?
+
+          # conversion for killbill_nodes_api [type = org.killbill.billing.util.nodes.KillbillNodesApi]
+          @killbill_nodes_api = @killbill_nodes_api.to_java unless @killbill_nodes_api.nil?
           self
         end
 
@@ -161,6 +167,14 @@ module Killbill
           # conversion for security_api [type = org.killbill.billing.security.api.SecurityApi]
           @security_api = j_obj.security_api
           @security_api = Killbill::Plugin::Model::SecurityApi.new.to_ruby(@security_api) unless @security_api.nil?
+
+          # conversion for plugins_info_api [type = org.killbill.billing.osgi.api.PluginsInfoApi]
+          @plugins_info_api = j_obj.plugins_info_api
+          @plugins_info_api = Killbill::Plugin::Model::PluginsInfoApi.new.to_ruby(@plugins_info_api) unless @plugins_info_api.nil?
+
+          # conversion for killbill_nodes_api [type = org.killbill.billing.util.nodes.KillbillNodesApi]
+          @killbill_nodes_api = j_obj.killbill_nodes_api
+          @killbill_nodes_api = Killbill::Plugin::Model::KillbillNodesApi.new.to_ruby(@killbill_nodes_api) unless @killbill_nodes_api.nil?
           self
         end
 
