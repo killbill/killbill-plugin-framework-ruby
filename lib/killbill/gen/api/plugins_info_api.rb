@@ -25,30 +25,51 @@
 #
 
 
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/broadcast_metadata'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/invoice_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/control_result'
-require 'killbill/gen/plugin-api/on_failure_payment_control_result'
-require 'killbill/gen/plugin-api/on_success_payment_control_result'
-require 'killbill/gen/plugin-api/payment_control_api_exception'
-require 'killbill/gen/plugin-api/payment_control_context'
-require 'killbill/gen/plugin-api/payment_control_plugin_api'
-require 'killbill/gen/plugin-api/prior_payment_control_result'
-require 'killbill/gen/plugin-api/catalog_plugin_api'
-require 'killbill/gen/plugin-api/standalone_plugin_catalog'
-require 'killbill/gen/plugin-api/versioned_plugin_catalog'
-require 'killbill/gen/plugin-api/entitlement_context'
-require 'killbill/gen/plugin-api/entitlement_plugin_api'
-require 'killbill/gen/plugin-api/entitlement_plugin_api_exception'
-require 'killbill/gen/plugin-api/on_failure_entitlement_result'
-require 'killbill/gen/plugin-api/on_success_entitlement_result'
-require 'killbill/gen/plugin-api/prior_entitlement_result'
-require 'killbill/gen/plugin-api/gateway_notification'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/payment_transaction_info_plugin'
+module Killbill
+  module Plugin
+    module Api
+
+      java_package 'org.killbill.billing.osgi.api'
+      class PluginsInfoApi
+
+        include org.killbill.billing.osgi.api.PluginsInfoApi
+
+        def initialize(real_java_api)
+          @real_java_api = real_java_api
+        end
+
+
+        java_signature 'Java::java.lang.Iterable getPluginsInfo()'
+        def get_plugins_info()
+        res = @real_java_api.get_plugins_info()
+        # conversion for res [type = java.lang.Iterable]
+        tmp = []
+        (res.nil? ? [] : res.iterator).each do |m|
+          # conversion for m [type = org.killbill.billing.osgi.api.PluginInfo]
+          m = Killbill::Plugin::Model::PluginInfo.new.to_ruby(m) unless m.nil?
+          tmp << m
+        end
+        res = tmp
+        return res
+      end
+
+      java_signature 'Java::void notifyOfStateChanged(Java::org.killbill.billing.osgi.api.PluginStateChange, Java::java.lang.String, Java::java.lang.String, Java::org.killbill.billing.osgi.api.config.PluginLanguage)'
+      def notify_of_state_changed(newState, pluginName, pluginVersion, pluginLanguage)
+
+        # conversion for newState [type = org.killbill.billing.osgi.api.PluginStateChange]
+        newState = Java::org.killbill.billing.osgi.api.PluginStateChange.value_of( newState.to_s ) unless newState.nil?
+
+        # conversion for pluginName [type = java.lang.String]
+        pluginName = pluginName.to_s unless pluginName.nil?
+
+        # conversion for pluginVersion [type = java.lang.String]
+        pluginVersion = pluginVersion.to_s unless pluginVersion.nil?
+
+        # conversion for pluginLanguage [type = org.killbill.billing.osgi.api.config.PluginLanguage]
+        pluginLanguage = Java::org.killbill.billing.osgi.api.config.PluginLanguage.value_of( pluginLanguage.to_s ) unless pluginLanguage.nil?
+        @real_java_api.notify_of_state_changed(newState, pluginName, pluginVersion, pluginLanguage)
+      end
+    end
+  end
+end
+end

@@ -25,30 +25,50 @@
 #
 
 
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/broadcast_metadata'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/invoice_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/control_result'
-require 'killbill/gen/plugin-api/on_failure_payment_control_result'
-require 'killbill/gen/plugin-api/on_success_payment_control_result'
-require 'killbill/gen/plugin-api/payment_control_api_exception'
-require 'killbill/gen/plugin-api/payment_control_context'
-require 'killbill/gen/plugin-api/payment_control_plugin_api'
-require 'killbill/gen/plugin-api/prior_payment_control_result'
-require 'killbill/gen/plugin-api/catalog_plugin_api'
-require 'killbill/gen/plugin-api/standalone_plugin_catalog'
-require 'killbill/gen/plugin-api/versioned_plugin_catalog'
-require 'killbill/gen/plugin-api/entitlement_context'
-require 'killbill/gen/plugin-api/entitlement_plugin_api'
-require 'killbill/gen/plugin-api/entitlement_plugin_api_exception'
-require 'killbill/gen/plugin-api/on_failure_entitlement_result'
-require 'killbill/gen/plugin-api/on_success_entitlement_result'
-require 'killbill/gen/plugin-api/prior_entitlement_result'
-require 'killbill/gen/plugin-api/gateway_notification'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/payment_transaction_info_plugin'
+module Killbill
+  module Plugin
+    module Api
+
+      java_package 'org.killbill.billing.util.nodes'
+      class KillbillNodesApi
+
+        include org.killbill.billing.util.nodes.KillbillNodesApi
+
+        def initialize(real_java_api)
+          @real_java_api = real_java_api
+        end
+
+
+        java_signature 'Java::java.lang.Iterable getNodesInfo()'
+        def get_nodes_info()
+        res = @real_java_api.get_nodes_info()
+        # conversion for res [type = java.lang.Iterable]
+        tmp = []
+        (res.nil? ? [] : res.iterator).each do |m|
+          # conversion for m [type = org.killbill.billing.util.nodes.NodeInfo]
+          m = Killbill::Plugin::Model::NodeInfo.new.to_ruby(m) unless m.nil?
+          tmp << m
+        end
+        res = tmp
+        return res
+      end
+
+      java_signature 'Java::void triggerNodeCommand(Java::org.killbill.billing.util.nodes.NodeCommand)'
+      def trigger_node_command(nodeCommand)
+
+        # conversion for nodeCommand [type = org.killbill.billing.util.nodes.NodeCommand]
+        nodeCommand = nodeCommand.to_java unless nodeCommand.nil?
+        @real_java_api.trigger_node_command(nodeCommand)
+      end
+
+      java_signature 'Java::void notifyPluginChanged(Java::org.killbill.billing.osgi.api.PluginInfo)'
+      def notify_plugin_changed(plugin)
+
+        # conversion for plugin [type = org.killbill.billing.osgi.api.PluginInfo]
+        plugin = plugin.to_java unless plugin.nil?
+        @real_java_api.notify_plugin_changed(plugin)
+      end
+    end
+  end
+end
+end

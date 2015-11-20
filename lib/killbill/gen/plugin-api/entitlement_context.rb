@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.plugin.api.EntitlementContext
 
-        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :operation_type, :account_id, :destination_account_id, :bundle_id, :plan_phase_specifier, :external_key, :plan_phase_price_override, :effective_date, :plugin_properties
+        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :operation_type, :account_id, :destination_account_id, :bundle_id, :external_key, :entitlement_specifiers, :effective_date, :plugin_properties
 
         def initialize()
         end
@@ -85,20 +85,17 @@ module Killbill
           # conversion for bundle_id [type = java.util.UUID]
           @bundle_id = java.util.UUID.fromString(@bundle_id.to_s) unless @bundle_id.nil?
 
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
-
           # conversion for external_key [type = java.lang.String]
           @external_key = @external_key.to_s unless @external_key.nil?
 
-          # conversion for plan_phase_price_override [type = java.util.List]
+          # conversion for entitlement_specifiers [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (@plan_phase_price_override || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
+          (@entitlement_specifiers || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementSpecifier]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @plan_phase_price_override = tmp
+          @entitlement_specifiers = tmp
 
           # conversion for effective_date [type = org.joda.time.LocalDate]
           if !@effective_date.nil?
@@ -174,22 +171,18 @@ module Killbill
           @bundle_id = j_obj.bundle_id
           @bundle_id = @bundle_id.nil? ? nil : @bundle_id.to_s
 
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = j_obj.plan_phase_specifier
-          @plan_phase_specifier = Killbill::Plugin::Model::PlanPhaseSpecifier.new.to_ruby(@plan_phase_specifier) unless @plan_phase_specifier.nil?
-
           # conversion for external_key [type = java.lang.String]
           @external_key = j_obj.external_key
 
-          # conversion for plan_phase_price_override [type = java.util.List]
-          @plan_phase_price_override = j_obj.plan_phase_price_override
+          # conversion for entitlement_specifiers [type = java.util.List]
+          @entitlement_specifiers = j_obj.entitlement_specifiers
           tmp = []
-          (@plan_phase_price_override || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = Killbill::Plugin::Model::PlanPhasePriceOverride.new.to_ruby(m) unless m.nil?
+          (@entitlement_specifiers || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementSpecifier]
+            m = Killbill::Plugin::Model::EntitlementSpecifier.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @plan_phase_price_override = tmp
+          @entitlement_specifiers = tmp
 
           # conversion for effective_date [type = org.joda.time.LocalDate]
           @effective_date = j_obj.effective_date

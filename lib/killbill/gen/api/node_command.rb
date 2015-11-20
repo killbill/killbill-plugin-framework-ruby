@@ -25,30 +25,52 @@
 #
 
 
-require 'killbill/gen/plugin-api/payment_method_info_plugin'
-require 'killbill/gen/plugin-api/payment_plugin_api'
-require 'killbill/gen/plugin-api/payment_plugin_api_exception'
-require 'killbill/gen/plugin-api/broadcast_metadata'
-require 'killbill/gen/plugin-api/ext_bus_event'
-require 'killbill/gen/plugin-api/notification_plugin_api'
-require 'killbill/gen/plugin-api/invoice_plugin_api'
-require 'killbill/gen/plugin-api/currency_plugin_api'
-require 'killbill/gen/plugin-api/control_result'
-require 'killbill/gen/plugin-api/on_failure_payment_control_result'
-require 'killbill/gen/plugin-api/on_success_payment_control_result'
-require 'killbill/gen/plugin-api/payment_control_api_exception'
-require 'killbill/gen/plugin-api/payment_control_context'
-require 'killbill/gen/plugin-api/payment_control_plugin_api'
-require 'killbill/gen/plugin-api/prior_payment_control_result'
-require 'killbill/gen/plugin-api/catalog_plugin_api'
-require 'killbill/gen/plugin-api/standalone_plugin_catalog'
-require 'killbill/gen/plugin-api/versioned_plugin_catalog'
-require 'killbill/gen/plugin-api/entitlement_context'
-require 'killbill/gen/plugin-api/entitlement_plugin_api'
-require 'killbill/gen/plugin-api/entitlement_plugin_api_exception'
-require 'killbill/gen/plugin-api/on_failure_entitlement_result'
-require 'killbill/gen/plugin-api/on_success_entitlement_result'
-require 'killbill/gen/plugin-api/prior_entitlement_result'
-require 'killbill/gen/plugin-api/gateway_notification'
-require 'killbill/gen/plugin-api/hosted_payment_page_form_descriptor'
-require 'killbill/gen/plugin-api/payment_transaction_info_plugin'
+module Killbill
+  module Plugin
+    module Model
+
+      java_package 'org.killbill.billing.util.nodes'
+      class NodeCommand
+
+        include org.killbill.billing.util.nodes.NodeCommand
+
+        attr_accessor :is_system_command_type, :node_command_type, :node_command_metadata
+
+        def initialize()
+        end
+
+        def to_java()
+          # conversion for is_system_command_type [type = boolean]
+          @is_system_command_type = @is_system_command_type.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_system_command_type)
+
+          # conversion for node_command_type [type = java.lang.String]
+          @node_command_type = @node_command_type.to_s unless @node_command_type.nil?
+
+          # conversion for node_command_metadata [type = org.killbill.billing.util.nodes.NodeCommandMetadata]
+          @node_command_metadata = @node_command_metadata.to_java unless @node_command_metadata.nil?
+          self
+        end
+
+        def to_ruby(j_obj)
+          # conversion for is_system_command_type [type = boolean]
+          @is_system_command_type = j_obj.is_system_command_type
+          if @is_system_command_type.nil?
+            @is_system_command_type = false
+          else
+            tmp_bool = (@is_system_command_type.java_kind_of? java.lang.Boolean) ? @is_system_command_type.boolean_value : @is_system_command_type
+            @is_system_command_type = tmp_bool ? true : false
+          end
+
+          # conversion for node_command_type [type = java.lang.String]
+          @node_command_type = j_obj.node_command_type
+
+          # conversion for node_command_metadata [type = org.killbill.billing.util.nodes.NodeCommandMetadata]
+          @node_command_metadata = j_obj.node_command_metadata
+          @node_command_metadata = Killbill::Plugin::Model::NodeCommandMetadata.new.to_ruby(@node_command_metadata) unless @node_command_metadata.nil?
+          self
+        end
+
+      end
+    end
+  end
+end

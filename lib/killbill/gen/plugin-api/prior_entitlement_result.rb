@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.plugin.api.PriorEntitlementResult
 
-        attr_accessor :is_aborted, :adjusted_plan_phase_specifier, :adjusted_effective_date, :adjusted_plan_phase_price_override, :adjusted_plugin_properties
+        attr_accessor :is_aborted, :adjusted_effective_date, :adjusted_entitlement_specifiers, :adjusted_plugin_properties
 
         def initialize()
         end
@@ -43,22 +43,19 @@ module Killbill
           # conversion for is_aborted [type = boolean]
           @is_aborted = @is_aborted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_aborted)
 
-          # conversion for adjusted_plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @adjusted_plan_phase_specifier = @adjusted_plan_phase_specifier.to_java unless @adjusted_plan_phase_specifier.nil?
-
           # conversion for adjusted_effective_date [type = org.joda.time.LocalDate]
           if !@adjusted_effective_date.nil?
             @adjusted_effective_date = Java::org.joda.time.LocalDate.parse(@adjusted_effective_date.to_s)
           end
 
-          # conversion for adjusted_plan_phase_price_override [type = java.util.List]
+          # conversion for adjusted_entitlement_specifiers [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (@adjusted_plan_phase_price_override || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
+          (@adjusted_entitlement_specifiers || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementSpecifier]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @adjusted_plan_phase_price_override = tmp
+          @adjusted_entitlement_specifiers = tmp
 
           # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -81,25 +78,21 @@ module Killbill
             @is_aborted = tmp_bool ? true : false
           end
 
-          # conversion for adjusted_plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @adjusted_plan_phase_specifier = j_obj.adjusted_plan_phase_specifier
-          @adjusted_plan_phase_specifier = Killbill::Plugin::Model::PlanPhaseSpecifier.new.to_ruby(@adjusted_plan_phase_specifier) unless @adjusted_plan_phase_specifier.nil?
-
           # conversion for adjusted_effective_date [type = org.joda.time.LocalDate]
           @adjusted_effective_date = j_obj.adjusted_effective_date
           if !@adjusted_effective_date.nil?
             @adjusted_effective_date = @adjusted_effective_date.to_s
           end
 
-          # conversion for adjusted_plan_phase_price_override [type = java.util.List]
-          @adjusted_plan_phase_price_override = j_obj.adjusted_plan_phase_price_override
+          # conversion for adjusted_entitlement_specifiers [type = java.util.List]
+          @adjusted_entitlement_specifiers = j_obj.adjusted_entitlement_specifiers
           tmp = []
-          (@adjusted_plan_phase_price_override || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = Killbill::Plugin::Model::PlanPhasePriceOverride.new.to_ruby(m) unless m.nil?
+          (@adjusted_entitlement_specifiers || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementSpecifier]
+            m = Killbill::Plugin::Model::EntitlementSpecifier.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @adjusted_plan_phase_price_override = tmp
+          @adjusted_entitlement_specifiers = tmp
 
           # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
           @adjusted_plugin_properties = j_obj.adjusted_plugin_properties
