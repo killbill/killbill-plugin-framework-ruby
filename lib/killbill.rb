@@ -35,8 +35,12 @@ begin
     org.killbill.billing.util.api.AuditUserApi
     org.killbill.billing.util.api.CustomFieldUserApi
     org.killbill.billing.util.api.TagUserApi
+    org.killbill.billing.security.api.SecurityApi
+    org.killbill.billing.osgi.api.PluginsInfoApi
+    org.killbill.billing.util.nodes.KillbillNodesApi
     javax.servlet.http.HttpServlet
   )
+
 
   begin
     IMPORT_KILLBILL_APIS.each { |api| java_import api }
