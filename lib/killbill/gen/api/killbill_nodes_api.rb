@@ -53,12 +53,15 @@ module Killbill
         return res
       end
 
-      java_signature 'Java::void triggerNodeCommand(Java::org.killbill.billing.util.nodes.NodeCommand)'
-      def trigger_node_command(nodeCommand)
+      java_signature 'Java::void triggerNodeCommand(Java::org.killbill.billing.util.nodes.NodeCommand, Java::boolean)'
+      def trigger_node_command(nodeCommand, localNodeOnly)
 
         # conversion for nodeCommand [type = org.killbill.billing.util.nodes.NodeCommand]
         nodeCommand = nodeCommand.to_java unless nodeCommand.nil?
-        @real_java_api.trigger_node_command(nodeCommand)
+
+        # conversion for localNodeOnly [type = boolean]
+        localNodeOnly = localNodeOnly.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(localNodeOnly)
+        @real_java_api.trigger_node_command(nodeCommand, localNodeOnly)
       end
 
       java_signature 'Java::void notifyPluginChanged(Java::org.killbill.billing.osgi.api.PluginInfo)'

@@ -32,18 +32,12 @@ module Killbill
       class PluginNodeCommandMetadata
 
 
-        attr_accessor :plugin_name, :plugin_version, :properties
+        attr_accessor :properties, :plugin_name, :plugin_version
 
         def initialize()
         end
 
         def to_java()
-          # conversion for plugin_name [type = java.lang.String]
-          @plugin_name = @plugin_name.to_s unless @plugin_name.nil?
-
-          # conversion for plugin_version [type = java.lang.String]
-          @plugin_version = @plugin_version.to_s unless @plugin_version.nil?
-
           # conversion for properties [type = java.util.List]
           tmp = java.util.ArrayList.new
           (@properties || []).each do |m|
@@ -52,16 +46,16 @@ module Killbill
             tmp.add(m)
           end
           @properties = tmp
-          Java::org.killbill.billing.util.nodes.PluginNodeCommandMetadata.new(@plugin_name, @plugin_version, @properties)
+
+          # conversion for plugin_name [type = java.lang.String]
+          @plugin_name = @plugin_name.to_s unless @plugin_name.nil?
+
+          # conversion for plugin_version [type = java.lang.String]
+          @plugin_version = @plugin_version.to_s unless @plugin_version.nil?
+          Java::org.killbill.billing.util.nodes.PluginNodeCommandMetadata.new(@properties, @plugin_name, @plugin_version)
         end
 
         def to_ruby(j_obj)
-          # conversion for plugin_name [type = java.lang.String]
-          @plugin_name = j_obj.plugin_name
-
-          # conversion for plugin_version [type = java.lang.String]
-          @plugin_version = j_obj.plugin_version
-
           # conversion for properties [type = java.util.List]
           @properties = j_obj.properties
           tmp = []
@@ -71,6 +65,12 @@ module Killbill
             tmp << m
           end
           @properties = tmp
+
+          # conversion for plugin_name [type = java.lang.String]
+          @plugin_name = j_obj.plugin_name
+
+          # conversion for plugin_version [type = java.lang.String]
+          @plugin_version = j_obj.plugin_version
           self
         end
 

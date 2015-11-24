@@ -29,63 +29,36 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.osgi.api'
-      class PluginInfo
+      class DefaultNodeCommandMetadata
 
-        include org.killbill.billing.osgi.api.PluginInfo
 
-        attr_accessor :bundle_symbolic_name, :plugin_name, :version, :plugin_state, :services
+        attr_accessor :properties
 
         def initialize()
         end
 
         def to_java()
-          # conversion for bundle_symbolic_name [type = java.lang.String]
-          @bundle_symbolic_name = @bundle_symbolic_name.to_s unless @bundle_symbolic_name.nil?
-
-          # conversion for plugin_name [type = java.lang.String]
-          @plugin_name = @plugin_name.to_s unless @plugin_name.nil?
-
-          # conversion for version [type = java.lang.String]
-          @version = @version.to_s unless @version.nil?
-
-          # conversion for plugin_state [type = org.killbill.billing.osgi.api.PluginState]
-          @plugin_state = Java::org.killbill.billing.osgi.api.PluginState.value_of( @plugin_state.to_s ) unless @plugin_state.nil?
-
-          # conversion for services [type = java.util.Set]
-          tmp = java.util.TreeSet.new
-          (@services || []).each do |m|
-            # conversion for m [type = org.killbill.billing.osgi.api.PluginServiceInfo]
+          # conversion for properties [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.nodes.NodeCommandProperty]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @services = tmp
-          self
+          @properties = tmp
+          Java::org.killbill.billing.util.nodes.DefaultNodeCommandMetadata.new(@properties)
         end
 
         def to_ruby(j_obj)
-          # conversion for bundle_symbolic_name [type = java.lang.String]
-          @bundle_symbolic_name = j_obj.bundle_symbolic_name
-
-          # conversion for plugin_name [type = java.lang.String]
-          @plugin_name = j_obj.plugin_name
-
-          # conversion for version [type = java.lang.String]
-          @version = j_obj.version
-
-          # conversion for plugin_state [type = org.killbill.billing.osgi.api.PluginState]
-          @plugin_state = j_obj.plugin_state
-          @plugin_state = @plugin_state.to_s.to_sym unless @plugin_state.nil?
-
-          # conversion for services [type = java.util.Set]
-          @services = j_obj.services
+          # conversion for properties [type = java.util.List]
+          @properties = j_obj.properties
           tmp = []
-          (@services || []).each do |m|
-            # conversion for m [type = org.killbill.billing.osgi.api.PluginServiceInfo]
-            m = Killbill::Plugin::Model::PluginServiceInfo.new.to_ruby(m) unless m.nil?
+          (@properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.nodes.NodeCommandProperty]
+            m = Killbill::Plugin::Model::NodeCommandProperty.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @services = tmp
+          @properties = tmp
           self
         end
 
