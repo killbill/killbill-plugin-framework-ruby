@@ -25,6 +25,7 @@ module Killbill
                     :plugin_name,
                     :logger,
                     :conf_dir,
+                    :clock,
                     :kb_apis
 
       # Called by the Killbill lifecycle when instantiating the plugin
