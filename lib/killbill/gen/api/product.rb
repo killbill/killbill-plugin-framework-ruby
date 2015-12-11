@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.Product
 
-        attr_accessor :name, :is_retired, :available, :included, :category, :catalog_name, :limits
+        attr_accessor :name, :available, :included, :category, :catalog_name, :limits
 
         def initialize()
         end
@@ -42,9 +42,6 @@ module Killbill
         def to_java()
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
-
-          # conversion for is_retired [type = boolean]
-          @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
           # conversion for available [type = org.killbill.billing.catalog.api.Product[]]
           tmp = []
@@ -84,15 +81,6 @@ module Killbill
         def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
-
-          # conversion for is_retired [type = boolean]
-          @is_retired = j_obj.is_retired
-          if @is_retired.nil?
-            @is_retired = false
-          else
-            tmp_bool = (@is_retired.java_kind_of? java.lang.Boolean) ? @is_retired.boolean_value : @is_retired
-            @is_retired = tmp_bool ? true : false
-          end
 
           # conversion for available [type = org.killbill.billing.catalog.api.Product[]]
           @available = j_obj.available

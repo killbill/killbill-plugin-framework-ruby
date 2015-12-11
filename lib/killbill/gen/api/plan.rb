@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.Plan
 
-        attr_accessor :initial_phases, :product, :name, :is_retired, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptons
+        attr_accessor :initial_phases, :product, :name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptons
 
         def initialize()
         end
@@ -54,9 +54,6 @@ module Killbill
 
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
-
-          # conversion for is_retired [type = boolean]
-          @is_retired = @is_retired.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_retired)
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = Killbill::Plugin::Model::EnumeratorIterator.new(@initial_phase_iterator)
@@ -105,15 +102,6 @@ module Killbill
 
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
-
-          # conversion for is_retired [type = boolean]
-          @is_retired = j_obj.is_retired
-          if @is_retired.nil?
-            @is_retired = false
-          else
-            tmp_bool = (@is_retired.java_kind_of? java.lang.Boolean) ? @is_retired.boolean_value : @is_retired
-            @is_retired = tmp_bool ? true : false
-          end
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = j_obj.initial_phase_iterator

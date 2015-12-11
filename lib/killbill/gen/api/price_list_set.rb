@@ -34,20 +34,37 @@ module Killbill
 
         include org.killbill.billing.catalog.api.PriceListSet
 
-        attr_accessor 
+        attr_accessor :all_price_lists
 
         def initialize()
         end
 
         def to_java()
-        self
+          # conversion for all_price_lists [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@all_price_lists || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.PriceList]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @all_price_lists = tmp
+          self
+        end
+
+        def to_ruby(j_obj)
+          # conversion for all_price_lists [type = java.util.List]
+          @all_price_lists = j_obj.all_price_lists
+          tmp = []
+          (@all_price_lists || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.PriceList]
+            m = Killbill::Plugin::Model::PriceList.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @all_price_lists = tmp
+          self
+        end
+
       end
-
-      def to_ruby(j_obj)
-      self
     end
-
   end
-end
-end
 end

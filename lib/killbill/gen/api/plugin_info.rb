@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.osgi.api.PluginInfo
 
-        attr_accessor :bundle_symbolic_name, :plugin_name, :version, :plugin_state, :services
+        attr_accessor :bundle_symbolic_name, :plugin_name, :version, :plugin_state, :services, :is_selected_for_start
 
         def initialize()
         end
@@ -60,6 +60,9 @@ module Killbill
             tmp.add(m)
           end
           @services = tmp
+
+          # conversion for is_selected_for_start [type = boolean]
+          @is_selected_for_start = @is_selected_for_start.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_selected_for_start)
           self
         end
 
@@ -86,6 +89,15 @@ module Killbill
             tmp << m
           end
           @services = tmp
+
+          # conversion for is_selected_for_start [type = boolean]
+          @is_selected_for_start = j_obj.is_selected_for_start
+          if @is_selected_for_start.nil?
+            @is_selected_for_start = false
+          else
+            tmp_bool = (@is_selected_for_start.java_kind_of? java.lang.Boolean) ? @is_selected_for_start.boolean_value : @is_selected_for_start
+            @is_selected_for_start = tmp_bool ? true : false
+          end
           self
         end
 
