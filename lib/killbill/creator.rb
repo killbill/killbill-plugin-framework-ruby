@@ -27,7 +27,8 @@ module Killbill
         plugin_delegate.plugin_name = extract_plugin_name(plugin_delegate.root)
 
         # At this point we removed everything from the map which is not API, so we can build the APIs
-        kb_apis = KillbillApi.new(@target_class_name, services["kb_apis"])
+        # Note: services["kb_apis"] is never nil, except in tests
+        kb_apis = KillbillApi.new(@target_class_name, services["kb_apis"] || {})
         plugin_delegate.kb_apis = kb_apis
 
         plugin_delegate

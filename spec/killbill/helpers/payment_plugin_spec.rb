@@ -366,8 +366,10 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       with_plugin_yaml_config('test.yml', plugin_config) do |file|
         ze_jplugin = ::Killbill::Plugin::Api::PaymentPluginApi.new('DummyRecordingGatewayPlugin',
                                                                    {
-                                                                       'payment_api' => payment_api,
-                                                                       'tenant_user_api' => tenant_api,
+                                                                       'kb_apis' => {
+                                                                           'payment_api' => payment_api,
+                                                                           'tenant_user_api' => tenant_api
+                                                                       },
                                                                        'logger' => logger,
                                                                        'conf_dir' => File.dirname(file),
                                                                        'root' => File.dirname(file)
