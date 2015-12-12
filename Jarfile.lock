@@ -24,7 +24,9 @@ javax.mail:mail:jar:1.4.1
 javax.activation:activation:jar:1.1
 org.apache.shiro:shiro-core:jar:1.2.3
 commons-beanutils:commons-beanutils:jar:1.8.3
+commons-logging:commons-logging:jar:1.1.1
 org.apache.shiro:shiro-ehcache:jar:1.2.3
+net.sf.ehcache:ehcache-core:jar:2.5.0
 org.apache.shiro:shiro-guice:jar:1.2.3
 com.google.guava:guava:jar:r09
 com.google.inject:guice:jar:3.0
