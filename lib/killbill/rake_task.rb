@@ -169,7 +169,7 @@ module Killbill
         task :repackage => [:clobber_package, :package]
 
         task :clobber_tmp do
-          rm_f @package_tmp_dir rescue nil
+          rm_r @package_tmp_dir rescue nil
         end
 
         desc "Remove package files from #{@package_dir}"
