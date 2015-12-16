@@ -32,7 +32,7 @@ module Killbill
       class PluginNodeCommandMetadata
 
 
-        attr_accessor :properties, :plugin_name, :plugin_version
+        attr_accessor :properties, :plugin_key, :plugin_name, :plugin_version
 
         def initialize()
         end
@@ -47,12 +47,15 @@ module Killbill
           end
           @properties = tmp
 
+          # conversion for plugin_key [type = java.lang.String]
+          @plugin_key = @plugin_key.to_s unless @plugin_key.nil?
+
           # conversion for plugin_name [type = java.lang.String]
           @plugin_name = @plugin_name.to_s unless @plugin_name.nil?
 
           # conversion for plugin_version [type = java.lang.String]
           @plugin_version = @plugin_version.to_s unless @plugin_version.nil?
-          Java::org.killbill.billing.util.nodes.PluginNodeCommandMetadata.new(@properties, @plugin_name, @plugin_version)
+          Java::org.killbill.billing.util.nodes.PluginNodeCommandMetadata.new(@properties, @plugin_key, @plugin_name, @plugin_version)
         end
 
         def to_ruby(j_obj)
@@ -65,6 +68,9 @@ module Killbill
             tmp << m
           end
           @properties = tmp
+
+          # conversion for plugin_key [type = java.lang.String]
+          @plugin_key = j_obj.plugin_key
 
           # conversion for plugin_name [type = java.lang.String]
           @plugin_name = j_obj.plugin_name

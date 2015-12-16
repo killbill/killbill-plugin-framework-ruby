@@ -34,12 +34,15 @@ module Killbill
 
         include org.killbill.billing.osgi.api.PluginInfo
 
-        attr_accessor :bundle_symbolic_name, :plugin_name, :version, :plugin_state, :services, :is_selected_for_start
+        attr_accessor :plugin_key, :bundle_symbolic_name, :plugin_name, :version, :plugin_state, :services, :is_selected_for_start
 
         def initialize()
         end
 
         def to_java()
+          # conversion for plugin_key [type = java.lang.String]
+          @plugin_key = @plugin_key.to_s unless @plugin_key.nil?
+
           # conversion for bundle_symbolic_name [type = java.lang.String]
           @bundle_symbolic_name = @bundle_symbolic_name.to_s unless @bundle_symbolic_name.nil?
 
@@ -67,6 +70,9 @@ module Killbill
         end
 
         def to_ruby(j_obj)
+          # conversion for plugin_key [type = java.lang.String]
+          @plugin_key = j_obj.plugin_key
+
           # conversion for bundle_symbolic_name [type = java.lang.String]
           @bundle_symbolic_name = j_obj.bundle_symbolic_name
 

@@ -53,11 +53,14 @@ module Killbill
         return res
       end
 
-      java_signature 'Java::void notifyOfStateChanged(Java::org.killbill.billing.osgi.api.PluginStateChange, Java::java.lang.String, Java::java.lang.String, Java::org.killbill.billing.osgi.api.config.PluginLanguage)'
-      def notify_of_state_changed(newState, pluginName, pluginVersion, pluginLanguage)
+      java_signature 'Java::void notifyOfStateChanged(Java::org.killbill.billing.osgi.api.PluginStateChange, Java::java.lang.String, Java::java.lang.String, Java::java.lang.String, Java::org.killbill.billing.osgi.api.config.PluginLanguage)'
+      def notify_of_state_changed(newState, pluginKey, pluginName, pluginVersion, pluginLanguage)
 
         # conversion for newState [type = org.killbill.billing.osgi.api.PluginStateChange]
         newState = Java::org.killbill.billing.osgi.api.PluginStateChange.value_of( newState.to_s ) unless newState.nil?
+
+        # conversion for pluginKey [type = java.lang.String]
+        pluginKey = pluginKey.to_s unless pluginKey.nil?
 
         # conversion for pluginName [type = java.lang.String]
         pluginName = pluginName.to_s unless pluginName.nil?
@@ -67,7 +70,7 @@ module Killbill
 
         # conversion for pluginLanguage [type = org.killbill.billing.osgi.api.config.PluginLanguage]
         pluginLanguage = Java::org.killbill.billing.osgi.api.config.PluginLanguage.value_of( pluginLanguage.to_s ) unless pluginLanguage.nil?
-        @real_java_api.notify_of_state_changed(newState, pluginName, pluginVersion, pluginLanguage)
+        @real_java_api.notify_of_state_changed(newState, pluginKey, pluginName, pluginVersion, pluginLanguage)
       end
     end
   end
