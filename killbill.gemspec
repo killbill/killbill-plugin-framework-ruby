@@ -45,7 +45,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'monetize', '~> 1.1.0'
   s.add_development_dependency 'money', '~> 6.5.1'
   # testing/development :
-  s.add_development_dependency 'jbundler', '~> 0.4.3'
+  s.add_development_dependency 'jbundler', '~> 0.9.2'
   s.add_development_dependency 'rake', '>= 10.0.0'
   s.add_development_dependency 'rspec', '~> 2.12.0'
   s.add_development_dependency 'thor', '~> 0.19.1'
@@ -54,8 +54,4 @@ Gem::Specification.new do |s|
   else
     s.add_development_dependency 'sqlite3', '~> 1.3.7'
   end
-
-  s.requirements << "jar 'org.kill-bill.billing:killbill-api'"
-  # For testing only
-  s.requirements << "jar 'org.kill-bill.billing:killbill-util:tests'"
 end
