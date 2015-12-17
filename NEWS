@@ -1,4 +1,5 @@
-6.6.0
+7.0.0
+    Initial release for Kill Bill 0.16.x
     ActiveMerchant: add support for mock clock in tests
 
 6.5.0
