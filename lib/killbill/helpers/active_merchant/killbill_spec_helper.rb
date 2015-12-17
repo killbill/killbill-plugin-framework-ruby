@@ -107,6 +107,8 @@ module Killbill
           }
           plugin.kb_apis = ::Killbill::Plugin::KillbillApi.new(name, svcs)
 
+          plugin.clock = ::Killbill::Plugin::ActiveMerchant::RSpec::FakeOSGIKillbillClock.new
+
           plugin.logger = ::Logger.new(STDOUT)
           plugin.logger.level = ::Logger::INFO
           plugin.conf_dir = File.expand_path(conf_dir)
@@ -177,6 +179,30 @@ module Killbill
               return [result]
             end
             nil
+          end
+        end
+
+        class FakeOSGIKillbillClock
+
+          attr_accessor :clock
+
+          def initialize(clock = FakeClock.new)
+            @clock = clock
+          end
+
+          def get_clock
+            @clock
+          end
+        end
+
+        class FakeClock
+
+          def get_utc_now
+            Time.now.utc
+          end
+
+          def get_utc_today
+            get_utc_now.strftime('%F')
           end
         end
       end
