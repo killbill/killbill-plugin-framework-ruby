@@ -597,8 +597,8 @@ module Killbill
           gateway
         end
 
-        def config
-          ::Killbill::Plugin::ActiveMerchant.config
+        def config(kb_tenant_id=nil)
+          ::Killbill::Plugin::ActiveMerchant.config(kb_tenant_id)
         end
 
         def get_active_merchant_module
