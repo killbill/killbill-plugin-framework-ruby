@@ -1,3 +1,7 @@
+7.0.1
+    Update ActiveMerchant config helper to retrieve per-tenant configuration
+    Improve exception logging in ActiveMerchant
+
 7.0.0
     Initial release for Kill Bill 0.16.x
     ActiveMerchant: add support for mock clock in tests
