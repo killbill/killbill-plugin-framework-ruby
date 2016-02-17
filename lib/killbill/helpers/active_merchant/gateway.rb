@@ -131,7 +131,7 @@ module Killbill
             if PROBABLY_UNKNOWN_CONNECTION_ERRORS.include?(e.class) || UNKNOWN_CONNECTION_ERRORS.include?(e.class)
               @logger.warn("Unstable connection with the gateway: #{message}")
             else
-              @logger.warn("Unexpected exception: #{message}")
+              @logger.warn("Unexpected exception: #{message}\n#{e.backtrace.join("\n")}")
             end
 
             # Allow clients to force a PLUGIN_FAILURE instead of UNKNOWN (the default is a conservative behavior)
