@@ -48,6 +48,7 @@ CREATE TABLE <%= identifier %>_transactions (
   PRIMARY KEY (id)
 ) /*! ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin */;
 CREATE INDEX index_<%= identifier %>_transactions_kb_payment_id ON <%= identifier %>_transactions(kb_payment_id);
+CREATE INDEX index_<%= identifier %>_transactions_<%= identifier %>_response_id ON <%= identifier %>_transactions(<%= identifier %>_response_id);
 
 CREATE TABLE <%= identifier %>_responses (
   id serial UNIQUE,
@@ -73,3 +74,4 @@ CREATE TABLE <%= identifier %>_responses (
   kb_tenant_id varchar(255) DEFAULT NULL,
   PRIMARY KEY (id)
 ) /*! ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin */;
+CREATE INDEX index_<%= identifier %>_responses_kb_payment_id_kb_tenant_id ON <%= identifier %>_responses(kb_payment_id, kb_tenant_id);
