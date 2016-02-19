@@ -1,3 +1,6 @@
+7.0.2
+    Handle blank tokens
+
 7.0.1
     Update ActiveMerchant config helper to retrieve per-tenant configuration
     Improve exception logging in ActiveMerchant
