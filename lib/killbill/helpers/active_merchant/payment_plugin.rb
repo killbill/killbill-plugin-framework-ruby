@@ -499,7 +499,7 @@ module Killbill
 
             if cc_number.blank? && !pm.nil?
               # Lookup existing token
-              if pm.token.nil?
+              if pm.token.blank?
                 # Real credit card
                 cc_or_token = build_am_credit_card(pm.cc_number, attributes, pm)
               else

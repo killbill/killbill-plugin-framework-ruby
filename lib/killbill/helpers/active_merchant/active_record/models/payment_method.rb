@@ -24,7 +24,7 @@ module Killbill
                           :kb_account_id        => kb_account_id,
                           :kb_payment_method_id => kb_payment_method_id,
                           :kb_tenant_id         => kb_tenant_id,
-                          :token                => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? response.authorization : (cc_or_token || response.authorization),
+                          :token                => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? response.authorization.presence : (cc_or_token || response.authorization).presence,
                           :cc_first_name        => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.first_name : extra_params[:cc_first_name],
                           :cc_last_name         => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.last_name : extra_params[:cc_last_name],
                           :cc_type              => cc_or_token.kind_of?(::ActiveMerchant::Billing::CreditCard) ? cc_or_token.brand : extra_params[:cc_type],
