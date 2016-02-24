@@ -85,8 +85,6 @@ module Killbill
             __instance_object__.send(method, *args)
           end
 
-          private
-
           def __instance_object__
             @__instance_object__ ||= @instantiator.call
           end
