@@ -1,3 +1,7 @@
+7.0.3
+    Java API: set default dates in context to now()
+    Expose the underlying object from LazyEvaluator
+
 7.0.2
     Handle blank tokens
 
