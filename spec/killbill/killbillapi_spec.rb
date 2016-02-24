@@ -4,8 +4,6 @@ require 'killbill/killbill_api'
 
 require 'killbill/gen/api/account_data'
 
-
-
 describe Killbill::Plugin do
 
   before(:each) do
@@ -27,7 +25,6 @@ describe Killbill::Plugin do
   end
 
   it 'should test create/get_account_by_id' do
-
     account_user_api = @kb_apis.account_user_api
     account_created = account_user_api.create_account(@account, @context)
     account_created.should be_an_instance_of Killbill::Plugin::Model::Account
@@ -48,4 +45,9 @@ describe Killbill::Plugin do
     account_fetched.time_zone.to_s.should == :UTC.to_s
   end
 
+  it 'should create contexts' do
+    context = @kb_apis.create_context
+    # The offset representation will differ (Z vs +00:00)
+    context.created_date.iso8601[0..18].should == Time.now.utc.iso8601[0..18]
+  end
 end

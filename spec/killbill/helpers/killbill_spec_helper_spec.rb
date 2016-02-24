@@ -21,4 +21,10 @@ describe Killbill::Plugin::ActiveMerchant::RSpec do
 
     (props3.find { |p| p.key == :foo }).value.should == :bar
   end
+
+  it 'should build test contexts in Ruby' do
+    call_context = build_call_context('12345')
+    call_context.tenant_id.should == '12345'
+    call_context.created_date.should be_nil
+  end
 end

@@ -37,8 +37,8 @@ module Killbill
         context.user_type= :SYSTEM
         context.reason_code= reason_code
         context.comments= comments
-        context.created_date= DateTime.new
-        context.updated_date= DateTime.new
+        context.created_date= DateTime.now.new_offset(0)
+        context.updated_date= context.created_date
         context
       end
 
