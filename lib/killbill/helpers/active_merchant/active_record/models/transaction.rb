@@ -20,7 +20,7 @@ module Killbill
               where(:kb_payment_id => kb_payment_id, :kb_tenant_id => kb_tenant_id).order(:created_at)
             end
 
-            [:authorize, :capture, :purchase, :credit, :refund].each do |transaction_type|
+            [:authorize, :capture, :purchase, :credit, :refund, :void].each do |transaction_type|
               define_method("#{transaction_type.to_s}s_from_kb_payment_id") do |kb_payment_id, kb_tenant_id|
                 transaction_from_kb_payment_id(transaction_type.to_s.upcase, kb_payment_id, kb_tenant_id, :multiple)
               end
@@ -28,16 +28,6 @@ module Killbill
 
             # For convenience
             alias_method :authorizations_from_kb_payment_id, :authorizes_from_kb_payment_id
-
-            # For convenience
-            def voids_from_kb_payment_id(kb_payment_id, kb_tenant_id)
-              [void_from_kb_payment_id(kb_payment_id, kb_tenant_id)]
-            end
-
-            # void is special: unique void per payment_id
-            def void_from_kb_payment_id(kb_payment_id, kb_tenant_id)
-              transaction_from_kb_payment_id(:VOID, kb_payment_id, kb_tenant_id, :single)
-            end
 
             def from_kb_payment_transaction_id(kb_payment_transaction_id, kb_tenant_id)
               transaction_from_kb_payment_transaction_id(nil, kb_payment_transaction_id, kb_tenant_id, :single)

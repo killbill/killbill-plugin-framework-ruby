@@ -140,7 +140,7 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Transaction do
     ::Killbill::Test::TestTransaction.refunds_from_kb_payment_id(kb_payment_id1, kb_tenant_id).size.should == 0
 
     # Lookup VOID for kb_payment_id1
-    ::Killbill::Test::TestTransaction.void_from_kb_payment_id(kb_payment_id1, kb_tenant_id).should be_nil
+    ::Killbill::Test::TestTransaction.voids_from_kb_payment_id(kb_payment_id1, kb_tenant_id).size.should == 0
 
     # Lookup AUTH for kb_payment_id2
     ::Killbill::Test::TestTransaction.authorizes_from_kb_payment_id(kb_payment_id2, kb_tenant_id).size.should == 0
@@ -163,7 +163,7 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Transaction do
     ts[0].kb_payment_transaction_id.should == kb_payment_transaction_id5
 
     # Lookup VOID for kb_payment_id2
-    ::Killbill::Test::TestTransaction.void_from_kb_payment_id(kb_payment_id2, kb_tenant_id).should be_nil
+    ::Killbill::Test::TestTransaction.voids_from_kb_payment_id(kb_payment_id1, kb_tenant_id).size.should == 0
 
     # Lookup individual transactions
     ::Killbill::Test::TestTransaction.from_kb_payment_transaction_id(kb_payment_transaction_id1, SecureRandom.uuid).should be_nil
