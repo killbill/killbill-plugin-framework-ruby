@@ -28,6 +28,51 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Transaction do
     ::Killbill::Test::TestTransaction.find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
   end
 
+  # https://github.com/killbill/killbill-plugin-framework-ruby/issues/53
+  it 'finds the right transaction to void' do
+    api_call        = 'for debugging only'
+    amount_in_cents = 1242
+    currency        = :USD
+    kb_account_id   = SecureRandom.uuid
+    kb_tenant_id    = SecureRandom.uuid
+    kb_payment_id   = SecureRandom.uuid
+
+    auth_tx = create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :AUTHORIZE, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
+
+    capture_tx1 = create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :CAPTURE, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).id.should == capture_tx1.id
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, :AUTHORIZE).id.should == auth_tx.id
+
+    # Void the first capture
+    create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :VOID, nil, nil, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
+
+    capture_tx2 = create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :CAPTURE, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).id.should == capture_tx2.id
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, :CAPTURE).id.should == capture_tx2.id
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, :AUTHORIZE).id.should == auth_tx.id
+
+    capture_tx3 = create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :CAPTURE, amount_in_cents, currency, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).id.should == capture_tx3.id
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, :CAPTURE).id.should == capture_tx3.id
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, :AUTHORIZE).id.should == auth_tx.id
+
+    # Void the third capture
+    create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :VOID, nil, nil, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).id.should == capture_tx2.id
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, :CAPTURE).id.should == capture_tx2.id
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, :AUTHORIZE).id.should == auth_tx.id
+
+    # Void the second capture
+    create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :VOID, nil, nil, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).id.should == auth_tx.id
+
+    # Void the authorization
+    create_transaction(api_call, kb_payment_id, SecureRandom.uuid, :VOID, nil, nil, kb_account_id, kb_tenant_id)
+    ::Killbill::Test::TestTransaction.find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id).should be_nil
+  end
+
   it 'should store and retrieve transactions correctly' do
     api_call        = 'for debugging only'
     amount_in_cents = 1242

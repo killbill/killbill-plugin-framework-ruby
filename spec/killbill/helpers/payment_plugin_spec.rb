@@ -114,6 +114,27 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       plugin.get_payment_methods(@kb_account_id, true, @properties, @call_context).size.should == 0
     end
 
+    # https://github.com/killbill/killbill-plugin-framework-ruby/issues/53
+    it 'supports multiple voids' do
+      ptip = trigger_auth(@properties)
+      verify_auth_status(ptip, :PROCESSED)
+
+      ptip = trigger_capture(@properties)
+      verify_capture_status(ptip, :PROCESSED)
+
+      ptip = trigger_void(@properties)
+      verify_void_status(ptip, :PROCESSED)
+
+      ptip = trigger_capture(@properties)
+      verify_capture_status(ptip, :PROCESSED)
+
+      ptip = trigger_void(@properties)
+      verify_void_status(ptip, :PROCESSED)
+
+      ptip = trigger_void(@properties)
+      verify_void_status(ptip, :PROCESSED)
+    end
+
     # https://github.com/killbill/killbill-plugin-framework-ruby/issues/51
     it 'supports multiple refunds regardless of the amount against auth' do
       ptip = trigger_auth(@properties)
@@ -528,6 +549,10 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
     plugin.authorize_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, auth_properties, @call_context)
   end
 
+  def trigger_void(void_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
+    plugin.void_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, void_properties, @call_context)
+  end
+
   def trigger_capture(capture_properties=[], kb_payment_transaction_id=SecureRandom.uuid)
     plugin.capture_payment(@kb_account_id, @kb_payment_id, kb_payment_transaction_id, @kb_payment_method_id, @amount_in_cents, @currency, capture_properties, @call_context)
   end
@@ -546,6 +571,10 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
 
   def verify_auth_status(t_info_plugin, status)
     verify_transaction_status(t_info_plugin, status, :AUTHORIZE)
+  end
+
+  def verify_void_status(t_info_plugin, status)
+    verify_transaction_status(t_info_plugin, status, :VOID)
   end
 
   def verify_capture_status(t_info_plugin, status)

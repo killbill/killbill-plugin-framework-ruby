@@ -43,6 +43,26 @@ module Killbill
               transaction_from_kb_payment_transaction_id(nil, kb_payment_transaction_id, kb_tenant_id, :single)
             end
 
+            def find_candidate_transaction_for_void(kb_payment_id, kb_tenant_id, linked_transaction_type = nil)
+              # Default behavior to search for the last voidable transaction
+              # If an authorization is being voided, we're performing an 'auth_reversal', otherwise,
+              # we're voiding an unsettled capture or purchase (which often needs to happen within 24 hours).
+              transactions = transaction_from_kb_payment_id(nil, kb_payment_id, kb_tenant_id, :multiple).to_a
+              tx_to_void = 0
+              transactions.reverse.each do |t|
+                if t.transaction_type == 'VOID'
+                  tx_to_void += 1
+                else
+                  if tx_to_void > 0
+                    tx_to_void -= 1
+                  elsif linked_transaction_type.nil? || t.transaction_type.downcase == linked_transaction_type.to_s.downcase
+                    return t
+                  end
+                end
+              end
+              nil
+            end
+
             def find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, transaction_type = nil)
               if transaction_type.nil?
                 find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, :AUTHORIZE) || find_candidate_transaction_for_refund(kb_payment_id, kb_tenant_id, :PURCHASE)

@@ -91,24 +91,7 @@ module Killbill
 
           linked_transaction_proc = Proc.new do |amount_in_cents, options|
             linked_transaction_type = find_value_from_properties(properties, :linked_transaction_type)
-            if linked_transaction_type.nil?
-              # Default behavior to search for the last transaction
-              # If an authorization is being voided, we're performing an 'auth_reversal', otherwise,
-              # we're voiding an unsettled capture or purchase (which often needs to happen within 24 hours).
-              last_transaction = @transaction_model.purchases_from_kb_payment_id(kb_payment_id, context.tenant_id).last
-              if last_transaction.nil?
-                last_transaction = @transaction_model.captures_from_kb_payment_id(kb_payment_id, context.tenant_id).last
-                if last_transaction.nil?
-                  last_transaction = @transaction_model.authorizations_from_kb_payment_id(kb_payment_id, context.tenant_id).last
-                  if last_transaction.nil?
-                    raise ArgumentError.new("Kill Bill payment #{kb_payment_id} has no auth, capture or purchase, thus cannot be voided")
-                  end
-                end
-              end
-            else
-              last_transaction = @transaction_model.send("#{linked_transaction_type.to_s}s_from_kb_payment_id", kb_payment_id, context.tenant_id).last
-            end
-            last_transaction
+            @transaction_model.find_candidate_transaction_for_void(kb_payment_id, context.tenant_id, linked_transaction_type)
           end
 
           dispatch_to_gateways(:void, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, nil, nil, properties, context, gateway_call_proc, linked_transaction_proc)
