@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Killbill::Plugin::ActiveMerchant::Utils do
 
+  include ::Killbill::Plugin::PropertiesHelper
+
   context 'UUID' do
     it 'should convert back and forth UUIDs' do
       uuid = SecureRandom.uuid
@@ -55,6 +57,25 @@ describe Killbill::Plugin::ActiveMerchant::Utils do
       ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:cc_first_name => ''}, :cc_first_name).should be_nil
       ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:cc_first_name => 'Paul'}, :cc_first_name).should == 'Paul'
       ::Killbill::Plugin::ActiveMerchant::Utils.normalized({:ccFirstName => 'Paul'}, :cc_first_name).should == 'Paul'
+    end
+
+    it 'normalizes properties' do
+      properties = []
+      properties << build_property('dontTouch', 'true')
+      properties << build_property(:dont_touch, false)
+      properties << build_property('changeMe', 'false')
+      properties << build_property('dont_touch', 'null')
+
+      ::Killbill::Plugin::ActiveMerchant::Utils.normalize_property(properties, 'change_me')
+
+      properties[0].key.should == 'dontTouch'
+      properties[0].value.should == 'true'
+      properties[1].key.should == :dont_touch
+      properties[1].value.should == false
+      properties[2].key.should == 'changeMe'
+      properties[2].value.should == false
+      properties[3].key.should == 'dont_touch'
+      properties[3].value.should == 'null'
     end
   end
 

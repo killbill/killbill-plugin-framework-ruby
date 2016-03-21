@@ -1,6 +1,8 @@
 7.0.3
     Java API: set default dates in context to now()
     Expose the underlying object from LazyEvaluator
+    https://github.com/killbill/killbill-plugin-framework-ruby/issues/53
+    Introduce Utils.normalize_property
 
 7.0.2
     Handle blank tokens

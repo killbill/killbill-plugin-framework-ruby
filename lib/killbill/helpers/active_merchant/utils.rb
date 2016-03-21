@@ -58,6 +58,17 @@ module Killbill
           end
         end
 
+        def self.normalize_property(properties, key)
+          return if key.nil?
+
+          (properties || []).each do |property|
+            # Be friendly with Java-style conventions
+            if property.key == key || property.key == key.to_s.camelize(false)
+              property.value = normalize(property.value)
+            end
+          end
+        end
+
         class KBWiredumpDevice < IO
 
           # Required for compatibility, but unused
