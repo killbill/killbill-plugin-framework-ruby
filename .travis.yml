@@ -39,6 +39,7 @@ jdk:
 matrix:
   allow_failures:
     - rvm: jruby-head
+    - rvm: jruby-20mode # Gemfile.lock bug with --deployment?
     - jdk: oraclejdk8
     - gemfile: Gemfile.head
   fast_finish: true
