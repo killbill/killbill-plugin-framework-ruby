@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+$:.push File.expand_path('../../lib', __FILE__)
+require 'killbill/migration'
+
+begin
+  Killbill::Cli.start
+rescue => e
+  Thor::Shell::Color.new.say e.message, :red
+  exit 1
+end
