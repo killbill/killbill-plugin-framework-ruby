@@ -1,6 +1,6 @@
 require 'logger'
 require 'active_record'
-require 'activerecord-jdbc-adapter'
+require 'arjdbc'
 
 require 'jdbc/mariadb'
 Jdbc::MariaDB.load_driver
@@ -55,10 +55,10 @@ module Killbill
     private
 
     def configure_logging(logger)
-      verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
+      verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : false
 
       ActiveRecord::Base.logger = logger
-      ActiveRecord::Base.logger.level = Logger::DEBUG if verbose
+      ActiveRecord::Base.logger.level = verbose ? Logger::DEBUG : Logger::INFO
 
       ActiveRecord::Migration.verbose = verbose
     end
@@ -68,16 +68,19 @@ module Killbill
     end
 
     def configure_connection(config)
-      config ||= {
-          :adapter => :mysql,
+      config ||= {}
+      db_config = {
+          :adapter => ENV['ADAPTER'] || :mysql,
           :driver => ENV['DRIVER'] || 'org.mariadb.jdbc.Driver',
           :username => ENV['USERNAME'] || 'killbill',
           :password => ENV['PASSWORD'] || 'killbill',
           :database => ENV['DB'] || 'killbill',
+          :host => ENV['HOST'] || '127.0.0.1'
       }
-      ActiveRecord::Base.establish_connection(config)
+      config_with_defaults = db_config.merge(config)
+      ActiveRecord::Base.establish_connection(config_with_defaults)
 
-      @config = config.stringify_keys
+      @config = config_with_defaults.stringify_keys
     end
 
     def monkey_patch_ar
