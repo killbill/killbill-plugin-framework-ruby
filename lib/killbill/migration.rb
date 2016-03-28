@@ -49,14 +49,22 @@ module Killbill
       say migration(plugin_name, options).current_version, :green
     end
 
+    method_option :path,
+                  :type    => :string,
+                  :default => ActiveRecord::Migrator.migrations_paths,
+                  :desc    => 'Folder where to find migration files.'
     desc 'sql_for_migration plugin_name', 'Display the migration SQL'
     def sql_for_migration(plugin_name)
-      say migration(plugin_name, options).sql_for_migration.join("\n"), :green
+      say migration(plugin_name, options).sql_for_migration(options[:path]).join("\n"), :green
     end
 
+    method_option :path,
+                  :type    => :string,
+                  :default => ActiveRecord::Migrator.migrations_paths,
+                  :desc    => 'Folder where to find migration files.'
     desc 'migrate plugin_name', 'Run all migrations'
     def migrate(plugin_name)
-      migration(plugin_name, options).migrate
+      migration(plugin_name, options).migrate(options[:path])
     end
 
     desc 'ruby_dump plugin_name', 'Dump the current schema structure (Ruby)'
