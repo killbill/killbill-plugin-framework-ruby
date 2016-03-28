@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 $:.push File.expand_path('../../lib', __FILE__)
-require 'killbill/migration'
+require 'killbill/migration_cli'
 
 begin
   Killbill::Cli.start

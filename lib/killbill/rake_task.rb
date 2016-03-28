@@ -5,6 +5,8 @@ require 'tmpdir'
 require 'rake'
 require 'rubygems/installer'
 
+require 'killbill/migration'
+
 module Killbill
   class PluginHelper
     include Rake::DSL
@@ -64,6 +66,8 @@ module Killbill
       # Staging area to install gem dependencies
       # Note the Killbill friendly structure (which we will keep in the tarball)
       @plugin_gem_target_dir = @plugin_target_dir.join(@gems_dir_path)
+
+      @migration = Killbill::Migration.new(plugin_name || ENV['PLUGIN_NAME'])
     end
 
     attr_reader :base
@@ -245,6 +249,33 @@ module Killbill
         desc "Delete #{@package_dir}"
         task :clean => :clobber do
           rm_r @package_dir if File.exist?(@package_dir)
+        end
+
+        namespace :db do
+          desc 'Display the current migration version'
+          task :current_version do
+            puts @migration.current_version
+          end
+
+          desc 'Display the migration SQL'
+          task :sql_for_migration do
+            puts @migration.sql_for_migration.join("\n")
+          end
+
+          desc 'Run all migrations'
+          task :migrate do
+            @migration.migrate
+          end
+
+          desc 'Dump the current schema structure (Ruby)'
+          task :ruby_dump do
+            puts @migration.ruby_dump.string
+          end
+
+          desc 'Dump the current schema structure (SQL)'
+          task :sql_dump do
+            puts @migration.sql_dump.string
+          end
         end
       end
     end
