@@ -138,9 +138,15 @@ Use the plugin generator:
 
 ```bash
 ./script/generate active_merchant gateway_name /path/to/dir
+cd /path/to/dir
+git init .
+git add *
+git ci -m 'Initial'
 ```
 
 Replace `gateway_name` with the snake case of your ActiveMerchant gateway (e.g. `yandex`, `stripe`, `paypal`, etc.).
+
+The newly generated plugin is in a git repository due to the way that the gemspec file resolves the files to include in the `killbill:package` rake task.  The above will add the generated files to a git repository, the handling of which is left to the reader.
 
 This will generate a tree of files ready to be plugged into Kill Bill. To package the plugin, run:
 
