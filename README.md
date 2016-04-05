@@ -140,8 +140,8 @@ Use the plugin generator:
 ./script/generate active_merchant gateway_name /path/to/dir
 cd /path/to/dir
 git init .
-git add *
-git ci -m 'Initial'
+git add .
+git commit -m 'Initial'
 ```
 
 Replace `gateway_name` with the snake case of your ActiveMerchant gateway (e.g. `yandex`, `stripe`, `paypal`, etc.).
