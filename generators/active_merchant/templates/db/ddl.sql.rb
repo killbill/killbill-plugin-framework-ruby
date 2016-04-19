@@ -57,7 +57,7 @@ CREATE TABLE <%= identifier %>_responses (
   kb_payment_transaction_id varchar(255) DEFAULT NULL,
   transaction_type varchar(255) DEFAULT NULL,
   payment_processor_account_id varchar(255) DEFAULT NULL,
-  message varchar(255) DEFAULT NULL,
+  message text DEFAULT NULL,
   authorisation varchar(255) DEFAULT NULL,
   fraud_review boolean DEFAULT NULL,
   test boolean DEFAULT NULL,
