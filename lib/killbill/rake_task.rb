@@ -66,8 +66,6 @@ module Killbill
       # Staging area to install gem dependencies
       # Note the Killbill friendly structure (which we will keep in the tarball)
       @plugin_gem_target_dir = @plugin_target_dir.join(@gems_dir_path)
-
-      @migration = Killbill::Migration.new(plugin_name || ENV['PLUGIN_NAME'])
     end
 
     attr_reader :base
@@ -254,33 +252,37 @@ module Killbill
         namespace :db do
           desc 'Display the current migration version'
           task :current_version do
-            puts @migration.current_version
+            puts migration.current_version
           end
 
           desc 'Display the migration SQL'
           task :sql_for_migration do
-            puts @migration.sql_for_migration.join("\n")
+            puts migration.sql_for_migration.join("\n")
           end
 
           desc 'Run all migrations'
           task :migrate do
-            @migration.migrate
+            migration.migrate
           end
 
           desc 'Dump the current schema structure (Ruby)'
           task :ruby_dump do
-            puts @migration.ruby_dump.string
+            puts migration.ruby_dump.string
           end
 
           desc 'Dump the current schema structure (SQL)'
           task :sql_dump do
-            puts @migration.sql_dump.string
+            puts migration.sql_dump.string
           end
         end
       end
     end
 
     private
+
+    def migration
+      @migration ||= Killbill::Migration.new(@plugin_name || ENV['PLUGIN_NAME'])
+    end
 
     def plugin_path(plugins_dir, versioned = true)
       plugin_path = plugins_dir.join(name)
