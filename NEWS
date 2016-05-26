@@ -1,3 +1,6 @@
+7.0.5
+    Fix regression when loading Rake tasks
+
 7.0.4
     Add support for migrations
     ActiveMerchant: change message column to TEXT
