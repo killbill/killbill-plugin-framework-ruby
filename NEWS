@@ -1,3 +1,8 @@
+7.0.4
+    Add support for migrations
+    ActiveMerchant: change message column to TEXT
+    ActiveMerchant: pass in extra_params to dispatch_to_gateways
+
 7.0.3
     Java API: set default dates in context to now()
     Expose the underlying object from LazyEvaluator
