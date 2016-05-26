@@ -361,7 +361,7 @@ module Killbill
         # TODO Split settlements is partially implemented. Left to be done:
         # * payment_source should probably be retrieved per gateway
         # * amount per gateway should be retrieved from the options
-        def dispatch_to_gateways(operation, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc=nil)
+        def dispatch_to_gateways(operation, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc=nil, extra_params={})
           kb_transaction        = Utils::LazyEvaluator.new { get_kb_transaction(kb_payment_id, kb_payment_transaction_id, context.tenant_id) }
           amount_in_cents       = amount.nil? ? nil : to_cents(amount, currency)
 
@@ -412,7 +412,7 @@ module Killbill
 
             # Perform the operation in the gateway
             gw_response           = gateway_call_proc.call(gateway, linked_transaction, payment_source, amount_in_cents, options)
-            response, transaction = save_response_and_transaction(gw_response, operation, kb_account_id, context.tenant_id, payment_processor_account_id, kb_payment_id, kb_payment_transaction_id, operation.upcase, amount_in_cents, currency)
+            response, transaction = save_response_and_transaction(gw_response, operation, kb_account_id, context.tenant_id, payment_processor_account_id, kb_payment_id, kb_payment_transaction_id, operation.upcase, amount_in_cents, currency, extra_params)
 
             # Filter after each gateway call
             after_gateway(response, transaction, gw_response, context)
@@ -564,10 +564,10 @@ module Killbill
           account.currency
         end
 
-        def save_response_and_transaction(gw_response, api_call, kb_account_id, kb_tenant_id, payment_processor_account_id, kb_payment_id=nil, kb_payment_transaction_id=nil, transaction_type=nil, amount_in_cents=0, currency=nil)
+        def save_response_and_transaction(gw_response, api_call, kb_account_id, kb_tenant_id, payment_processor_account_id, kb_payment_id=nil, kb_payment_transaction_id=nil, transaction_type=nil, amount_in_cents=0, currency=nil, extra_params={})
           @logger.warn "Unsuccessful #{api_call}: #{gw_response.message}" unless gw_response.success?
 
-          response, transaction = @response_model.create_response_and_transaction(@identifier, @transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, {}, @response_model)
+          response, transaction = @response_model.create_response_and_transaction(@identifier, @transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, extra_params, @response_model)
 
           @logger.debug { "Recorded transaction: #{transaction.inspect}" } unless transaction.nil?
 
