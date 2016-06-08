@@ -29,49 +29,36 @@ module Killbill
   module Plugin
     module Model
 
-      class SubscriptionUsageRecord
+      class UsageApiException
 
 
-        attr_accessor :subscription_id, :tracking_id, :unit_usage_record
+        attr_accessor :message, :cause, :code
 
         def initialize()
         end
 
         def to_java()
-          # conversion for subscription_id [type = java.util.UUID]
-          @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?
+          # conversion for message [type = java.lang.String]
+          @message = @message.to_s unless @message.nil?
 
-          # conversion for tracking_id [type = java.lang.String]
-          @tracking_id = @tracking_id.to_s unless @tracking_id.nil?
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = @cause.to_s unless cause.nil?
 
-          # conversion for unit_usage_record [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@unit_usage_record || []).each do |m|
-            # conversion for m [type = org.killbill.billing.usage.api.UnitUsageRecord]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @unit_usage_record = tmp
-          Java::org.killbill.billing.usage.api.SubscriptionUsageRecord.new(@subscription_id, @tracking_id, @unit_usage_record)
+          # conversion for code [type = int]
+          @code = @code
+          Java::org.killbill.billing.usage.api.UsageApiException.new(@message, @cause, @code)
         end
 
         def to_ruby(j_obj)
-          # conversion for subscription_id [type = java.util.UUID]
-          @subscription_id = j_obj.subscription_id
-          @subscription_id = @subscription_id.nil? ? nil : @subscription_id.to_s
+          # conversion for message [type = java.lang.String]
+          @message = j_obj.message
 
-          # conversion for tracking_id [type = java.lang.String]
-          @tracking_id = j_obj.tracking_id
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = j_obj.cause
+          @cause = @cause.to_s unless @cause.nil?
 
-          # conversion for unit_usage_record [type = java.util.List]
-          @unit_usage_record = j_obj.unit_usage_record
-          tmp = []
-          (@unit_usage_record || []).each do |m|
-            # conversion for m [type = org.killbill.billing.usage.api.UnitUsageRecord]
-            m = Killbill::Plugin::Model::UnitUsageRecord.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @unit_usage_record = tmp
+          # conversion for code [type = int]
+          @code = j_obj.code
           self
         end
 

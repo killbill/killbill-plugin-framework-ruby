@@ -660,6 +660,57 @@ module Killbill
           end
         end
 
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackReversal(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback_reversal(account, paymentId, paymentTransactionExternalKey, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_chargeback_reversal(account, paymentId, paymentTransactionExternalKey, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackReversalWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback_reversal_with_payment_control(account, paymentId, paymentTransactionExternalKey, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_chargeback_reversal_with_payment_control(account, paymentId, paymentTransactionExternalKey, paymentOptions, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
         java_signature 'Java::org.killbill.billing.payment.api.Payment notifyPendingTransactionOfStateChanged(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::org.killbill.billing.util.callcontext.CallContext)'
         def notify_pending_transaction_of_state_changed(account, paymentTransactionId, isSuccess, context)
 

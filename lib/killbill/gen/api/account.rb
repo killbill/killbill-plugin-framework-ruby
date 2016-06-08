@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.Account
 
-        attr_accessor :id, :created_date, :updated_date, :external_key, :currency, :time_zone, :name, :first_name_length, :email, :bill_cycle_day_local, :payment_method_id, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
+        attr_accessor :id, :created_date, :updated_date, :external_key, :currency, :time_zone, :fixed_offset_time_zone, :reference_time, :name, :first_name_length, :email, :bill_cycle_day_local, :payment_method_id, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
 
         def initialize()
         end
@@ -64,6 +64,17 @@ module Killbill
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           if !@time_zone.nil?
             @time_zone = Java::org.joda.time.DateTimeZone.forID((@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s))
+          end
+
+          # conversion for fixed_offset_time_zone [type = org.joda.time.DateTimeZone]
+          if !@fixed_offset_time_zone.nil?
+            @fixed_offset_time_zone = Java::org.joda.time.DateTimeZone.forID((@fixed_offset_time_zone.respond_to?(:identifier) ? @fixed_offset_time_zone.identifier : @fixed_offset_time_zone.to_s))
+          end
+
+          # conversion for reference_time [type = org.joda.time.DateTime]
+          if !@reference_time.nil?
+            @reference_time =  (@reference_time.kind_of? Time) ? DateTime.parse(@reference_time.to_s) : @reference_time
+            @reference_time = Java::org.joda.time.DateTime.new(@reference_time.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
           # conversion for name [type = java.lang.String]
@@ -148,6 +159,20 @@ module Killbill
           @time_zone = j_obj.time_zone
           if !@time_zone.nil?
             @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
+          end
+
+          # conversion for fixed_offset_time_zone [type = org.joda.time.DateTimeZone]
+          @fixed_offset_time_zone = j_obj.fixed_offset_time_zone
+          if !@fixed_offset_time_zone.nil?
+            @fixed_offset_time_zone = TZInfo::Timezone.get(@fixed_offset_time_zone.get_id)
+          end
+
+          # conversion for reference_time [type = org.joda.time.DateTime]
+          @reference_time = j_obj.reference_time
+          if !@reference_time.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@reference_time)
+            @reference_time = DateTime.iso8601(str)
           end
 
           # conversion for name [type = java.lang.String]

@@ -28,6 +28,7 @@
 require 'killbill/gen/plugin-api/payment_method_info_plugin'
 require 'killbill/gen/plugin-api/payment_plugin_api'
 require 'killbill/gen/plugin-api/payment_plugin_api_exception'
+require 'killbill/gen/plugin-api/blocking_state_metadata'
 require 'killbill/gen/plugin-api/broadcast_metadata'
 require 'killbill/gen/plugin-api/ext_bus_event'
 require 'killbill/gen/plugin-api/notification_plugin_api'

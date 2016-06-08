@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.osgi.api.OSGIKillbill
 
-        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api, :security_api, :plugins_info_api, :killbill_nodes_api
+        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api, :security_api, :plugins_info_api, :killbill_nodes_api, :admin_payment_api
 
         def initialize()
         end
@@ -96,6 +96,9 @@ module Killbill
 
           # conversion for killbill_nodes_api [type = org.killbill.billing.util.nodes.KillbillNodesApi]
           @killbill_nodes_api = @killbill_nodes_api.to_java unless @killbill_nodes_api.nil?
+
+          # conversion for admin_payment_api [type = org.killbill.billing.payment.api.AdminPaymentApi]
+          @admin_payment_api = @admin_payment_api.to_java unless @admin_payment_api.nil?
           self
         end
 
@@ -175,6 +178,10 @@ module Killbill
           # conversion for killbill_nodes_api [type = org.killbill.billing.util.nodes.KillbillNodesApi]
           @killbill_nodes_api = j_obj.killbill_nodes_api
           @killbill_nodes_api = Killbill::Plugin::Model::KillbillNodesApi.new.to_ruby(@killbill_nodes_api) unless @killbill_nodes_api.nil?
+
+          # conversion for admin_payment_api [type = org.killbill.billing.payment.api.AdminPaymentApi]
+          @admin_payment_api = j_obj.admin_payment_api
+          @admin_payment_api = Killbill::Plugin::Model::AdminPaymentApi.new.to_ruby(@admin_payment_api) unless @admin_payment_api.nil?
           self
         end
 

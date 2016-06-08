@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.plugin.api.PriorEntitlementResult
 
-        attr_accessor :is_aborted, :adjusted_effective_date, :adjusted_entitlement_specifiers, :adjusted_plugin_properties
+        attr_accessor :is_aborted, :adjusted_entitlement_effective_date, :adjusted_billing_effective_date, :adjusted_billing_action_policy, :adjusted_entitlement_specifiers, :adjusted_plugin_properties
 
         def initialize()
         end
@@ -43,10 +43,18 @@ module Killbill
           # conversion for is_aborted [type = boolean]
           @is_aborted = @is_aborted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_aborted)
 
-          # conversion for adjusted_effective_date [type = org.joda.time.LocalDate]
-          if !@adjusted_effective_date.nil?
-            @adjusted_effective_date = Java::org.joda.time.LocalDate.parse(@adjusted_effective_date.to_s)
+          # conversion for adjusted_entitlement_effective_date [type = org.joda.time.LocalDate]
+          if !@adjusted_entitlement_effective_date.nil?
+            @adjusted_entitlement_effective_date = Java::org.joda.time.LocalDate.parse(@adjusted_entitlement_effective_date.to_s)
           end
+
+          # conversion for adjusted_billing_effective_date [type = org.joda.time.LocalDate]
+          if !@adjusted_billing_effective_date.nil?
+            @adjusted_billing_effective_date = Java::org.joda.time.LocalDate.parse(@adjusted_billing_effective_date.to_s)
+          end
+
+          # conversion for adjusted_billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
+          @adjusted_billing_action_policy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of( @adjusted_billing_action_policy.to_s ) unless @adjusted_billing_action_policy.nil?
 
           # conversion for adjusted_entitlement_specifiers [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -78,11 +86,21 @@ module Killbill
             @is_aborted = tmp_bool ? true : false
           end
 
-          # conversion for adjusted_effective_date [type = org.joda.time.LocalDate]
-          @adjusted_effective_date = j_obj.adjusted_effective_date
-          if !@adjusted_effective_date.nil?
-            @adjusted_effective_date = @adjusted_effective_date.to_s
+          # conversion for adjusted_entitlement_effective_date [type = org.joda.time.LocalDate]
+          @adjusted_entitlement_effective_date = j_obj.adjusted_entitlement_effective_date
+          if !@adjusted_entitlement_effective_date.nil?
+            @adjusted_entitlement_effective_date = @adjusted_entitlement_effective_date.to_s
           end
+
+          # conversion for adjusted_billing_effective_date [type = org.joda.time.LocalDate]
+          @adjusted_billing_effective_date = j_obj.adjusted_billing_effective_date
+          if !@adjusted_billing_effective_date.nil?
+            @adjusted_billing_effective_date = @adjusted_billing_effective_date.to_s
+          end
+
+          # conversion for adjusted_billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
+          @adjusted_billing_action_policy = j_obj.adjusted_billing_action_policy
+          @adjusted_billing_action_policy = @adjusted_billing_action_policy.to_s.to_sym unless @adjusted_billing_action_policy.nil?
 
           # conversion for adjusted_entitlement_specifiers [type = java.util.List]
           @adjusted_entitlement_specifiers = j_obj.adjusted_entitlement_specifiers

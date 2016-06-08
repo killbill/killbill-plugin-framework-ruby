@@ -39,15 +39,18 @@ module Killbill
         end
 
 
-        java_signature 'Java::java.util.List getInvoicesByAccount(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_invoices_by_account(accountId, context)
+        java_signature 'Java::java.util.List getInvoicesByAccount(Java::java.util.UUID, Java::boolean, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_invoices_by_account(accountId, includesMigrated, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
+          # conversion for includesMigrated [type = boolean]
+          includesMigrated = includesMigrated.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includesMigrated)
+
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_invoices_by_account(accountId, context)
+          res = @real_java_api.get_invoices_by_account(accountId, includesMigrated, context)
           # conversion for res [type = java.util.List]
           tmp = []
           (res || []).each do |m|
@@ -325,8 +328,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertCredit(Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def insert_credit(accountId, amount, effectiveDate, currency, context)
+        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertCredit(Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def insert_credit(accountId, amount, effectiveDate, currency, description, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -346,10 +349,13 @@ module Killbill
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
+          # conversion for description [type = java.lang.String]
+          description = description.to_s unless description.nil?
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.insert_credit(accountId, amount, effectiveDate, currency, context)
+            res = @real_java_api.insert_credit(accountId, amount, effectiveDate, currency, description, context)
             # conversion for res [type = org.killbill.billing.invoice.api.InvoiceItem]
             res = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(res) unless res.nil?
             return res
@@ -358,8 +364,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertCreditForInvoice(Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def insert_credit_for_invoice(accountId, invoiceId, amount, effectiveDate, currency, context)
+        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertCreditForInvoice(Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.joda.time.LocalDate, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def insert_credit_for_invoice(accountId, invoiceId, amount, effectiveDate, currency, description, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -382,10 +388,13 @@ module Killbill
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
+          # conversion for description [type = java.lang.String]
+          description = description.to_s unless description.nil?
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.insert_credit_for_invoice(accountId, invoiceId, amount, effectiveDate, currency, context)
+            res = @real_java_api.insert_credit_for_invoice(accountId, invoiceId, amount, effectiveDate, currency, description, context)
             # conversion for res [type = org.killbill.billing.invoice.api.InvoiceItem]
             res = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(res) unless res.nil?
             return res
@@ -394,8 +403,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertInvoiceItemAdjustment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def insert_invoice_item_adjustment(accountId, invoiceId, invoiceItemId, effectiveDate, context)
+        java_signature 'Java::org.killbill.billing.invoice.api.InvoiceItem insertInvoiceItemAdjustment(Java::java.util.UUID, Java::java.util.UUID, Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def insert_invoice_item_adjustment(accountId, invoiceId, invoiceItemId, effectiveDate, description, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -411,10 +420,13 @@ module Killbill
             effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
           end
 
+          # conversion for description [type = java.lang.String]
+          description = description.to_s unless description.nil?
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.insert_invoice_item_adjustment(accountId, invoiceId, invoiceItemId, effectiveDate, context)
+            res = @real_java_api.insert_invoice_item_adjustment(accountId, invoiceId, invoiceItemId, effectiveDate, description, context)
             # conversion for res [type = org.killbill.billing.invoice.api.InvoiceItem]
             res = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(res) unless res.nil?
             return res
@@ -470,6 +482,34 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           @real_java_api.consume_exsting_cba_onaccount_with_unpaid_invoices(accountId, context)
+        end
+
+        java_signature 'Java::java.util.UUID createMigrationInvoice(Java::java.util.UUID, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_migration_invoice(accountId, invoiceDate, items, context)
+
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
+          # conversion for invoiceDate [type = org.joda.time.LocalDate]
+          if !invoiceDate.nil?
+            invoiceDate = Java::org.joda.time.LocalDate.parse(invoiceDate.to_s)
+          end
+
+          # conversion for items [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (items || []).each do |m|
+            # conversion for m [type = org.killbill.billing.invoice.api.InvoiceItem]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          items = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.create_migration_invoice(accountId, invoiceDate, items, context)
+          # conversion for res [type = java.util.UUID]
+          res = res.nil? ? nil : res.to_s
+          return res
         end
       end
     end
