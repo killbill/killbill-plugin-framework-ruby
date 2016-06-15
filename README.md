@@ -1,6 +1,19 @@
 [![Build Status](https://travis-ci.org/killbill/killbill-plugin-framework-ruby.png)](https://travis-ci.org/killbill/killbill-plugin-framework-ruby)
 [![Code Climate](https://codeclimate.com/github/killbill/killbill-plugin-framework-ruby.png)](https://codeclimate.com/github/killbill/killbill-plugin-framework-ruby)
 
+
+Kill Bill compatibility
+-----------------------
+
+| Plugin Framework version | Kill Bill version |
+| -----------------------: | ----------------: |
+| 7.x.y                    | 0.16.z            |
+| -----------------------: | ----------------: |
+| 8.x.y                    | 0.18.z(and 0.17.x)|
+
+
+
+
 killbill-plugin-framework-ruby
 ==============================
 
