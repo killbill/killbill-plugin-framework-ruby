@@ -5,8 +5,6 @@ require 'tmpdir'
 require 'rake'
 require 'rubygems/installer'
 
-require 'killbill/migration'
-
 module Killbill
   class PluginHelper
     include Rake::DSL
@@ -281,6 +279,7 @@ module Killbill
     private
 
     def migration
+      require 'killbill/migration'
       @migration ||= Killbill::Migration.new(@plugin_name || ENV['PLUGIN_NAME'])
     end
 
