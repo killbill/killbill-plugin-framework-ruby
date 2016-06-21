@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     # See https://github.com/killbill/killbill-plugin-framework-ruby/issues/33
     s.add_development_dependency 'activerecord-jdbc-adapter', '~> 1.3'
     s.add_development_dependency 'jdbc-mariadb', '~> 1.1.8'
+    s.add_development_dependency 'jdbc-postgres', '~> 9.4'
   end
   s.add_development_dependency 'actionpack', '~> 4.1.0'
   s.add_development_dependency 'actionview', '~> 4.1.0'

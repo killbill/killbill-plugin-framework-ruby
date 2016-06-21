@@ -6,6 +6,9 @@ require 'arjdbc'
 require 'jdbc/mariadb'
 Jdbc::MariaDB.load_driver
 
+require 'jdbc/postgres'
+Jdbc::Postgres.load_driver
+
 module Killbill
   class Migration
 

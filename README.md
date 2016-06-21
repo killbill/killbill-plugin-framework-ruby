@@ -249,4 +249,5 @@ To change the database driver:
 
 ```bash
 AR_ADAPTER=mariadb AR_USERNAME=root AR_PASSWORD=root AR_DATABASE=kbtest rake
+AR_ADAPTER=postgresql AR_DATABASE=kbtest rake
 ```

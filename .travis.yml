@@ -6,9 +6,14 @@ cache:
   directories:
     - $HOME/.m2
 
+services:
+  - mysql
+  - postgresql
+
 before_script:
   - bundle exec jbundle install
   - mysql -uroot -e 'create database killbill_test;'
+  - psql -c 'create database killbill_test;' -U postgres
 
 notifications:
   email:
@@ -20,6 +25,7 @@ env:
   matrix:
     # Need MySQL 5.6 - see https://github.com/travis-ci/travis-ci/issues/1986
     #- AR_ADAPTER='mariadb' AR_USERNAME='root' AR_PASSWORD='' AR_DATABASE='killbill_test'
+    - AR_ADAPTER='postgresql' AR_USERNAME='postgres' AR_DATABASE='killbill_test'
     - AR_ADAPTER='sqlite3' AR_DATABASE='test.db'
 
 rvm:
