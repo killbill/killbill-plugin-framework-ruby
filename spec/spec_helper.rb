@@ -80,7 +80,7 @@ module Killbill
         require File.expand_path(File.dirname(__FILE__) + '/killbill/helpers/test_schema.rb')
 
         # Required to have MySQL store milliseconds
-        Time::DATE_FORMATS.merge!({ db: '%Y-%m-%d %H:%M:%S.%3N' })
+        Time::DATE_FORMATS.merge!({ db: '%Y-%m-%d %H:%M:%S.%3N' }) if %w(mariadb mysql).include?(ENV['AR_ADAPTER'])
       end
     end
   end
