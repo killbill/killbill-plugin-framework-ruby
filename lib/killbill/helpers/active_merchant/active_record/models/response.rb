@@ -162,7 +162,6 @@ module Killbill
                        .or(t[:kb_payment_transaction_id].eq(search_key))
                        .or(t[:message].eq(search_key))
                        .or(t[:authorization].eq(search_key))
-                       .or(t[:fraud_review].eq(search_key))
 
             # Only search successful payments and refunds
             where_clause = where_clause.and(t[:success].eq(true))
