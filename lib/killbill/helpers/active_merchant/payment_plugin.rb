@@ -86,7 +86,12 @@ module Killbill
 
             # Go to the gateway - while some gateways implementations are smart and have void support 'auth_reversal' and 'void' (e.g. Litle),
             # others (e.g. CyberSource) implement different methods
-            linked_transaction.transaction_type == 'AUTHORIZE' && gateway.respond_to?(:auth_reversal) ? gateway.auth_reversal(linked_transaction.amount_in_cents, authorization, options) : gateway.void(authorization, options)
+            if linked_transaction.transaction_type == 'AUTHORIZE' && gateway.respond_to?(:auth_reversal)
+              options[:currency] ||= linked_transaction.currency
+              gateway.auth_reversal(linked_transaction.amount_in_cents, authorization, options)
+            else
+              gateway.void(authorization, options)
+            end
           end
 
           linked_transaction_proc = Proc.new do |amount_in_cents, options|
