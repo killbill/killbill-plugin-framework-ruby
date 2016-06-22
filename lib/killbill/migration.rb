@@ -3,11 +3,19 @@ require 'logger'
 require 'active_record'
 require 'arjdbc'
 
-require 'jdbc/mariadb'
-Jdbc::MariaDB.load_driver
+begin
+  require 'jdbc/mariadb'
+  Jdbc::MariaDB.load_driver
+rescue LoadError
+# ignored
+end
 
-require 'jdbc/postgres'
-Jdbc::Postgres.load_driver
+begin
+  require 'jdbc/postgres'
+  Jdbc::Postgres.load_driver
+rescue LoadError
+# ignored
+end
 
 module Killbill
   class Migration
