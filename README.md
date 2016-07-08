@@ -5,11 +5,10 @@
 Kill Bill compatibility
 -----------------------
 
-| Plugin Framework version | Kill Bill version |
-| -----------------------: | ----------------: |
-| 7.x.y                    | 0.16.z            |
-| -----------------------: | ----------------: |
-| 8.x.y                    | 0.18.z(and 0.17.x)|
+| Plugin Framework version | Kill Bill version  |
+| -----------------------: | ----------------:  |
+| 7.x.y                    | 0.16.z             |
+| 8.x.y                    | 0.18.z (and 0.17.x)|
 
 
 
