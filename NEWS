@@ -1,3 +1,9 @@
+8.0.1
+    Fix ActiveRecord dependency issues
+
+8.0.0
+    Initial release for Kill Bill 0.17.x
+
 7.0.5
     Fix regression when loading Rake tasks
 
