@@ -206,6 +206,30 @@ module Killbill
           context = context.to_java unless context.nil?
           @real_java_api.remove_email(accountId, email, context)
         end
+
+        java_signature 'Java::java.util.List getChildrenAccounts(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_children_accounts(parentAccountId, context)
+
+          # conversion for parentAccountId [type = java.util.UUID]
+          parentAccountId = java.util.UUID.fromString(parentAccountId.to_s) unless parentAccountId.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_children_accounts(parentAccountId, context)
+            # conversion for res [type = java.util.List]
+            tmp = []
+            (res || []).each do |m|
+              # conversion for m [type = org.killbill.billing.account.api.Account]
+              m = Killbill::Plugin::Model::Account.new.to_ruby(m) unless m.nil?
+              tmp << m
+            end
+            res = tmp
+            return res
+          rescue Java::org.killbill.billing.account.api.AccountApiException => e
+            raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
+          end
+        end
       end
     end
   end

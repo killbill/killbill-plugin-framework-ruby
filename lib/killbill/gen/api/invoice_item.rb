@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.invoice.api.InvoiceItem
 
-        attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :usage_name, :rate, :linked_item_id
+        attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :usage_name, :rate, :linked_item_id
 
         def initialize()
         end
@@ -63,6 +63,9 @@ module Killbill
 
           # conversion for account_id [type = java.util.UUID]
           @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
+
+          # conversion for child_account_id [type = java.util.UUID]
+          @child_account_id = java.util.UUID.fromString(@child_account_id.to_s) unless @child_account_id.nil?
 
           # conversion for start_date [type = org.joda.time.LocalDate]
           if !@start_date.nil?
@@ -146,6 +149,10 @@ module Killbill
           # conversion for account_id [type = java.util.UUID]
           @account_id = j_obj.account_id
           @account_id = @account_id.nil? ? nil : @account_id.to_s
+
+          # conversion for child_account_id [type = java.util.UUID]
+          @child_account_id = j_obj.child_account_id
+          @child_account_id = @child_account_id.nil? ? nil : @child_account_id.to_s
 
           # conversion for start_date [type = org.joda.time.LocalDate]
           @start_date = j_obj.start_date

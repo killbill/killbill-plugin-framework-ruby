@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.MigrationPlan
 
-        attr_accessor :initial_phases, :product, :price_list, :name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions
+        attr_accessor :initial_phases, :product, :price_list_name, :name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions
 
         def initialize()
         end
@@ -52,8 +52,8 @@ module Killbill
           # conversion for product [type = org.killbill.billing.catalog.api.Product]
           @product = @product.to_java unless @product.nil?
 
-          # conversion for price_list [type = org.killbill.billing.catalog.api.PriceList]
-          @price_list = @price_list.to_java unless @price_list.nil?
+          # conversion for price_list_name [type = java.lang.String]
+          @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
 
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
@@ -103,9 +103,8 @@ module Killbill
           @product = j_obj.product
           @product = Killbill::Plugin::Model::Product.new.to_ruby(@product) unless @product.nil?
 
-          # conversion for price_list [type = org.killbill.billing.catalog.api.PriceList]
-          @price_list = j_obj.price_list
-          @price_list = Killbill::Plugin::Model::PriceList.new.to_ruby(@price_list) unless @price_list.nil?
+          # conversion for price_list_name [type = java.lang.String]
+          @price_list_name = j_obj.price_list_name
 
           # conversion for name [type = java.lang.String]
           @name = j_obj.name

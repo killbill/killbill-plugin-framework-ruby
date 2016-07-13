@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.ImmutableAccountData
 
-        attr_accessor :id, :external_key, :currency, :time_zone, :fixed_offset_time_zone, :reference_time
+        attr_accessor :id, :external_key, :currency, :time_zone, :parent_account_id, :is_payment_delegated_to_parent, :fixed_offset_time_zone, :reference_time
 
         def initialize()
         end
@@ -53,6 +53,12 @@ module Killbill
           if !@time_zone.nil?
             @time_zone = Java::org.joda.time.DateTimeZone.forID((@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s))
           end
+
+          # conversion for parent_account_id [type = java.util.UUID]
+          @parent_account_id = java.util.UUID.fromString(@parent_account_id.to_s) unless @parent_account_id.nil?
+
+          # conversion for is_payment_delegated_to_parent [type = java.lang.Boolean]
+          @is_payment_delegated_to_parent = @is_payment_delegated_to_parent.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_payment_delegated_to_parent)
 
           # conversion for fixed_offset_time_zone [type = org.joda.time.DateTimeZone]
           if !@fixed_offset_time_zone.nil?
@@ -83,6 +89,19 @@ module Killbill
           @time_zone = j_obj.time_zone
           if !@time_zone.nil?
             @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
+          end
+
+          # conversion for parent_account_id [type = java.util.UUID]
+          @parent_account_id = j_obj.parent_account_id
+          @parent_account_id = @parent_account_id.nil? ? nil : @parent_account_id.to_s
+
+          # conversion for is_payment_delegated_to_parent [type = java.lang.Boolean]
+          @is_payment_delegated_to_parent = j_obj.is_payment_delegated_to_parent
+          if @is_payment_delegated_to_parent.nil?
+            @is_payment_delegated_to_parent = false
+          else
+            tmp_bool = (@is_payment_delegated_to_parent.java_kind_of? java.lang.Boolean) ? @is_payment_delegated_to_parent.boolean_value : @is_payment_delegated_to_parent
+            @is_payment_delegated_to_parent = tmp_bool ? true : false
           end
 
           # conversion for fixed_offset_time_zone [type = org.joda.time.DateTimeZone]
