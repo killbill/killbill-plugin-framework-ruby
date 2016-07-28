@@ -30,11 +30,11 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.payment.api'
-      class Payment
+      class PaymentAttempt
 
-        include org.killbill.billing.payment.api.Payment
+        include org.killbill.billing.payment.api.PaymentAttempt
 
-        attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_number, :external_key, :auth_amount, :captured_amount, :purchased_amount, :credited_amount, :refunded_amount, :is_auth_voided, :currency, :transactions, :payment_attempts
+        attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_external_key, :transaction_id, :transaction_external_key, :transaction_type, :effective_date, :state_name, :amount, :currency, :plugin_name, :plugin_properties
 
         def initialize()
         end
@@ -61,70 +61,48 @@ module Killbill
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
 
-          # conversion for payment_number [type = java.lang.Integer]
-          @payment_number = @payment_number
+          # conversion for payment_external_key [type = java.lang.String]
+          @payment_external_key = @payment_external_key.to_s unless @payment_external_key.nil?
 
-          # conversion for external_key [type = java.lang.String]
-          @external_key = @external_key.to_s unless @external_key.nil?
+          # conversion for transaction_id [type = java.util.UUID]
+          @transaction_id = java.util.UUID.fromString(@transaction_id.to_s) unless @transaction_id.nil?
 
-          # conversion for auth_amount [type = java.math.BigDecimal]
-          if @auth_amount.nil?
-            @auth_amount = java.math.BigDecimal::ZERO
-          else
-            @auth_amount = java.math.BigDecimal.new(@auth_amount.to_s)
+          # conversion for transaction_external_key [type = java.lang.String]
+          @transaction_external_key = @transaction_external_key.to_s unless @transaction_external_key.nil?
+
+          # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
+          @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of( @transaction_type.to_s ) unless @transaction_type.nil?
+
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          if !@effective_date.nil?
+            @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
+            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for captured_amount [type = java.math.BigDecimal]
-          if @captured_amount.nil?
-            @captured_amount = java.math.BigDecimal::ZERO
-          else
-            @captured_amount = java.math.BigDecimal.new(@captured_amount.to_s)
-          end
+          # conversion for state_name [type = java.lang.String]
+          @state_name = @state_name.to_s unless @state_name.nil?
 
-          # conversion for purchased_amount [type = java.math.BigDecimal]
-          if @purchased_amount.nil?
-            @purchased_amount = java.math.BigDecimal::ZERO
+          # conversion for amount [type = java.math.BigDecimal]
+          if @amount.nil?
+            @amount = java.math.BigDecimal::ZERO
           else
-            @purchased_amount = java.math.BigDecimal.new(@purchased_amount.to_s)
+            @amount = java.math.BigDecimal.new(@amount.to_s)
           end
-
-          # conversion for credited_amount [type = java.math.BigDecimal]
-          if @credited_amount.nil?
-            @credited_amount = java.math.BigDecimal::ZERO
-          else
-            @credited_amount = java.math.BigDecimal.new(@credited_amount.to_s)
-          end
-
-          # conversion for refunded_amount [type = java.math.BigDecimal]
-          if @refunded_amount.nil?
-            @refunded_amount = java.math.BigDecimal::ZERO
-          else
-            @refunded_amount = java.math.BigDecimal.new(@refunded_amount.to_s)
-          end
-
-          # conversion for is_auth_voided [type = java.lang.Boolean]
-          @is_auth_voided = @is_auth_voided.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_auth_voided)
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
 
-          # conversion for transactions [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@transactions || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PaymentTransaction]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @transactions = tmp
+          # conversion for plugin_name [type = java.lang.String]
+          @plugin_name = @plugin_name.to_s unless @plugin_name.nil?
 
-          # conversion for payment_attempts [type = java.util.List]
+          # conversion for plugin_properties [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (@payment_attempts || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PaymentAttempt]
+          (@plugin_properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @payment_attempts = tmp
+          @plugin_properties = tmp
           self
         end
 
@@ -157,64 +135,51 @@ module Killbill
           @payment_method_id = j_obj.payment_method_id
           @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
 
-          # conversion for payment_number [type = java.lang.Integer]
-          @payment_number = j_obj.payment_number
+          # conversion for payment_external_key [type = java.lang.String]
+          @payment_external_key = j_obj.payment_external_key
 
-          # conversion for external_key [type = java.lang.String]
-          @external_key = j_obj.external_key
+          # conversion for transaction_id [type = java.util.UUID]
+          @transaction_id = j_obj.transaction_id
+          @transaction_id = @transaction_id.nil? ? nil : @transaction_id.to_s
 
-          # conversion for auth_amount [type = java.math.BigDecimal]
-          @auth_amount = j_obj.auth_amount
-          @auth_amount = @auth_amount.nil? ? 0 : BigDecimal.new(@auth_amount.to_s)
+          # conversion for transaction_external_key [type = java.lang.String]
+          @transaction_external_key = j_obj.transaction_external_key
 
-          # conversion for captured_amount [type = java.math.BigDecimal]
-          @captured_amount = j_obj.captured_amount
-          @captured_amount = @captured_amount.nil? ? 0 : BigDecimal.new(@captured_amount.to_s)
+          # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
+          @transaction_type = j_obj.transaction_type
+          @transaction_type = @transaction_type.to_s.to_sym unless @transaction_type.nil?
 
-          # conversion for purchased_amount [type = java.math.BigDecimal]
-          @purchased_amount = j_obj.purchased_amount
-          @purchased_amount = @purchased_amount.nil? ? 0 : BigDecimal.new(@purchased_amount.to_s)
-
-          # conversion for credited_amount [type = java.math.BigDecimal]
-          @credited_amount = j_obj.credited_amount
-          @credited_amount = @credited_amount.nil? ? 0 : BigDecimal.new(@credited_amount.to_s)
-
-          # conversion for refunded_amount [type = java.math.BigDecimal]
-          @refunded_amount = j_obj.refunded_amount
-          @refunded_amount = @refunded_amount.nil? ? 0 : BigDecimal.new(@refunded_amount.to_s)
-
-          # conversion for is_auth_voided [type = java.lang.Boolean]
-          @is_auth_voided = j_obj.is_auth_voided
-          if @is_auth_voided.nil?
-            @is_auth_voided = false
-          else
-            tmp_bool = (@is_auth_voided.java_kind_of? java.lang.Boolean) ? @is_auth_voided.boolean_value : @is_auth_voided
-            @is_auth_voided = tmp_bool ? true : false
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          @effective_date = j_obj.effective_date
+          if !@effective_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@effective_date)
+            @effective_date = DateTime.iso8601(str)
           end
+
+          # conversion for state_name [type = java.lang.String]
+          @state_name = j_obj.state_name
+
+          # conversion for amount [type = java.math.BigDecimal]
+          @amount = j_obj.amount
+          @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 
-          # conversion for transactions [type = java.util.List]
-          @transactions = j_obj.transactions
-          tmp = []
-          (@transactions || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PaymentTransaction]
-            m = Killbill::Plugin::Model::PaymentTransaction.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @transactions = tmp
+          # conversion for plugin_name [type = java.lang.String]
+          @plugin_name = j_obj.plugin_name
 
-          # conversion for payment_attempts [type = java.util.List]
-          @payment_attempts = j_obj.payment_attempts
+          # conversion for plugin_properties [type = java.util.List]
+          @plugin_properties = j_obj.plugin_properties
           tmp = []
-          (@payment_attempts || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PaymentAttempt]
-            m = Killbill::Plugin::Model::PaymentAttempt.new.to_ruby(m) unless m.nil?
+          (@plugin_properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @payment_attempts = tmp
+          @plugin_properties = tmp
           self
         end
 

@@ -762,14 +762,17 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.List getAccountPayments(Java::java.util.UUID, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_account_payments(accountId, withPluginInfo, properties, context)
+        java_signature 'Java::java.util.List getAccountPayments(Java::java.util.UUID, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_account_payments(accountId, withPluginInfo, withAttempts, properties, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
           # conversion for withPluginInfo [type = boolean]
           withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
+
+          # conversion for withAttempts [type = boolean]
+          withAttempts = withAttempts.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withAttempts)
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -783,7 +786,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.get_account_payments(accountId, withPluginInfo, properties, context)
+            res = @real_java_api.get_account_payments(accountId, withPluginInfo, withAttempts, properties, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|
@@ -798,8 +801,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment getPayment(Java::java.util.UUID, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_payment(paymentId, withPluginInfo, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment getPayment(Java::java.util.UUID, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment(paymentId, withPluginInfo, withAttempts, properties, context)
 
           # conversion for paymentId [type = java.util.UUID]
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
@@ -807,6 +810,9 @@ module Killbill
           # conversion for withPluginInfo [type = boolean]
           withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
 
+          # conversion for withAttempts [type = boolean]
+          withAttempts = withAttempts.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withAttempts)
+
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
           (properties || []).each do |m|
@@ -819,7 +825,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.get_payment(paymentId, withPluginInfo, properties, context)
+            res = @real_java_api.get_payment(paymentId, withPluginInfo, withAttempts, properties, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -828,8 +834,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment getPaymentByExternalKey(Java::java.lang.String, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_payment_by_external_key(paymentExternalKey, withPluginInfo, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment getPaymentByExternalKey(Java::java.lang.String, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_by_external_key(paymentExternalKey, withPluginInfo, withAttempts, properties, context)
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -837,6 +843,9 @@ module Killbill
           # conversion for withPluginInfo [type = boolean]
           withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
 
+          # conversion for withAttempts [type = boolean]
+          withAttempts = withAttempts.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withAttempts)
+
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
           (properties || []).each do |m|
@@ -849,7 +858,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.get_payment_by_external_key(paymentExternalKey, withPluginInfo, properties, context)
+            res = @real_java_api.get_payment_by_external_key(paymentExternalKey, withPluginInfo, withAttempts, properties, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -858,8 +867,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.util.entity.Pagination getPayments(Java::java.lang.Long, Java::java.lang.Long, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_payments(offset, limit, withPluginInfo, properties, context)
+        java_signature 'Java::org.killbill.billing.util.entity.Pagination getPayments(Java::java.lang.Long, Java::java.lang.Long, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payments(offset, limit, withPluginInfo, withAttempts, properties, context)
 
           # conversion for offset [type = java.lang.Long]
           offset = offset
@@ -870,6 +879,9 @@ module Killbill
           # conversion for withPluginInfo [type = boolean]
           withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
 
+          # conversion for withAttempts [type = boolean]
+          withAttempts = withAttempts.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withAttempts)
+
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
           (properties || []).each do |m|
@@ -881,14 +893,14 @@ module Killbill
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.get_payments(offset, limit, withPluginInfo, properties, context)
+          res = @real_java_api.get_payments(offset, limit, withPluginInfo, withAttempts, properties, context)
           # conversion for res [type = org.killbill.billing.util.entity.Pagination]
           res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
           return res
         end
 
-        java_signature 'Java::org.killbill.billing.util.entity.Pagination searchPayments(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def search_payments(searchKey, offset, limit, withPluginInfo, properties, context)
+        java_signature 'Java::org.killbill.billing.util.entity.Pagination searchPayments(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def search_payments(searchKey, offset, limit, withPluginInfo, withAttempts, properties, context)
 
           # conversion for searchKey [type = java.lang.String]
           searchKey = searchKey.to_s unless searchKey.nil?
@@ -902,6 +914,9 @@ module Killbill
           # conversion for withPluginInfo [type = boolean]
           withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
 
+          # conversion for withAttempts [type = boolean]
+          withAttempts = withAttempts.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withAttempts)
+
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
           (properties || []).each do |m|
@@ -913,7 +928,7 @@ module Killbill
 
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
-          res = @real_java_api.search_payments(searchKey, offset, limit, withPluginInfo, properties, context)
+          res = @real_java_api.search_payments(searchKey, offset, limit, withPluginInfo, withAttempts, properties, context)
           # conversion for res [type = org.killbill.billing.util.entity.Pagination]
           res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
           return res
@@ -1121,8 +1136,8 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::void deletePaymentMethod(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def delete_payment_method(account, paymentMethodId, deleteDefaultPaymentMethodWithAutoPayOff, properties, context)
+        java_signature 'Java::void deletePaymentMethod(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def delete_payment_method(account, paymentMethodId, deleteDefaultPaymentMethodWithAutoPayOff, forceDefaultPaymentMethodDeletion, properties, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -1132,6 +1147,9 @@ module Killbill
 
           # conversion for deleteDefaultPaymentMethodWithAutoPayOff [type = boolean]
           deleteDefaultPaymentMethodWithAutoPayOff = deleteDefaultPaymentMethodWithAutoPayOff.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(deleteDefaultPaymentMethodWithAutoPayOff)
+
+          # conversion for forceDefaultPaymentMethodDeletion [type = boolean]
+          forceDefaultPaymentMethodDeletion = forceDefaultPaymentMethodDeletion.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(forceDefaultPaymentMethodDeletion)
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -1144,7 +1162,7 @@ module Killbill
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
-          @real_java_api.delete_payment_method(account, paymentMethodId, deleteDefaultPaymentMethodWithAutoPayOff, properties, context)
+          @real_java_api.delete_payment_method(account, paymentMethodId, deleteDefaultPaymentMethodWithAutoPayOff, forceDefaultPaymentMethodDeletion, properties, context)
         end
 
         java_signature 'Java::void setDefaultPaymentMethod(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'

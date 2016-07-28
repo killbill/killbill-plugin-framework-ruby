@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.MigrationPlan
 
-        attr_accessor :initial_phases, :product, :price_list_name, :name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions
+        attr_accessor :initial_phases, :product, :price_list_name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions, :name
 
         def initialize()
         end
@@ -54,9 +54,6 @@ module Killbill
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
-
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = Killbill::Plugin::Model::EnumeratorIterator.new(@initial_phase_iterator)
@@ -85,6 +82,9 @@ module Killbill
             @effective_date_for_existing_subscriptions = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptions.to_s, Java::org.joda.time.DateTimeZone::UTC)
             @effective_date_for_existing_subscriptions = @effective_date_for_existing_subscriptions.to_date
           end
+
+          # conversion for name [type = java.lang.String]
+          @name = @name.to_s unless @name.nil?
           self
         end
 
@@ -105,9 +105,6 @@ module Killbill
 
           # conversion for price_list_name [type = java.lang.String]
           @price_list_name = j_obj.price_list_name
-
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = j_obj.initial_phase_iterator
@@ -141,6 +138,9 @@ module Killbill
             str = fmt.print(@effective_date_for_existing_subscriptions)
             @effective_date_for_existing_subscriptions = DateTime.iso8601(str)
           end
+
+          # conversion for name [type = java.lang.String]
+          @name = j_obj.name
           self
         end
 

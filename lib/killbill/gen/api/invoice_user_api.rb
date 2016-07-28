@@ -539,6 +539,30 @@ module Killbill
           context = context.to_java unless context.nil?
           @real_java_api.transfer_child_credit_to_parent(childAccountId, context)
         end
+
+        java_signature 'Java::java.util.List getInvoiceItemsByParentInvoice(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_invoice_items_by_parent_invoice(parentInvoiceId, context)
+
+          # conversion for parentInvoiceId [type = java.util.UUID]
+          parentInvoiceId = java.util.UUID.fromString(parentInvoiceId.to_s) unless parentInvoiceId.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_invoice_items_by_parent_invoice(parentInvoiceId, context)
+            # conversion for res [type = java.util.List]
+            tmp = []
+            (res || []).each do |m|
+              # conversion for m [type = org.killbill.billing.invoice.api.InvoiceItem]
+              m = Killbill::Plugin::Model::InvoiceItem.new.to_ruby(m) unless m.nil?
+              tmp << m
+            end
+            res = tmp
+            return res
+          rescue Java::org.killbill.billing.invoice.api.InvoiceApiException => e
+            raise Killbill::Plugin::Model::InvoiceApiException.new.to_ruby(e)
+          end
+        end
       end
     end
   end

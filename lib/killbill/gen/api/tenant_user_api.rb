@@ -124,6 +124,20 @@ module Killbill
           @real_java_api.add_tenant_key_value(key, value, context)
         end
 
+        java_signature 'Java::void updateTenantKeyValue(Java::java.lang.String, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def update_tenant_key_value(key, value, context)
+
+          # conversion for key [type = java.lang.String]
+          key = key.to_s unless key.nil?
+
+          # conversion for value [type = java.lang.String]
+          value = value.to_s unless value.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.update_tenant_key_value(key, value, context)
+        end
+
         java_signature 'Java::void deleteTenantKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
         def delete_tenant_key(key, context)
 

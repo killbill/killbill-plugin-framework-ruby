@@ -85,6 +85,23 @@ module Killbill
           context = context.to_java unless context.nil?
           @real_java_api.upload_catalog(catalogXML, context)
         end
+
+        java_signature 'Java::void addSimplePlan(Java::org.killbill.billing.catalog.api.SimplePlanDescriptor, Java::org.joda.time.DateTime, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def add_simple_plan(planDescriptor, requestedDate, context)
+
+          # conversion for planDescriptor [type = org.killbill.billing.catalog.api.SimplePlanDescriptor]
+          planDescriptor = planDescriptor.to_java unless planDescriptor.nil?
+
+          # conversion for requestedDate [type = org.joda.time.DateTime]
+          if !requestedDate.nil?
+            requestedDate =  (requestedDate.kind_of? Time) ? DateTime.parse(requestedDate.to_s) : requestedDate
+            requestedDate = Java::org.joda.time.DateTime.new(requestedDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.add_simple_plan(planDescriptor, requestedDate, context)
+        end
       end
     end
   end

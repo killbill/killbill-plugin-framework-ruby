@@ -29,42 +29,69 @@ module Killbill
   module Plugin
     module Model
 
-      class PlanSpecifier
+      java_package 'org.killbill.billing.catalog.api'
+      class SimplePlanDescriptor
 
+        include org.killbill.billing.catalog.api.SimplePlanDescriptor
 
-        attr_accessor :plan_name, :product_name, :billing_period, :price_list_name
+        attr_accessor :plan_id, :product_name, :currency, :amount, :billing_period, :trial_length, :trial_time_unit
 
         def initialize()
         end
 
         def to_java()
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = @plan_name.to_s unless @plan_name.nil?
+          # conversion for plan_id [type = java.lang.String]
+          @plan_id = @plan_id.to_s unless @plan_id.nil?
 
           # conversion for product_name [type = java.lang.String]
           @product_name = @product_name.to_s unless @product_name.nil?
 
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if @amount.nil?
+            @amount = java.math.BigDecimal::ZERO
+          else
+            @amount = java.math.BigDecimal.new(@amount.to_s)
+          end
+
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
 
-          # conversion for price_list_name [type = java.lang.String]
-          @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
-          Java::org.killbill.billing.catalog.api.PlanSpecifier.new(@plan_name, @product_name, @billing_period, @price_list_name)
+          # conversion for trial_length [type = int]
+          @trial_length = @trial_length
+
+          # conversion for trial_time_unit [type = org.killbill.billing.catalog.api.TimeUnit]
+          @trial_time_unit = Java::org.killbill.billing.catalog.api.TimeUnit.value_of( @trial_time_unit.to_s ) unless @trial_time_unit.nil?
+          self
         end
 
         def to_ruby(j_obj)
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = j_obj.plan_name
+          # conversion for plan_id [type = java.lang.String]
+          @plan_id = j_obj.plan_id
 
           # conversion for product_name [type = java.lang.String]
           @product_name = j_obj.product_name
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = j_obj.currency
+          @currency = @currency.to_s.to_sym unless @currency.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          @amount = j_obj.amount
+          @amount = @amount.nil? ? 0 : BigDecimal.new(@amount.to_s)
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period
           @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
-          # conversion for price_list_name [type = java.lang.String]
-          @price_list_name = j_obj.price_list_name
+          # conversion for trial_length [type = int]
+          @trial_length = j_obj.trial_length
+
+          # conversion for trial_time_unit [type = org.killbill.billing.catalog.api.TimeUnit]
+          @trial_time_unit = j_obj.trial_time_unit
+          @trial_time_unit = @trial_time_unit.to_s.to_sym unless @trial_time_unit.nil?
           self
         end
 

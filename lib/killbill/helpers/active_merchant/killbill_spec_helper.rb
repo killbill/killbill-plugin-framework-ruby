@@ -160,7 +160,7 @@ module Killbill
             kb_payment
           end
 
-          def get_payment(id, with_plugin_info=false, properties=[], context=nil)
+          def get_payment(id, with_plugin_info=false, with_attempts=false, properties=[], context=nil)
             @payments.find { |payment| payment.id == id.to_s }
           end
         end
