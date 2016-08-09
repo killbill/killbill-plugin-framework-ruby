@@ -532,7 +532,8 @@ module Killbill
           tokenization_attributes = {
               :eci => Utils.normalized(attributes, :eci),
               :payment_cryptogram => Utils.normalized(attributes, :payment_cryptogram),
-              :transaction_id => Utils.normalized(attributes, :transaction_id)
+              :transaction_id => Utils.normalized(attributes, :transaction_id),
+              :source => Utils.normalized(attributes, :source)
           }
 
           if tokenization_attributes[:eci].nil? &&
