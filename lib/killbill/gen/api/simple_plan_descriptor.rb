@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.SimplePlanDescriptor
 
-        attr_accessor :plan_id, :product_name, :currency, :amount, :billing_period, :trial_length, :trial_time_unit
+        attr_accessor :plan_id, :product_name, :product_category, :available_base_products, :currency, :amount, :billing_period, :trial_length, :trial_time_unit
 
         def initialize()
         end
@@ -45,6 +45,18 @@ module Killbill
 
           # conversion for product_name [type = java.lang.String]
           @product_name = @product_name.to_s unless @product_name.nil?
+
+          # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
+          @product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @product_category.to_s ) unless @product_category.nil?
+
+          # conversion for available_base_products [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@available_base_products || []).each do |m|
+            # conversion for m [type = java.lang.String]
+            m = m.to_s unless m.nil?
+            tmp.add(m)
+          end
+          @available_base_products = tmp
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
@@ -59,7 +71,7 @@ module Killbill
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
 
-          # conversion for trial_length [type = int]
+          # conversion for trial_length [type = java.lang.Integer]
           @trial_length = @trial_length
 
           # conversion for trial_time_unit [type = org.killbill.billing.catalog.api.TimeUnit]
@@ -74,6 +86,19 @@ module Killbill
           # conversion for product_name [type = java.lang.String]
           @product_name = j_obj.product_name
 
+          # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
+          @product_category = j_obj.product_category
+          @product_category = @product_category.to_s.to_sym unless @product_category.nil?
+
+          # conversion for available_base_products [type = java.util.List]
+          @available_base_products = j_obj.available_base_products
+          tmp = []
+          (@available_base_products || []).each do |m|
+            # conversion for m [type = java.lang.String]
+            tmp << m
+          end
+          @available_base_products = tmp
+
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
@@ -86,7 +111,7 @@ module Killbill
           @billing_period = j_obj.billing_period
           @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
 
-          # conversion for trial_length [type = int]
+          # conversion for trial_length [type = java.lang.Integer]
           @trial_length = j_obj.trial_length
 
           # conversion for trial_time_unit [type = org.killbill.billing.catalog.api.TimeUnit]

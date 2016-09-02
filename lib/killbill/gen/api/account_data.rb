@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.AccountData
 
-        attr_accessor :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices, :parent_account_id, :is_payment_delegated_to_parent
+        attr_accessor :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices, :parent_account_id, :is_payment_delegated_to_parent, :notes
 
         def initialize()
         end
@@ -104,6 +104,9 @@ module Killbill
 
           # conversion for is_payment_delegated_to_parent [type = java.lang.Boolean]
           @is_payment_delegated_to_parent = @is_payment_delegated_to_parent.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_payment_delegated_to_parent)
+
+          # conversion for notes [type = java.lang.String]
+          @notes = @notes.to_s unless @notes.nil?
           self
         end
 
@@ -194,6 +197,9 @@ module Killbill
             tmp_bool = (@is_payment_delegated_to_parent.java_kind_of? java.lang.Boolean) ? @is_payment_delegated_to_parent.boolean_value : @is_payment_delegated_to_parent
             @is_payment_delegated_to_parent = tmp_bool ? true : false
           end
+
+          # conversion for notes [type = java.lang.String]
+          @notes = j_obj.notes
           self
         end
 

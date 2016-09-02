@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.Account
 
-        attr_accessor :id, :created_date, :updated_date, :external_key, :currency, :time_zone, :parent_account_id, :is_payment_delegated_to_parent, :fixed_offset_time_zone, :reference_time, :name, :first_name_length, :email, :bill_cycle_day_local, :payment_method_id, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices
+        attr_accessor :id, :created_date, :updated_date, :external_key, :currency, :time_zone, :parent_account_id, :is_payment_delegated_to_parent, :fixed_offset_time_zone, :reference_time, :name, :first_name_length, :email, :bill_cycle_day_local, :payment_method_id, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices, :notes
 
         def initialize()
         end
@@ -130,6 +130,9 @@ module Killbill
 
           # conversion for is_notified_for_invoices [type = java.lang.Boolean]
           @is_notified_for_invoices = @is_notified_for_invoices.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_notified_for_invoices)
+
+          # conversion for notes [type = java.lang.String]
+          @notes = @notes.to_s unless @notes.nil?
           self
         end
 
@@ -254,6 +257,9 @@ module Killbill
             tmp_bool = (@is_notified_for_invoices.java_kind_of? java.lang.Boolean) ? @is_notified_for_invoices.boolean_value : @is_notified_for_invoices
             @is_notified_for_invoices = tmp_bool ? true : false
           end
+
+          # conversion for notes [type = java.lang.String]
+          @notes = j_obj.notes
           self
         end
 

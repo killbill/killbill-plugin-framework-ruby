@@ -589,6 +589,17 @@ module Killbill
           end
         end
 
+        java_signature 'Java::void cancelScheduledPaymentTransaction(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def cancel_scheduled_payment_transaction(paymentTransactionExternalKey, context)
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.cancel_scheduled_payment_transaction(paymentTransactionExternalKey, context)
+        end
+
         java_signature 'Java::org.killbill.billing.payment.api.Payment createChargeback(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
         def create_chargeback(account, paymentId, amount, currency, paymentTransactionExternalKey, context)
 
