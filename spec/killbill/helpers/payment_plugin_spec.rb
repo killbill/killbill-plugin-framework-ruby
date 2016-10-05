@@ -531,6 +531,19 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
         ptip.gateway_error_code.should == ek.to_s
       end
     end
+
+    it 'returns UNDEFINED for HTTP code >= 300' do
+      msg = 'Proxy Error'
+      gateway.next_exception = ::ActiveMerchant::ResponseError.new(OpenStruct.new(:code => 502, :message => msg))
+
+      # Verify the purchase call for the Kill Bill payment state machine and the get_payment_info call for the Janitor
+      ptip = trigger_purchase
+      verify_purchase_status(ptip, :UNDEFINED)
+
+      # Check debugging fields
+      ptip.gateway_error.ends_with?(msg).should be_true
+      ptip.gateway_error_code.should == 'ActiveMerchant::ResponseError'
+    end
   end
 
   private
