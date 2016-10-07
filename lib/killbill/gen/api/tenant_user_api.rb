@@ -110,6 +110,38 @@ module Killbill
           end
         end
 
+        java_signature 'Java::java.util.Map searchTenantKeyValues(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def search_tenant_key_values(searchKey, context)
+
+          # conversion for searchKey [type = java.lang.String]
+          searchKey = searchKey.to_s unless searchKey.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.search_tenant_key_values(searchKey, context)
+            # conversion for res [type = java.util.Map]
+            tmp = {}
+            jtmp0 = res || java.util.HashMap.new
+            jtmp0.key_set.each do |k|
+              # conversion for k [type = java.lang.String]
+              v = jtmp0.get(k)
+                # conversion for v [type = java.util.List]
+                tmp1 = []
+                (v || []).each do |m|
+                  # conversion for m [type = java.lang.String]
+                  tmp1 << m
+                end
+                v = tmp1
+                tmp[k] = v
+              end
+            res = tmp
+            return res
+          rescue Java::org.killbill.billing.tenant.api.TenantApiException => e
+            raise Killbill::Plugin::Model::TenantApiException.new.to_ruby(e)
+          end
+        end
+
         java_signature 'Java::void addTenantKeyValue(Java::java.lang.String, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
         def add_tenant_key_value(key, value, context)
 

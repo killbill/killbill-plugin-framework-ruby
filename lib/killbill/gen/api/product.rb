@@ -43,23 +43,23 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
 
-          # conversion for available [type = org.killbill.billing.catalog.api.Product[]]
-          tmp = []
+          # conversion for available [type = java.util.Collection]
+          tmp = java.util.ArrayList.new
           (@available || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Product]
             m = m.to_java unless m.nil?
-            tmp << m
+            tmp.add(m)
           end
-          @available = tmp.to_java Java::org.killbill.billing.catalog.api.Product
+          @available = tmp
 
-          # conversion for included [type = org.killbill.billing.catalog.api.Product[]]
-          tmp = []
+          # conversion for included [type = java.util.Collection]
+          tmp = java.util.ArrayList.new
           (@included || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Product]
             m = m.to_java unless m.nil?
-            tmp << m
+            tmp.add(m)
           end
-          @included = tmp.to_java Java::org.killbill.billing.catalog.api.Product
+          @included = tmp
 
           # conversion for category [type = org.killbill.billing.catalog.api.ProductCategory]
           @category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @category.to_s ) unless @category.nil?
@@ -82,7 +82,7 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
 
-          # conversion for available [type = org.killbill.billing.catalog.api.Product[]]
+          # conversion for available [type = java.util.Collection]
           @available = j_obj.available
           tmp = []
           (@available || []).each do |m|
@@ -92,8 +92,8 @@ module Killbill
           end
           @available = tmp
 
-          # conversion for included [type = org.killbill.billing.catalog.api.Product[]]
-          @included = j_obj.get_included
+          # conversion for included [type = java.util.Collection]
+          @included = j_obj.included
           tmp = []
           (@included || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Product]

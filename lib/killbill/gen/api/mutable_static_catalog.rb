@@ -62,14 +62,14 @@ module Killbill
           end
           @current_supported_currencies = tmp.to_java Java::org.killbill.billing.catalog.api.Currency
 
-          # conversion for current_products [type = org.killbill.billing.catalog.api.Product[]]
-          tmp = []
+          # conversion for current_products [type = java.util.Collection]
+          tmp = java.util.ArrayList.new
           (@current_products || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Product]
             m = m.to_java unless m.nil?
-            tmp << m
+            tmp.add(m)
           end
-          @current_products = tmp.to_java Java::org.killbill.billing.catalog.api.Product
+          @current_products = tmp
 
           # conversion for current_units [type = org.killbill.billing.catalog.api.Unit[]]
           tmp = []
@@ -80,14 +80,14 @@ module Killbill
           end
           @current_units = tmp.to_java Java::org.killbill.billing.catalog.api.Unit
 
-          # conversion for current_plans [type = org.killbill.billing.catalog.api.Plan[]]
-          tmp = []
+          # conversion for current_plans [type = java.util.Collection]
+          tmp = java.util.ArrayList.new
           (@current_plans || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Plan]
             m = m.to_java unless m.nil?
-            tmp << m
+            tmp.add(m)
           end
-          @current_plans = tmp.to_java Java::org.killbill.billing.catalog.api.Plan
+          @current_plans = tmp
 
           # conversion for available_base_plan_listings [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -127,7 +127,7 @@ module Killbill
           end
           @current_supported_currencies = tmp
 
-          # conversion for current_products [type = org.killbill.billing.catalog.api.Product[]]
+          # conversion for current_products [type = java.util.Collection]
           @current_products = j_obj.current_products
           tmp = []
           (@current_products || []).each do |m|
@@ -147,7 +147,7 @@ module Killbill
           end
           @current_units = tmp
 
-          # conversion for current_plans [type = org.killbill.billing.catalog.api.Plan[]]
+          # conversion for current_plans [type = java.util.Collection]
           @current_plans = j_obj.current_plans
           tmp = []
           (@current_plans || []).each do |m|

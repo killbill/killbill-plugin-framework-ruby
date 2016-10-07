@@ -878,6 +878,39 @@ module Killbill
           end
         end
 
+        java_signature 'Java::org.killbill.billing.payment.api.Payment getPaymentByTransactionId(Java::java.util.UUID, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_by_transaction_id(transactionId, withPluginInfo, withAttempts, properties, context)
+
+          # conversion for transactionId [type = java.util.UUID]
+          transactionId = java.util.UUID.fromString(transactionId.to_s) unless transactionId.nil?
+
+          # conversion for withPluginInfo [type = boolean]
+          withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
+
+          # conversion for withAttempts [type = boolean]
+          withAttempts = withAttempts.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withAttempts)
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_payment_by_transaction_id(transactionId, withPluginInfo, withAttempts, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
         java_signature 'Java::org.killbill.billing.util.entity.Pagination getPayments(Java::java.lang.Long, Java::java.lang.Long, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_payments(offset, limit, withPluginInfo, withAttempts, properties, context)
 

@@ -43,14 +43,14 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
 
-          # conversion for plans [type = org.killbill.billing.catalog.api.Plan[]]
-          tmp = []
+          # conversion for plans [type = java.util.Collection]
+          tmp = java.util.ArrayList.new
           (@plans || []).each do |m|
             # conversion for m [type = org.killbill.billing.catalog.api.Plan]
             m = m.to_java unless m.nil?
-            tmp << m
+            tmp.add(m)
           end
-          @plans = tmp.to_java Java::org.killbill.billing.catalog.api.Plan
+          @plans = tmp
           self
         end
 
@@ -58,7 +58,7 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
 
-          # conversion for plans [type = org.killbill.billing.catalog.api.Plan[]]
+          # conversion for plans [type = java.util.Collection]
           @plans = j_obj.plans
           tmp = []
           (@plans || []).each do |m|
