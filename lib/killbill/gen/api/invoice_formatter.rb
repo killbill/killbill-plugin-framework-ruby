@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.invoice.api.formatters.InvoiceFormatter
 
-        attr_accessor :invoice_items, :number_of_items, :payments, :number_of_payments, :account_id, :invoice_number, :invoice_date, :target_date, :currency, :paid_amount, :original_charged_amount, :charged_amount, :credited_amount, :refunded_amount, :balance, :is_migration_invoice, :id, :created_date, :updated_date, :formatted_invoice_date, :formatted_charged_amount, :formatted_paid_amount, :formatted_balance, :processed_currency, :processed_payment_rate
+        attr_accessor :invoice_items, :number_of_items, :payments, :number_of_payments, :account_id, :invoice_number, :invoice_date, :target_date, :currency, :paid_amount, :original_charged_amount, :charged_amount, :credited_amount, :refunded_amount, :balance, :is_migration_invoice, :status, :is_parent_invoice, :id, :created_date, :updated_date, :formatted_invoice_date, :formatted_charged_amount, :formatted_paid_amount, :formatted_balance, :processed_currency, :processed_payment_rate
 
         def initialize()
         end
@@ -127,6 +127,12 @@ module Killbill
 
           # conversion for is_migration_invoice [type = boolean]
           @is_migration_invoice = @is_migration_invoice.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_migration_invoice)
+
+          # conversion for status [type = org.killbill.billing.invoice.api.InvoiceStatus]
+          @status = Java::org.killbill.billing.invoice.api.InvoiceStatus.value_of( @status.to_s ) unless @status.nil?
+
+          # conversion for is_parent_invoice [type = boolean]
+          @is_parent_invoice = @is_parent_invoice.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_parent_invoice)
 
           # conversion for id [type = java.util.UUID]
           @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
@@ -244,6 +250,19 @@ module Killbill
           else
             tmp_bool = (@is_migration_invoice.java_kind_of? java.lang.Boolean) ? @is_migration_invoice.boolean_value : @is_migration_invoice
             @is_migration_invoice = tmp_bool ? true : false
+          end
+
+          # conversion for status [type = org.killbill.billing.invoice.api.InvoiceStatus]
+          @status = j_obj.status
+          @status = @status.to_s.to_sym unless @status.nil?
+
+          # conversion for is_parent_invoice [type = boolean]
+          @is_parent_invoice = j_obj.is_parent_invoice
+          if @is_parent_invoice.nil?
+            @is_parent_invoice = false
+          else
+            tmp_bool = (@is_parent_invoice.java_kind_of? java.lang.Boolean) ? @is_parent_invoice.boolean_value : @is_parent_invoice
+            @is_parent_invoice = tmp_bool ? true : false
           end
 
           # conversion for id [type = java.util.UUID]

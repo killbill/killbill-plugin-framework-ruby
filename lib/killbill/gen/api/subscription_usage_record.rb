@@ -32,7 +32,7 @@ module Killbill
       class SubscriptionUsageRecord
 
 
-        attr_accessor :subscription_id, :unit_usage_record
+        attr_accessor :subscription_id, :tracking_id, :unit_usage_record
 
         def initialize()
         end
@@ -40,6 +40,9 @@ module Killbill
         def to_java()
           # conversion for subscription_id [type = java.util.UUID]
           @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?
+
+          # conversion for tracking_id [type = java.lang.String]
+          @tracking_id = @tracking_id.to_s unless @tracking_id.nil?
 
           # conversion for unit_usage_record [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -49,13 +52,16 @@ module Killbill
             tmp.add(m)
           end
           @unit_usage_record = tmp
-          Java::org.killbill.billing.usage.api.SubscriptionUsageRecord.new(@subscription_id, @unit_usage_record)
+          Java::org.killbill.billing.usage.api.SubscriptionUsageRecord.new(@subscription_id, @tracking_id, @unit_usage_record)
         end
 
         def to_ruby(j_obj)
           # conversion for subscription_id [type = java.util.UUID]
           @subscription_id = j_obj.subscription_id
           @subscription_id = @subscription_id.nil? ? nil : @subscription_id.to_s
+
+          # conversion for tracking_id [type = java.lang.String]
+          @tracking_id = j_obj.tracking_id
 
           # conversion for unit_usage_record [type = java.util.List]
           @unit_usage_record = j_obj.unit_usage_record

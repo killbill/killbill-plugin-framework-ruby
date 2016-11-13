@@ -1,3 +1,18 @@
+8.3.0
+    Initial release for Kill Bill 0.18.x
+
+8.2.0
+    Updates for 0.17.2
+
+8.1.0
+    Updates for 0.17.1
+
+8.0.1
+    Fix ActiveRecord dependency issues
+
+8.0.0
+    Initial release for Kill Bill 0.17.x
+
 7.0.6
     ActiveMerchant: pass currency to auth_reversal call
     Improve PostgreSQL support

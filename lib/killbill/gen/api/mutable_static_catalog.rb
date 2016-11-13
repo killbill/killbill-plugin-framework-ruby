@@ -30,9 +30,9 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.catalog.api'
-      class StaticCatalog
+      class MutableStaticCatalog
 
-        include org.killbill.billing.catalog.api.StaticCatalog
+        include org.killbill.billing.catalog.api.MutableStaticCatalog
 
         attr_accessor :catalog_name, :recurring_billing_mode, :effective_date, :current_supported_currencies, :current_products, :current_units, :current_plans, :available_base_plan_listings
 

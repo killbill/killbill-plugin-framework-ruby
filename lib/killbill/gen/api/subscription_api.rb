@@ -39,186 +39,301 @@ module Killbill
         end
 
 
-        java_signature 'Java::org.killbill.billing.entitlement.api.Subscription getSubscriptionForEntitlementId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_subscription_for_entitlement_id(entitlementId, context)
-
-          # conversion for entitlementId [type = java.util.UUID]
-          entitlementId = java.util.UUID.fromString(entitlementId.to_s) unless entitlementId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_subscription_for_entitlement_id(entitlementId, context)
-            # conversion for res [type = org.killbill.billing.entitlement.api.Subscription]
-            res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
-            raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.entitlement.api.SubscriptionBundle getSubscriptionBundle(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_subscription_bundle(bundleId, context)
-
-          # conversion for bundleId [type = java.util.UUID]
-          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_subscription_bundle(bundleId, context)
-            # conversion for res [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
-            res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
-            raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::void updateExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def update_external_key(bundleId, newExternalKey, context)
-
-          # conversion for bundleId [type = java.util.UUID]
-          bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
-
-          # conversion for newExternalKey [type = java.lang.String]
-          newExternalKey = newExternalKey.to_s unless newExternalKey.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          @real_java_api.update_external_key(bundleId, newExternalKey, context)
-        end
-
-        java_signature 'Java::java.util.List getSubscriptionBundlesForAccountIdAndExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_subscription_bundles_for_account_id_and_external_key(accountId, externalKey, context)
-
-          # conversion for accountId [type = java.util.UUID]
-          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
-
-          # conversion for externalKey [type = java.lang.String]
-          externalKey = externalKey.to_s unless externalKey.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_subscription_bundles_for_account_id_and_external_key(accountId, externalKey, context)
-            # conversion for res [type = java.util.List]
-            tmp = []
-            (res || []).each do |m|
-              # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
-              m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
-              tmp << m
-            end
-            res = tmp
-            return res
-          rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
-            raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.entitlement.api.SubscriptionBundle getActiveSubscriptionBundleForExternalKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_active_subscription_bundle_for_external_key(externalKey, context)
-
-          # conversion for externalKey [type = java.lang.String]
-          externalKey = externalKey.to_s unless externalKey.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_active_subscription_bundle_for_external_key(externalKey, context)
-            # conversion for res [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
-            res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
-            raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::java.util.List getSubscriptionBundlesForExternalKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_subscription_bundles_for_external_key(externalKey, context)
-
-          # conversion for externalKey [type = java.lang.String]
-          externalKey = externalKey.to_s unless externalKey.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_subscription_bundles_for_external_key(externalKey, context)
-            # conversion for res [type = java.util.List]
-            tmp = []
-            (res || []).each do |m|
-              # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
-              m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
-              tmp << m
-            end
-            res = tmp
-            return res
-          rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
-            raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::java.util.List getSubscriptionBundlesForAccountId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_subscription_bundles_for_account_id(accountId, context)
-
-          # conversion for accountId [type = java.util.UUID]
-          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.get_subscription_bundles_for_account_id(accountId, context)
-            # conversion for res [type = java.util.List]
-            tmp = []
-            (res || []).each do |m|
-              # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
-              m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
-              tmp << m
-            end
-            res = tmp
-            return res
-          rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
-            raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.util.entity.Pagination getSubscriptionBundles(Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_subscription_bundles(offset, limit, context)
-
-          # conversion for offset [type = java.lang.Long]
-          offset = offset
-
-          # conversion for limit [type = java.lang.Long]
-          limit = limit
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.get_subscription_bundles(offset, limit, context)
-          # conversion for res [type = org.killbill.billing.util.entity.Pagination]
-          res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
-          return res
-        end
-
-        java_signature 'Java::org.killbill.billing.util.entity.Pagination searchSubscriptionBundles(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def search_subscription_bundles(searchKey, offset, limit, context)
-
-          # conversion for searchKey [type = java.lang.String]
-          searchKey = searchKey.to_s unless searchKey.nil?
-
-          # conversion for offset [type = java.lang.Long]
-          offset = offset
-
-          # conversion for limit [type = java.lang.Long]
-          limit = limit
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
-          context = context.to_java unless context.nil?
-          res = @real_java_api.search_subscription_bundles(searchKey, offset, limit, context)
-          # conversion for res [type = org.killbill.billing.util.entity.Pagination]
-          res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
-          return res
-        end
+        java_signature 'Java::int PAST_EVENTS()'
+        def past_events()
+        res = @real_java_api.past_events()
+        # conversion for res [type = int]
+        return res
       end
+
+      java_signature 'Java::int PRESENT_EVENTS()'
+      def present_events()
+      res = @real_java_api.present_events()
+      # conversion for res [type = int]
+      return res
     end
+
+    java_signature 'Java::int FUTURE_EVENTS()'
+    def future_events()
+    res = @real_java_api.future_events()
+    # conversion for res [type = int]
+    return res
   end
+
+  java_signature 'Java::int PAST_OR_PRESENT_EVENTS()'
+  def past_or_present_events()
+  res = @real_java_api.past_or_present_events()
+  # conversion for res [type = int]
+  return res
+end
+
+java_signature 'Java::int FUTURE_OR_PRESENT_EVENTS()'
+def future_or_present_events()
+res = @real_java_api.future_or_present_events()
+# conversion for res [type = int]
+return res
+end
+
+java_signature 'Java::int ALL_EVENTS()'
+def all_events()
+res = @real_java_api.all_events()
+# conversion for res [type = int]
+return res
+end
+
+java_signature 'Java::org.killbill.billing.entitlement.api.Subscription getSubscriptionForEntitlementId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_subscription_for_entitlement_id(entitlementId, context)
+
+# conversion for entitlementId [type = java.util.UUID]
+entitlementId = java.util.UUID.fromString(entitlementId.to_s) unless entitlementId.nil?
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+begin
+res = @real_java_api.get_subscription_for_entitlement_id(entitlementId, context)
+# conversion for res [type = org.killbill.billing.entitlement.api.Subscription]
+res = Killbill::Plugin::Model::Subscription.new.to_ruby(res) unless res.nil?
+return res
+rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
+raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
+end
+end
+
+java_signature 'Java::org.killbill.billing.entitlement.api.SubscriptionBundle getSubscriptionBundle(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_subscription_bundle(bundleId, context)
+
+# conversion for bundleId [type = java.util.UUID]
+bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+begin
+res = @real_java_api.get_subscription_bundle(bundleId, context)
+# conversion for res [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
+res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
+return res
+rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
+raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
+end
+end
+
+java_signature 'Java::void updateExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+def update_external_key(bundleId, newExternalKey, context)
+
+# conversion for bundleId [type = java.util.UUID]
+bundleId = java.util.UUID.fromString(bundleId.to_s) unless bundleId.nil?
+
+# conversion for newExternalKey [type = java.lang.String]
+newExternalKey = newExternalKey.to_s unless newExternalKey.nil?
+
+# conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+context = context.to_java unless context.nil?
+@real_java_api.update_external_key(bundleId, newExternalKey, context)
+end
+
+java_signature 'Java::java.util.List getSubscriptionBundlesForAccountIdAndExternalKey(Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_subscription_bundles_for_account_id_and_external_key(accountId, externalKey, context)
+
+# conversion for accountId [type = java.util.UUID]
+accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
+# conversion for externalKey [type = java.lang.String]
+externalKey = externalKey.to_s unless externalKey.nil?
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+begin
+res = @real_java_api.get_subscription_bundles_for_account_id_and_external_key(accountId, externalKey, context)
+# conversion for res [type = java.util.List]
+tmp = []
+(res || []).each do |m|
+  # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
+  m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
+  tmp << m
+end
+res = tmp
+return res
+rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
+raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
+end
+end
+
+java_signature 'Java::org.killbill.billing.entitlement.api.SubscriptionBundle getActiveSubscriptionBundleForExternalKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_active_subscription_bundle_for_external_key(externalKey, context)
+
+# conversion for externalKey [type = java.lang.String]
+externalKey = externalKey.to_s unless externalKey.nil?
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+begin
+res = @real_java_api.get_active_subscription_bundle_for_external_key(externalKey, context)
+# conversion for res [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
+res = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(res) unless res.nil?
+return res
+rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
+raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
+end
+end
+
+java_signature 'Java::java.util.List getSubscriptionBundlesForExternalKey(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_subscription_bundles_for_external_key(externalKey, context)
+
+# conversion for externalKey [type = java.lang.String]
+externalKey = externalKey.to_s unless externalKey.nil?
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+begin
+res = @real_java_api.get_subscription_bundles_for_external_key(externalKey, context)
+# conversion for res [type = java.util.List]
+tmp = []
+(res || []).each do |m|
+  # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
+  m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
+  tmp << m
+end
+res = tmp
+return res
+rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
+raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
+end
+end
+
+java_signature 'Java::java.util.List getSubscriptionBundlesForAccountId(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_subscription_bundles_for_account_id(accountId, context)
+
+# conversion for accountId [type = java.util.UUID]
+accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+begin
+res = @real_java_api.get_subscription_bundles_for_account_id(accountId, context)
+# conversion for res [type = java.util.List]
+tmp = []
+(res || []).each do |m|
+  # conversion for m [type = org.killbill.billing.entitlement.api.SubscriptionBundle]
+  m = Killbill::Plugin::Model::SubscriptionBundle.new.to_ruby(m) unless m.nil?
+  tmp << m
+end
+res = tmp
+return res
+rescue Java::org.killbill.billing.entitlement.api.SubscriptionApiException => e
+raise Killbill::Plugin::Model::SubscriptionApiException.new.to_ruby(e)
+end
+end
+
+java_signature 'Java::org.killbill.billing.util.entity.Pagination getSubscriptionBundles(Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_subscription_bundles(offset, limit, context)
+
+# conversion for offset [type = java.lang.Long]
+offset = offset
+
+# conversion for limit [type = java.lang.Long]
+limit = limit
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+res = @real_java_api.get_subscription_bundles(offset, limit, context)
+# conversion for res [type = org.killbill.billing.util.entity.Pagination]
+res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
+return res
+end
+
+java_signature 'Java::org.killbill.billing.util.entity.Pagination searchSubscriptionBundles(Java::java.lang.String, Java::java.lang.Long, Java::java.lang.Long, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def search_subscription_bundles(searchKey, offset, limit, context)
+
+# conversion for searchKey [type = java.lang.String]
+searchKey = searchKey.to_s unless searchKey.nil?
+
+# conversion for offset [type = java.lang.Long]
+offset = offset
+
+# conversion for limit [type = java.lang.Long]
+limit = limit
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+res = @real_java_api.search_subscription_bundles(searchKey, offset, limit, context)
+# conversion for res [type = org.killbill.billing.util.entity.Pagination]
+res = Killbill::Plugin::Model::Pagination.new.to_ruby(res) unless res.nil?
+return res
+end
+
+java_signature 'Java::void addBlockingState(Java::org.killbill.billing.entitlement.api.BlockingState, Java::org.joda.time.LocalDate, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+def add_blocking_state(blockingState, effectiveDate, properties, context)
+
+# conversion for blockingState [type = org.killbill.billing.entitlement.api.BlockingState]
+blockingState = blockingState.to_java unless blockingState.nil?
+
+# conversion for effectiveDate [type = org.joda.time.LocalDate]
+if !effectiveDate.nil?
+effectiveDate = Java::org.joda.time.LocalDate.parse(effectiveDate.to_s)
+end
+
+# conversion for properties [type = java.lang.Iterable]
+tmp = java.util.ArrayList.new
+(properties || []).each do |m|
+# conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+m = m.to_java unless m.nil?
+tmp.add(m)
+end
+properties = tmp
+
+# conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+context = context.to_java unless context.nil?
+@real_java_api.add_blocking_state(blockingState, effectiveDate, properties, context)
+end
+
+java_signature 'Java::java.lang.Iterable getBlockingStates(Java::java.util.UUID, Java::java.util.List, Java::java.util.List, Java::org.killbill.billing.OrderingType, Java::int, Java::org.killbill.billing.util.callcontext.TenantContext)'
+def get_blocking_states(accountId, typeFilter, svcsFilter, orderingType, timeFilter, context)
+
+# conversion for accountId [type = java.util.UUID]
+accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
+# conversion for typeFilter [type = java.util.List]
+tmp = java.util.ArrayList.new
+(typeFilter || []).each do |m|
+# conversion for m [type = org.killbill.billing.entitlement.api.BlockingStateType]
+m = Java::org.killbill.billing.entitlement.api.BlockingStateType.value_of( m.to_s ) unless m.nil?
+tmp.add(m)
+end
+typeFilter = tmp
+
+# conversion for svcsFilter [type = java.util.List]
+tmp = java.util.ArrayList.new
+(svcsFilter || []).each do |m|
+# conversion for m [type = java.lang.String]
+m = m.to_s unless m.nil?
+tmp.add(m)
+end
+svcsFilter = tmp
+
+# conversion for orderingType [type = org.killbill.billing.OrderingType]
+orderingType = Java::org.killbill.billing.OrderingType.value_of( orderingType.to_s ) unless orderingType.nil?
+
+# conversion for timeFilter [type = int]
+timeFilter = timeFilter
+
+# conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+context = context.to_java unless context.nil?
+begin
+res = @real_java_api.get_blocking_states(accountId, typeFilter, svcsFilter, orderingType, timeFilter, context)
+# conversion for res [type = java.lang.Iterable]
+tmp = []
+(res.nil? ? [] : res.iterator).each do |m|
+  # conversion for m [type = org.killbill.billing.entitlement.api.BlockingState]
+  m = Killbill::Plugin::Model::BlockingState.new.to_ruby(m) unless m.nil?
+  tmp << m
+end
+res = tmp
+return res
+rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
+raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
+end
+end
+end
+end
+end
 end

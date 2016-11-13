@@ -34,12 +34,15 @@ module Killbill
 
         include org.killbill.billing.catalog.api.Plan
 
-        attr_accessor :initial_phases, :product, :name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptons
+        attr_accessor :name, :initial_phases, :product, :price_list_name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions
 
         def initialize()
         end
 
         def to_java()
+          # conversion for name [type = java.lang.String]
+          @name = @name.to_s unless @name.nil?
+
           # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
           tmp = []
           (@initial_phases || []).each do |m|
@@ -52,8 +55,8 @@ module Killbill
           # conversion for product [type = org.killbill.billing.catalog.api.Product]
           @product = @product.to_java unless @product.nil?
 
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
+          # conversion for price_list_name [type = java.lang.String]
+          @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = Killbill::Plugin::Model::EnumeratorIterator.new(@initial_phase_iterator)
@@ -76,16 +79,19 @@ module Killbill
           end
           @all_phases = tmp.to_java Java::org.killbill.billing.catalog.api.PlanPhase
 
-          # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
-          if !@effective_date_for_existing_subscriptons.nil?
-            @effective_date_for_existing_subscriptons =  (@effective_date_for_existing_subscriptons.kind_of? Time) ? DateTime.parse(@effective_date_for_existing_subscriptons.to_s) : @effective_date_for_existing_subscriptons
-            @effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptons.to_s, Java::org.joda.time.DateTimeZone::UTC)
-            @effective_date_for_existing_subscriptons = @effective_date_for_existing_subscriptons.to_date
+          # conversion for effective_date_for_existing_subscriptions [type = java.util.Date]
+          if !@effective_date_for_existing_subscriptions.nil?
+            @effective_date_for_existing_subscriptions =  (@effective_date_for_existing_subscriptions.kind_of? Time) ? DateTime.parse(@effective_date_for_existing_subscriptions.to_s) : @effective_date_for_existing_subscriptions
+            @effective_date_for_existing_subscriptions = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptions.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            @effective_date_for_existing_subscriptions = @effective_date_for_existing_subscriptions.to_date
           end
           self
         end
 
         def to_ruby(j_obj)
+          # conversion for name [type = java.lang.String]
+          @name = j_obj.name
+
           # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
           @initial_phases = j_obj.initial_phases
           tmp = []
@@ -100,8 +106,8 @@ module Killbill
           @product = j_obj.product
           @product = Killbill::Plugin::Model::Product.new.to_ruby(@product) unless @product.nil?
 
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
+          # conversion for price_list_name [type = java.lang.String]
+          @price_list_name = j_obj.price_list_name
 
           # conversion for initial_phase_iterator [type = java.util.Iterator]
           @initial_phase_iterator = j_obj.initial_phase_iterator
@@ -127,13 +133,13 @@ module Killbill
           end
           @all_phases = tmp
 
-          # conversion for effective_date_for_existing_subscriptons [type = java.util.Date]
-          @effective_date_for_existing_subscriptons = j_obj.effective_date_for_existing_subscriptons
-          if !@effective_date_for_existing_subscriptons.nil?
-            @effective_date_for_existing_subscriptons = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptons)
+          # conversion for effective_date_for_existing_subscriptions [type = java.util.Date]
+          @effective_date_for_existing_subscriptions = j_obj.effective_date_for_existing_subscriptions
+          if !@effective_date_for_existing_subscriptions.nil?
+            @effective_date_for_existing_subscriptions = Java::org.joda.time.DateTime.new(@effective_date_for_existing_subscriptions)
             fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
-            str = fmt.print(@effective_date_for_existing_subscriptons)
-            @effective_date_for_existing_subscriptons = DateTime.iso8601(str)
+            str = fmt.print(@effective_date_for_existing_subscriptions)
+            @effective_date_for_existing_subscriptions = DateTime.iso8601(str)
           end
           self
         end

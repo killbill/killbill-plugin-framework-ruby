@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.payment.api.Payment
 
-        attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_number, :external_key, :auth_amount, :captured_amount, :purchased_amount, :credited_amount, :refunded_amount, :is_auth_voided, :currency, :transactions
+        attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_number, :external_key, :auth_amount, :captured_amount, :purchased_amount, :credited_amount, :refunded_amount, :is_auth_voided, :currency, :transactions, :payment_attempts
 
         def initialize()
         end
@@ -116,6 +116,15 @@ module Killbill
             tmp.add(m)
           end
           @transactions = tmp
+
+          # conversion for payment_attempts [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@payment_attempts || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentAttempt]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @payment_attempts = tmp
           self
         end
 
@@ -196,6 +205,16 @@ module Killbill
             tmp << m
           end
           @transactions = tmp
+
+          # conversion for payment_attempts [type = java.util.List]
+          @payment_attempts = j_obj.payment_attempts
+          tmp = []
+          (@payment_attempts || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PaymentAttempt]
+            m = Killbill::Plugin::Model::PaymentAttempt.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @payment_attempts = tmp
           self
         end
 

@@ -53,25 +53,42 @@ module Killbill
         return res
       end
 
-      java_signature 'Java::void triggerNodeCommand(Java::org.killbill.billing.util.nodes.NodeCommand, Java::boolean)'
-      def trigger_node_command(nodeCommand, localNodeOnly)
+      java_signature 'Java::org.killbill.billing.util.nodes.NodeInfo getCurrentNodeInfo()'
+      def get_current_node_info()
+      res = @real_java_api.get_current_node_info()
+      # conversion for res [type = org.killbill.billing.util.nodes.NodeInfo]
+      res = Killbill::Plugin::Model::NodeInfo.new.to_ruby(res) unless res.nil?
+      return res
+    end
 
-        # conversion for nodeCommand [type = org.killbill.billing.util.nodes.NodeCommand]
-        nodeCommand = nodeCommand.to_java unless nodeCommand.nil?
+    java_signature 'Java::void triggerNodeCommand(Java::org.killbill.billing.util.nodes.NodeCommand, Java::boolean)'
+    def trigger_node_command(nodeCommand, localNodeOnly)
 
-        # conversion for localNodeOnly [type = boolean]
-        localNodeOnly = localNodeOnly.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(localNodeOnly)
-        @real_java_api.trigger_node_command(nodeCommand, localNodeOnly)
+      # conversion for nodeCommand [type = org.killbill.billing.util.nodes.NodeCommand]
+      nodeCommand = nodeCommand.to_java unless nodeCommand.nil?
+
+      # conversion for localNodeOnly [type = boolean]
+      localNodeOnly = localNodeOnly.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(localNodeOnly)
+      @real_java_api.trigger_node_command(nodeCommand, localNodeOnly)
+    end
+
+    java_signature 'Java::void notifyPluginChanged(Java::org.killbill.billing.osgi.api.PluginInfo, Java::java.lang.Iterable)'
+    def notify_plugin_changed(plugin, latestPlugins)
+
+      # conversion for plugin [type = org.killbill.billing.osgi.api.PluginInfo]
+      plugin = plugin.to_java unless plugin.nil?
+
+      # conversion for latestPlugins [type = java.lang.Iterable]
+      tmp = java.util.ArrayList.new
+      (latestPlugins || []).each do |m|
+        # conversion for m [type = org.killbill.billing.osgi.api.PluginInfo]
+        m = m.to_java unless m.nil?
+        tmp.add(m)
       end
-
-      java_signature 'Java::void notifyPluginChanged(Java::org.killbill.billing.osgi.api.PluginInfo)'
-      def notify_plugin_changed(plugin)
-
-        # conversion for plugin [type = org.killbill.billing.osgi.api.PluginInfo]
-        plugin = plugin.to_java unless plugin.nil?
-        @real_java_api.notify_plugin_changed(plugin)
-      end
+      latestPlugins = tmp
+      @real_java_api.notify_plugin_changed(plugin, latestPlugins)
     end
   end
+end
 end
 end

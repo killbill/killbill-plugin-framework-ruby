@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.api.SubscriptionEvent
 
-        attr_accessor :id, :entitlement_id, :effective_date, :requested_date, :subscription_event_type, :is_blocked_billing, :is_blocked_entitlement, :service_name, :service_state_name, :prev_product, :prev_plan, :prev_phase, :prev_price_list, :prev_billing_period, :next_product, :next_plan, :next_phase, :next_price_list, :next_billing_period
+        attr_accessor :id, :entitlement_id, :effective_date, :subscription_event_type, :is_blocked_billing, :is_blocked_entitlement, :service_name, :service_state_name, :prev_product, :prev_plan, :prev_phase, :prev_price_list, :prev_billing_period, :next_product, :next_plan, :next_phase, :next_price_list, :next_billing_period
 
         def initialize()
         end
@@ -49,11 +49,6 @@ module Killbill
           # conversion for effective_date [type = org.joda.time.LocalDate]
           if !@effective_date.nil?
             @effective_date = Java::org.joda.time.LocalDate.parse(@effective_date.to_s)
-          end
-
-          # conversion for requested_date [type = org.joda.time.LocalDate]
-          if !@requested_date.nil?
-            @requested_date = Java::org.joda.time.LocalDate.parse(@requested_date.to_s)
           end
 
           # conversion for subscription_event_type [type = org.killbill.billing.entitlement.api.SubscriptionEventType]
@@ -116,12 +111,6 @@ module Killbill
           @effective_date = j_obj.effective_date
           if !@effective_date.nil?
             @effective_date = @effective_date.to_s
-          end
-
-          # conversion for requested_date [type = org.joda.time.LocalDate]
-          @requested_date = j_obj.requested_date
-          if !@requested_date.nil?
-            @requested_date = @requested_date.to_s
           end
 
           # conversion for subscription_event_type [type = org.killbill.billing.entitlement.api.SubscriptionEventType]

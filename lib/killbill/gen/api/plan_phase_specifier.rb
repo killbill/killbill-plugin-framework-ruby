@@ -32,17 +32,17 @@ module Killbill
       class PlanPhaseSpecifier
 
 
-        attr_accessor :product_name, :product_category, :billing_period, :price_list_name, :phase_type
+        attr_accessor :plan_name, :product_name, :billing_period, :price_list_name, :phase_type
 
         def initialize()
         end
 
         def to_java()
+          # conversion for plan_name [type = java.lang.String]
+          @plan_name = @plan_name.to_s unless @plan_name.nil?
+
           # conversion for product_name [type = java.lang.String]
           @product_name = @product_name.to_s unless @product_name.nil?
-
-          # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
-          @product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @product_category.to_s ) unless @product_category.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
@@ -52,16 +52,15 @@ module Killbill
 
           # conversion for phase_type [type = org.killbill.billing.catalog.api.PhaseType]
           @phase_type = Java::org.killbill.billing.catalog.api.PhaseType.value_of( @phase_type.to_s ) unless @phase_type.nil?
-          Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier.new(@product_name, @product_category, @billing_period, @price_list_name, @phase_type)
+          Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier.new(@plan_name, @product_name, @billing_period, @price_list_name, @phase_type)
         end
 
         def to_ruby(j_obj)
+          # conversion for plan_name [type = java.lang.String]
+          @plan_name = j_obj.plan_name
+
           # conversion for product_name [type = java.lang.String]
           @product_name = j_obj.product_name
-
-          # conversion for product_category [type = org.killbill.billing.catalog.api.ProductCategory]
-          @product_category = j_obj.product_category
-          @product_category = @product_category.to_s.to_sym unless @product_category.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period

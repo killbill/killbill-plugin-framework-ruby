@@ -27,7 +27,8 @@ describe Killbill::Plugin do
                                     'stateOrProvince',
                                     'country',
                                     'postalCode',
-                                    'phone')
+                                    'phone',
+                                    'notes')
     account = @account_user_api.getAccountByKey('externalKey', nil)
     account.external_key.should == 'externalKey'
     account.email.should == 'email'
@@ -45,6 +46,7 @@ describe Killbill::Plugin do
     account.country.should == 'country'
     account.postal_code.should == 'postalCode'
     account.phone.should == 'phone'
+    account.notes.should == 'notes'
   end
 end
 

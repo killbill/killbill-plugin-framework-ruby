@@ -29,12 +29,12 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.invoice.api'
-      class InvoiceItem
+      java_package 'org.killbill.billing.payment.api'
+      class PaymentAttempt
 
-        include org.killbill.billing.invoice.api.InvoiceItem
+        include org.killbill.billing.payment.api.PaymentAttempt
 
-        attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :usage_name, :rate, :linked_item_id
+        attr_accessor :id, :created_date, :updated_date, :account_id, :payment_method_id, :payment_external_key, :transaction_id, :transaction_external_key, :transaction_type, :effective_date, :state_name, :amount, :currency, :plugin_name, :plugin_properties
 
         def initialize()
         end
@@ -55,27 +55,32 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for invoice_item_type [type = org.killbill.billing.invoice.api.InvoiceItemType]
-          @invoice_item_type = Java::org.killbill.billing.invoice.api.InvoiceItemType.value_of( @invoice_item_type.to_s ) unless @invoice_item_type.nil?
-
-          # conversion for invoice_id [type = java.util.UUID]
-          @invoice_id = java.util.UUID.fromString(@invoice_id.to_s) unless @invoice_id.nil?
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
 
-          # conversion for child_account_id [type = java.util.UUID]
-          @child_account_id = java.util.UUID.fromString(@child_account_id.to_s) unless @child_account_id.nil?
+          # conversion for payment_method_id [type = java.util.UUID]
+          @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
 
-          # conversion for start_date [type = org.joda.time.LocalDate]
-          if !@start_date.nil?
-            @start_date = Java::org.joda.time.LocalDate.parse(@start_date.to_s)
+          # conversion for payment_external_key [type = java.lang.String]
+          @payment_external_key = @payment_external_key.to_s unless @payment_external_key.nil?
+
+          # conversion for transaction_id [type = java.util.UUID]
+          @transaction_id = java.util.UUID.fromString(@transaction_id.to_s) unless @transaction_id.nil?
+
+          # conversion for transaction_external_key [type = java.lang.String]
+          @transaction_external_key = @transaction_external_key.to_s unless @transaction_external_key.nil?
+
+          # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
+          @transaction_type = Java::org.killbill.billing.payment.api.TransactionType.value_of( @transaction_type.to_s ) unless @transaction_type.nil?
+
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          if !@effective_date.nil?
+            @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
+            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for end_date [type = org.joda.time.LocalDate]
-          if !@end_date.nil?
-            @end_date = Java::org.joda.time.LocalDate.parse(@end_date.to_s)
-          end
+          # conversion for state_name [type = java.lang.String]
+          @state_name = @state_name.to_s unless @state_name.nil?
 
           # conversion for amount [type = java.math.BigDecimal]
           if @amount.nil?
@@ -87,33 +92,17 @@ module Killbill
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
 
-          # conversion for description [type = java.lang.String]
-          @description = @description.to_s unless @description.nil?
+          # conversion for plugin_name [type = java.lang.String]
+          @plugin_name = @plugin_name.to_s unless @plugin_name.nil?
 
-          # conversion for bundle_id [type = java.util.UUID]
-          @bundle_id = java.util.UUID.fromString(@bundle_id.to_s) unless @bundle_id.nil?
-
-          # conversion for subscription_id [type = java.util.UUID]
-          @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?
-
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = @plan_name.to_s unless @plan_name.nil?
-
-          # conversion for phase_name [type = java.lang.String]
-          @phase_name = @phase_name.to_s unless @phase_name.nil?
-
-          # conversion for usage_name [type = java.lang.String]
-          @usage_name = @usage_name.to_s unless @usage_name.nil?
-
-          # conversion for rate [type = java.math.BigDecimal]
-          if @rate.nil?
-            @rate = java.math.BigDecimal::ZERO
-          else
-            @rate = java.math.BigDecimal.new(@rate.to_s)
+          # conversion for plugin_properties [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@plugin_properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
           end
-
-          # conversion for linked_item_id [type = java.util.UUID]
-          @linked_item_id = java.util.UUID.fromString(@linked_item_id.to_s) unless @linked_item_id.nil?
+          @plugin_properties = tmp
           self
         end
 
@@ -138,33 +127,38 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
-          # conversion for invoice_item_type [type = org.killbill.billing.invoice.api.InvoiceItemType]
-          @invoice_item_type = j_obj.invoice_item_type
-          @invoice_item_type = @invoice_item_type.to_s.to_sym unless @invoice_item_type.nil?
-
-          # conversion for invoice_id [type = java.util.UUID]
-          @invoice_id = j_obj.invoice_id
-          @invoice_id = @invoice_id.nil? ? nil : @invoice_id.to_s
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = j_obj.account_id
           @account_id = @account_id.nil? ? nil : @account_id.to_s
 
-          # conversion for child_account_id [type = java.util.UUID]
-          @child_account_id = j_obj.child_account_id
-          @child_account_id = @child_account_id.nil? ? nil : @child_account_id.to_s
+          # conversion for payment_method_id [type = java.util.UUID]
+          @payment_method_id = j_obj.payment_method_id
+          @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
 
-          # conversion for start_date [type = org.joda.time.LocalDate]
-          @start_date = j_obj.start_date
-          if !@start_date.nil?
-            @start_date = @start_date.to_s
+          # conversion for payment_external_key [type = java.lang.String]
+          @payment_external_key = j_obj.payment_external_key
+
+          # conversion for transaction_id [type = java.util.UUID]
+          @transaction_id = j_obj.transaction_id
+          @transaction_id = @transaction_id.nil? ? nil : @transaction_id.to_s
+
+          # conversion for transaction_external_key [type = java.lang.String]
+          @transaction_external_key = j_obj.transaction_external_key
+
+          # conversion for transaction_type [type = org.killbill.billing.payment.api.TransactionType]
+          @transaction_type = j_obj.transaction_type
+          @transaction_type = @transaction_type.to_s.to_sym unless @transaction_type.nil?
+
+          # conversion for effective_date [type = org.joda.time.DateTime]
+          @effective_date = j_obj.effective_date
+          if !@effective_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@effective_date)
+            @effective_date = DateTime.iso8601(str)
           end
 
-          # conversion for end_date [type = org.joda.time.LocalDate]
-          @end_date = j_obj.end_date
-          if !@end_date.nil?
-            @end_date = @end_date.to_s
-          end
+          # conversion for state_name [type = java.lang.String]
+          @state_name = j_obj.state_name
 
           # conversion for amount [type = java.math.BigDecimal]
           @amount = j_obj.amount
@@ -174,33 +168,18 @@ module Killbill
           @currency = j_obj.currency
           @currency = @currency.to_s.to_sym unless @currency.nil?
 
-          # conversion for description [type = java.lang.String]
-          @description = j_obj.description
+          # conversion for plugin_name [type = java.lang.String]
+          @plugin_name = j_obj.plugin_name
 
-          # conversion for bundle_id [type = java.util.UUID]
-          @bundle_id = j_obj.bundle_id
-          @bundle_id = @bundle_id.nil? ? nil : @bundle_id.to_s
-
-          # conversion for subscription_id [type = java.util.UUID]
-          @subscription_id = j_obj.subscription_id
-          @subscription_id = @subscription_id.nil? ? nil : @subscription_id.to_s
-
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = j_obj.plan_name
-
-          # conversion for phase_name [type = java.lang.String]
-          @phase_name = j_obj.phase_name
-
-          # conversion for usage_name [type = java.lang.String]
-          @usage_name = j_obj.usage_name
-
-          # conversion for rate [type = java.math.BigDecimal]
-          @rate = j_obj.rate
-          @rate = @rate.nil? ? 0 : BigDecimal.new(@rate.to_s)
-
-          # conversion for linked_item_id [type = java.util.UUID]
-          @linked_item_id = j_obj.linked_item_id
-          @linked_item_id = @linked_item_id.nil? ? nil : @linked_item_id.to_s
+          # conversion for plugin_properties [type = java.util.List]
+          @plugin_properties = j_obj.plugin_properties
+          tmp = []
+          (@plugin_properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @plugin_properties = tmp
           self
         end
 

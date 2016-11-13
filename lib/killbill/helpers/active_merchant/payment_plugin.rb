@@ -435,7 +435,7 @@ module Killbill
         end
 
         def get_kb_transaction(kb_payment_id, kb_payment_transaction_id, kb_tenant_id)
-          kb_payment     = @kb_apis.payment_api.get_payment(kb_payment_id, false, [], @kb_apis.create_context(kb_tenant_id))
+          kb_payment     = @kb_apis.payment_api.get_payment(kb_payment_id, false, false, [], @kb_apis.create_context(kb_tenant_id))
           kb_transaction = kb_payment.transactions.find { |t| t.id == kb_payment_transaction_id }
           # This should never happen...
           raise ArgumentError.new("Unable to find Kill Bill transaction for id #{kb_payment_transaction_id}") if kb_transaction.nil?

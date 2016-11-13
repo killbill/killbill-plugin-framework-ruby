@@ -29,42 +29,25 @@ module Killbill
   module Plugin
     module Model
 
-      class PlanSpecifier
+      java_package 'org.killbill.billing.catalog.api'
+      class MutableCatalog
 
+        include org.killbill.billing.catalog.api.MutableCatalog
 
-        attr_accessor :plan_name, :product_name, :billing_period, :price_list_name
+        attr_accessor :catalog_name
 
         def initialize()
         end
 
         def to_java()
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = @plan_name.to_s unless @plan_name.nil?
-
-          # conversion for product_name [type = java.lang.String]
-          @product_name = @product_name.to_s unless @product_name.nil?
-
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
-
-          # conversion for price_list_name [type = java.lang.String]
-          @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
-          Java::org.killbill.billing.catalog.api.PlanSpecifier.new(@plan_name, @product_name, @billing_period, @price_list_name)
+          # conversion for catalog_name [type = java.lang.String]
+          @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
+          self
         end
 
         def to_ruby(j_obj)
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = j_obj.plan_name
-
-          # conversion for product_name [type = java.lang.String]
-          @product_name = j_obj.product_name
-
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = j_obj.billing_period
-          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
-
-          # conversion for price_list_name [type = java.lang.String]
-          @price_list_name = j_obj.price_list_name
+          # conversion for catalog_name [type = java.lang.String]
+          @catalog_name = j_obj.catalog_name
           self
         end
 

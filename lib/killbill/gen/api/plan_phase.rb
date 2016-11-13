@@ -34,12 +34,15 @@ module Killbill
 
         include org.killbill.billing.catalog.api.PlanPhase
 
-        attr_accessor :fixed, :recurring, :usages, :name, :duration, :phase_type
+        attr_accessor :name, :fixed, :recurring, :usages, :duration, :phase_type
 
         def initialize()
         end
 
         def to_java()
+          # conversion for name [type = java.lang.String]
+          @name = @name.to_s unless @name.nil?
+
           # conversion for fixed [type = org.killbill.billing.catalog.api.Fixed]
           @fixed = @fixed.to_java unless @fixed.nil?
 
@@ -55,9 +58,6 @@ module Killbill
           end
           @usages = tmp.to_java Java::org.killbill.billing.catalog.api.Usage
 
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
-
           # conversion for duration [type = org.killbill.billing.catalog.api.Duration]
           @duration = @duration.to_java unless @duration.nil?
 
@@ -67,6 +67,9 @@ module Killbill
         end
 
         def to_ruby(j_obj)
+          # conversion for name [type = java.lang.String]
+          @name = j_obj.name
+
           # conversion for fixed [type = org.killbill.billing.catalog.api.Fixed]
           @fixed = j_obj.fixed
           @fixed = Killbill::Plugin::Model::Fixed.new.to_ruby(@fixed) unless @fixed.nil?
@@ -84,9 +87,6 @@ module Killbill
             tmp << m
           end
           @usages = tmp
-
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
 
           # conversion for duration [type = org.killbill.billing.catalog.api.Duration]
           @duration = j_obj.duration

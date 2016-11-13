@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.ImmutableAccountData
 
-        attr_accessor :id, :external_key, :currency, :time_zone
+        attr_accessor :id, :external_key, :currency, :time_zone, :parent_account_id, :is_payment_delegated_to_parent, :fixed_offset_time_zone, :reference_time
 
         def initialize()
         end
@@ -52,6 +52,23 @@ module Killbill
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           if !@time_zone.nil?
             @time_zone = Java::org.joda.time.DateTimeZone.forID((@time_zone.respond_to?(:identifier) ? @time_zone.identifier : @time_zone.to_s))
+          end
+
+          # conversion for parent_account_id [type = java.util.UUID]
+          @parent_account_id = java.util.UUID.fromString(@parent_account_id.to_s) unless @parent_account_id.nil?
+
+          # conversion for is_payment_delegated_to_parent [type = java.lang.Boolean]
+          @is_payment_delegated_to_parent = @is_payment_delegated_to_parent.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_payment_delegated_to_parent)
+
+          # conversion for fixed_offset_time_zone [type = org.joda.time.DateTimeZone]
+          if !@fixed_offset_time_zone.nil?
+            @fixed_offset_time_zone = Java::org.joda.time.DateTimeZone.forID((@fixed_offset_time_zone.respond_to?(:identifier) ? @fixed_offset_time_zone.identifier : @fixed_offset_time_zone.to_s))
+          end
+
+          # conversion for reference_time [type = org.joda.time.DateTime]
+          if !@reference_time.nil?
+            @reference_time =  (@reference_time.kind_of? Time) ? DateTime.parse(@reference_time.to_s) : @reference_time
+            @reference_time = Java::org.joda.time.DateTime.new(@reference_time.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
           self
         end
@@ -72,6 +89,33 @@ module Killbill
           @time_zone = j_obj.time_zone
           if !@time_zone.nil?
             @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
+          end
+
+          # conversion for parent_account_id [type = java.util.UUID]
+          @parent_account_id = j_obj.parent_account_id
+          @parent_account_id = @parent_account_id.nil? ? nil : @parent_account_id.to_s
+
+          # conversion for is_payment_delegated_to_parent [type = java.lang.Boolean]
+          @is_payment_delegated_to_parent = j_obj.is_payment_delegated_to_parent
+          if @is_payment_delegated_to_parent.nil?
+            @is_payment_delegated_to_parent = false
+          else
+            tmp_bool = (@is_payment_delegated_to_parent.java_kind_of? java.lang.Boolean) ? @is_payment_delegated_to_parent.boolean_value : @is_payment_delegated_to_parent
+            @is_payment_delegated_to_parent = tmp_bool ? true : false
+          end
+
+          # conversion for fixed_offset_time_zone [type = org.joda.time.DateTimeZone]
+          @fixed_offset_time_zone = j_obj.fixed_offset_time_zone
+          if !@fixed_offset_time_zone.nil?
+            @fixed_offset_time_zone = TZInfo::Timezone.get(@fixed_offset_time_zone.get_id)
+          end
+
+          # conversion for reference_time [type = org.joda.time.DateTime]
+          @reference_time = j_obj.reference_time
+          if !@reference_time.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@reference_time)
+            @reference_time = DateTime.iso8601(str)
           end
           self
         end

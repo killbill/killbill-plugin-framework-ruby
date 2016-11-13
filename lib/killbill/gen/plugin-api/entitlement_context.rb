@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.plugin.api.EntitlementContext
 
-        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :operation_type, :account_id, :destination_account_id, :bundle_id, :external_key, :entitlement_specifiers, :effective_date, :plugin_properties
+        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :operation_type, :account_id, :destination_account_id, :bundle_id, :external_key, :entitlement_specifiers, :entitlement_effective_date, :billing_effective_date, :billing_action_policy, :plugin_properties
 
         def initialize()
         end
@@ -97,10 +97,18 @@ module Killbill
           end
           @entitlement_specifiers = tmp
 
-          # conversion for effective_date [type = org.joda.time.LocalDate]
-          if !@effective_date.nil?
-            @effective_date = Java::org.joda.time.LocalDate.parse(@effective_date.to_s)
+          # conversion for entitlement_effective_date [type = org.joda.time.LocalDate]
+          if !@entitlement_effective_date.nil?
+            @entitlement_effective_date = Java::org.joda.time.LocalDate.parse(@entitlement_effective_date.to_s)
           end
+
+          # conversion for billing_effective_date [type = org.joda.time.LocalDate]
+          if !@billing_effective_date.nil?
+            @billing_effective_date = Java::org.joda.time.LocalDate.parse(@billing_effective_date.to_s)
+          end
+
+          # conversion for billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
+          @billing_action_policy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of( @billing_action_policy.to_s ) unless @billing_action_policy.nil?
 
           # conversion for plugin_properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -184,11 +192,21 @@ module Killbill
           end
           @entitlement_specifiers = tmp
 
-          # conversion for effective_date [type = org.joda.time.LocalDate]
-          @effective_date = j_obj.effective_date
-          if !@effective_date.nil?
-            @effective_date = @effective_date.to_s
+          # conversion for entitlement_effective_date [type = org.joda.time.LocalDate]
+          @entitlement_effective_date = j_obj.entitlement_effective_date
+          if !@entitlement_effective_date.nil?
+            @entitlement_effective_date = @entitlement_effective_date.to_s
           end
+
+          # conversion for billing_effective_date [type = org.joda.time.LocalDate]
+          @billing_effective_date = j_obj.billing_effective_date
+          if !@billing_effective_date.nil?
+            @billing_effective_date = @billing_effective_date.to_s
+          end
+
+          # conversion for billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
+          @billing_action_policy = j_obj.billing_action_policy
+          @billing_action_policy = @billing_action_policy.to_s.to_sym unless @billing_action_policy.nil?
 
           # conversion for plugin_properties [type = java.lang.Iterable]
           @plugin_properties = j_obj.plugin_properties

@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.api.Subscription
 
-        attr_accessor :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :last_active_product, :last_active_plan, :last_active_phase, :last_active_price_list, :last_active_product_category, :id, :created_date, :updated_date, :billing_start_date, :billing_end_date, :charged_through_date, :subscription_events
+        attr_accessor :base_entitlement_id, :bundle_id, :account_id, :external_key, :state, :source_type, :effective_start_date, :effective_end_date, :last_active_product, :last_active_plan, :last_active_phase, :last_active_price_list, :last_active_product_category, :bill_cycle_day_local, :id, :created_date, :updated_date, :billing_start_date, :billing_end_date, :charged_through_date, :subscription_events
 
         def initialize()
         end
@@ -82,6 +82,9 @@ module Killbill
 
           # conversion for last_active_product_category [type = org.killbill.billing.catalog.api.ProductCategory]
           @last_active_product_category = Java::org.killbill.billing.catalog.api.ProductCategory.value_of( @last_active_product_category.to_s ) unless @last_active_product_category.nil?
+
+          # conversion for bill_cycle_day_local [type = java.lang.Integer]
+          @bill_cycle_day_local = @bill_cycle_day_local
 
           # conversion for id [type = java.util.UUID]
           @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
@@ -179,6 +182,9 @@ module Killbill
           # conversion for last_active_product_category [type = org.killbill.billing.catalog.api.ProductCategory]
           @last_active_product_category = j_obj.last_active_product_category
           @last_active_product_category = @last_active_product_category.to_s.to_sym unless @last_active_product_category.nil?
+
+          # conversion for bill_cycle_day_local [type = java.lang.Integer]
+          @bill_cycle_day_local = j_obj.bill_cycle_day_local
 
           # conversion for id [type = java.util.UUID]
           @id = j_obj.id

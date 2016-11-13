@@ -52,10 +52,9 @@ module Killbill
           # conversion for subscription_id [type = java.util.UUID]
           @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?
 
-          # conversion for effective_date [type = org.joda.time.DateTime]
+          # conversion for effective_date [type = org.joda.time.LocalDate]
           if !@effective_date.nil?
-            @effective_date =  (@effective_date.kind_of? Time) ? DateTime.parse(@effective_date.to_s) : @effective_date
-            @effective_date = Java::org.joda.time.DateTime.new(@effective_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            @effective_date = Java::org.joda.time.LocalDate.parse(@effective_date.to_s)
           end
 
           # conversion for bundle_id [type = java.util.UUID]
@@ -92,12 +91,10 @@ module Killbill
           @subscription_id = j_obj.subscription_id
           @subscription_id = @subscription_id.nil? ? nil : @subscription_id.to_s
 
-          # conversion for effective_date [type = org.joda.time.DateTime]
+          # conversion for effective_date [type = org.joda.time.LocalDate]
           @effective_date = j_obj.effective_date
           if !@effective_date.nil?
-            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
-            str = fmt.print(@effective_date)
-            @effective_date = DateTime.iso8601(str)
+            @effective_date = @effective_date.to_s
           end
 
           # conversion for bundle_id [type = java.util.UUID]

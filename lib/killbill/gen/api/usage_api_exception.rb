@@ -29,42 +29,36 @@ module Killbill
   module Plugin
     module Model
 
-      class PlanSpecifier
+      class UsageApiException
 
 
-        attr_accessor :plan_name, :product_name, :billing_period, :price_list_name
+        attr_accessor :message, :cause, :code
 
         def initialize()
         end
 
         def to_java()
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = @plan_name.to_s unless @plan_name.nil?
+          # conversion for message [type = java.lang.String]
+          @message = @message.to_s unless @message.nil?
 
-          # conversion for product_name [type = java.lang.String]
-          @product_name = @product_name.to_s unless @product_name.nil?
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = @cause.to_s unless cause.nil?
 
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
-
-          # conversion for price_list_name [type = java.lang.String]
-          @price_list_name = @price_list_name.to_s unless @price_list_name.nil?
-          Java::org.killbill.billing.catalog.api.PlanSpecifier.new(@plan_name, @product_name, @billing_period, @price_list_name)
+          # conversion for code [type = int]
+          @code = @code
+          Java::org.killbill.billing.usage.api.UsageApiException.new(@message, @cause, @code)
         end
 
         def to_ruby(j_obj)
-          # conversion for plan_name [type = java.lang.String]
-          @plan_name = j_obj.plan_name
+          # conversion for message [type = java.lang.String]
+          @message = j_obj.message
 
-          # conversion for product_name [type = java.lang.String]
-          @product_name = j_obj.product_name
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = j_obj.cause
+          @cause = @cause.to_s unless @cause.nil?
 
-          # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
-          @billing_period = j_obj.billing_period
-          @billing_period = @billing_period.to_s.to_sym unless @billing_period.nil?
-
-          # conversion for price_list_name [type = java.lang.String]
-          @price_list_name = j_obj.price_list_name
+          # conversion for code [type = int]
+          @code = j_obj.code
           self
         end
 
