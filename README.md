@@ -16,10 +16,10 @@ All plugin types can interact with Kill Bill directly via APIs and expose HTTP e
 Kill Bill compatibility
 -----------------------
 
-| OSS parent version | Kill Bill version |
-| -----------------: | ----------------: |
-| 7.x.y              | 0.16.z            |
-| 8.3.y              | 0.18.z            |
+| Framework version | Kill Bill version |
+| ----------------: | ----------------: |
+| 7.x.y             | 0.16.z            |
+| 8.x.y             | 0.18.z            |
 
 
 How to write a Notification plugin
