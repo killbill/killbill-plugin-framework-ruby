@@ -94,36 +94,20 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement createBaseEntitlementWithAddOns(Java::java.util.UUID, Java::java.lang.String, Java::java.lang.Iterable, Java::org.joda.time.LocalDate, Java::org.joda.time.LocalDate, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_base_entitlement_with_add_ons(accountId, externalKey, entitlementSpecifier, entitlementEffectiveDate, billingEffectiveDate, isMigrated, properties, context)
+        java_signature 'Java::java.util.List createBaseEntitlementsWithAddOns(Java::java.util.UUID, Java::java.lang.Iterable, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_base_entitlements_with_add_ons(accountId, baseEntitlementWithAddOnsSpecifier, properties, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
 
-          # conversion for externalKey [type = java.lang.String]
-          externalKey = externalKey.to_s unless externalKey.nil?
-
-          # conversion for entitlementSpecifier [type = java.lang.Iterable]
+          # conversion for baseEntitlementWithAddOnsSpecifier [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
-          (entitlementSpecifier || []).each do |m|
-            # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementSpecifier]
+          (baseEntitlementWithAddOnsSpecifier || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.BaseEntitlementWithAddOnsSpecifier]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          entitlementSpecifier = tmp
-
-          # conversion for entitlementEffectiveDate [type = org.joda.time.LocalDate]
-          if !entitlementEffectiveDate.nil?
-            entitlementEffectiveDate = Java::org.joda.time.LocalDate.parse(entitlementEffectiveDate.to_s)
-          end
-
-          # conversion for billingEffectiveDate [type = org.joda.time.LocalDate]
-          if !billingEffectiveDate.nil?
-            billingEffectiveDate = Java::org.joda.time.LocalDate.parse(billingEffectiveDate.to_s)
-          end
-
-          # conversion for isMigrated [type = boolean]
-          isMigrated = isMigrated.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(isMigrated)
+          baseEntitlementWithAddOnsSpecifier = tmp
 
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -137,9 +121,15 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_base_entitlement_with_add_ons(accountId, externalKey, entitlementSpecifier, entitlementEffectiveDate, billingEffectiveDate, isMigrated, properties, context)
-            # conversion for res [type = org.killbill.billing.entitlement.api.Entitlement]
-            res = Killbill::Plugin::Model::Entitlement.new.to_ruby(res) unless res.nil?
+            res = @real_java_api.create_base_entitlements_with_add_ons(accountId, baseEntitlementWithAddOnsSpecifier, properties, context)
+            # conversion for res [type = java.util.List]
+            tmp = []
+            (res || []).each do |m|
+              # conversion for m [type = org.killbill.billing.entitlement.api.Entitlement]
+              m = Killbill::Plugin::Model::Entitlement.new.to_ruby(m) unless m.nil?
+              tmp << m
+            end
+            res = tmp
             return res
           rescue Java::org.killbill.billing.entitlement.api.EntitlementApiException => e
             raise Killbill::Plugin::Model::EntitlementApiException.new.to_ruby(e)
