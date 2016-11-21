@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.plugin.api.PriorEntitlementResult
 
-        attr_accessor :is_aborted, :adjusted_entitlement_effective_date, :adjusted_billing_effective_date, :adjusted_billing_action_policy, :adjusted_entitlement_specifiers, :adjusted_plugin_properties
+        attr_accessor :is_aborted, :adjusted_billing_action_policy, :adjusted_base_entitlement_with_add_ons_specifiers, :adjusted_plugin_properties
 
         def initialize()
         end
@@ -43,27 +43,17 @@ module Killbill
           # conversion for is_aborted [type = boolean]
           @is_aborted = @is_aborted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_aborted)
 
-          # conversion for adjusted_entitlement_effective_date [type = org.joda.time.LocalDate]
-          if !@adjusted_entitlement_effective_date.nil?
-            @adjusted_entitlement_effective_date = Java::org.joda.time.LocalDate.parse(@adjusted_entitlement_effective_date.to_s)
-          end
-
-          # conversion for adjusted_billing_effective_date [type = org.joda.time.LocalDate]
-          if !@adjusted_billing_effective_date.nil?
-            @adjusted_billing_effective_date = Java::org.joda.time.LocalDate.parse(@adjusted_billing_effective_date.to_s)
-          end
-
           # conversion for adjusted_billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
           @adjusted_billing_action_policy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of( @adjusted_billing_action_policy.to_s ) unless @adjusted_billing_action_policy.nil?
 
-          # conversion for adjusted_entitlement_specifiers [type = java.util.List]
+          # conversion for adjusted_base_entitlement_with_add_ons_specifiers [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
-          (@adjusted_entitlement_specifiers || []).each do |m|
-            # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementSpecifier]
+          (@adjusted_base_entitlement_with_add_ons_specifiers || []).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.BaseEntitlementWithAddOnsSpecifier]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @adjusted_entitlement_specifiers = tmp
+          @adjusted_base_entitlement_with_add_ons_specifiers = tmp
 
           # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -86,31 +76,19 @@ module Killbill
             @is_aborted = tmp_bool ? true : false
           end
 
-          # conversion for adjusted_entitlement_effective_date [type = org.joda.time.LocalDate]
-          @adjusted_entitlement_effective_date = j_obj.adjusted_entitlement_effective_date
-          if !@adjusted_entitlement_effective_date.nil?
-            @adjusted_entitlement_effective_date = @adjusted_entitlement_effective_date.to_s
-          end
-
-          # conversion for adjusted_billing_effective_date [type = org.joda.time.LocalDate]
-          @adjusted_billing_effective_date = j_obj.adjusted_billing_effective_date
-          if !@adjusted_billing_effective_date.nil?
-            @adjusted_billing_effective_date = @adjusted_billing_effective_date.to_s
-          end
-
           # conversion for adjusted_billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
           @adjusted_billing_action_policy = j_obj.adjusted_billing_action_policy
           @adjusted_billing_action_policy = @adjusted_billing_action_policy.to_s.to_sym unless @adjusted_billing_action_policy.nil?
 
-          # conversion for adjusted_entitlement_specifiers [type = java.util.List]
-          @adjusted_entitlement_specifiers = j_obj.adjusted_entitlement_specifiers
+          # conversion for adjusted_base_entitlement_with_add_ons_specifiers [type = java.lang.Iterable]
+          @adjusted_base_entitlement_with_add_ons_specifiers = j_obj.adjusted_base_entitlement_with_add_ons_specifiers
           tmp = []
-          (@adjusted_entitlement_specifiers || []).each do |m|
-            # conversion for m [type = org.killbill.billing.entitlement.api.EntitlementSpecifier]
-            m = Killbill::Plugin::Model::EntitlementSpecifier.new.to_ruby(m) unless m.nil?
+          (@adjusted_base_entitlement_with_add_ons_specifiers.nil? ? [] : @adjusted_base_entitlement_with_add_ons_specifiers.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.entitlement.api.BaseEntitlementWithAddOnsSpecifier]
+            m = Killbill::Plugin::Model::BaseEntitlementWithAddOnsSpecifier.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @adjusted_entitlement_specifiers = tmp
+          @adjusted_base_entitlement_with_add_ons_specifiers = tmp
 
           # conversion for adjusted_plugin_properties [type = java.lang.Iterable]
           @adjusted_plugin_properties = j_obj.adjusted_plugin_properties
