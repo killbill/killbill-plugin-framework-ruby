@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.MigrationPlan
 
-        attr_accessor :initial_phases, :product, :price_list_name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions, :name
+        attr_accessor :initial_phases, :product, :price_list_name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions, :name, :pretty_name
 
         def initialize()
         end
@@ -85,6 +85,9 @@ module Killbill
 
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
+
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
           self
         end
 
@@ -141,6 +144,9 @@ module Killbill
 
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
+
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = j_obj.pretty_name
           self
         end
 

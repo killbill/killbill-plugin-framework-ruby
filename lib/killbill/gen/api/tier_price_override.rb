@@ -30,30 +30,37 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      class TierPriceOverride
 
-        include org.killbill.billing.catalog.api.Unit
+        include org.killbill.billing.catalog.api.TierPriceOverride
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :tiered_block_price_overrides
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
+          # conversion for tiered_block_price_overrides [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@tiered_block_price_overrides || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.TieredBlockPriceOverride]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @tiered_block_price_overrides = tmp
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
+          # conversion for tiered_block_price_overrides [type = java.util.List]
+          @tiered_block_price_overrides = j_obj.tiered_block_price_overrides
+          tmp = []
+          (@tiered_block_price_overrides || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.TieredBlockPriceOverride]
+            m = Killbill::Plugin::Model::TieredBlockPriceOverride.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @tiered_block_price_overrides = tmp
           self
         end
 

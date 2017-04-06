@@ -30,30 +30,48 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      class BlockPriceOverride
 
-        include org.killbill.billing.catalog.api.Unit
+        include org.killbill.billing.catalog.api.BlockPriceOverride
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :unit_name, :size, :price, :currency
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
+          # conversion for unit_name [type = java.lang.String]
+          @unit_name = @unit_name.to_s unless @unit_name.nil?
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
+          # conversion for size [type = java.lang.Double]
+          @size = @size
+
+          # conversion for price [type = java.math.BigDecimal]
+          if @price.nil?
+            @price = java.math.BigDecimal::ZERO
+          else
+            @price = java.math.BigDecimal.new(@price.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
+          # conversion for unit_name [type = java.lang.String]
+          @unit_name = j_obj.unit_name
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
+          # conversion for size [type = java.lang.Double]
+          @size = j_obj.size
+
+          # conversion for price [type = java.math.BigDecimal]
+          @price = j_obj.price
+          @price = @price.nil? ? 0 : BigDecimal.new(@price.to_s)
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = j_obj.currency
+          @currency = @currency.to_s.to_sym unless @currency.nil?
           self
         end
 

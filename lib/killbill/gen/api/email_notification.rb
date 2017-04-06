@@ -29,31 +29,43 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      java_package 'org.killbill.billing.overdue.api'
+      class EmailNotification
 
-        include org.killbill.billing.catalog.api.Unit
+        include org.killbill.billing.overdue.api.EmailNotification
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :subject, :template_name, :is_html
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
+          # conversion for subject [type = java.lang.String]
+          @subject = @subject.to_s unless @subject.nil?
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
+          # conversion for template_name [type = java.lang.String]
+          @template_name = @template_name.to_s unless @template_name.nil?
+
+          # conversion for is_html [type = java.lang.Boolean]
+          @is_html = @is_html.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_html)
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
+          # conversion for subject [type = java.lang.String]
+          @subject = j_obj.subject
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
+          # conversion for template_name [type = java.lang.String]
+          @template_name = j_obj.template_name
+
+          # conversion for is_html [type = java.lang.Boolean]
+          @is_html = j_obj.is_html
+          if @is_html.nil?
+            @is_html = false
+          else
+            tmp_bool = (@is_html.java_kind_of? java.lang.Boolean) ? @is_html.boolean_value : @is_html
+            @is_html = tmp_bool ? true : false
+          end
           self
         end
 

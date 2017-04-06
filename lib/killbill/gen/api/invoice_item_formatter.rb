@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter
 
-        attr_accessor :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :usage_name, :rate, :linked_item_id, :id, :created_date, :updated_date, :formatted_start_date, :formatted_end_date, :formatted_amount
+        attr_accessor :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :pretty_plan_name, :phase_name, :pretty_phase_name, :usage_name, :pretty_usage_name, :rate, :linked_item_id, :id, :created_date, :updated_date, :formatted_start_date, :formatted_end_date, :formatted_amount
 
         def initialize()
         end
@@ -84,11 +84,20 @@ module Killbill
           # conversion for plan_name [type = java.lang.String]
           @plan_name = @plan_name.to_s unless @plan_name.nil?
 
+          # conversion for pretty_plan_name [type = java.lang.String]
+          @pretty_plan_name = @pretty_plan_name.to_s unless @pretty_plan_name.nil?
+
           # conversion for phase_name [type = java.lang.String]
           @phase_name = @phase_name.to_s unless @phase_name.nil?
 
+          # conversion for pretty_phase_name [type = java.lang.String]
+          @pretty_phase_name = @pretty_phase_name.to_s unless @pretty_phase_name.nil?
+
           # conversion for usage_name [type = java.lang.String]
           @usage_name = @usage_name.to_s unless @usage_name.nil?
+
+          # conversion for pretty_usage_name [type = java.lang.String]
+          @pretty_usage_name = @pretty_usage_name.to_s unless @pretty_usage_name.nil?
 
           # conversion for rate [type = java.math.BigDecimal]
           if @rate.nil?
@@ -177,11 +186,20 @@ module Killbill
           # conversion for plan_name [type = java.lang.String]
           @plan_name = j_obj.plan_name
 
+          # conversion for pretty_plan_name [type = java.lang.String]
+          @pretty_plan_name = j_obj.pretty_plan_name
+
           # conversion for phase_name [type = java.lang.String]
           @phase_name = j_obj.phase_name
 
+          # conversion for pretty_phase_name [type = java.lang.String]
+          @pretty_phase_name = j_obj.pretty_phase_name
+
           # conversion for usage_name [type = java.lang.String]
           @usage_name = j_obj.usage_name
+
+          # conversion for pretty_usage_name [type = java.lang.String]
+          @pretty_usage_name = j_obj.pretty_usage_name
 
           # conversion for rate [type = java.math.BigDecimal]
           @rate = j_obj.rate

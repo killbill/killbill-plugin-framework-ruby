@@ -29,31 +29,26 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      java_package 'org.killbill.billing.overdue.api'
+      class OverdueConfig
 
-        include org.killbill.billing.catalog.api.Unit
+        include org.killbill.billing.overdue.api.OverdueConfig
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :overdue_states_account
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
+          # conversion for overdue_states_account [type = org.killbill.billing.overdue.api.OverdueStatesAccount]
+          @overdue_states_account = @overdue_states_account.to_java unless @overdue_states_account.nil?
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
+          # conversion for overdue_states_account [type = org.killbill.billing.overdue.api.OverdueStatesAccount]
+          @overdue_states_account = j_obj.overdue_states_account
+          @overdue_states_account = Killbill::Plugin::Model::OverdueStatesAccount.new.to_ruby(@overdue_states_account) unless @overdue_states_account.nil?
           self
         end
 

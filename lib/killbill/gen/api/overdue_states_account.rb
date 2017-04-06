@@ -29,35 +29,44 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      java_package 'org.killbill.billing.overdue.api'
+      class OverdueStatesAccount
 
-        include org.killbill.billing.catalog.api.Unit
+        include org.killbill.billing.overdue.api.OverdueStatesAccount
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :initial_reevaluation_interval, :states
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
-          self
+        # conversion for states [type = org.killbill.billing.overdue.api.OverdueState[]]
+        tmp = []
+        (@states || []).each do |m|
+          # conversion for m [type = org.killbill.billing.overdue.api.OverdueState]
+          m = m.to_java unless m.nil?
+          tmp << m
         end
-
-        def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
-          self
-        end
-
+        @states = tmp.to_java Java::org.killbill.billing.overdue.api.OverdueState
+        self
       end
+
+      def to_ruby(j_obj)
+
+      # conversion for states [type = org.killbill.billing.overdue.api.OverdueState[]]
+      @states = j_obj.states
+      tmp = []
+      (@states || []).each do |m|
+        # conversion for m [type = org.killbill.billing.overdue.api.OverdueState]
+        m = Killbill::Plugin::Model::OverdueState.new.to_ruby(m) unless m.nil?
+        tmp << m
+      end
+      @states = tmp
+      self
     end
+
   end
+end
+end
 end

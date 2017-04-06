@@ -29,31 +29,36 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      class OverdueApiException
 
-        include org.killbill.billing.catalog.api.Unit
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :message, :cause, :code
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
+          # conversion for message [type = java.lang.String]
+          @message = @message.to_s unless @message.nil?
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
-          self
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = @cause.to_s unless cause.nil?
+
+          # conversion for code [type = int]
+          @code = @code
+          Java::org.killbill.billing.overdue.api.OverdueApiException.new(@message, @cause, @code)
         end
 
         def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
+          # conversion for message [type = java.lang.String]
+          @message = j_obj.message
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
+          # conversion for cause [type = java.lang.Throwable]
+          @cause = j_obj.cause
+          @cause = @cause.to_s unless @cause.nil?
+
+          # conversion for code [type = int]
+          @code = j_obj.code
           self
         end
 
