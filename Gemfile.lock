@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    killbill (8.3.1)
+    killbill (8.3.2)
       rack (>= 1.5.2)
       sinatra (~> 1.3.4)
       typhoeus (~> 0.6.9)
