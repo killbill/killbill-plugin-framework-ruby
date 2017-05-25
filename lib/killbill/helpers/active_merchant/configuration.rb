@@ -72,7 +72,10 @@ module Killbill
           gateway_configs = config[@@gateway_name.to_sym]
           global_defaults = @@glob_config[@@gateway_name.to_sym] || {}
           # Provided configuration is the same of global (i.e. no tenant specific configuration)
-          global_defaults = {} if gateway_configs == global_defaults
+          unless global_defaults.is_a?(Hash)
+            @@logger.warn "Ignoring #{@@gateway_name} global configuration. Invalid format, expecting a Hash."
+            global_defaults = {}
+          end
 
           gateways_config = {}
           if gateway_configs.is_a?(Array)
