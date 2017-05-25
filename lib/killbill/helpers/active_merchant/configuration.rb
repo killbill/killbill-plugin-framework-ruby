@@ -69,11 +69,16 @@ module Killbill
         private
 
         def extract_gateway_config(config)
-          gateways_config = {}
           gateway_configs = config[@@gateway_name.to_sym]
+          global_defaults = @@glob_config[@@gateway_name.to_sym] || {}
+          # Provided configuration is the same of global (i.e. no tenant specific configuration)
+          global_defaults = {} if gateway_configs == global_defaults
+
+          gateways_config = {}
           if gateway_configs.is_a?(Array)
             default_gateway = nil
             gateway_configs.each_with_index do |gateway_config, idx|
+              gateway_config = global_defaults.merge(gateway_config)
               gateway_account_id = gateway_config[:account_id]
               if gateway_account_id.nil?
                 @@logger.warn "Skipping config #{gateway_config} -- missing :account_id"
@@ -88,7 +93,7 @@ module Killbill
             if gateway_configs.nil?
               @@logger.warn "Unable to configure gateway #{@@gateway_name}, invalid configuration: #{config}"
             else
-              gateways_config[:default] = Gateway.wrap(@@gateway_builder, gateway_configs, @@logger)
+              gateways_config[:default] = Gateway.wrap(@@gateway_builder, global_defaults.merge(gateway_configs), @@logger)
             end
           end
           gateways_config
