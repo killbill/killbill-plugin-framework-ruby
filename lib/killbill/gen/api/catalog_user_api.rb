@@ -116,6 +116,14 @@ module Killbill
           context = context.to_java unless context.nil?
           @real_java_api.add_simple_plan(planDescriptor, requestedDate, context)
         end
+
+        java_signature 'Java::void deleteCatalog(Java::org.killbill.billing.util.callcontext.CallContext)'
+        def delete_catalog(callContext)
+
+          # conversion for callContext [type = org.killbill.billing.util.callcontext.CallContext]
+          callContext = callContext.to_java unless callContext.nil?
+          @real_java_api.delete_catalog(callContext)
+        end
       end
     end
   end

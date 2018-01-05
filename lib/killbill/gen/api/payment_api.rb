@@ -1017,11 +1017,56 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.List getAccountPaymentMethods(Java::java.util.UUID, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_account_payment_methods(accountId, withPluginInfo, properties, context)
+        java_signature 'Java::java.util.UUID addPaymentMethodWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.lang.String, Java::java.lang.String, Java::boolean, Java::org.killbill.billing.payment.api.PaymentMethodPlugin, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def add_payment_method_with_payment_control(account, paymentMethodExternalKey, pluginName, setDefault, paymentMethodInfo, properties, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentMethodExternalKey [type = java.lang.String]
+          paymentMethodExternalKey = paymentMethodExternalKey.to_s unless paymentMethodExternalKey.nil?
+
+          # conversion for pluginName [type = java.lang.String]
+          pluginName = pluginName.to_s unless pluginName.nil?
+
+          # conversion for setDefault [type = boolean]
+          setDefault = setDefault.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(setDefault)
+
+          # conversion for paymentMethodInfo [type = org.killbill.billing.payment.api.PaymentMethodPlugin]
+          paymentMethodInfo = paymentMethodInfo.to_java unless paymentMethodInfo.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.add_payment_method_with_payment_control(account, paymentMethodExternalKey, pluginName, setDefault, paymentMethodInfo, properties, paymentOptions, context)
+            # conversion for res [type = java.util.UUID]
+            res = res.nil? ? nil : res.to_s
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::java.util.List getAccountPaymentMethods(Java::java.util.UUID, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_account_payment_methods(accountId, includedInactive, withPluginInfo, properties, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
+          # conversion for includedInactive [type = boolean]
+          includedInactive = includedInactive.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(includedInactive)
 
           # conversion for withPluginInfo [type = boolean]
           withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
@@ -1038,7 +1083,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.get_account_payment_methods(accountId, withPluginInfo, properties, context)
+            res = @real_java_api.get_account_payment_methods(accountId, includedInactive, withPluginInfo, properties, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|

@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.Plan
 
-        attr_accessor :name, :pretty_name, :initial_phases, :product, :price_list_name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions
+        attr_accessor :name, :pretty_name, :recurring_billing_mode, :initial_phases, :product, :price_list_name, :initial_phase_iterator, :final_phase, :recurring_billing_period, :plans_allowed_in_bundle, :all_phases, :effective_date_for_existing_subscriptions
 
         def initialize()
         end
@@ -45,6 +45,9 @@ module Killbill
 
           # conversion for pretty_name [type = java.lang.String]
           @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
+
+          # conversion for recurring_billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
+          @recurring_billing_mode = Java::org.killbill.billing.catalog.api.BillingMode.value_of( @recurring_billing_mode.to_s ) unless @recurring_billing_mode.nil?
 
           # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
           tmp = []
@@ -97,6 +100,10 @@ module Killbill
 
           # conversion for pretty_name [type = java.lang.String]
           @pretty_name = j_obj.pretty_name
+
+          # conversion for recurring_billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
+          @recurring_billing_mode = j_obj.recurring_billing_mode
+          @recurring_billing_mode = @recurring_billing_mode.to_s.to_sym unless @recurring_billing_mode.nil?
 
           # conversion for initial_phases [type = org.killbill.billing.catalog.api.PlanPhase[]]
           @initial_phases = j_obj.initial_phases

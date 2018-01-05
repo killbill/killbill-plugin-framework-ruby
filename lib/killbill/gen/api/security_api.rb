@@ -212,6 +212,26 @@ module Killbill
       @real_java_api.add_role_definition(role, permissions, context)
     end
 
+    java_signature 'Java::void updateRoleDefinition(Java::java.lang.String, Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'
+    def update_role_definition(role, permissions, context)
+
+      # conversion for role [type = java.lang.String]
+      role = role.to_s unless role.nil?
+
+      # conversion for permissions [type = java.util.List]
+      tmp = java.util.ArrayList.new
+      (permissions || []).each do |m|
+        # conversion for m [type = java.lang.String]
+        m = m.to_s unless m.nil?
+        tmp.add(m)
+      end
+      permissions = tmp
+
+      # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+      context = context.to_java unless context.nil?
+      @real_java_api.update_role_definition(role, permissions, context)
+    end
+
     java_signature 'Java::java.util.List getRoleDefinition(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
     def get_role_definition(role, tenantContext)
 

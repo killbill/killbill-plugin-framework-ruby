@@ -93,6 +93,23 @@ module Killbill
           @real_java_api.add_custom_fields(fields, context)
         end
 
+        java_signature 'Java::void updateCustomFields(Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def update_custom_fields(fields, context)
+
+          # conversion for fields [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (fields || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.customfield.CustomField]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          fields = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          @real_java_api.update_custom_fields(fields, context)
+        end
+
         java_signature 'Java::void removeCustomFields(Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'
         def remove_custom_fields(fields, context)
 

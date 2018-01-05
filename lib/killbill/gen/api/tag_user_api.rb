@@ -56,8 +56,8 @@ module Killbill
           return res
         end
 
-        java_signature 'Java::org.killbill.billing.util.tag.TagDefinition createTagDefinition(Java::java.lang.String, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_tag_definition(definitionName, description, context)
+        java_signature 'Java::org.killbill.billing.util.tag.TagDefinition createTagDefinition(Java::java.lang.String, Java::java.lang.String, Java::java.util.Set, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_tag_definition(definitionName, description, applicableObjectTypes, context)
 
           # conversion for definitionName [type = java.lang.String]
           definitionName = definitionName.to_s unless definitionName.nil?
@@ -65,10 +65,19 @@ module Killbill
           # conversion for description [type = java.lang.String]
           description = description.to_s unless description.nil?
 
+          # conversion for applicableObjectTypes [type = java.util.Set]
+          tmp = java.util.TreeSet.new
+          (applicableObjectTypes || []).each do |m|
+            # conversion for m [type = org.killbill.billing.ObjectType]
+            m = Java::org.killbill.billing.ObjectType.value_of( m.to_s ) unless m.nil?
+            tmp.add(m)
+          end
+          applicableObjectTypes = tmp
+
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_tag_definition(definitionName, description, context)
+            res = @real_java_api.create_tag_definition(definitionName, description, applicableObjectTypes, context)
             # conversion for res [type = org.killbill.billing.util.tag.TagDefinition]
             res = Killbill::Plugin::Model::TagDefinition.new.to_ruby(res) unless res.nil?
             return res

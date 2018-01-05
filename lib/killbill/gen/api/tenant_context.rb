@@ -34,18 +34,25 @@ module Killbill
 
         include org.killbill.billing.util.callcontext.TenantContext
 
-        attr_accessor :tenant_id
+        attr_accessor :account_id, :tenant_id
 
         def initialize()
         end
 
         def to_java()
+          # conversion for account_id [type = java.util.UUID]
+          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
+
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
           self
         end
 
         def to_ruby(j_obj)
+          # conversion for account_id [type = java.util.UUID]
+          @account_id = j_obj.account_id
+          @account_id = @account_id.nil? ? nil : @account_id.to_s
+
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = j_obj.tenant_id
           @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
