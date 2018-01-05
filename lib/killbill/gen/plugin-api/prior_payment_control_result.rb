@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.control.plugin.api.PriorPaymentControlResult
 
-        attr_accessor :adjusted_plugin_properties, :is_aborted, :adjusted_amount, :adjusted_currency, :adjusted_payment_method_id
+        attr_accessor :adjusted_plugin_properties, :is_aborted, :adjusted_amount, :adjusted_currency, :adjusted_payment_method_id, :adjusted_plugin_name
 
         def initialize()
         end
@@ -64,6 +64,9 @@ module Killbill
 
           # conversion for adjusted_payment_method_id [type = java.util.UUID]
           @adjusted_payment_method_id = java.util.UUID.fromString(@adjusted_payment_method_id.to_s) unless @adjusted_payment_method_id.nil?
+
+          # conversion for adjusted_plugin_name [type = java.lang.String]
+          @adjusted_plugin_name = @adjusted_plugin_name.to_s unless @adjusted_plugin_name.nil?
           self
         end
 
@@ -98,6 +101,9 @@ module Killbill
           # conversion for adjusted_payment_method_id [type = java.util.UUID]
           @adjusted_payment_method_id = j_obj.adjusted_payment_method_id
           @adjusted_payment_method_id = @adjusted_payment_method_id.nil? ? nil : @adjusted_payment_method_id.to_s
+
+          # conversion for adjusted_plugin_name [type = java.lang.String]
+          @adjusted_plugin_name = j_obj.adjusted_plugin_name
           self
         end
 
