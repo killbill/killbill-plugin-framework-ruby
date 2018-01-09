@@ -39,8 +39,8 @@ module Killbill
         end
 
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createAuthorization(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_authorization(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createAuthorization(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_authorization(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -60,6 +60,12 @@ module Killbill
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -79,7 +85,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_authorization(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, context)
+            res = @real_java_api.create_authorization(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -88,8 +94,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createAuthorizationWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_authorization_with_payment_control(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createAuthorizationWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_authorization_with_payment_control(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -110,195 +116,11 @@ module Killbill
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
-          # conversion for paymentExternalKey [type = java.lang.String]
-          paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
-
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
-          properties = tmp
-
-          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
-          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_authorization_with_payment_control(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createCapture(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_capture(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
-
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          properties = tmp
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_capture(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createCaptureWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_capture_with_payment_control(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, paymentOptions, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
-
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          properties = tmp
-
-          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
-          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_capture_with_payment_control(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, paymentOptions, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createPurchase(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_purchase(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentMethodId [type = java.util.UUID]
-          paymentMethodId = java.util.UUID.fromString(paymentMethodId.to_s) unless paymentMethodId.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
-
-          # conversion for paymentExternalKey [type = java.lang.String]
-          paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
-
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          properties = tmp
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_purchase(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createPurchaseWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_purchase_with_payment_control(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentMethodId [type = java.util.UUID]
-          paymentMethodId = java.util.UUID.fromString(paymentMethodId.to_s) unless paymentMethodId.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -321,7 +143,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_purchase_with_payment_control(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
+            res = @real_java_api.create_authorization_with_payment_control(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -330,14 +152,30 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createVoid(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_void(account, paymentId, paymentTransactionExternalKey, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createCapture(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_capture(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
 
           # conversion for paymentId [type = java.util.UUID]
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -354,7 +192,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_void(account, paymentId, paymentTransactionExternalKey, properties, context)
+            res = @real_java_api.create_capture(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -363,14 +201,30 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createVoidWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_void_with_payment_control(account, paymentId, paymentTransactionExternalKey, properties, paymentOptions, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createCaptureWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_capture_with_payment_control(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
 
           # conversion for paymentId [type = java.util.UUID]
           paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -390,7 +244,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_void_with_payment_control(account, paymentId, paymentTransactionExternalKey, properties, paymentOptions, context)
+            res = @real_java_api.create_capture_with_payment_control(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -399,97 +253,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createRefund(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_refund(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
-
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          properties = tmp
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_refund(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createRefundWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_refund_with_payment_control(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, paymentOptions, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for amount [type = java.math.BigDecimal]
-          if amount.nil?
-            amount = java.math.BigDecimal::ZERO
-          else
-            amount = java.math.BigDecimal.new(amount.to_s)
-          end
-
-          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
-          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
-
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          properties = tmp
-
-          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
-          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_refund_with_payment_control(account, paymentId, amount, currency, paymentTransactionExternalKey, properties, paymentOptions, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createCredit(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_credit(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createPurchase(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_purchase(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -509,6 +274,12 @@ module Killbill
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -528,7 +299,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_credit(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, context)
+            res = @real_java_api.create_purchase(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -537,8 +308,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createCreditWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_credit_with_payment_control(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createPurchaseWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_purchase_with_payment_control(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -558,6 +329,12 @@ module Killbill
 
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
 
           # conversion for paymentExternalKey [type = java.lang.String]
           paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
@@ -580,7 +357,302 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_credit_with_payment_control(account, paymentMethodId, paymentId, amount, currency, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
+            res = @real_java_api.create_purchase_with_payment_control(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createVoid(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_void(account, paymentId, effectiveDate, paymentTransactionExternalKey, properties, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_void(account, paymentId, effectiveDate, paymentTransactionExternalKey, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createVoidWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_void_with_payment_control(account, paymentId, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_void_with_payment_control(account, paymentId, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createRefund(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_refund(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_refund(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createRefundWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_refund_with_payment_control(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_refund_with_payment_control(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createCredit(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_credit(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentMethodId [type = java.util.UUID]
+          paymentMethodId = java.util.UUID.fromString(paymentMethodId.to_s) unless paymentMethodId.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentExternalKey [type = java.lang.String]
+          paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_credit(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createCreditWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_credit_with_payment_control(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentMethodId [type = java.util.UUID]
+          paymentMethodId = java.util.UUID.fromString(paymentMethodId.to_s) unless paymentMethodId.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for amount [type = java.math.BigDecimal]
+          if amount.nil?
+            amount = java.math.BigDecimal::ZERO
+          else
+            amount = java.math.BigDecimal.new(amount.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentExternalKey [type = java.lang.String]
+          paymentExternalKey = paymentExternalKey.to_s unless paymentExternalKey.nil?
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_credit_with_payment_control(account, paymentMethodId, paymentId, amount, currency, effectiveDate, paymentExternalKey, paymentTransactionExternalKey, properties, paymentOptions, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -600,8 +672,8 @@ module Killbill
           @real_java_api.cancel_scheduled_payment_transaction(paymentTransactionExternalKey, context)
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargeback(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_chargeback(account, paymentId, amount, currency, paymentTransactionExternalKey, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargeback(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -619,13 +691,19 @@ module Killbill
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
 
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_chargeback(account, paymentId, amount, currency, paymentTransactionExternalKey, context)
+            res = @real_java_api.create_chargeback(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
@@ -634,8 +712,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::java.lang.String, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_chargeback_with_payment_control(account, paymentId, amount, currency, paymentTransactionExternalKey, paymentOptions, context)
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback_with_payment_control(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, paymentOptions, context)
 
           # conversion for account [type = org.killbill.billing.account.api.Account]
           account = account.to_java unless account.nil?
@@ -653,56 +731,11 @@ module Killbill
           # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
           currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
 
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
-          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_chargeback_with_payment_control(account, paymentId, amount, currency, paymentTransactionExternalKey, paymentOptions, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackReversal(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_chargeback_reversal(account, paymentId, paymentTransactionExternalKey, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
-
-          # conversion for paymentTransactionExternalKey [type = java.lang.String]
-          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
-
-          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
-          context = context.to_java unless context.nil?
-          begin
-            res = @real_java_api.create_chargeback_reversal(account, paymentId, paymentTransactionExternalKey, context)
-            # conversion for res [type = org.killbill.billing.payment.api.Payment]
-            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
-            return res
-          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
-            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
-          end
-        end
-
-        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackReversalWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.lang.String, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_chargeback_reversal_with_payment_control(account, paymentId, paymentTransactionExternalKey, paymentOptions, context)
-
-          # conversion for account [type = org.killbill.billing.account.api.Account]
-          account = account.to_java unless account.nil?
-
-          # conversion for paymentId [type = java.util.UUID]
-          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
 
           # conversion for paymentTransactionExternalKey [type = java.lang.String]
           paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
@@ -713,7 +746,70 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_chargeback_reversal_with_payment_control(account, paymentId, paymentTransactionExternalKey, paymentOptions, context)
+            res = @real_java_api.create_chargeback_with_payment_control(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, paymentOptions, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackReversal(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::org.joda.time.DateTime, Java::java.lang.String, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback_reversal(account, paymentId, effectiveDate, paymentTransactionExternalKey, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_chargeback_reversal(account, paymentId, effectiveDate, paymentTransactionExternalKey, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.payment.api.Payment createChargebackReversalWithPaymentControl(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::org.joda.time.DateTime, Java::java.lang.String, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_chargeback_reversal_with_payment_control(account, paymentId, effectiveDate, paymentTransactionExternalKey, paymentOptions, context)
+
+          # conversion for account [type = org.killbill.billing.account.api.Account]
+          account = account.to_java unless account.nil?
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for effectiveDate [type = org.joda.time.DateTime]
+          if !effectiveDate.nil?
+            effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+            effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
+          # conversion for paymentTransactionExternalKey [type = java.lang.String]
+          paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+          # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+          paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.create_chargeback_reversal_with_payment_control(account, paymentId, effectiveDate, paymentTransactionExternalKey, paymentOptions, context)
             # conversion for res [type = org.killbill.billing.payment.api.Payment]
             res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
             return res
