@@ -39,8 +39,8 @@ module Killbill
         end
 
 
-        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement createBaseEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::java.lang.String, Java::java.util.List, Java::org.joda.time.LocalDate, Java::org.joda.time.LocalDate, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_base_entitlement(accountId, spec, externalKey, overrides, entitlementEffectiveDate, billingEffectiveDate, isMigrated, properties, context)
+        java_signature 'Java::org.killbill.billing.entitlement.api.Entitlement createBaseEntitlement(Java::java.util.UUID, Java::org.killbill.billing.catalog.api.PlanPhaseSpecifier, Java::java.lang.String, Java::java.util.List, Java::org.joda.time.LocalDate, Java::org.joda.time.LocalDate, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_base_entitlement(accountId, spec, externalKey, overrides, entitlementEffectiveDate, billingEffectiveDate, isMigrated, renameCancelledBundleIfExist, properties, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -73,6 +73,9 @@ module Killbill
           # conversion for isMigrated [type = boolean]
           isMigrated = isMigrated.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(isMigrated)
 
+          # conversion for renameCancelledBundleIfExist [type = boolean]
+          renameCancelledBundleIfExist = renameCancelledBundleIfExist.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(renameCancelledBundleIfExist)
+
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
           (properties || []).each do |m|
@@ -85,7 +88,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_base_entitlement(accountId, spec, externalKey, overrides, entitlementEffectiveDate, billingEffectiveDate, isMigrated, properties, context)
+            res = @real_java_api.create_base_entitlement(accountId, spec, externalKey, overrides, entitlementEffectiveDate, billingEffectiveDate, isMigrated, renameCancelledBundleIfExist, properties, context)
             # conversion for res [type = org.killbill.billing.entitlement.api.Entitlement]
             res = Killbill::Plugin::Model::Entitlement.new.to_ruby(res) unless res.nil?
             return res
@@ -94,8 +97,8 @@ module Killbill
           end
         end
 
-        java_signature 'Java::java.util.List createBaseEntitlementsWithAddOns(Java::java.util.UUID, Java::java.lang.Iterable, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
-        def create_base_entitlements_with_add_ons(accountId, baseEntitlementWithAddOnsSpecifier, properties, context)
+        java_signature 'Java::java.util.List createBaseEntitlementsWithAddOns(Java::java.util.UUID, Java::java.lang.Iterable, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
+        def create_base_entitlements_with_add_ons(accountId, baseEntitlementWithAddOnsSpecifier, renameCancelledBundleIfExist, properties, context)
 
           # conversion for accountId [type = java.util.UUID]
           accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
@@ -109,6 +112,9 @@ module Killbill
           end
           baseEntitlementWithAddOnsSpecifier = tmp
 
+          # conversion for renameCancelledBundleIfExist [type = boolean]
+          renameCancelledBundleIfExist = renameCancelledBundleIfExist.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(renameCancelledBundleIfExist)
+
           # conversion for properties [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
           (properties || []).each do |m|
@@ -121,7 +127,7 @@ module Killbill
           # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.create_base_entitlements_with_add_ons(accountId, baseEntitlementWithAddOnsSpecifier, properties, context)
+            res = @real_java_api.create_base_entitlements_with_add_ons(accountId, baseEntitlementWithAddOnsSpecifier, renameCancelledBundleIfExist, properties, context)
             # conversion for res [type = java.util.List]
             tmp = []
             (res || []).each do |m|

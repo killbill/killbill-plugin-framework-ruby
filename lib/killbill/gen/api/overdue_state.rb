@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.overdue.api.OverdueState
 
-        attr_accessor :overdue_condition, :name, :external_message, :is_block_changes, :is_disable_entitlement_and_changes_blocked, :overdue_cancellation_policy, :is_clear_state, :auto_reevaluation_interval, :email_notification
+        attr_accessor :overdue_condition, :name, :external_message, :is_block_changes, :is_disable_entitlement_and_changes_blocked, :overdue_cancellation_policy, :is_clear_state, :auto_reevaluation_interval
 
         def initialize()
         end
@@ -63,9 +63,6 @@ module Killbill
 
           # conversion for auto_reevaluation_interval [type = org.killbill.billing.catalog.api.Duration]
           @auto_reevaluation_interval = @auto_reevaluation_interval.to_java unless @auto_reevaluation_interval.nil?
-
-          # conversion for email_notification [type = org.killbill.billing.overdue.api.EmailNotification]
-          @email_notification = @email_notification.to_java unless @email_notification.nil?
           self
         end
 
@@ -114,10 +111,6 @@ module Killbill
           # conversion for auto_reevaluation_interval [type = org.killbill.billing.catalog.api.Duration]
           @auto_reevaluation_interval = j_obj.auto_reevaluation_interval
           @auto_reevaluation_interval = Killbill::Plugin::Model::Duration.new.to_ruby(@auto_reevaluation_interval) unless @auto_reevaluation_interval.nil?
-
-          # conversion for email_notification [type = org.killbill.billing.overdue.api.EmailNotification]
-          @email_notification = j_obj.email_notification
-          @email_notification = Killbill::Plugin::Model::EmailNotification.new.to_ruby(@email_notification) unless @email_notification.nil?
           self
         end
 

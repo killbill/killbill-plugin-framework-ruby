@@ -29,48 +29,36 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.plugin.api'
-      class VersionedPluginCatalog
+      class InvoicePluginApiRetryException
 
-        include org.killbill.billing.catalog.plugin.api.VersionedPluginCatalog
 
-        attr_accessor :catalog_name, :standalone_plugin_catalogs
+        attr_accessor :retry_schedule
 
         def initialize()
         end
 
         def to_java()
-          # conversion for catalog_name [type = java.lang.String]
-          @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
-
-          # conversion for standalone_plugin_catalogs [type = java.lang.Iterable]
+          # conversion for retry_schedule [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (@standalone_plugin_catalogs || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.plugin.api.StandalonePluginCatalog]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @standalone_plugin_catalogs = tmp
-          self
+          (@retry_schedule || []).each do |m|
+          tmp.add(m)
         end
-
-        def to_ruby(j_obj)
-          # conversion for catalog_name [type = java.lang.String]
-          @catalog_name = j_obj.catalog_name
-
-          # conversion for standalone_plugin_catalogs [type = java.lang.Iterable]
-          @standalone_plugin_catalogs = j_obj.standalone_plugin_catalogs
-          tmp = []
-          (@standalone_plugin_catalogs.nil? ? [] : @standalone_plugin_catalogs.iterator).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.plugin.api.StandalonePluginCatalog]
-            m = Killbill::Plugin::Model::StandalonePluginCatalog.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @standalone_plugin_catalogs = tmp
-          self
-        end
-
+        @retry_schedule = tmp
+        Java::org.killbill.billing.invoice.plugin.api.InvoicePluginApiRetryException.new(@retry_schedule)
       end
+
+      def to_ruby(j_obj)
+        # conversion for retry_schedule [type = java.util.List]
+        @retry_schedule = j_obj.retry_schedule
+        tmp = []
+        (@retry_schedule || []).each do |m|
+        tmp << m
+      end
+      @retry_schedule = tmp
+      self
     end
+
   end
+end
+end
 end

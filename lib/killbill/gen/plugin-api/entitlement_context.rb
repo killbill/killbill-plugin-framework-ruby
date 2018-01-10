@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.plugin.api.EntitlementContext
 
-        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :operation_type, :account_id, :destination_account_id, :base_entitlement_with_add_ons_specifiers, :billing_action_policy, :plugin_properties
+        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :account_id, :tenant_id, :operation_type, :destination_account_id, :base_entitlement_with_add_ons_specifiers, :billing_action_policy, :plugin_properties
 
         def initialize()
         end
@@ -70,14 +70,14 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
+          # conversion for account_id [type = java.util.UUID]
+          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
+
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
 
           # conversion for operation_type [type = org.killbill.billing.entitlement.plugin.api.OperationType]
           @operation_type = Java::org.killbill.billing.entitlement.plugin.api.OperationType.value_of( @operation_type.to_s ) unless @operation_type.nil?
-
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
 
           # conversion for destination_account_id [type = java.util.UUID]
           @destination_account_id = java.util.UUID.fromString(@destination_account_id.to_s) unless @destination_account_id.nil?
@@ -143,6 +143,10 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
+          # conversion for account_id [type = java.util.UUID]
+          @account_id = j_obj.account_id
+          @account_id = @account_id.nil? ? nil : @account_id.to_s
+
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = j_obj.tenant_id
           @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
@@ -150,10 +154,6 @@ module Killbill
           # conversion for operation_type [type = org.killbill.billing.entitlement.plugin.api.OperationType]
           @operation_type = j_obj.operation_type
           @operation_type = @operation_type.to_s.to_sym unless @operation_type.nil?
-
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = j_obj.account_id
-          @account_id = @account_id.nil? ? nil : @account_id.to_s
 
           # conversion for destination_account_id [type = java.util.UUID]
           @destination_account_id = j_obj.destination_account_id
