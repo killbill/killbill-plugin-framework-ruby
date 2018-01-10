@@ -169,7 +169,7 @@ describe Killbill::Plugin::ActiveMerchant do
   it 'interprets the config file through ERB' do
     value = '<%= 12 %>'
     do_initialize!({ :key => value })
-    ::Killbill::Plugin::ActiveMerchant.config[:test][:key].should == 12
+    ::Killbill::Plugin::ActiveMerchant.config[:test][:key].to_i.should == 12
   end
 
   after do
