@@ -19,6 +19,7 @@ describe Killbill::Plugin do
     @account.locale="locale"
     @account.address1="address1"
     @account.time_zone=:UTC
+    @account.reference_time=DateTime.now
     @account.city="San Francisco"
 
     @context = @kb_apis.create_context
