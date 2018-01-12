@@ -41,7 +41,7 @@ module Killbill
           cc_last_name = (overrides.delete(:cc_last_name) || (set_defaults ? 'Doe' : nil))
           cc_type = (overrides.delete(:cc_type) || (set_defaults ? 'Visa' : nil))
           cc_exp_month = (overrides.delete(:cc_exp_month) || (set_defaults ? 12 : nil))
-          cc_exp_year = (overrides.delete(:cc_exp_year) || (set_defaults ? 2017 : nil))
+          cc_exp_year = (overrides.delete(:cc_exp_year) || (set_defaults ? 2020 : nil))
           cc_last_4 = (overrides.delete(:cc_last_4) || (set_defaults ? 4242 : nil))
           address1 = (overrides.delete(:address1) || (set_defaults ? '5, oakriu road' : nil))
           address2 = (overrides.delete(:address2) || (set_defaults ? 'apt. 298' : nil))
