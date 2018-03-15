@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.invoice.api.InvoiceItem
 
-        attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :pretty_plan_name, :phase_name, :pretty_phase_name, :usage_name, :pretty_usage_name, :rate, :linked_item_id
+        attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :pretty_plan_name, :phase_name, :pretty_phase_name, :usage_name, :pretty_usage_name, :rate, :linked_item_id, :quantity, :item_details
 
         def initialize()
         end
@@ -123,6 +123,12 @@ module Killbill
 
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = java.util.UUID.fromString(@linked_item_id.to_s) unless @linked_item_id.nil?
+
+          # conversion for quantity [type = java.lang.Integer]
+          @quantity = @quantity
+
+          # conversion for item_details [type = java.lang.String]
+          @item_details = @item_details.to_s unless @item_details.nil?
           self
         end
 
@@ -219,6 +225,12 @@ module Killbill
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = j_obj.linked_item_id
           @linked_item_id = @linked_item_id.nil? ? nil : @linked_item_id.to_s
+
+          # conversion for quantity [type = java.lang.Integer]
+          @quantity = j_obj.quantity
+
+          # conversion for item_details [type = java.lang.String]
+          @item_details = j_obj.item_details
           self
         end
 
