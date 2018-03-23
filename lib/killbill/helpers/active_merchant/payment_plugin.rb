@@ -54,7 +54,7 @@ module Killbill
             gateway.authorize(amount_in_cents, payment_source, options)
           end
 
-          dispatch_to_gateways(:authorize, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, extra_params)
+          dispatch_to_gateways(:authorize, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, nil, extra_params)
         end
 
         def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, extra_params = {})
@@ -77,7 +77,7 @@ module Killbill
             gateway.purchase(amount_in_cents, payment_source, options)
           end
 
-          dispatch_to_gateways(:purchase, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, extra_params)
+          dispatch_to_gateways(:purchase, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, nil, extra_params)
         end
 
         def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context, extra_params = {})
@@ -107,7 +107,7 @@ module Killbill
             gateway.credit(amount_in_cents, payment_source, options)
           end
 
-          dispatch_to_gateways(:credit, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, extra_params)
+          dispatch_to_gateways(:credit, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, nil, extra_params)
         end
 
         def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, extra_params = {})
