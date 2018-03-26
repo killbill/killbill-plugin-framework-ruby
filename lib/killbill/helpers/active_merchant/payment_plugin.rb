@@ -49,15 +49,15 @@ module Killbill
           end
         end
 
-        def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+        def authorize_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, extra_params = {})
           gateway_call_proc = Proc.new do |gateway, linked_transaction, payment_source, amount_in_cents, options|
             gateway.authorize(amount_in_cents, payment_source, options)
           end
 
-          dispatch_to_gateways(:authorize, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
+          dispatch_to_gateways(:authorize, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, nil, extra_params)
         end
 
-        def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+        def capture_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, extra_params = {})
           gateway_call_proc = Proc.new do |gateway, linked_transaction, payment_source, amount_in_cents, options|
             gateway.capture(amount_in_cents, linked_transaction.txn_id, options)
           end
@@ -69,18 +69,18 @@ module Killbill
             last_authorization
           end
 
-          dispatch_to_gateways(:capture, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc)
+          dispatch_to_gateways(:capture, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc, extra_params)
         end
 
-        def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+        def purchase_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, extra_params = {})
           gateway_call_proc = Proc.new do |gateway, linked_transaction, payment_source, amount_in_cents, options|
             gateway.purchase(amount_in_cents, payment_source, options)
           end
 
-          dispatch_to_gateways(:purchase, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
+          dispatch_to_gateways(:purchase, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, nil, extra_params)
         end
 
-        def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context)
+        def void_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, properties, context, extra_params = {})
           gateway_call_proc = Proc.new do |gateway, linked_transaction, payment_source, amount_in_cents, options|
             authorization = linked_transaction.txn_id
 
@@ -99,18 +99,18 @@ module Killbill
             @transaction_model.find_candidate_transaction_for_void(kb_payment_id, context.tenant_id, linked_transaction_type)
           end
 
-          dispatch_to_gateways(:void, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, nil, nil, properties, context, gateway_call_proc, linked_transaction_proc)
+          dispatch_to_gateways(:void, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, nil, nil, properties, context, gateway_call_proc, linked_transaction_proc, extra_params)
         end
 
-        def credit_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+        def credit_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, extra_params = {})
           gateway_call_proc = Proc.new do |gateway, linked_transaction, payment_source, amount_in_cents, options|
             gateway.credit(amount_in_cents, payment_source, options)
           end
 
-          dispatch_to_gateways(:credit, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc)
+          dispatch_to_gateways(:credit, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, nil, extra_params)
         end
 
-        def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context)
+        def refund_payment(kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, extra_params = {})
           gateway_call_proc = Proc.new do |gateway, linked_transaction, payment_source, amount_in_cents, options|
             gateway.refund(amount_in_cents, linked_transaction.txn_id, options)
           end
@@ -123,7 +123,7 @@ module Killbill
             transaction
           end
 
-          dispatch_to_gateways(:refund, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc)
+          dispatch_to_gateways(:refund, kb_account_id, kb_payment_id, kb_payment_transaction_id, kb_payment_method_id, amount, currency, properties, context, gateway_call_proc, linked_transaction_proc, extra_params)
         end
 
         def get_payment_info(kb_account_id, kb_payment_id, properties, context)
