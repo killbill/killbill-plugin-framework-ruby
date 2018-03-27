@@ -29,8 +29,10 @@ module Killbill
   module Plugin
     module Model
 
+      java_package 'org.killbill.billing.invoice.plugin.api'
       class OnSuccessInvoiceResult
 
+        include org.killbill.billing.invoice.plugin.api.OnSuccessInvoiceResult
 
         attr_accessor 
 
@@ -38,7 +40,7 @@ module Killbill
         end
 
         def to_java()
-        Java::org.killbill.billing.invoice.plugin.api.OnSuccessInvoiceResult.new()
+        self
       end
 
       def to_ruby(j_obj)
