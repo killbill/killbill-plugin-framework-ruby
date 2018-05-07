@@ -137,11 +137,9 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
 
   it 'should filter out sensitive parameter if specified' do
     extra_params = {:email => "test.test", :payer_id => "test"}
-    ::Killbill::Test::TestResponse.any_instance.stub(:sensitive_fields) do
-      return [:email]
-    end
     ::Killbill::Test::TestResponse.send(:remove_sensitive_data_and_compact, extra_params)
     extra_params[:email].should be_nil
+    extra_params[:payer_id].should == "test"
   end
 
   it 'should generate the right SQL query' do
