@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v3-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v4-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
       - run:
           name: Install gem dependencies
           command: |
@@ -24,7 +24,7 @@ jobs:
             - .bundle
             - .jbundler
             - vendor/bundle
-          key: v3-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v4-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
 
   test-mysql-jruby-1.7.26:
     <<: *defaults
@@ -36,7 +36,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v3-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v4-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
       - run:
           name: Setup DDL
           command: |
@@ -74,7 +74,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v3-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v4-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
       - run:
           name: Setup DDL
           command: |
@@ -109,7 +109,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v3-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v4-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
       - run:
           name: Run tests
           command: |
