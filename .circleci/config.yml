@@ -127,9 +127,9 @@ workflows:
   build-and-test:
     jobs:
       - build-jruby-1.7.26
-      - test-mysql-jruby-1.7.26:
-          requires:
-            - build-jruby-1.7.26
+      #- test-mysql-jruby-1.7.26:
+      #    requires:
+      #      - build-jruby-1.7.26
       - test-postgresql-jruby-1.7.26:
           requires:
             - build-jruby-1.7.26
