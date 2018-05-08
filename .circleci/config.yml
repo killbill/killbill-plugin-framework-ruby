@@ -50,13 +50,13 @@ jobs:
               sleep 5
             done
             set -e
-            mysql -uroot -e 'create database killbill_test;'
+            mysql -h 127.0.0.1 -u root --password=root -e 'create database killbill_test;'
       - run:
           name: Run tests
           command: |
             mkdir /tmp/test-results
-            AR_ADAPTER='mariadb' AR_USERNAME='root' AR_PASSWORD='' AR_DATABASE='killbill_test' bundle exec rake test:spec
-            AR_ADAPTER='mariadb' AR_USERNAME='root' AR_PASSWORD='' AR_DATABASE='killbill_test' bundle exec rake test:remote:spec
+            AR_ADAPTER='mariadb' AR_USERNAME='root' AR_PASSWORD='' AR_DATABASE='killbill_test' bundle exec rake test:spec | tee /tmp/test-results/test.txt 2>&1
+            AR_ADAPTER='mariadb' AR_USERNAME='root' AR_PASSWORD='' AR_DATABASE='killbill_test' bundle exec rake test:remote:spec | tee /tmp/test-results/remote-test.txt 2>&1
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
@@ -67,6 +67,9 @@ jobs:
     <<: *defaults
     docker:
       - image: killbill/kbbuild:0.4.0
+      - image: killbill/postgresql:0.19
+        environment:
+        - POSTGRES_PASSWORD=postgres
     steps:
       - checkout
       - restore_cache:
@@ -90,10 +93,8 @@ jobs:
           name: Run tests
           command: |
             mkdir /tmp/test-results
-            source /usr/share/rvm/scripts/rvm
-            rvm use jruby-1.7.26
-            AR_ADAPTER='postgresql' AR_USERNAME='postgres' AR_DATABASE='killbill_test' bundle exec rake test:spec
-            AR_ADAPTER='postgresql' AR_USERNAME='postgres' AR_DATABASE='killbill_test' bundle exec rake test:remote:spec
+            AR_ADAPTER='postgresql' AR_USERNAME='postgres' AR_DATABASE='killbill_test' bundle exec rake test:spec | tee /tmp/test-results/test.txt 2>&1
+            AR_ADAPTER='postgresql' AR_USERNAME='postgres' AR_DATABASE='killbill_test' bundle exec rake test:remote:spec | tee /tmp/test-results/remote-test.txt 2>&1
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
@@ -112,10 +113,8 @@ jobs:
           name: Run tests
           command: |
             mkdir /tmp/test-results
-            source /usr/share/rvm/scripts/rvm
-            rvm use jruby-1.7.26
-            AR_ADAPTER='sqlite3' AR_DATABASE='test.db' bundle exec rake test:spec
-            AR_ADAPTER='sqlite3' AR_DATABASE='test.db' bundle exec rake test:remote:spec
+            AR_ADAPTER='sqlite3' AR_DATABASE='test.db' bundle exec rake test:spec | tee /tmp/test-results/test.txt 2>&1
+            AR_ADAPTER='sqlite3' AR_DATABASE='test.db' bundle exec rake test:remote:spec | tee /tmp/test-results/remote-test.txt 2>&1
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
