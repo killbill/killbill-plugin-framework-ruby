@@ -1,3 +1,6 @@
+8.3.4
+    ActiveMerchant: pass in extra_params to gateway api calls
+
 8.3.3
     active_merchant: update default CC year in tests
 
