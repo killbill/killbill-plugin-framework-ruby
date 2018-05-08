@@ -210,9 +210,7 @@ module Killbill
 
           def self.remove_sensitive_data_and_compact(extra_params)
             extra_params.compact!
-            for sensitive_key in sensitive_fields
-              extra_params.delete sensitive_key
-            end
+            extra_params.delete_if { |k, _| sensitive_fields.include?(k) }
           end
 
           # Override in your plugin if needed
