@@ -1,3 +1,6 @@
+8.3.5
+    ActiveMerchant: add utility function to avoid persisting sensitive data (GDPR)
+
 8.3.4
     ActiveMerchant: pass in extra_params to gateway api calls
 
