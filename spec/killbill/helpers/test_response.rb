@@ -6,6 +6,10 @@ module Killbill #:nodoc:
 
       has_one :test_transaction
 
+      def self.sensitive_fields
+        [:email]
+      end
+
     end
   end
 end
