@@ -49,7 +49,7 @@ module Killbill
           # conversion for subscription_api [type = org.killbill.billing.entitlement.api.SubscriptionApi]
           @subscription_api = @subscription_api.to_java unless @subscription_api.nil?
 
-          # conversion for invoice_payment_api [type = org.killbill.billing.invoice.api.InvoicePaymentApi]
+          # conversion for invoice_payment_api [type = org.killbill.billing.payment.api.InvoicePaymentApi]
           @invoice_payment_api = @invoice_payment_api.to_java unless @invoice_payment_api.nil?
 
           # conversion for invoice_user_api [type = org.killbill.billing.invoice.api.InvoiceUserApi]
@@ -118,7 +118,7 @@ module Killbill
           @subscription_api = j_obj.subscription_api
           @subscription_api = Killbill::Plugin::Model::SubscriptionApi.new.to_ruby(@subscription_api) unless @subscription_api.nil?
 
-          # conversion for invoice_payment_api [type = org.killbill.billing.invoice.api.InvoicePaymentApi]
+          # conversion for invoice_payment_api [type = org.killbill.billing.payment.api.InvoicePaymentApi]
           @invoice_payment_api = j_obj.invoice_payment_api
           @invoice_payment_api = Killbill::Plugin::Model::InvoicePaymentApi.new.to_ruby(@invoice_payment_api) unless @invoice_payment_api.nil?
 

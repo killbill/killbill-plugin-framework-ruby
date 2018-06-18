@@ -324,6 +324,52 @@ module Killbill
           res = tmp
           return res
         end
+
+        java_signature 'Java::java.util.List getTagAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_tag_audit_logs_with_history_for_id(tagId, auditLevel, context)
+
+          # conversion for tagId [type = java.util.UUID]
+          tagId = java.util.UUID.fromString(tagId.to_s) unless tagId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_tag_audit_logs_with_history_for_id(tagId, auditLevel, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+            m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
+          return res
+        end
+
+        java_signature 'Java::java.util.List getTagDefinitionAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_tag_definition_audit_logs_with_history_for_id(tagDefinitionId, auditLevel, context)
+
+          # conversion for tagDefinitionId [type = java.util.UUID]
+          tagDefinitionId = java.util.UUID.fromString(tagDefinitionId.to_s) unless tagDefinitionId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_tag_definition_audit_logs_with_history_for_id(tagDefinitionId, auditLevel, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+            m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
+          return res
+        end
       end
     end
   end

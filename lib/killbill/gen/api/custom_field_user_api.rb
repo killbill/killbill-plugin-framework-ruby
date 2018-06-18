@@ -192,6 +192,29 @@ module Killbill
           res = tmp
           return res
         end
+
+        java_signature 'Java::java.util.List getCustomFieldAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_custom_field_audit_logs_with_history_for_id(customFieldId, auditLevel, context)
+
+          # conversion for customFieldId [type = java.util.UUID]
+          customFieldId = java.util.UUID.fromString(customFieldId.to_s) unless customFieldId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_custom_field_audit_logs_with_history_for_id(customFieldId, auditLevel, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+            m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
+          return res
+        end
       end
     end
   end

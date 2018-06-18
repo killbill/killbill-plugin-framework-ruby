@@ -29,55 +29,25 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.entitlement.api'
-      class EntitlementSpecifier
+      java_package 'org.killbill.billing.osgi.api'
+      class Healthcheck
 
-        include org.killbill.billing.entitlement.api.EntitlementSpecifier
+        include org.killbill.billing.osgi.api.Healthcheck
 
-        attr_accessor :plan_phase_specifier, :bill_cycle_day, :overrides
+        attr_accessor 
 
         def initialize()
         end
 
         def to_java()
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
-
-          # conversion for bill_cycle_day [type = java.lang.Integer]
-          @bill_cycle_day = @bill_cycle_day
-
-          # conversion for overrides [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@overrides || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @overrides = tmp
-          self
-        end
-
-        def to_ruby(j_obj)
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = j_obj.plan_phase_specifier
-          @plan_phase_specifier = Killbill::Plugin::Model::PlanPhaseSpecifier.new.to_ruby(@plan_phase_specifier) unless @plan_phase_specifier.nil?
-
-          # conversion for bill_cycle_day [type = java.lang.Integer]
-          @bill_cycle_day = j_obj.bill_cycle_day
-
-          # conversion for overrides [type = java.util.List]
-          @overrides = j_obj.overrides
-          tmp = []
-          (@overrides || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = Killbill::Plugin::Model::PlanPhasePriceOverride.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @overrides = tmp
-          self
-        end
-
+        self
       end
+
+      def to_ruby(j_obj)
+      self
     end
+
   end
+end
+end
 end

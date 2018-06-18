@@ -29,51 +29,49 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.entitlement.api'
-      class EntitlementSpecifier
+      class InvoiceNotificationMetadata
 
-        include org.killbill.billing.entitlement.api.EntitlementSpecifier
 
-        attr_accessor :plan_phase_specifier, :bill_cycle_day, :overrides
+        attr_accessor :target_date, :amount_owed, :currency
 
         def initialize()
         end
 
         def to_java()
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
-
-          # conversion for bill_cycle_day [type = java.lang.Integer]
-          @bill_cycle_day = @bill_cycle_day
-
-          # conversion for overrides [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@overrides || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
+          # conversion for target_date [type = org.joda.time.DateTime]
+          if !@target_date.nil?
+            @target_date =  (@target_date.kind_of? Time) ? DateTime.parse(@target_date.to_s) : @target_date
+            @target_date = Java::org.joda.time.DateTime.new(@target_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
-          @overrides = tmp
-          self
+
+          # conversion for amount_owed [type = java.math.BigDecimal]
+          if @amount_owed.nil?
+            @amount_owed = java.math.BigDecimal::ZERO
+          else
+            @amount_owed = java.math.BigDecimal.new(@amount_owed.to_s)
+          end
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = Java::org.killbill.billing.catalog.api.Currency.value_of( @currency.to_s ) unless @currency.nil?
+          Java::org.killbill.billing.notification.plugin.api.InvoiceNotificationMetadata.new(@target_date, @amount_owed, @currency)
         end
 
         def to_ruby(j_obj)
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = j_obj.plan_phase_specifier
-          @plan_phase_specifier = Killbill::Plugin::Model::PlanPhaseSpecifier.new.to_ruby(@plan_phase_specifier) unless @plan_phase_specifier.nil?
-
-          # conversion for bill_cycle_day [type = java.lang.Integer]
-          @bill_cycle_day = j_obj.bill_cycle_day
-
-          # conversion for overrides [type = java.util.List]
-          @overrides = j_obj.overrides
-          tmp = []
-          (@overrides || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = Killbill::Plugin::Model::PlanPhasePriceOverride.new.to_ruby(m) unless m.nil?
-            tmp << m
+          # conversion for target_date [type = org.joda.time.DateTime]
+          @target_date = j_obj.target_date
+          if !@target_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@target_date)
+            @target_date = DateTime.iso8601(str)
           end
-          @overrides = tmp
+
+          # conversion for amount_owed [type = java.math.BigDecimal]
+          @amount_owed = j_obj.amount_owed
+          @amount_owed = @amount_owed.nil? ? 0 : BigDecimal.new(@amount_owed.to_s)
+
+          # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+          @currency = j_obj.currency
+          @currency = @currency.to_s.to_sym unless @currency.nil?
           self
         end
 

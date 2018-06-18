@@ -1007,6 +1007,39 @@ module Killbill
           end
         end
 
+        java_signature 'Java::org.killbill.billing.payment.api.Payment getPaymentByTransactionExternalKey(Java::java.lang.String, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_by_transaction_external_key(transactionExternalKey, withPluginInfo, withAttempts, properties, context)
+
+          # conversion for transactionExternalKey [type = java.lang.String]
+          transactionExternalKey = transactionExternalKey.to_s unless transactionExternalKey.nil?
+
+          # conversion for withPluginInfo [type = boolean]
+          withPluginInfo = withPluginInfo.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withPluginInfo)
+
+          # conversion for withAttempts [type = boolean]
+          withAttempts = withAttempts.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(withAttempts)
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = java.util.ArrayList.new
+          (properties || []).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_payment_by_transaction_external_key(transactionExternalKey, withPluginInfo, withAttempts, properties, context)
+            # conversion for res [type = org.killbill.billing.payment.api.Payment]
+            res = Killbill::Plugin::Model::Payment.new.to_ruby(res) unless res.nil?
+            return res
+          rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+            raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+          end
+        end
+
         java_signature 'Java::org.killbill.billing.util.entity.Pagination getPayments(Java::java.lang.Long, Java::java.lang.Long, Java::boolean, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_payments(offset, limit, withPluginInfo, withAttempts, properties, context)
 
@@ -1407,6 +1440,98 @@ module Killbill
           rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
             raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
           end
+        end
+
+        java_signature 'Java::java.util.List getPaymentAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_audit_logs_with_history_for_id(paymentId, auditLevel, context)
+
+          # conversion for paymentId [type = java.util.UUID]
+          paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_payment_audit_logs_with_history_for_id(paymentId, auditLevel, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+            m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
+          return res
+        end
+
+        java_signature 'Java::java.util.List getPaymentMethodAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_method_audit_logs_with_history_for_id(paymentMethodId, auditLevel, context)
+
+          # conversion for paymentMethodId [type = java.util.UUID]
+          paymentMethodId = java.util.UUID.fromString(paymentMethodId.to_s) unless paymentMethodId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_payment_method_audit_logs_with_history_for_id(paymentMethodId, auditLevel, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+            m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
+          return res
+        end
+
+        java_signature 'Java::java.util.List getPaymentAttemptAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_attempt_audit_logs_with_history_for_id(paymentAttemptId, auditLevel, context)
+
+          # conversion for paymentAttemptId [type = java.util.UUID]
+          paymentAttemptId = java.util.UUID.fromString(paymentAttemptId.to_s) unless paymentAttemptId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_payment_attempt_audit_logs_with_history_for_id(paymentAttemptId, auditLevel, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+            m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
+          return res
+        end
+
+        java_signature 'Java::java.util.List getPaymentTransactionAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_payment_transaction_audit_logs_with_history_for_id(paymentTransactionId, auditLevel, context)
+
+          # conversion for paymentTransactionId [type = java.util.UUID]
+          paymentTransactionId = java.util.UUID.fromString(paymentTransactionId.to_s) unless paymentTransactionId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          res = @real_java_api.get_payment_transaction_audit_logs_with_history_for_id(paymentTransactionId, auditLevel, context)
+          # conversion for res [type = java.util.List]
+          tmp = []
+          (res || []).each do |m|
+            # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+            m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          res = tmp
+          return res
         end
       end
     end

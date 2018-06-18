@@ -181,15 +181,19 @@ module Killbill
 
       # conversion for tenantContext [type = org.killbill.billing.util.callcontext.TenantContext]
       tenantContext = tenantContext.to_java unless tenantContext.nil?
-      res = @real_java_api.get_user_roles(username, tenantContext)
-      # conversion for res [type = java.util.List]
-      tmp = []
-      (res || []).each do |m|
-        # conversion for m [type = java.lang.String]
-        tmp << m
+      begin
+        res = @real_java_api.get_user_roles(username, tenantContext)
+        # conversion for res [type = java.util.List]
+        tmp = []
+        (res || []).each do |m|
+          # conversion for m [type = java.lang.String]
+          tmp << m
+        end
+        res = tmp
+        return res
+      rescue Java::org.killbill.billing.security.SecurityApiException => e
+        raise Killbill::Plugin::Model::SecurityApiException.new.to_ruby(e)
       end
-      res = tmp
-      return res
     end
 
     java_signature 'Java::void addRoleDefinition(Java::java.lang.String, Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'

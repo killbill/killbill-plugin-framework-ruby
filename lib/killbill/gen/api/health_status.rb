@@ -29,55 +29,50 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.entitlement.api'
-      class EntitlementSpecifier
+      class HealthStatus
 
-        include org.killbill.billing.entitlement.api.EntitlementSpecifier
 
-        attr_accessor :plan_phase_specifier, :bill_cycle_day, :overrides
+        attr_accessor :is_healthy, :details
 
         def initialize()
         end
 
         def to_java()
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
+          # conversion for is_healthy [type = boolean]
+          @is_healthy = @is_healthy.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_healthy)
 
-          # conversion for bill_cycle_day [type = java.lang.Integer]
-          @bill_cycle_day = @bill_cycle_day
-
-          # conversion for overrides [type = java.util.List]
-          tmp = java.util.ArrayList.new
-          (@overrides || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @overrides = tmp
-          self
+          # conversion for details [type = java.util.Map]
+          tmp = java.util.HashMap.new
+          (@details || {}).each do |k,v|
+          tmp.put(k, v)
         end
-
-        def to_ruby(j_obj)
-          # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
-          @plan_phase_specifier = j_obj.plan_phase_specifier
-          @plan_phase_specifier = Killbill::Plugin::Model::PlanPhaseSpecifier.new.to_ruby(@plan_phase_specifier) unless @plan_phase_specifier.nil?
-
-          # conversion for bill_cycle_day [type = java.lang.Integer]
-          @bill_cycle_day = j_obj.bill_cycle_day
-
-          # conversion for overrides [type = java.util.List]
-          @overrides = j_obj.overrides
-          tmp = []
-          (@overrides || []).each do |m|
-            # conversion for m [type = org.killbill.billing.catalog.api.PlanPhasePriceOverride]
-            m = Killbill::Plugin::Model::PlanPhasePriceOverride.new.to_ruby(m) unless m.nil?
-            tmp << m
-          end
-          @overrides = tmp
-          self
-        end
-
-      end
+      @details = tmp
+      Java::org.killbill.billing.osgi.api.HealthStatus.new(@is_healthy, @details)
     end
-  end
+
+    def to_ruby(j_obj)
+      # conversion for is_healthy [type = boolean]
+      @is_healthy = j_obj.is_healthy
+      if @is_healthy.nil?
+        @is_healthy = false
+      else
+        tmp_bool = (@is_healthy.java_kind_of? java.lang.Boolean) ? @is_healthy.boolean_value : @is_healthy
+        @is_healthy = tmp_bool ? true : false
+      end
+
+      # conversion for details [type = java.util.Map]
+      @details = j_obj.details
+      tmp = {}
+      jtmp0 = @details || java.util.HashMap.new
+      jtmp0.key_set.each do |k|
+      v = jtmp0.get(k)
+      tmp[k] = v
+    end
+  @details = tmp
+  self
+end
+
+end
+end
+end
 end

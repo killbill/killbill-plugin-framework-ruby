@@ -22,6 +22,7 @@ module Killbill
             # But regardless, for performance reasons, we want to set these timestamps ourselves
             # See ActiveRecord::Timestamp
             current_time = Time.now.utc
+            remove_sensitive_data_and_compact(extra_params)
             model.new({
                           :api_call                     => api_call,
                           :kb_account_id                => kb_account_id,
@@ -43,7 +44,7 @@ module Killbill
                           :success                      => response.success?,
                           :created_at                   => current_time,
                           :updated_at                   => current_time
-                      }.merge!(extra_params.compact)) # Don't override with nil values
+                      }.merge!(extra_params))
           end
 
           def self.create_response_and_transaction(identifier, transaction_model, api_call, kb_account_id, kb_payment_id, kb_payment_transaction_id, transaction_type, payment_processor_account_id, kb_tenant_id, gw_response, amount_in_cents, currency, extra_params = {}, model = Response)
@@ -159,9 +160,9 @@ module Killbill
           def self.search_where_clause(t, search_key)
             # Exact matches only
             where_clause = t[:kb_payment_id].eq(search_key)
-                       .or(t[:kb_payment_transaction_id].eq(search_key))
-                       .or(t[:message].eq(search_key))
-                       .or(t[:authorization].eq(search_key))
+                                            .or(t[:kb_payment_transaction_id].eq(search_key))
+                                            .or(t[:message].eq(search_key))
+                                            .or(t[:authorization].eq(search_key))
 
             # Only search successful payments and refunds
             where_clause = where_clause.and(t[:success].eq(true))
@@ -205,6 +206,16 @@ module Killbill
               self.find_by_sql(self.search_query(search_key, kb_tenant_id, offset, limit)).map { |x| x.to_transaction_info_plugin }
             end
             pagination
+          end
+
+          def self.remove_sensitive_data_and_compact(extra_params)
+            extra_params.compact!
+            extra_params.delete_if { |k, _| sensitive_fields.include?(k) }
+          end
+
+          # Override in your plugin if needed
+          def self.sensitive_fields
+            []
           end
 
           # Override in your plugin if needed
