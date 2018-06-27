@@ -233,6 +233,100 @@ module Killbill
   end
 end
 
+java_signature 'Java::org.killbill.billing.invoice.api.InvoicePayment createChargebackForInvoicePayment(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::java.math.BigDecimal, Java::org.killbill.billing.catalog.api.Currency, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+def create_chargeback_for_invoice_payment(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+
+  # conversion for account [type = org.killbill.billing.account.api.Account]
+  account = account.to_java unless account.nil?
+
+  # conversion for paymentId [type = java.util.UUID]
+  paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+  # conversion for amount [type = java.math.BigDecimal]
+  if amount.nil?
+    amount = java.math.BigDecimal::ZERO
+  else
+    amount = java.math.BigDecimal.new(amount.to_s)
+  end
+
+  # conversion for currency [type = org.killbill.billing.catalog.api.Currency]
+  currency = Java::org.killbill.billing.catalog.api.Currency.value_of( currency.to_s ) unless currency.nil?
+
+  # conversion for effectiveDate [type = org.joda.time.DateTime]
+  if !effectiveDate.nil?
+    effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+    effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+  end
+
+  # conversion for paymentTransactionExternalKey [type = java.lang.String]
+  paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+  # conversion for properties [type = java.lang.Iterable]
+  tmp = java.util.ArrayList.new
+  (properties || []).each do |m|
+    # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+    m = m.to_java unless m.nil?
+    tmp.add(m)
+  end
+  properties = tmp
+
+  # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+  paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+  # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+  context = context.to_java unless context.nil?
+  begin
+    res = @real_java_api.create_chargeback_for_invoice_payment(account, paymentId, amount, currency, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+    # conversion for res [type = org.killbill.billing.invoice.api.InvoicePayment]
+    res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
+    return res
+  rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+    raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+  end
+end
+
+java_signature 'Java::org.killbill.billing.invoice.api.InvoicePayment createChargebackReversalForInvoicePayment(Java::org.killbill.billing.account.api.Account, Java::java.util.UUID, Java::org.joda.time.DateTime, Java::java.lang.String, Java::java.lang.Iterable, Java::org.killbill.billing.payment.api.PaymentOptions, Java::org.killbill.billing.util.callcontext.CallContext)'
+def create_chargeback_reversal_for_invoice_payment(account, paymentId, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+
+  # conversion for account [type = org.killbill.billing.account.api.Account]
+  account = account.to_java unless account.nil?
+
+  # conversion for paymentId [type = java.util.UUID]
+  paymentId = java.util.UUID.fromString(paymentId.to_s) unless paymentId.nil?
+
+  # conversion for effectiveDate [type = org.joda.time.DateTime]
+  if !effectiveDate.nil?
+    effectiveDate =  (effectiveDate.kind_of? Time) ? DateTime.parse(effectiveDate.to_s) : effectiveDate
+    effectiveDate = Java::org.joda.time.DateTime.new(effectiveDate.to_s, Java::org.joda.time.DateTimeZone::UTC)
+  end
+
+  # conversion for paymentTransactionExternalKey [type = java.lang.String]
+  paymentTransactionExternalKey = paymentTransactionExternalKey.to_s unless paymentTransactionExternalKey.nil?
+
+  # conversion for properties [type = java.lang.Iterable]
+  tmp = java.util.ArrayList.new
+  (properties || []).each do |m|
+    # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+    m = m.to_java unless m.nil?
+    tmp.add(m)
+  end
+  properties = tmp
+
+  # conversion for paymentOptions [type = org.killbill.billing.payment.api.PaymentOptions]
+  paymentOptions = paymentOptions.to_java unless paymentOptions.nil?
+
+  # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+  context = context.to_java unless context.nil?
+  begin
+    res = @real_java_api.create_chargeback_reversal_for_invoice_payment(account, paymentId, effectiveDate, paymentTransactionExternalKey, properties, paymentOptions, context)
+    # conversion for res [type = org.killbill.billing.invoice.api.InvoicePayment]
+    res = Killbill::Plugin::Model::InvoicePayment.new.to_ruby(res) unless res.nil?
+    return res
+  rescue Java::org.killbill.billing.payment.api.PaymentApiException => e
+    raise Killbill::Plugin::Model::PaymentApiException.new.to_ruby(e)
+  end
+end
+
 java_signature 'Java::java.util.List getInvoicePayments(Java::java.util.UUID, Java::org.killbill.billing.util.callcontext.TenantContext)'
 def get_invoice_payments(paymentId, context)
 

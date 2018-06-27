@@ -39,18 +39,24 @@ module Killbill
         end
 
 
-        java_signature 'Java::org.killbill.billing.catalog.api.Catalog getCatalog(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'
-        def get_catalog(catalogName, context)
+        java_signature 'Java::org.killbill.billing.catalog.api.VersionedCatalog getCatalog(Java::java.lang.String, Java::org.joda.time.DateTime, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_catalog(catalogName, catalogDateVersion, context)
 
           # conversion for catalogName [type = java.lang.String]
           catalogName = catalogName.to_s unless catalogName.nil?
 
+          # conversion for catalogDateVersion [type = org.joda.time.DateTime]
+          if !catalogDateVersion.nil?
+            catalogDateVersion =  (catalogDateVersion.kind_of? Time) ? DateTime.parse(catalogDateVersion.to_s) : catalogDateVersion
+            catalogDateVersion = Java::org.joda.time.DateTime.new(catalogDateVersion.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+
           # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
           context = context.to_java unless context.nil?
           begin
-            res = @real_java_api.get_catalog(catalogName, context)
-            # conversion for res [type = org.killbill.billing.catalog.api.Catalog]
-            res = Killbill::Plugin::Model::Catalog.new.to_ruby(res) unless res.nil?
+            res = @real_java_api.get_catalog(catalogName, catalogDateVersion, context)
+            # conversion for res [type = org.killbill.billing.catalog.api.VersionedCatalog]
+            res = Killbill::Plugin::Model::VersionedCatalog.new.to_ruby(res) unless res.nil?
             return res
           rescue Java::org.killbill.billing.catalog.api.CatalogApiException => e
             raise Killbill::Plugin::Model::CatalogApiException.new.to_ruby(e)
