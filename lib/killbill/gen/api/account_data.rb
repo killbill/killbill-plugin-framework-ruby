@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.AccountData
 
-        attr_accessor :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :reference_time, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices, :parent_account_id, :is_payment_delegated_to_parent, :notes
+        attr_accessor :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :reference_time, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :parent_account_id, :is_payment_delegated_to_parent, :notes
 
         def initialize()
         end
@@ -101,9 +101,6 @@ module Killbill
 
           # conversion for is_migrated [type = java.lang.Boolean]
           @is_migrated = @is_migrated.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_migrated)
-
-          # conversion for is_notified_for_invoices [type = java.lang.Boolean]
-          @is_notified_for_invoices = @is_notified_for_invoices.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_notified_for_invoices)
 
           # conversion for parent_account_id [type = java.util.UUID]
           @parent_account_id = java.util.UUID.fromString(@parent_account_id.to_s) unless @parent_account_id.nil?
@@ -188,15 +185,6 @@ module Killbill
           else
             tmp_bool = (@is_migrated.java_kind_of? java.lang.Boolean) ? @is_migrated.boolean_value : @is_migrated
             @is_migrated = tmp_bool ? true : false
-          end
-
-          # conversion for is_notified_for_invoices [type = java.lang.Boolean]
-          @is_notified_for_invoices = j_obj.is_notified_for_invoices
-          if @is_notified_for_invoices.nil?
-            @is_notified_for_invoices = false
-          else
-            tmp_bool = (@is_notified_for_invoices.java_kind_of? java.lang.Boolean) ? @is_notified_for_invoices.boolean_value : @is_notified_for_invoices
-            @is_notified_for_invoices = tmp_bool ? true : false
           end
 
           # conversion for parent_account_id [type = java.util.UUID]
