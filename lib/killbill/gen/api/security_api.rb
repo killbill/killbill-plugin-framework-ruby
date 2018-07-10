@@ -181,15 +181,19 @@ module Killbill
 
       # conversion for tenantContext [type = org.killbill.billing.util.callcontext.TenantContext]
       tenantContext = tenantContext.to_java unless tenantContext.nil?
-      res = @real_java_api.get_user_roles(username, tenantContext)
-      # conversion for res [type = java.util.List]
-      tmp = []
-      (res || []).each do |m|
-        # conversion for m [type = java.lang.String]
-        tmp << m
+      begin
+        res = @real_java_api.get_user_roles(username, tenantContext)
+        # conversion for res [type = java.util.List]
+        tmp = []
+        (res || []).each do |m|
+          # conversion for m [type = java.lang.String]
+          tmp << m
+        end
+        res = tmp
+        return res
+      rescue Java::org.killbill.billing.security.SecurityApiException => e
+        raise Killbill::Plugin::Model::SecurityApiException.new.to_ruby(e)
       end
-      res = tmp
-      return res
     end
 
     java_signature 'Java::void addRoleDefinition(Java::java.lang.String, Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'
@@ -210,6 +214,26 @@ module Killbill
       # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
       context = context.to_java unless context.nil?
       @real_java_api.add_role_definition(role, permissions, context)
+    end
+
+    java_signature 'Java::void updateRoleDefinition(Java::java.lang.String, Java::java.util.List, Java::org.killbill.billing.util.callcontext.CallContext)'
+    def update_role_definition(role, permissions, context)
+
+      # conversion for role [type = java.lang.String]
+      role = role.to_s unless role.nil?
+
+      # conversion for permissions [type = java.util.List]
+      tmp = java.util.ArrayList.new
+      (permissions || []).each do |m|
+        # conversion for m [type = java.lang.String]
+        m = m.to_s unless m.nil?
+        tmp.add(m)
+      end
+      permissions = tmp
+
+      # conversion for context [type = org.killbill.billing.util.callcontext.CallContext]
+      context = context.to_java unless context.nil?
+      @real_java_api.update_role_definition(role, permissions, context)
     end
 
     java_signature 'Java::java.util.List getRoleDefinition(Java::java.lang.String, Java::org.killbill.billing.util.callcontext.TenantContext)'

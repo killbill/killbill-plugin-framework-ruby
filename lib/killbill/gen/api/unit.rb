@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.Unit
 
-        attr_accessor :name
+        attr_accessor :name, :pretty_name
 
         def initialize()
         end
@@ -42,12 +42,18 @@ module Killbill
         def to_java()
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
+
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
           self
         end
 
         def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
+
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = j_obj.pretty_name
           self
         end
 

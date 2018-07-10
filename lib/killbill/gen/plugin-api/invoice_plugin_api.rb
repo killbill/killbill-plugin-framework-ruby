@@ -40,6 +40,37 @@ module Killbill
         end
 
 
+        java_signature 'Java::org.killbill.billing.invoice.plugin.api.PriorInvoiceResult priorCall(Java::org.killbill.billing.invoice.plugin.api.InvoiceContext, Java::java.lang.Iterable)'
+        def prior_call(context, properties)
+
+          # conversion for context [type = org.killbill.billing.invoice.plugin.api.InvoiceContext]
+          context = Killbill::Plugin::Model::InvoiceContext.new.to_ruby(context) unless context.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = []
+          (properties.nil? ? [] : properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          properties = tmp
+          begin
+            res = @delegate_plugin.prior_call(context, properties)
+            # conversion for res [type = org.killbill.billing.invoice.plugin.api.PriorInvoiceResult]
+            res = res.to_java unless res.nil?
+            return res
+          rescue Exception => e
+            message = "Failure in prior_call: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("prior_call failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
         java_signature 'Java::java.util.List getAdditionalInvoiceItems(Java::org.killbill.billing.invoice.api.Invoice, Java::boolean, Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.CallContext)'
         def get_additional_invoice_items(invoice, dryRun, properties, context)
 
@@ -83,6 +114,68 @@ module Killbill
             end
             logger.warn message
             raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_additional_invoice_items failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.invoice.plugin.api.OnSuccessInvoiceResult onSuccessCall(Java::org.killbill.billing.invoice.plugin.api.InvoiceContext, Java::java.lang.Iterable)'
+        def on_success_call(context, properties)
+
+          # conversion for context [type = org.killbill.billing.invoice.plugin.api.InvoiceContext]
+          context = Killbill::Plugin::Model::InvoiceContext.new.to_ruby(context) unless context.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = []
+          (properties.nil? ? [] : properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          properties = tmp
+          begin
+            res = @delegate_plugin.on_success_call(context, properties)
+            # conversion for res [type = org.killbill.billing.invoice.plugin.api.OnSuccessInvoiceResult]
+            res = res.to_java unless res.nil?
+            return res
+          rescue Exception => e
+            message = "Failure in on_success_call: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("on_success_call failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
+        java_signature 'Java::org.killbill.billing.invoice.plugin.api.OnFailureInvoiceResult onFailureCall(Java::org.killbill.billing.invoice.plugin.api.InvoiceContext, Java::java.lang.Iterable)'
+        def on_failure_call(context, properties)
+
+          # conversion for context [type = org.killbill.billing.invoice.plugin.api.InvoiceContext]
+          context = Killbill::Plugin::Model::InvoiceContext.new.to_ruby(context) unless context.nil?
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = []
+          (properties.nil? ? [] : properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          properties = tmp
+          begin
+            res = @delegate_plugin.on_failure_call(context, properties)
+            # conversion for res [type = org.killbill.billing.invoice.plugin.api.OnFailureInvoiceResult]
+            res = res.to_java unless res.nil?
+            return res
+          rescue Exception => e
+            message = "Failure in on_failure_call: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("on_failure_call failure", e.message)
           ensure
             @delegate_plugin.after_request
           end

@@ -230,6 +230,60 @@ module Killbill
             raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
           end
         end
+
+        java_signature 'Java::java.util.List getAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_audit_logs_with_history_for_id(accountId, auditLevel, context)
+
+          # conversion for accountId [type = java.util.UUID]
+          accountId = java.util.UUID.fromString(accountId.to_s) unless accountId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_audit_logs_with_history_for_id(accountId, auditLevel, context)
+            # conversion for res [type = java.util.List]
+            tmp = []
+            (res || []).each do |m|
+              # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+              m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+              tmp << m
+            end
+            res = tmp
+            return res
+          rescue Java::org.killbill.billing.account.api.AccountApiException => e
+            raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
+          end
+        end
+
+        java_signature 'Java::java.util.List getEmailAuditLogsWithHistoryForId(Java::java.util.UUID, Java::org.killbill.billing.util.api.AuditLevel, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_email_audit_logs_with_history_for_id(accountEmailId, auditLevel, context)
+
+          # conversion for accountEmailId [type = java.util.UUID]
+          accountEmailId = java.util.UUID.fromString(accountEmailId.to_s) unless accountEmailId.nil?
+
+          # conversion for auditLevel [type = org.killbill.billing.util.api.AuditLevel]
+          auditLevel = Java::org.killbill.billing.util.api.AuditLevel.value_of( auditLevel.to_s ) unless auditLevel.nil?
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = context.to_java unless context.nil?
+          begin
+            res = @real_java_api.get_email_audit_logs_with_history_for_id(accountEmailId, auditLevel, context)
+            # conversion for res [type = java.util.List]
+            tmp = []
+            (res || []).each do |m|
+              # conversion for m [type = org.killbill.billing.util.audit.AuditLogWithHistory]
+              m = Killbill::Plugin::Model::AuditLogWithHistory.new.to_ruby(m) unless m.nil?
+              tmp << m
+            end
+            res = tmp
+            return res
+          rescue Java::org.killbill.billing.account.api.AccountApiException => e
+            raise Killbill::Plugin::Model::AccountApiException.new.to_ruby(e)
+          end
+        end
       end
     end
   end

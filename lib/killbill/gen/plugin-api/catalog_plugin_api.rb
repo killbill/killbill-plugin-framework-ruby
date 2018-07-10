@@ -40,6 +40,40 @@ module Killbill
         end
 
 
+        java_signature 'Java::org.joda.time.DateTime getLatestCatalogVersion(Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
+        def get_latest_catalog_version(properties, context)
+
+          # conversion for properties [type = java.lang.Iterable]
+          tmp = []
+          (properties.nil? ? [] : properties.iterator).each do |m|
+            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
+            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          properties = tmp
+
+          # conversion for context [type = org.killbill.billing.util.callcontext.TenantContext]
+          context = Killbill::Plugin::Model::TenantContext.new.to_ruby(context) unless context.nil?
+          begin
+            res = @delegate_plugin.get_latest_catalog_version(properties, context)
+            # conversion for res [type = org.joda.time.DateTime]
+            if !res.nil?
+              res =  (res.kind_of? Time) ? DateTime.parse(res.to_s) : res
+              res = Java::org.joda.time.DateTime.new(res.to_s, Java::org.joda.time.DateTimeZone::UTC)
+            end
+            return res
+          rescue Exception => e
+            message = "Failure in get_latest_catalog_version: #{e}"
+            unless e.backtrace.nil?
+              message = "#{message}\n#{e.backtrace.join("\n")}"
+            end
+            logger.warn message
+            raise Java::org.killbill.billing.payment.plugin.api.PaymentPluginApiException.new("get_latest_catalog_version failure", e.message)
+          ensure
+            @delegate_plugin.after_request
+          end
+        end
+
         java_signature 'Java::org.killbill.billing.catalog.plugin.api.VersionedPluginCatalog getVersionedPluginCatalog(Java::java.lang.Iterable, Java::org.killbill.billing.util.callcontext.TenantContext)'
         def get_versioned_plugin_catalog(properties, context)
 

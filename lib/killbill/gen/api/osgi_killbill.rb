@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.osgi.api.OSGIKillbill
 
-        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :plugin_config_service_api, :security_api, :plugins_info_api, :killbill_nodes_api, :admin_payment_api
+        attr_accessor :account_user_api, :catalog_user_api, :subscription_api, :invoice_payment_api, :invoice_user_api, :payment_api, :tenant_user_api, :usage_user_api, :audit_user_api, :custom_field_user_api, :export_user_api, :tag_user_api, :entitlement_api, :record_id_api, :currency_conversion_api, :overdue_api, :plugin_config_service_api, :security_api, :plugins_info_api, :killbill_nodes_api, :admin_payment_api
 
         def initialize()
         end
@@ -49,7 +49,7 @@ module Killbill
           # conversion for subscription_api [type = org.killbill.billing.entitlement.api.SubscriptionApi]
           @subscription_api = @subscription_api.to_java unless @subscription_api.nil?
 
-          # conversion for invoice_payment_api [type = org.killbill.billing.invoice.api.InvoicePaymentApi]
+          # conversion for invoice_payment_api [type = org.killbill.billing.payment.api.InvoicePaymentApi]
           @invoice_payment_api = @invoice_payment_api.to_java unless @invoice_payment_api.nil?
 
           # conversion for invoice_user_api [type = org.killbill.billing.invoice.api.InvoiceUserApi]
@@ -85,6 +85,9 @@ module Killbill
           # conversion for currency_conversion_api [type = org.killbill.billing.currency.api.CurrencyConversionApi]
           @currency_conversion_api = @currency_conversion_api.to_java unless @currency_conversion_api.nil?
 
+          # conversion for overdue_api [type = org.killbill.billing.overdue.api.OverdueApi]
+          @overdue_api = @overdue_api.to_java unless @overdue_api.nil?
+
           # conversion for plugin_config_service_api [type = org.killbill.billing.osgi.api.config.PluginConfigServiceApi]
           @plugin_config_service_api = @plugin_config_service_api.to_java unless @plugin_config_service_api.nil?
 
@@ -115,7 +118,7 @@ module Killbill
           @subscription_api = j_obj.subscription_api
           @subscription_api = Killbill::Plugin::Model::SubscriptionApi.new.to_ruby(@subscription_api) unless @subscription_api.nil?
 
-          # conversion for invoice_payment_api [type = org.killbill.billing.invoice.api.InvoicePaymentApi]
+          # conversion for invoice_payment_api [type = org.killbill.billing.payment.api.InvoicePaymentApi]
           @invoice_payment_api = j_obj.invoice_payment_api
           @invoice_payment_api = Killbill::Plugin::Model::InvoicePaymentApi.new.to_ruby(@invoice_payment_api) unless @invoice_payment_api.nil?
 
@@ -162,6 +165,10 @@ module Killbill
           # conversion for currency_conversion_api [type = org.killbill.billing.currency.api.CurrencyConversionApi]
           @currency_conversion_api = j_obj.currency_conversion_api
           @currency_conversion_api = Killbill::Plugin::Model::CurrencyConversionApi.new.to_ruby(@currency_conversion_api) unless @currency_conversion_api.nil?
+
+          # conversion for overdue_api [type = org.killbill.billing.overdue.api.OverdueApi]
+          @overdue_api = j_obj.overdue_api
+          @overdue_api = Killbill::Plugin::Model::OverdueApi.new.to_ruby(@overdue_api) unless @overdue_api.nil?
 
           # conversion for plugin_config_service_api [type = org.killbill.billing.osgi.api.config.PluginConfigServiceApi]
           @plugin_config_service_api = j_obj.plugin_config_service_api
