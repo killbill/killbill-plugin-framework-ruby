@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.plugin.api.VersionedPluginCatalog
 
-        attr_accessor :catalog_name, :recurring_billing_mode, :standalone_plugin_catalogs
+        attr_accessor :catalog_name, :standalone_plugin_catalogs
 
         def initialize()
         end
@@ -42,9 +42,6 @@ module Killbill
         def to_java()
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = @catalog_name.to_s unless @catalog_name.nil?
-
-          # conversion for recurring_billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
-          @recurring_billing_mode = Java::org.killbill.billing.catalog.api.BillingMode.value_of( @recurring_billing_mode.to_s ) unless @recurring_billing_mode.nil?
 
           # conversion for standalone_plugin_catalogs [type = java.lang.Iterable]
           tmp = java.util.ArrayList.new
@@ -60,10 +57,6 @@ module Killbill
         def to_ruby(j_obj)
           # conversion for catalog_name [type = java.lang.String]
           @catalog_name = j_obj.catalog_name
-
-          # conversion for recurring_billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
-          @recurring_billing_mode = j_obj.recurring_billing_mode
-          @recurring_billing_mode = @recurring_billing_mode.to_s.to_sym unless @recurring_billing_mode.nil?
 
           # conversion for standalone_plugin_catalogs [type = java.lang.Iterable]
           @standalone_plugin_catalogs = j_obj.standalone_plugin_catalogs

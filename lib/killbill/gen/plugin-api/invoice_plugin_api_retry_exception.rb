@@ -29,34 +29,36 @@ module Killbill
   module Plugin
     module Model
 
-      class SubscriptionMetadata
+      class InvoicePluginApiRetryException
 
 
-        attr_accessor :action_type, :bundle_external_key
+        attr_accessor :retry_schedule
 
         def initialize()
         end
 
         def to_java()
-          # conversion for action_type [type = org.killbill.billing.notification.plugin.api.ActionType]
-          @action_type = Java::org.killbill.billing.notification.plugin.api.ActionType.value_of( @action_type.to_s ) unless @action_type.nil?
-
-          # conversion for bundle_external_key [type = java.lang.String]
-          @bundle_external_key = @bundle_external_key.to_s unless @bundle_external_key.nil?
-          Java::org.killbill.billing.notification.plugin.api.SubscriptionMetadata.new(@action_type, @bundle_external_key)
+          # conversion for retry_schedule [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@retry_schedule || []).each do |m|
+          tmp.add(m)
         end
-
-        def to_ruby(j_obj)
-          # conversion for action_type [type = org.killbill.billing.notification.plugin.api.ActionType]
-          @action_type = j_obj.action_type
-          @action_type = @action_type.to_s.to_sym unless @action_type.nil?
-
-          # conversion for bundle_external_key [type = java.lang.String]
-          @bundle_external_key = j_obj.bundle_external_key
-          self
-        end
-
+        @retry_schedule = tmp
+        Java::org.killbill.billing.invoice.plugin.api.InvoicePluginApiRetryException.new(@retry_schedule)
       end
+
+      def to_ruby(j_obj)
+        # conversion for retry_schedule [type = java.util.List]
+        @retry_schedule = j_obj.retry_schedule
+        tmp = []
+        (@retry_schedule || []).each do |m|
+        tmp << m
+      end
+      @retry_schedule = tmp
+      self
     end
+
   end
+end
+end
 end

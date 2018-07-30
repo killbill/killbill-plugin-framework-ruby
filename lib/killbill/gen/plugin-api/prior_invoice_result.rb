@@ -29,30 +29,45 @@ module Killbill
   module Plugin
     module Model
 
-      class SubscriptionMetadata
+      java_package 'org.killbill.billing.invoice.plugin.api'
+      class PriorInvoiceResult
 
+        include org.killbill.billing.invoice.plugin.api.PriorInvoiceResult
 
-        attr_accessor :action_type, :bundle_external_key
+        attr_accessor :is_aborted, :reschedule_date
 
         def initialize()
         end
 
         def to_java()
-          # conversion for action_type [type = org.killbill.billing.notification.plugin.api.ActionType]
-          @action_type = Java::org.killbill.billing.notification.plugin.api.ActionType.value_of( @action_type.to_s ) unless @action_type.nil?
+          # conversion for is_aborted [type = boolean]
+          @is_aborted = @is_aborted.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_aborted)
 
-          # conversion for bundle_external_key [type = java.lang.String]
-          @bundle_external_key = @bundle_external_key.to_s unless @bundle_external_key.nil?
-          Java::org.killbill.billing.notification.plugin.api.SubscriptionMetadata.new(@action_type, @bundle_external_key)
+          # conversion for reschedule_date [type = org.joda.time.DateTime]
+          if !@reschedule_date.nil?
+            @reschedule_date =  (@reschedule_date.kind_of? Time) ? DateTime.parse(@reschedule_date.to_s) : @reschedule_date
+            @reschedule_date = Java::org.joda.time.DateTime.new(@reschedule_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
+          self
         end
 
         def to_ruby(j_obj)
-          # conversion for action_type [type = org.killbill.billing.notification.plugin.api.ActionType]
-          @action_type = j_obj.action_type
-          @action_type = @action_type.to_s.to_sym unless @action_type.nil?
+          # conversion for is_aborted [type = boolean]
+          @is_aborted = j_obj.is_aborted
+          if @is_aborted.nil?
+            @is_aborted = false
+          else
+            tmp_bool = (@is_aborted.java_kind_of? java.lang.Boolean) ? @is_aborted.boolean_value : @is_aborted
+            @is_aborted = tmp_bool ? true : false
+          end
 
-          # conversion for bundle_external_key [type = java.lang.String]
-          @bundle_external_key = j_obj.bundle_external_key
+          # conversion for reschedule_date [type = org.joda.time.DateTime]
+          @reschedule_date = j_obj.reschedule_date
+          if !@reschedule_date.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@reschedule_date)
+            @reschedule_date = DateTime.iso8601(str)
+          end
           self
         end
 

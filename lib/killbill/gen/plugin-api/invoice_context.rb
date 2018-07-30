@@ -29,12 +29,12 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.entitlement.plugin.api'
-      class EntitlementContext
+      java_package 'org.killbill.billing.invoice.plugin.api'
+      class InvoiceContext
 
-        include org.killbill.billing.entitlement.plugin.api.EntitlementContext
+        include org.killbill.billing.invoice.plugin.api.InvoiceContext
 
-        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :account_id, :tenant_id, :operation_type, :destination_account_id, :base_entitlement_with_add_ons_specifiers, :billing_action_policy, :plugin_properties
+        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :account_id, :tenant_id, :target_date, :invoice, :existing_invoices, :is_dry_run, :is_rescheduled
 
         def initialize()
         end
@@ -76,32 +76,28 @@ module Killbill
           # conversion for tenant_id [type = java.util.UUID]
           @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
 
-          # conversion for operation_type [type = org.killbill.billing.entitlement.plugin.api.OperationType]
-          @operation_type = Java::org.killbill.billing.entitlement.plugin.api.OperationType.value_of( @operation_type.to_s ) unless @operation_type.nil?
+          # conversion for target_date [type = org.joda.time.LocalDate]
+          if !@target_date.nil?
+            @target_date = Java::org.joda.time.LocalDate.parse(@target_date.to_s)
+          end
 
-          # conversion for destination_account_id [type = java.util.UUID]
-          @destination_account_id = java.util.UUID.fromString(@destination_account_id.to_s) unless @destination_account_id.nil?
+          # conversion for invoice [type = org.killbill.billing.invoice.api.Invoice]
+          @invoice = @invoice.to_java unless @invoice.nil?
 
-          # conversion for base_entitlement_with_add_ons_specifiers [type = java.lang.Iterable]
+          # conversion for existing_invoices [type = java.util.List]
           tmp = java.util.ArrayList.new
-          (@base_entitlement_with_add_ons_specifiers || []).each do |m|
-            # conversion for m [type = org.killbill.billing.entitlement.api.BaseEntitlementWithAddOnsSpecifier]
+          (@existing_invoices || []).each do |m|
+            # conversion for m [type = org.killbill.billing.invoice.api.Invoice]
             m = m.to_java unless m.nil?
             tmp.add(m)
           end
-          @base_entitlement_with_add_ons_specifiers = tmp
+          @existing_invoices = tmp
 
-          # conversion for billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
-          @billing_action_policy = Java::org.killbill.billing.catalog.api.BillingActionPolicy.value_of( @billing_action_policy.to_s ) unless @billing_action_policy.nil?
+          # conversion for is_dry_run [type = boolean]
+          @is_dry_run = @is_dry_run.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_dry_run)
 
-          # conversion for plugin_properties [type = java.lang.Iterable]
-          tmp = java.util.ArrayList.new
-          (@plugin_properties || []).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = m.to_java unless m.nil?
-            tmp.add(m)
-          end
-          @plugin_properties = tmp
+          # conversion for is_rescheduled [type = boolean]
+          @is_rescheduled = @is_rescheduled.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_rescheduled)
           self
         end
 
@@ -151,37 +147,43 @@ module Killbill
           @tenant_id = j_obj.tenant_id
           @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
 
-          # conversion for operation_type [type = org.killbill.billing.entitlement.plugin.api.OperationType]
-          @operation_type = j_obj.operation_type
-          @operation_type = @operation_type.to_s.to_sym unless @operation_type.nil?
+          # conversion for target_date [type = org.joda.time.LocalDate]
+          @target_date = j_obj.target_date
+          if !@target_date.nil?
+            @target_date = @target_date.to_s
+          end
 
-          # conversion for destination_account_id [type = java.util.UUID]
-          @destination_account_id = j_obj.destination_account_id
-          @destination_account_id = @destination_account_id.nil? ? nil : @destination_account_id.to_s
+          # conversion for invoice [type = org.killbill.billing.invoice.api.Invoice]
+          @invoice = j_obj.invoice
+          @invoice = Killbill::Plugin::Model::Invoice.new.to_ruby(@invoice) unless @invoice.nil?
 
-          # conversion for base_entitlement_with_add_ons_specifiers [type = java.lang.Iterable]
-          @base_entitlement_with_add_ons_specifiers = j_obj.base_entitlement_with_add_ons_specifiers
+          # conversion for existing_invoices [type = java.util.List]
+          @existing_invoices = j_obj.existing_invoices
           tmp = []
-          (@base_entitlement_with_add_ons_specifiers.nil? ? [] : @base_entitlement_with_add_ons_specifiers.iterator).each do |m|
-            # conversion for m [type = org.killbill.billing.entitlement.api.BaseEntitlementWithAddOnsSpecifier]
-            m = Killbill::Plugin::Model::BaseEntitlementWithAddOnsSpecifier.new.to_ruby(m) unless m.nil?
+          (@existing_invoices || []).each do |m|
+            # conversion for m [type = org.killbill.billing.invoice.api.Invoice]
+            m = Killbill::Plugin::Model::Invoice.new.to_ruby(m) unless m.nil?
             tmp << m
           end
-          @base_entitlement_with_add_ons_specifiers = tmp
+          @existing_invoices = tmp
 
-          # conversion for billing_action_policy [type = org.killbill.billing.catalog.api.BillingActionPolicy]
-          @billing_action_policy = j_obj.billing_action_policy
-          @billing_action_policy = @billing_action_policy.to_s.to_sym unless @billing_action_policy.nil?
-
-          # conversion for plugin_properties [type = java.lang.Iterable]
-          @plugin_properties = j_obj.plugin_properties
-          tmp = []
-          (@plugin_properties.nil? ? [] : @plugin_properties.iterator).each do |m|
-            # conversion for m [type = org.killbill.billing.payment.api.PluginProperty]
-            m = Killbill::Plugin::Model::PluginProperty.new.to_ruby(m) unless m.nil?
-            tmp << m
+          # conversion for is_dry_run [type = boolean]
+          @is_dry_run = j_obj.is_dry_run
+          if @is_dry_run.nil?
+            @is_dry_run = false
+          else
+            tmp_bool = (@is_dry_run.java_kind_of? java.lang.Boolean) ? @is_dry_run.boolean_value : @is_dry_run
+            @is_dry_run = tmp_bool ? true : false
           end
-          @plugin_properties = tmp
+
+          # conversion for is_rescheduled [type = boolean]
+          @is_rescheduled = j_obj.is_rescheduled
+          if @is_rescheduled.nil?
+            @is_rescheduled = false
+          else
+            tmp_bool = (@is_rescheduled.java_kind_of? java.lang.Boolean) ? @is_rescheduled.boolean_value : @is_rescheduled
+            @is_rescheduled = tmp_bool ? true : false
+          end
           self
         end
 

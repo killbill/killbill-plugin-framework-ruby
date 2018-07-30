@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.control.plugin.api.PaymentControlContext
 
-        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :tenant_id, :account_id, :payment_id, :attempt_payment_id, :payment_external_key, :transaction_id, :transaction_external_key, :payment_api_type, :transaction_type, :hpp_type, :amount, :currency, :payment_method_id, :processed_amount, :processed_currency, :is_api_payment
+        attr_accessor :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date, :account_id, :tenant_id, :payment_id, :attempt_payment_id, :payment_external_key, :transaction_id, :transaction_external_key, :payment_api_type, :transaction_type, :hpp_type, :amount, :currency, :payment_method_id, :payment_plugin_name, :processed_amount, :processed_currency, :is_api_payment
 
         def initialize()
         end
@@ -70,11 +70,11 @@ module Killbill
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
+
+          # conversion for tenant_id [type = java.util.UUID]
+          @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
 
           # conversion for payment_id [type = java.util.UUID]
           @payment_id = java.util.UUID.fromString(@payment_id.to_s) unless @payment_id.nil?
@@ -112,6 +112,9 @@ module Killbill
 
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
+
+          # conversion for payment_plugin_name [type = java.lang.String]
+          @payment_plugin_name = @payment_plugin_name.to_s unless @payment_plugin_name.nil?
 
           # conversion for processed_amount [type = java.math.BigDecimal]
           if @processed_amount.nil?
@@ -166,13 +169,13 @@ module Killbill
             @updated_date = DateTime.iso8601(str)
           end
 
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = j_obj.tenant_id
-          @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
-
           # conversion for account_id [type = java.util.UUID]
           @account_id = j_obj.account_id
           @account_id = @account_id.nil? ? nil : @account_id.to_s
+
+          # conversion for tenant_id [type = java.util.UUID]
+          @tenant_id = j_obj.tenant_id
+          @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
 
           # conversion for payment_id [type = java.util.UUID]
           @payment_id = j_obj.payment_id
@@ -215,6 +218,9 @@ module Killbill
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = j_obj.payment_method_id
           @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
+
+          # conversion for payment_plugin_name [type = java.lang.String]
+          @payment_plugin_name = j_obj.payment_plugin_name
 
           # conversion for processed_amount [type = java.math.BigDecimal]
           @processed_amount = j_obj.processed_amount
