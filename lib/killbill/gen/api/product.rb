@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.Product
 
-        attr_accessor :name, :available, :included, :category, :catalog_name, :limits
+        attr_accessor :name, :pretty_name, :available, :included, :category, :catalog_name, :limits
 
         def initialize()
         end
@@ -42,6 +42,9 @@ module Killbill
         def to_java()
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
+
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
 
           # conversion for available [type = java.util.Collection]
           tmp = java.util.ArrayList.new
@@ -81,6 +84,9 @@ module Killbill
         def to_ruby(j_obj)
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
+
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = j_obj.pretty_name
 
           # conversion for available [type = java.util.Collection]
           @available = j_obj.available

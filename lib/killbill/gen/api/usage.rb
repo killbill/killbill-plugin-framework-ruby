@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.Usage
 
-        attr_accessor :name, :billing_mode, :usage_type, :billing_period, :limits, :tiers, :blocks, :fixed_price, :recurring_price
+        attr_accessor :name, :pretty_name, :billing_mode, :usage_type, :tier_block_policy, :billing_period, :limits, :tiers, :blocks, :fixed_price, :recurring_price
 
         def initialize()
         end
@@ -43,11 +43,17 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
 
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
+
           # conversion for billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
           @billing_mode = Java::org.killbill.billing.catalog.api.BillingMode.value_of( @billing_mode.to_s ) unless @billing_mode.nil?
 
           # conversion for usage_type [type = org.killbill.billing.catalog.api.UsageType]
           @usage_type = Java::org.killbill.billing.catalog.api.UsageType.value_of( @usage_type.to_s ) unless @usage_type.nil?
+
+          # conversion for tier_block_policy [type = org.killbill.billing.catalog.api.TierBlockPolicy]
+          @tier_block_policy = Java::org.killbill.billing.catalog.api.TierBlockPolicy.value_of( @tier_block_policy.to_s ) unless @tier_block_policy.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = Java::org.killbill.billing.catalog.api.BillingPeriod.value_of( @billing_period.to_s ) unless @billing_period.nil?
@@ -91,6 +97,9 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
 
+          # conversion for pretty_name [type = java.lang.String]
+          @pretty_name = j_obj.pretty_name
+
           # conversion for billing_mode [type = org.killbill.billing.catalog.api.BillingMode]
           @billing_mode = j_obj.billing_mode
           @billing_mode = @billing_mode.to_s.to_sym unless @billing_mode.nil?
@@ -98,6 +107,10 @@ module Killbill
           # conversion for usage_type [type = org.killbill.billing.catalog.api.UsageType]
           @usage_type = j_obj.usage_type
           @usage_type = @usage_type.to_s.to_sym unless @usage_type.nil?
+
+          # conversion for tier_block_policy [type = org.killbill.billing.catalog.api.TierBlockPolicy]
+          @tier_block_policy = j_obj.tier_block_policy
+          @tier_block_policy = @tier_block_policy.to_s.to_sym unless @tier_block_policy.nil?
 
           # conversion for billing_period [type = org.killbill.billing.catalog.api.BillingPeriod]
           @billing_period = j_obj.billing_period

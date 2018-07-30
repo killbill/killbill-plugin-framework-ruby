@@ -30,11 +30,11 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.catalog.api'
-      class MutableStaticCatalog
+      class VersionedCatalog
 
-        include org.killbill.billing.catalog.api.MutableStaticCatalog
+        include org.killbill.billing.catalog.api.VersionedCatalog
 
-        attr_accessor :catalog_name, :effective_date, :current_supported_currencies, :current_products, :current_units, :current_plans, :available_base_plan_listings
+        attr_accessor :catalog_name, :effective_date, :current_supported_currencies, :current_products, :current_units, :current_plans, :available_base_plan_listings, :versions
 
         def initialize()
         end
@@ -94,6 +94,14 @@ module Killbill
             tmp.add(m)
           end
           @available_base_plan_listings = tmp
+
+          # conversion for versions [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@versions || []).each do |m|
+            # conversion for m [type = Undefined]
+            tmp.add(m)
+          end
+          @versions = tmp
           self
         end
 
@@ -159,6 +167,15 @@ module Killbill
             tmp << m
           end
           @available_base_plan_listings = tmp
+
+          # conversion for versions [type = java.util.List]
+          @versions = j_obj.versions
+          tmp = []
+          (@versions || []).each do |m|
+            # conversion for m [type = Undefined]
+            tmp << m
+          end
+          @versions = tmp
           self
         end
 

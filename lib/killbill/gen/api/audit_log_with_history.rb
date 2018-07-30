@@ -29,40 +29,28 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.util.callcontext'
-      class CallContext
+      java_package 'org.killbill.billing.util.audit'
+      class AuditLogWithHistory
 
-        include org.killbill.billing.util.callcontext.CallContext
+        include org.killbill.billing.util.audit.AuditLogWithHistory
 
-        attr_accessor :account_id, :tenant_id, :user_token, :user_name, :call_origin, :user_type, :reason_code, :comments, :created_date, :updated_date
+        attr_accessor :audited_entity_id, :audited_object_type, :change_type, :user_name, :created_date, :reason_code, :user_token, :comment, :id, :updated_date, :entity
 
         def initialize()
         end
 
         def to_java()
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = java.util.UUID.fromString(@account_id.to_s) unless @account_id.nil?
+          # conversion for audited_entity_id [type = java.util.UUID]
+          @audited_entity_id = java.util.UUID.fromString(@audited_entity_id.to_s) unless @audited_entity_id.nil?
 
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = java.util.UUID.fromString(@tenant_id.to_s) unless @tenant_id.nil?
+          # conversion for audited_object_type [type = org.killbill.billing.ObjectType]
+          @audited_object_type = Java::org.killbill.billing.ObjectType.value_of( @audited_object_type.to_s ) unless @audited_object_type.nil?
 
-          # conversion for user_token [type = java.util.UUID]
-          @user_token = java.util.UUID.fromString(@user_token.to_s) unless @user_token.nil?
+          # conversion for change_type [type = org.killbill.billing.util.audit.ChangeType]
+          @change_type = Java::org.killbill.billing.util.audit.ChangeType.value_of( @change_type.to_s ) unless @change_type.nil?
 
           # conversion for user_name [type = java.lang.String]
           @user_name = @user_name.to_s unless @user_name.nil?
-
-          # conversion for call_origin [type = org.killbill.billing.util.callcontext.CallOrigin]
-          @call_origin = Java::org.killbill.billing.util.callcontext.CallOrigin.value_of( @call_origin.to_s ) unless @call_origin.nil?
-
-          # conversion for user_type [type = org.killbill.billing.util.callcontext.UserType]
-          @user_type = Java::org.killbill.billing.util.callcontext.UserType.value_of( @user_type.to_s ) unless @user_type.nil?
-
-          # conversion for reason_code [type = java.lang.String]
-          @reason_code = @reason_code.to_s unless @reason_code.nil?
-
-          # conversion for comments [type = java.lang.String]
-          @comments = @comments.to_s unless @comments.nil?
 
           # conversion for created_date [type = org.joda.time.DateTime]
           if !@created_date.nil?
@@ -70,43 +58,44 @@ module Killbill
             @created_date = Java::org.joda.time.DateTime.new(@created_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
 
+          # conversion for reason_code [type = java.lang.String]
+          @reason_code = @reason_code.to_s unless @reason_code.nil?
+
+          # conversion for user_token [type = java.lang.String]
+          @user_token = @user_token.to_s unless @user_token.nil?
+
+          # conversion for comment [type = java.lang.String]
+          @comment = @comment.to_s unless @comment.nil?
+
+          # conversion for id [type = java.util.UUID]
+          @id = java.util.UUID.fromString(@id.to_s) unless @id.nil?
+
           # conversion for updated_date [type = org.joda.time.DateTime]
           if !@updated_date.nil?
             @updated_date =  (@updated_date.kind_of? Time) ? DateTime.parse(@updated_date.to_s) : @updated_date
             @updated_date = Java::org.joda.time.DateTime.new(@updated_date.to_s, Java::org.joda.time.DateTimeZone::UTC)
           end
+
+          # conversion for entity [type = org.killbill.billing.util.entity.Entity]
+          @entity = @entity.to_java unless @entity.nil?
           self
         end
 
         def to_ruby(j_obj)
-          # conversion for account_id [type = java.util.UUID]
-          @account_id = j_obj.account_id
-          @account_id = @account_id.nil? ? nil : @account_id.to_s
+          # conversion for audited_entity_id [type = java.util.UUID]
+          @audited_entity_id = j_obj.audited_entity_id
+          @audited_entity_id = @audited_entity_id.nil? ? nil : @audited_entity_id.to_s
 
-          # conversion for tenant_id [type = java.util.UUID]
-          @tenant_id = j_obj.tenant_id
-          @tenant_id = @tenant_id.nil? ? nil : @tenant_id.to_s
+          # conversion for audited_object_type [type = org.killbill.billing.ObjectType]
+          @audited_object_type = j_obj.audited_object_type
+          @audited_object_type = @audited_object_type.to_s.to_sym unless @audited_object_type.nil?
 
-          # conversion for user_token [type = java.util.UUID]
-          @user_token = j_obj.user_token
-          @user_token = @user_token.nil? ? nil : @user_token.to_s
+          # conversion for change_type [type = org.killbill.billing.util.audit.ChangeType]
+          @change_type = j_obj.change_type
+          @change_type = @change_type.to_s.to_sym unless @change_type.nil?
 
           # conversion for user_name [type = java.lang.String]
           @user_name = j_obj.user_name
-
-          # conversion for call_origin [type = org.killbill.billing.util.callcontext.CallOrigin]
-          @call_origin = j_obj.call_origin
-          @call_origin = @call_origin.to_s.to_sym unless @call_origin.nil?
-
-          # conversion for user_type [type = org.killbill.billing.util.callcontext.UserType]
-          @user_type = j_obj.user_type
-          @user_type = @user_type.to_s.to_sym unless @user_type.nil?
-
-          # conversion for reason_code [type = java.lang.String]
-          @reason_code = j_obj.reason_code
-
-          # conversion for comments [type = java.lang.String]
-          @comments = j_obj.comments
 
           # conversion for created_date [type = org.joda.time.DateTime]
           @created_date = j_obj.created_date
@@ -116,6 +105,19 @@ module Killbill
             @created_date = DateTime.iso8601(str)
           end
 
+          # conversion for reason_code [type = java.lang.String]
+          @reason_code = j_obj.reason_code
+
+          # conversion for user_token [type = java.lang.String]
+          @user_token = j_obj.user_token
+
+          # conversion for comment [type = java.lang.String]
+          @comment = j_obj.comment
+
+          # conversion for id [type = java.util.UUID]
+          @id = j_obj.id
+          @id = @id.nil? ? nil : @id.to_s
+
           # conversion for updated_date [type = org.joda.time.DateTime]
           @updated_date = j_obj.updated_date
           if !@updated_date.nil?
@@ -123,6 +125,10 @@ module Killbill
             str = fmt.print(@updated_date)
             @updated_date = DateTime.iso8601(str)
           end
+
+          # conversion for entity [type = org.killbill.billing.util.entity.Entity]
+          @entity = j_obj.entity
+          @entity = Killbill::Plugin::Model::Entity.new.to_ruby(@entity) unless @entity.nil?
           self
         end
 

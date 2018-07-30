@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.catalog.api.PlanPhasePriceOverride
 
-        attr_accessor :phase_name, :plan_phase_specifier, :currency, :fixed_price, :recurring_price
+        attr_accessor :phase_name, :plan_phase_specifier, :currency, :fixed_price, :recurring_price, :usage_price_overrides
 
         def initialize()
         end
@@ -62,6 +62,15 @@ module Killbill
           else
             @recurring_price = java.math.BigDecimal.new(@recurring_price.to_s)
           end
+
+          # conversion for usage_price_overrides [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@usage_price_overrides || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.UsagePriceOverride]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @usage_price_overrides = tmp
           self
         end
 
@@ -84,6 +93,16 @@ module Killbill
           # conversion for recurring_price [type = java.math.BigDecimal]
           @recurring_price = j_obj.recurring_price
           @recurring_price = @recurring_price.nil? ? 0 : BigDecimal.new(@recurring_price.to_s)
+
+          # conversion for usage_price_overrides [type = java.util.List]
+          @usage_price_overrides = j_obj.usage_price_overrides
+          tmp = []
+          (@usage_price_overrides || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.UsagePriceOverride]
+            m = Killbill::Plugin::Model::UsagePriceOverride.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @usage_price_overrides = tmp
           self
         end
 

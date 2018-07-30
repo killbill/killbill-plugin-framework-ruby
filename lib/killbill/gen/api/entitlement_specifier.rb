@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.entitlement.api.EntitlementSpecifier
 
-        attr_accessor :plan_phase_specifier, :overrides
+        attr_accessor :plan_phase_specifier, :bill_cycle_day, :overrides
 
         def initialize()
         end
@@ -42,6 +42,9 @@ module Killbill
         def to_java()
           # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
           @plan_phase_specifier = @plan_phase_specifier.to_java unless @plan_phase_specifier.nil?
+
+          # conversion for bill_cycle_day [type = java.lang.Integer]
+          @bill_cycle_day = @bill_cycle_day
 
           # conversion for overrides [type = java.util.List]
           tmp = java.util.ArrayList.new
@@ -58,6 +61,9 @@ module Killbill
           # conversion for plan_phase_specifier [type = org.killbill.billing.catalog.api.PlanPhaseSpecifier]
           @plan_phase_specifier = j_obj.plan_phase_specifier
           @plan_phase_specifier = Killbill::Plugin::Model::PlanPhaseSpecifier.new.to_ruby(@plan_phase_specifier) unless @plan_phase_specifier.nil?
+
+          # conversion for bill_cycle_day [type = java.lang.Integer]
+          @bill_cycle_day = j_obj.bill_cycle_day
 
           # conversion for overrides [type = java.util.List]
           @overrides = j_obj.overrides

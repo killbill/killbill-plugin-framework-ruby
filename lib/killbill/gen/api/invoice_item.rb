@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.invoice.api.InvoiceItem
 
-        attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :plan_name, :phase_name, :usage_name, :rate, :linked_item_id
+        attr_accessor :id, :created_date, :updated_date, :invoice_item_type, :invoice_id, :account_id, :child_account_id, :start_date, :end_date, :amount, :currency, :description, :bundle_id, :subscription_id, :product_name, :pretty_product_name, :plan_name, :pretty_plan_name, :phase_name, :pretty_phase_name, :usage_name, :pretty_usage_name, :rate, :linked_item_id, :quantity, :item_details
 
         def initialize()
         end
@@ -96,14 +96,29 @@ module Killbill
           # conversion for subscription_id [type = java.util.UUID]
           @subscription_id = java.util.UUID.fromString(@subscription_id.to_s) unless @subscription_id.nil?
 
+          # conversion for product_name [type = java.lang.String]
+          @product_name = @product_name.to_s unless @product_name.nil?
+
+          # conversion for pretty_product_name [type = java.lang.String]
+          @pretty_product_name = @pretty_product_name.to_s unless @pretty_product_name.nil?
+
           # conversion for plan_name [type = java.lang.String]
           @plan_name = @plan_name.to_s unless @plan_name.nil?
+
+          # conversion for pretty_plan_name [type = java.lang.String]
+          @pretty_plan_name = @pretty_plan_name.to_s unless @pretty_plan_name.nil?
 
           # conversion for phase_name [type = java.lang.String]
           @phase_name = @phase_name.to_s unless @phase_name.nil?
 
+          # conversion for pretty_phase_name [type = java.lang.String]
+          @pretty_phase_name = @pretty_phase_name.to_s unless @pretty_phase_name.nil?
+
           # conversion for usage_name [type = java.lang.String]
           @usage_name = @usage_name.to_s unless @usage_name.nil?
+
+          # conversion for pretty_usage_name [type = java.lang.String]
+          @pretty_usage_name = @pretty_usage_name.to_s unless @pretty_usage_name.nil?
 
           # conversion for rate [type = java.math.BigDecimal]
           if @rate.nil?
@@ -114,6 +129,12 @@ module Killbill
 
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = java.util.UUID.fromString(@linked_item_id.to_s) unless @linked_item_id.nil?
+
+          # conversion for quantity [type = java.lang.Integer]
+          @quantity = @quantity
+
+          # conversion for item_details [type = java.lang.String]
+          @item_details = @item_details.to_s unless @item_details.nil?
           self
         end
 
@@ -185,14 +206,29 @@ module Killbill
           @subscription_id = j_obj.subscription_id
           @subscription_id = @subscription_id.nil? ? nil : @subscription_id.to_s
 
+          # conversion for product_name [type = java.lang.String]
+          @product_name = j_obj.product_name
+
+          # conversion for pretty_product_name [type = java.lang.String]
+          @pretty_product_name = j_obj.pretty_product_name
+
           # conversion for plan_name [type = java.lang.String]
           @plan_name = j_obj.plan_name
+
+          # conversion for pretty_plan_name [type = java.lang.String]
+          @pretty_plan_name = j_obj.pretty_plan_name
 
           # conversion for phase_name [type = java.lang.String]
           @phase_name = j_obj.phase_name
 
+          # conversion for pretty_phase_name [type = java.lang.String]
+          @pretty_phase_name = j_obj.pretty_phase_name
+
           # conversion for usage_name [type = java.lang.String]
           @usage_name = j_obj.usage_name
+
+          # conversion for pretty_usage_name [type = java.lang.String]
+          @pretty_usage_name = j_obj.pretty_usage_name
 
           # conversion for rate [type = java.math.BigDecimal]
           @rate = j_obj.rate
@@ -201,6 +237,12 @@ module Killbill
           # conversion for linked_item_id [type = java.util.UUID]
           @linked_item_id = j_obj.linked_item_id
           @linked_item_id = @linked_item_id.nil? ? nil : @linked_item_id.to_s
+
+          # conversion for quantity [type = java.lang.Integer]
+          @quantity = j_obj.quantity
+
+          # conversion for item_details [type = java.lang.String]
+          @item_details = j_obj.item_details
           self
         end
 

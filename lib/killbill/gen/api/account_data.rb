@@ -34,7 +34,7 @@ module Killbill
 
         include org.killbill.billing.account.api.AccountData
 
-        attr_accessor :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :is_notified_for_invoices, :parent_account_id, :is_payment_delegated_to_parent, :notes
+        attr_accessor :external_key, :name, :first_name_length, :email, :bill_cycle_day_local, :currency, :payment_method_id, :reference_time, :time_zone, :locale, :address1, :address2, :company_name, :city, :state_or_province, :postal_code, :country, :phone, :is_migrated, :parent_account_id, :is_payment_delegated_to_parent, :notes
 
         def initialize()
         end
@@ -60,6 +60,12 @@ module Killbill
 
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = java.util.UUID.fromString(@payment_method_id.to_s) unless @payment_method_id.nil?
+
+          # conversion for reference_time [type = org.joda.time.DateTime]
+          if !@reference_time.nil?
+            @reference_time =  (@reference_time.kind_of? Time) ? DateTime.parse(@reference_time.to_s) : @reference_time
+            @reference_time = Java::org.joda.time.DateTime.new(@reference_time.to_s, Java::org.joda.time.DateTimeZone::UTC)
+          end
 
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           if !@time_zone.nil?
@@ -96,9 +102,6 @@ module Killbill
           # conversion for is_migrated [type = java.lang.Boolean]
           @is_migrated = @is_migrated.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_migrated)
 
-          # conversion for is_notified_for_invoices [type = java.lang.Boolean]
-          @is_notified_for_invoices = @is_notified_for_invoices.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_notified_for_invoices)
-
           # conversion for parent_account_id [type = java.util.UUID]
           @parent_account_id = java.util.UUID.fromString(@parent_account_id.to_s) unless @parent_account_id.nil?
 
@@ -133,6 +136,14 @@ module Killbill
           # conversion for payment_method_id [type = java.util.UUID]
           @payment_method_id = j_obj.payment_method_id
           @payment_method_id = @payment_method_id.nil? ? nil : @payment_method_id.to_s
+
+          # conversion for reference_time [type = org.joda.time.DateTime]
+          @reference_time = j_obj.reference_time
+          if !@reference_time.nil?
+            fmt = Java::org.joda.time.format.ISODateTimeFormat.date_time_no_millis # See https://github.com/killbill/killbill-java-parser/issues/3
+            str = fmt.print(@reference_time)
+            @reference_time = DateTime.iso8601(str)
+          end
 
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           @time_zone = j_obj.time_zone
@@ -174,15 +185,6 @@ module Killbill
           else
             tmp_bool = (@is_migrated.java_kind_of? java.lang.Boolean) ? @is_migrated.boolean_value : @is_migrated
             @is_migrated = tmp_bool ? true : false
-          end
-
-          # conversion for is_notified_for_invoices [type = java.lang.Boolean]
-          @is_notified_for_invoices = j_obj.is_notified_for_invoices
-          if @is_notified_for_invoices.nil?
-            @is_notified_for_invoices = false
-          else
-            tmp_bool = (@is_notified_for_invoices.java_kind_of? java.lang.Boolean) ? @is_notified_for_invoices.boolean_value : @is_notified_for_invoices
-            @is_notified_for_invoices = tmp_bool ? true : false
           end
 
           # conversion for parent_account_id [type = java.util.UUID]

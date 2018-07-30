@@ -29,35 +29,25 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      java_package 'org.killbill.billing.osgi.api'
+      class Healthcheck
 
-        include org.killbill.billing.catalog.api.Unit
+        include org.killbill.billing.osgi.api.Healthcheck
 
-        attr_accessor :name, :pretty_name
+        attr_accessor 
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
-          self
-        end
-
-        def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
-          self
-        end
-
+        self
       end
+
+      def to_ruby(j_obj)
+      self
     end
+
   end
+end
+end
 end

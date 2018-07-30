@@ -29,35 +29,50 @@ module Killbill
   module Plugin
     module Model
 
-      java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      class HealthStatus
 
-        include org.killbill.billing.catalog.api.Unit
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :is_healthy, :details
 
         def initialize()
         end
 
         def to_java()
-          # conversion for name [type = java.lang.String]
-          @name = @name.to_s unless @name.nil?
+          # conversion for is_healthy [type = boolean]
+          @is_healthy = @is_healthy.nil? ? java.lang.Boolean.new(false) : java.lang.Boolean.new(@is_healthy)
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
-          self
+          # conversion for details [type = java.util.Map]
+          tmp = java.util.HashMap.new
+          (@details || {}).each do |k,v|
+          tmp.put(k, v)
         end
-
-        def to_ruby(j_obj)
-          # conversion for name [type = java.lang.String]
-          @name = j_obj.name
-
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
-          self
-        end
-
-      end
+      @details = tmp
+      Java::org.killbill.billing.osgi.api.HealthStatus.new(@is_healthy, @details)
     end
-  end
+
+    def to_ruby(j_obj)
+      # conversion for is_healthy [type = boolean]
+      @is_healthy = j_obj.is_healthy
+      if @is_healthy.nil?
+        @is_healthy = false
+      else
+        tmp_bool = (@is_healthy.java_kind_of? java.lang.Boolean) ? @is_healthy.boolean_value : @is_healthy
+        @is_healthy = tmp_bool ? true : false
+      end
+
+      # conversion for details [type = java.util.Map]
+      @details = j_obj.details
+      tmp = {}
+      jtmp0 = @details || java.util.HashMap.new
+      jtmp0.key_set.each do |k|
+      v = jtmp0.get(k)
+      tmp[k] = v
+    end
+  @details = tmp
+  self
+end
+
+end
+end
+end
 end

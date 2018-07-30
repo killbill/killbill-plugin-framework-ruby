@@ -30,11 +30,11 @@ module Killbill
     module Model
 
       java_package 'org.killbill.billing.catalog.api'
-      class Unit
+      class UsagePriceOverride
 
-        include org.killbill.billing.catalog.api.Unit
+        include org.killbill.billing.catalog.api.UsagePriceOverride
 
-        attr_accessor :name, :pretty_name
+        attr_accessor :name, :usage_type, :tier_price_overrides
 
         def initialize()
         end
@@ -43,8 +43,17 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = @name.to_s unless @name.nil?
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = @pretty_name.to_s unless @pretty_name.nil?
+          # conversion for usage_type [type = org.killbill.billing.catalog.api.UsageType]
+          @usage_type = Java::org.killbill.billing.catalog.api.UsageType.value_of( @usage_type.to_s ) unless @usage_type.nil?
+
+          # conversion for tier_price_overrides [type = java.util.List]
+          tmp = java.util.ArrayList.new
+          (@tier_price_overrides || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.TierPriceOverride]
+            m = m.to_java unless m.nil?
+            tmp.add(m)
+          end
+          @tier_price_overrides = tmp
           self
         end
 
@@ -52,8 +61,19 @@ module Killbill
           # conversion for name [type = java.lang.String]
           @name = j_obj.name
 
-          # conversion for pretty_name [type = java.lang.String]
-          @pretty_name = j_obj.pretty_name
+          # conversion for usage_type [type = org.killbill.billing.catalog.api.UsageType]
+          @usage_type = j_obj.usage_type
+          @usage_type = @usage_type.to_s.to_sym unless @usage_type.nil?
+
+          # conversion for tier_price_overrides [type = java.util.List]
+          @tier_price_overrides = j_obj.tier_price_overrides
+          tmp = []
+          (@tier_price_overrides || []).each do |m|
+            # conversion for m [type = org.killbill.billing.catalog.api.TierPriceOverride]
+            m = Killbill::Plugin::Model::TierPriceOverride.new.to_ruby(m) unless m.nil?
+            tmp << m
+          end
+          @tier_price_overrides = tmp
           self
         end
 
