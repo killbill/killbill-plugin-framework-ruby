@@ -26,8 +26,8 @@ begin
     org.killbill.billing.currency.api.CurrencyConversionApi
     org.killbill.billing.entitlement.api.EntitlementApi
     org.killbill.billing.entitlement.api.SubscriptionApi
-    org.killbill.billing.invoice.api.InvoicePaymentApi
     org.killbill.billing.invoice.api.InvoiceUserApi
+    org.killbill.billing.payment.api.InvoicePaymentApi
     org.killbill.billing.payment.api.PaymentApi
     org.killbill.billing.payment.api.PaymentGatewayApi
     org.killbill.billing.tenant.api.TenantUserApi

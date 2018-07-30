@@ -1,3 +1,28 @@
+9.4.0
+    Update to Kill Bill 0.19.18 APIs
+
+9.3.2
+    Update to Kill Bill 0.19.17 APIs
+
+9.3.1
+    DO NOT USE
+
+9.3.0
+    Update to Kill Bill latest 0.19.x APIs
+
+9.2.2
+    Release for Kill Bill 0.19.7
+    ActiveMerchant: pass in extra_params to gateway api calls
+
+9.2.1
+    Release for Kill Bill 0.19.6
+
+9.2.0
+    Initial release for Kill Bill 0.19.x
+
+8.3.5
+    ActiveMerchant: add utility function to avoid persisting sensitive data (GDPR)
+
 8.3.4
     ActiveMerchant: pass in extra_params to gateway api calls
 

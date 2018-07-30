@@ -20,6 +20,7 @@ Kill Bill compatibility
 | ----------------: | ----------------: |
 | 7.x.y             | 0.16.z            |
 | 8.x.y             | 0.18.z            |
+| 9.x.y             | 0.20.z            |
 
 
 How to write a Notification plugin

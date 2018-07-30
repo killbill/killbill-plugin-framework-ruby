@@ -135,6 +135,13 @@ describe Killbill::Plugin::ActiveMerchant::ActiveRecord::Response do
     ::Killbill::Test::TestResponse.from_kb_payment_id(::Killbill::Test::TestTransaction, kb_payment_id3, kb_tenant_id).size == 0
   end
 
+  it 'should filter out sensitive parameter if specified' do
+    extra_params = {:email => "test.test", :payer_id => "test"}
+    ::Killbill::Test::TestResponse.send(:remove_sensitive_data_and_compact, extra_params)
+    extra_params[:email].should be_nil
+    extra_params[:payer_id].should == "test"
+  end
+
   it 'should generate the right SQL query' do
     # Check count query (search query numeric)
     expected_query = "SELECT COUNT(DISTINCT #{q('test_responses')}.#{q('id')}) FROM #{q('test_responses')}  WHERE (((#{q('test_responses')}.#{q('kb_payment_id')} = '1234' OR #{q('test_responses')}.#{q('kb_payment_transaction_id')} = '1234') OR #{q('test_responses')}.#{q('message')} = '1234') OR #{q('test_responses')}.#{q('authorization')} = '1234') AND #{q('test_responses')}.#{q('success')} = #{qtrue} AND #{q('test_responses')}.#{q('kb_tenant_id')} = '11-22-33'"

@@ -1,3 +1,3 @@
 module Killbill
-  VERSION = '8.3.4'
+  VERSION = '9.4.0'
 end
