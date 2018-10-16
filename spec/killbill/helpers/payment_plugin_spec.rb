@@ -367,6 +367,14 @@ describe Killbill::Plugin::ActiveMerchant::PaymentPlugin do
       results.count.should == 1
       results.last.kb_payment_id.to_s.should == response.kb_payment_id
     end
+
+    it "supports decimal currencies" do
+      plugin.to_cents(BigDecimal.new('100'), 'USD').should == 10000
+    end
+
+    it "supports non-decimal currencies" do
+      plugin.to_cents(BigDecimal.new('100'), 'JPY').should == 100
+    end
   end
 
   context 'with a dummy gateway' do
