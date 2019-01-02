@@ -53,6 +53,51 @@ describe Killbill::Plugin do
     check_notification(jgw_notification2)
   end
 
+  it 'should be able to handle UTC as the fixed offset timezone' do
+    jaccount = ::Killbill::Plugin::Model::Account.new
+    jaccount.id = java.util.UUID.fromString('cf5a597a-cf15-45d3-8f02-95371be7f927')
+    jaccount.time_zone = org.joda.time.DateTimeZone.forID('Etc/UTC')
+    jaccount.reference_time = org.joda.time.DateTime.new('2015-09-01T08:01:01.000Z')
+    jaccount.fixed_offset_time_zone = org.killbill.billing.util.account.AccountDateTimeUtils.getFixedOffsetTimeZone(jaccount)
+
+    raccount = Killbill::Plugin::Model::Account.new.to_ruby(jaccount)
+    raccount.id.should == 'cf5a597a-cf15-45d3-8f02-95371be7f927'
+    raccount.time_zone.should be_an_instance_of TZInfo::DataTimezone
+    raccount.time_zone.to_s.should == 'Etc - UTC'
+    raccount.reference_time.should == '2015-09-01T08:01:01.000Z'
+    raccount.fixed_offset_time_zone.should be_an_instance_of TZInfo::DataTimezone
+    raccount.fixed_offset_time_zone.to_s.should == 'UTC'
+
+    jaccount2 = raccount.to_java
+    jaccount2.id.should == jaccount.id
+    jaccount2.time_zone.should == jaccount.time_zone
+    jaccount2.reference_time.to_s.should == '2015-09-01T08:01:01.000Z'
+    jaccount2.fixed_offset_time_zone.should == jaccount.fixed_offset_time_zone
+  end
+
+  it 'should be able to handle a non-UTC fixed offset timezone' do
+    jaccount = ::Killbill::Plugin::Model::Account.new
+    jaccount.id = java.util.UUID.fromString('cf5a597a-cf15-45d3-8f02-95371be7f927')
+    # Alaska Standard Time
+    jaccount.time_zone = org.joda.time.DateTimeZone.forID('America/Juneau')
+    # Time zone is AKDT (UTC-8h) between March and November
+    jaccount.reference_time = org.joda.time.DateTime.new('2015-09-01T08:01:01.000Z')
+    jaccount.fixed_offset_time_zone = org.killbill.billing.util.account.AccountDateTimeUtils.getFixedOffsetTimeZone(jaccount)
+
+    raccount = Killbill::Plugin::Model::Account.new.to_ruby(jaccount)
+    raccount.id.should == 'cf5a597a-cf15-45d3-8f02-95371be7f927'
+    raccount.time_zone.should be_an_instance_of TZInfo::DataTimezone
+    raccount.time_zone.to_s.should == 'America - Juneau'
+    raccount.reference_time.should == '2015-09-01T08:01:01.000Z'
+    raccount.fixed_offset_time_zone.should == '-08:00'
+
+    jaccount2 = raccount.to_java
+    jaccount2.id.should == jaccount.id
+    jaccount2.time_zone.should == jaccount.time_zone
+    jaccount2.reference_time.to_s.should == '2015-09-01T08:01:01.000Z'
+    jaccount2.fixed_offset_time_zone.should == jaccount.fixed_offset_time_zone
+  end
+
   private
 
   def check_notification(notification)

@@ -148,7 +148,7 @@ module Killbill
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           @time_zone = j_obj.time_zone
           if !@time_zone.nil?
-            @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
+            @time_zone = TZInfo::Timezone.get(@time_zone.get_id) rescue @time_zone.get_id
           end
 
           # conversion for locale [type = java.lang.String]
