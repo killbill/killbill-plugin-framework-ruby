@@ -164,13 +164,13 @@ module Killbill
           # conversion for time_zone [type = org.joda.time.DateTimeZone]
           @time_zone = j_obj.time_zone
           if !@time_zone.nil?
-            @time_zone = TZInfo::Timezone.get(@time_zone.get_id)
+            @time_zone = TZInfo::Timezone.get(@time_zone.get_id) rescue @time_zone.get_id
           end
 
           # conversion for fixed_offset_time_zone [type = org.joda.time.DateTimeZone]
           @fixed_offset_time_zone = j_obj.fixed_offset_time_zone
           if !@fixed_offset_time_zone.nil?
-            @fixed_offset_time_zone = TZInfo::Timezone.get(@fixed_offset_time_zone.get_id)
+            @fixed_offset_time_zone = TZInfo::Timezone.get(@fixed_offset_time_zone.get_id) rescue @fixed_offset_time_zone.get_id
           end
 
           # conversion for reference_time [type = org.joda.time.DateTime]
